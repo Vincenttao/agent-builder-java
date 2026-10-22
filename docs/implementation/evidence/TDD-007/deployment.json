@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-10-21T20:05:00.559Z",
+  "services": [
+    {
+      "service": "app",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:6e99cc11e9088bfd4ed684bf9bce486fa12ff3a05d1b5bad4b51c8d596a86a67"
+    },
+    {
+      "service": "mock-services",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:6e99cc11e9088bfd4ed684bf9bce486fa12ff3a05d1b5bad4b51c8d596a86a67"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a"
+    },
+    {
+      "service": "runner",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:a067fb603f7b96fd3613a00df004adde1cb96682d3e0c5787c9351b966a8728c"
+    }
+  ],
+  "productionSourceDigest": "bf067093ae6d8131a322e7c29dcd67ab6ebe6124467ef6723d68304fa6441c43",
+  "artifactDigest": "8ff43481dbf1f91963a840504643f394fc4b4223c7aa8b4447e8a62d6056dab5",
+  "validationId": "c866ec93-ffd4-486b-8621-2ca21890f8a0",
+  "binding": {
+    "mockDigest": "7e76cc293a32942372d9a65dbfb6306908d5c918cd65b84506e59d8691dfab37",
+    "modelProfile": {
+      "model": {
+        "name": "deepseek-v4-flash",
+        "baseUrl": "https://api.deepseek.com/v1",
+        "provider": "OpenAI",
+        "thinking": "disabled",
+        "maxTokens": 1024,
+        "temperature": 0
+      },
+      "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+      "executionMode": "live-mock"
+    },
+    "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
+    "artifactDigest": "8ff43481dbf1f91963a840504643f394fc4b4223c7aa8b4447e8a62d6056dab5",
+    "baselineDigest": "c7d91b5c0b08ad18ff26e302689d4e7584c38de30ae21e8de4207c866212ab43",
+    "snapshotDigest": "ef3eeb382a9bac491c6012fb4a5cd844a83aea877037847a687fe0379bcdc43d",
+    "compatibilityKey": "0beb60d10ee71f8d9f5e08e57b08b2e3c5bf5c2f8dd53f1214af300e52789e95"
+  },
+  "note": "Three equipment read cases only. Work-order argument revision, publication and export remain incomplete. This is not full PRD acceptance."
+}

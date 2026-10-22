@@ -1,0 +1,17 @@
+{
+  "id": "13f11441-0c81-447f-915d-c106222d097f",
+  "commandId": "platform-contract",
+  "executable": "java",
+  "args": [
+    "-ea",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\generated-candidate-live\\ca6daf63-5312-420e-a7e2-506a1519ead0\\engineering\\tasks\\80f5e769-7e82-4c56-8c4d-180703189abf\\workspace\\control\\commands\\4bcb7fb9-8b6f-454b-8a0b-6a441bde268f;D:\\agent-builder-java\\.cache\\generated-candidate-live\\ca6daf63-5312-420e-a7e2-506a1519ead0\\engineering\\tasks\\80f5e769-7e82-4c56-8c4d-180703189abf\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\generated-candidate-live\\ca6daf63-5312-420e-a7e2-506a1519ead0\\engineering\\tasks\\80f5e769-7e82-4c56-8c4d-180703189abf\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+    "verification.EquipmentContract"
+  ],
+  "startedAt": "2026-10-21T23:48:11.835Z",
+  "finishedAt": "2026-10-21T23:48:13.279Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "PLATFORM_CONTRACT_OK\n",
+  "truncated": false
+}

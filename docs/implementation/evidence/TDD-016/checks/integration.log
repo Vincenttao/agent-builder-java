@@ -1,0 +1,5 @@
+
+> agent-builder@0.1.0 test:integration D:\agent-builder-java
+> vitest run --project integration "--maxWorkers=3" "--reporter=json" "--outputFile=.cache/tdd016/integration.json"
+
+JSON report written to D:/agent-builder-java/.cache/tdd016/integration.json

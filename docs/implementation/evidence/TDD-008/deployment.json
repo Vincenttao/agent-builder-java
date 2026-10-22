@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-10-21T20:45:58.716Z",
+  "services": [
+    {
+      "service": "app",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:b82613d3acce42ffa400a80bbd590415aba85341882d9f43eb35c72a4e0da443"
+    },
+    {
+      "service": "mock-services",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:b82613d3acce42ffa400a80bbd590415aba85341882d9f43eb35c72a4e0da443"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a"
+    },
+    {
+      "service": "runner",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:bd91ef4c6573991fd85e706605da0190dd6fea4e38871ea6d459d95db43fc54f"
+    }
+  ],
+  "productionSourceDigest": "3cdcd65b920d4db36d42a97aa8287bea050af57863e4ec447c59fbb294869166",
+  "artifactDigest": "f699eb87a05bdd63dc2363e4bc0a34a8aed040a8486e3669c5b2960f52f18b2b",
+  "validationId": "3e7eedcb-5296-4d0c-aa9e-b600bdafa31d",
+  "binding": {
+    "mockDigest": "7e76cc293a32942372d9a65dbfb6306908d5c918cd65b84506e59d8691dfab37",
+    "modelProfile": {
+      "model": {
+        "name": "deepseek-v4-flash",
+        "baseUrl": "https://api.deepseek.com/v1",
+        "provider": "OpenAI",
+        "thinking": "disabled",
+        "maxTokens": 1024,
+        "temperature": 0
+      },
+      "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+      "executionMode": "live-mock"
+    },
+    "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
+    "artifactDigest": "f699eb87a05bdd63dc2363e4bc0a34a8aed040a8486e3669c5b2960f52f18b2b",
+    "baselineDigest": "5207c8da99c315f046d39c8dd5290ff9561bb5903f5f92b5f5dd4f49fdc5de4d",
+    "snapshotDigest": "6a738c8790624a860cbb44cd685bf4510ce079edee896f4d99027ca48427933b",
+    "compatibilityKey": "0beb60d10ee71f8d9f5e08e57b08b2e3c5bf5c2f8dd53f1214af300e52789e95"
+  },
+  "note": "Read-only validation and approval browser flows verified. Publication state and admission rules have component evidence only; real release driver and product publication entrypoint are not wired. Full PRD remains unverified."
+}

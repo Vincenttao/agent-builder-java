@@ -1,0 +1,17 @@
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"before_invoke","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:02.221004400Z"}
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"before_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:02.396137500Z"}
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"after_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:06.671103200Z"}
+{"event":{"allowed":true,"tool":"skill_tool","event":"before_tool_call","rail":"tool-allowlist","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45"},"time":"2026-10-21T23:49:06.717018700Z"}
+{"event":{"tool":"skill_tool","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"before_tool_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:06.727073100Z"}
+{"event":{"sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","skillDigest":"e943b7ad98ee0977f0d5b2cafa81fc715bbf257b40555b9309b2ac9259a83bf0","event":"skill_loaded","skill":"equipment-query","developmentBundleDigest":"ce0ac6558f473757cf6d19feb214991d563d8f4edaf1e493abb4dd82c2fe2a38"},"time":"2026-10-21T23:49:06.769044Z"}
+{"event":{"tool":"skill_tool","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"after_tool_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:06.786674900Z"}
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"before_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:06.821661800Z"}
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"after_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:07.425791200Z"}
+{"event":{"allowed":true,"tool":"get_equipment","event":"before_tool_call","rail":"tool-allowlist","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45"},"time":"2026-10-21T23:49:07.429905800Z"}
+{"event":{"tool":"get_equipment","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"before_tool_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:07.430915100Z"}
+{"event":{"sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","className":"generated.EquipmentTool","event":"generated_tool_invoked","componentDigest":"d488091ecc66bcaab4835c1218e18eb3d4c169f8f2293ecd109148f1d66c205e","developmentBundleDigest":"ce0ac6558f473757cf6d19feb214991d563d8f4edaf1e493abb4dd82c2fe2a38"},"time":"2026-10-21T23:49:07.432699300Z"}
+{"event":{"tool":"get_equipment","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"after_tool_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:07.485713300Z"}
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"before_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:07.491961100Z"}
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"after_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:08.669413300Z"}
+{"event":{"content":"{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"设备状态为 warning，温度 86°C 偏高，建议尽快检查冷却与散热情况，并安排现场巡检确认是否存在过热风险。\"}","event":"assistant_output","rail":"audit","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45"},"time":"2026-10-21T23:49:08.671424100Z"}
+{"event":{"tool":"","sessionId":"22aac8f5-8c0d-450a-b2f4-44143ebe1b45","event":"after_invoke","turnCount":1,"rail":"audit"},"time":"2026-10-21T23:49:08.676275600Z"}

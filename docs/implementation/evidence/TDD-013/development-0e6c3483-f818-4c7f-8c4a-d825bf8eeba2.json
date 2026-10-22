@@ -1,0 +1,27 @@
+{
+  "id": "0e6c3483-f818-4c7f-8c4a-d825bf8eeba2",
+  "startedAt": "2026-10-21T23:11:09.411Z",
+  "status": "passed-live-management-cancellation",
+  "job": {
+    "id": "61b277fe-9c42-4a9b-93f3-c168b204e03d",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "running"
+      },
+      {
+        "role": "developer",
+        "status": "queued"
+      }
+    ],
+    "status": "cancelled",
+    "agentId": "623cc9d3-6a2c-4871-b9bd-56538563ab09",
+    "createdAt": "2026-10-21T23:11:09.496Z",
+    "updatedAt": "2026-10-21T23:11:16.557Z",
+    "baselineId": "130330f0-34b0-44d5-b681-d6cf4b2fce0b",
+    "snapshotId": "b633c437-da1f-4735-b575-59b465bab645",
+    "inputDigest": "dd7ff1e3a74d413c2676965420a98899eaad2d207cfbf3ae7543a54380facc76",
+    "baselineDigest": "d1c87aee1e10c73fb5964eec26b0a8cfe8edaca9185c65eb99a4d145d3dca99e"
+  },
+  "finishedAt": "2026-10-21T23:11:16.798Z"
+}

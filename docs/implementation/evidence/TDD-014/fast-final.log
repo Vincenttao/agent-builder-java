@@ -1,0 +1,38 @@
+
+ RUN  v4.1.12 D:/agent-builder-java
+
+ ✓ |contract| tests/contract/engineering-mcp.test.ts (1 test) 535ms
+   ✓ MCP binds role outside model input, validates operation arguments, and never exposes shell or another role credential  531ms
+ ✓ |contract| tests/contract/runner-api.test.ts (2 tests) 885ms
+   ✓ rejects deployment stop while any session still has an active execution  641ms
+ ✓ |contract| tests/contract/development-api.test.ts (2 tests) 843ms
+   ✓ Runner authenticates generation admission, validates fixed inputs and rejects shell/credential overrides  702ms
+ ✓ |contract| tests/contract/acceptance-manifest.test.ts (1 test) 76ms
+ ✓ |contract| tests/contract/api.test.ts (15 tests) 1711ms
+     ✓ release admission accepts only an explicit target and returns an asynchronous operation  535ms
+ ✓ |contract| tests/contract/test-api.test.ts (1 test) 792ms
+   ✓ binds short-lived test authorization to deployment and actor, rejects spoofing and published grants, and revokes business access on stop  788ms
+ ✓ |contract| tests/contract/agent-api.test.ts (1 test) 518ms
+   ✓ issues an actor-bound demo credential through protected management API; agent-api never accepts admin cookies or actor overrides  515ms
+ ✓ |unit| apps/runner/src/runtime/retirement.test.ts (1 test) 71ms
+ ✓ |unit| apps/server/src/runs/tool-proxy.test.ts (3 tests) 540ms
+     ✓ write proxy requires native call context and rejects model-supplied identity, approval and idempotency overrides  430ms
+ ✓ |unit| apps/runner/src/executions/journal.test.ts (7 tests) 641ms
+ ✓ |unit| apps/server/src/runs/http-ports.test.ts (1 test) 198ms
+ ✓ |unit| apps/runner/src/engineering/task-manager.test.ts (2 tests) 156ms
+ ✓ |unit| apps/runner/src/runtime/artifact-registry.test.ts (2 tests) 68ms
+ ✓ |unit| apps/server/src/models/probe.test.ts (4 tests) 78ms
+ ✓ |unit| apps/runner/src/executions/fence.test.ts (2 tests) 59ms
+ ✓ |unit| apps/server/src/releases/project-release-gate.test.ts (3 tests) 31ms
+ ✓ |unit| apps/server/src/acceptance/application/acceptance-gate.test.ts (17 tests) 28ms
+ ✓ |unit| apps/server/src/drafts/application/draft-service.test.ts (4 tests) 25ms
+ ✓ |unit| apps/runner/src/engineering/profile.test.ts (2 tests) 20ms
+ ✓ |unit| apps/runner/src/runtime/model-profile.test.ts (1 test) 19ms
+ ✓ |unit| apps/server/src/acceptance/application/case-assertions.test.ts (4 tests) 17ms
+
+ Test Files  21 passed (21)
+      Tests  76 passed (76)
+   Start at  07:45:17
+   Duration  7.64s (transform 3.88s, setup 0ms, import 8.25s, tests 7.31s, environment 8ms)
+
+JSON report written to D:/agent-builder-java/test-results/tdd-014/fast-final.json

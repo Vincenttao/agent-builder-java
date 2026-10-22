@@ -1,0 +1,23 @@
+{
+  "executionMode": "live-platform",
+  "checkedAt": "2026-10-21T19:32:08.606Z",
+  "draftId": "aa432e19-9826-4dfd-be9d-5bfce580a028",
+  "snapshotId": "be1ff21b-bf18-433b-b615-f0e9ce811279",
+  "snapshotDigest": "8b11ea96170618f7642bd2335f9da2f58b63b7c60711ff01fbb10f165040cf7c",
+  "persistedExactly": true,
+  "snapshotPersistedExactly": true,
+  "previousSessionInvalidated": true,
+  "servicesRestarted": [
+    "postgres",
+    "mock-services",
+    "runner",
+    "app"
+  ],
+  "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+  "runPersistedExactly": true,
+  "eventsPersistedExactly": true,
+  "externalCallsPersistedExactly": true,
+  "runnerExecutionPersistedExactly": true,
+  "actionsPersistedExactly": true,
+  "businessStatePersistedExactly": true
+}

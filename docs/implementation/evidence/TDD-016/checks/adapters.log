@@ -1,0 +1,5 @@
+
+> agent-builder@0.1.0 test:live:adapters D:\agent-builder-java
+> vitest run --project adapter "--maxWorkers=1" "--reporter=json" "--outputFile=.cache/tdd016/adapters.json"
+
+JSON report written to D:/agent-builder-java/.cache/tdd016/adapters.json

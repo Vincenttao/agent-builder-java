@@ -1,0 +1,201 @@
+
+ RUN  v4.1.12 D:/agent-builder-java
+
+ ❯ |integration| tests/integration/test-deployments.test.ts (9 tests | 9 failed) 675ms
+   × pins an automatic case to its validation fault, exact request and preallocated Run; rejects stale or missing execution authority 90ms
+   × cancellation fences a delayed automatic test creation and stops request admission 55ms
+   × runs a registered generated artifact through the first-candidate ingress and blocks missing bytes without a template fallback 81ms
+   × tests the first candidate without a release, scopes idempotency and conversations to the fixed deployment, and retains history after stop 57ms
+   × blocks mismatched loaded bytes and retires failed preparation while preserving its fixed target 43ms
+   × expires a ready deployment and cancels an admitted request before starting a model execution 41ms
+   × freezes test bindings, rejects changed suites and retry input, and returns the original deployment after service reconstruction 45ms
+   × stopping a preparing deployment fences its late startup and never resurrects ready state 39ms
+   × stop wins against a delayed request admission without creating a Run 42ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > pins an automatic case to its validation fault, exact request and preallocated Run; rejects stale or missing execution authority
+AssertionError: expected 'normal' to be 'read-timeout' // Object.is equality
+
+Expected: "read-timeout"
+Received: "normal"
+
+ ❯ tests/integration/test-deployments.test.ts:66:42
+     64|   const h=await setup(true);const v=await validationCase(h);
+     65|   const target=await h.service.create(v.input,v.authority);
+     66|   expect(target.environmentConfig.fault).toBe('read-timeout');
+       |                                          ^
+     67|   expect(target.validation).toEqual({executionId:v.record.id,caseId:v.…
+     68|   await h.service.tick();const identity=await h.service.identity(targe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > cancellation fences a delayed automatic test creation and stops request admission
+AssertionError: promise resolved "{ …(17) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "agentId": "8624bc6d-5f0c-4cba-8274-f5e9e4a8e60d",
++   "binding": {
++     "artifactDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
++     "baselineDigest": "551f6f4d602227157d023d65aa8b7b6c2263a4e651b67525e277a1e5353622c1",
++     "compatibilityKey": "1c4ab3f6476cb193befc38b67899694e9a01b9d6f62e4a389980d0ad0952afd6",
++     "mockDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
++     "modelProfile": {
++       "digest": "40208717867b65b08c748c9fe0a3c90b80e0261f7880d44aeacf9dadeb6b820d",
++       "executionMode": "simulated",
++       "model": {
++         "baseUrl": "http://127.0.0.1:1/v1",
++         "maxTokens": 1024,
++         "name": "deepseek-v4-flash",
++         "provider": "OpenAI",
++         "temperature": 0,
++         "thinking": "disabled",
++       },
++     },
++     "snapshotDigest": "b98b58bde8c3342e55a54b27d4359d3160b2528d5f38dd1a8a8591ff5f41da1b",
++     "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
++   },
++   "candidateId": "ace5b160-0ec1-4f81-900b-a5835c46db16",
++   "clientRequestId": "463f77ad-41bc-4da9-a776-0c146416fd67",
++   "createdAt": "2026-10-22T00:03:09.361Z",
++   "deploymentId": "7202ad96-a134-41cc-87dc-1df66cc2b0c3",
++   "environmentConfig": {
++     "clock": "2026-10-21T08:00:00.000Z",
++     "fault": "normal",
++     "seed": "enterprise-default@1",
++   },
++   "environmentId": "799abcc3-94f2-4648-be41-6dd83ca6c373",
++   "expiresAt": "2026-10-22T01:03:09.361Z",
++   "failure": false,
++   "id": "69ec6919-79a9-4bd2-81e5-709e8cd88e6a",
++   "inputDigest": "81013adfd652bd7c3d9e2213d43ec7ff6d78fd2992b77eb822139389c9a0d231",
++   "purpose": "test",
++   "requirementBaselineId": "5a5236e6-f231-41c3-b5d8-623f63e81c8d",
++   "snapshotId": "4490c809-a0d2-4763-9413-9a90e99d4b1d",
++   "status": "preparing",
++   "updatedAt": "2026-10-22T00:03:09.361Z",
+  }
+
+ ❯ tests/integration/test-deployments.test.ts:82:53
+     80|   const h=await setup();const v=await validationCase(h,0);
+     81|   await pool.query("UPDATE validation_executions SET record=record || …
+     82|   await expect(h.service.create(v.input,v.authority)).rejects.toMatchO…
+       |                                                     ^
+     83|   expect(await h.service.list(h.candidate.id)).toEqual([]);
+     84| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > runs a registered generated artifact through the first-candidate ingress and blocks missing bytes without a template fallback
+AssertionError: expected 'preparing' to be 'ready' // Object.is equality
+
+Expected: "ready"
+Received: "preparing"
+
+ ❯ tests/integration/test-deployments.test.ts:86:144
+     84| });
+     85| it('runs a registered generated artifact through the first-candidate i…
+     86|  const h=await setup(true);const target=await h.service.create(h.input…
+       |                                                                                                                                                ^
+     87|  const identity=await h.service.identity(target.id,'U1001');const requ…
+     88|  expect((await h.entry.get(identity,request.requestId)).run).toMatchOb…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > tests the first candidate without a release, scopes idempotency and conversations to the fixed deployment, and retains history after stop
+AssertionError: expected 'preparing' to be 'ready' // Object.is equality
+
+Expected: "ready"
+Received: "preparing"
+
+ ❯ tests/integration/test-deployments.test.ts:96:51
+     94| it('tests the first candidate without a release, scopes idempotency an…
+     95|   const h=await setup();const target=await h.service.create(h.input);a…
+     96|   expect((await h.service.get(target.id)).status).toBe('ready');
+       |                                                   ^
+     97|   expect((await pool.query('SELECT * FROM release_pointers WHERE agent…
+     98|   const identity={agentId:h.draft.id,actorId:'U1002' as const,environm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > blocks mismatched loaded bytes and retires failed preparation while preserving its fixed target
+Error: 活动测试部署已达上限 4
+ ❯ apps/server/src/candidates/test-deployment-service.ts:47:26
+     45|       if(old){if(old.inputDigest!==digest)throw new AppError('REQUEST_…
+     46|       const active=(await client.query<{count:number}>("SELECT count(*…
+     47|       if(active>=4)throw new AppError('TEST_DEPLOYMENT_LIMIT','活动测试部署已…
+       |                          ^
+     48|       const now=new Date().toISOString();
+     49|       const record:TestDeployment={id:randomUUID(),clientRequestId:inp…
+ ❯ TestDeploymentService.tx apps/server/src/candidates/test-deployment-service.ts:27:89
+ ❯ tests/integration/test-deployments.test.ts:119:66
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > expires a ready deployment and cancels an admitted request before starting a model execution
+Error: 活动测试部署已达上限 4
+ ❯ apps/server/src/candidates/test-deployment-service.ts:47:26
+     45|       if(old){if(old.inputDigest!==digest)throw new AppError('REQUEST_…
+     46|       const active=(await client.query<{count:number}>("SELECT count(*…
+     47|       if(active>=4)throw new AppError('TEST_DEPLOYMENT_LIMIT','活动测试部署已…
+       |                          ^
+     48|       const now=new Date().toISOString();
+     49|       const record:TestDeployment={id:randomUUID(),clientRequestId:inp…
+ ❯ TestDeploymentService.tx apps/server/src/candidates/test-deployment-service.ts:27:89
+ ❯ tests/integration/test-deployments.test.ts:129:38
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > freezes test bindings, rejects changed suites and retry input, and returns the original deployment after service reconstruction
+Error: 活动测试部署已达上限 4
+ ❯ apps/server/src/candidates/test-deployment-service.ts:47:26
+     45|       if(old){if(old.inputDigest!==digest)throw new AppError('REQUEST_…
+     46|       const active=(await client.query<{count:number}>("SELECT count(*…
+     47|       if(active>=4)throw new AppError('TEST_DEPLOYMENT_LIMIT','活动测试部署已…
+       |                          ^
+     48|       const now=new Date().toISOString();
+     49|       const record:TestDeployment={id:randomUUID(),clientRequestId:inp…
+ ❯ TestDeploymentService.tx apps/server/src/candidates/test-deployment-service.ts:27:89
+ ❯ tests/integration/test-deployments.test.ts:138:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > stopping a preparing deployment fences its late startup and never resurrects ready state
+Error: 活动测试部署已达上限 4
+ ❯ apps/server/src/candidates/test-deployment-service.ts:47:26
+     45|       if(old){if(old.inputDigest!==digest)throw new AppError('REQUEST_…
+     46|       const active=(await client.query<{count:number}>("SELECT count(*…
+     47|       if(active>=4)throw new AppError('TEST_DEPLOYMENT_LIMIT','活动测试部署已…
+       |                          ^
+     48|       const now=new Date().toISOString();
+     49|       const record:TestDeployment={id:randomUUID(),clientRequestId:inp…
+ ❯ TestDeploymentService.tx apps/server/src/candidates/test-deployment-service.ts:27:89
+ ❯ tests/integration/test-deployments.test.ts:145:66
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > stop wins against a delayed request admission without creating a Run
+Error: 活动测试部署已达上限 4
+ ❯ apps/server/src/candidates/test-deployment-service.ts:47:26
+     45|       if(old){if(old.inputDigest!==digest)throw new AppError('REQUEST_…
+     46|       const active=(await client.query<{count:number}>("SELECT count(*…
+     47|       if(active>=4)throw new AppError('TEST_DEPLOYMENT_LIMIT','活动测试部署已…
+       |                          ^
+     48|       const now=new Date().toISOString();
+     49|       const record:TestDeployment={id:randomUUID(),clientRequestId:inp…
+ ❯ TestDeploymentService.tx apps/server/src/candidates/test-deployment-service.ts:27:89
+ ❯ tests/integration/test-deployments.test.ts:150:38
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed (9)
+   Start at  08:03:08
+   Duration  1.32s (transform 308ms, setup 0ms, import 443ms, tests 675ms, environment 0ms)
+

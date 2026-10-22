@@ -1,0 +1,181 @@
+{
+  "profile": {
+    "version": "equipment-java@2",
+    "executionMode": "trusted-local",
+    "scope": [
+      "tool",
+      "skill"
+    ],
+    "dependencies": [
+      "openjiuwen-core@0.1.17",
+      "agent-builder-bridge@0.1.0"
+    ],
+    "connectionProfile": "mock-equipment@1",
+    "templates": {
+      "toolStub": "72598841b7d919e7aae955bb2d1bffae68308b7008f20b004ecfb0334e04b39a",
+      "toolContract": "260e4ad50931eef4902c151bb05dadff719b150f4ee498c622526d22accd279a",
+      "repairContract": "fc873272134195a3c19db8b4bccca84b838b0850580fc22827067789fd5322aa",
+      "platformContractTest": "7a63edea6e6f280cf7c31871a3a0a3358dd96cb6c78fb8f9f8d75ea4be705f2f",
+      "tester": "5aec62c947dd46676953fae5eca195f841546d1bdef8c6070d066f39206d5a36",
+      "developer": "3f833d68bb3521407f88db7cb25a1a1b7234266940e4011467b6288426489bb9"
+    },
+    "engineVersion": "1.19.3",
+    "model": "deepseek-local/deepseek-v4-flash",
+    "maxSteps": 16,
+    "maxTaskSeconds": 900,
+    "maxCommandSeconds": 60,
+    "maxFileBytes": 32768,
+    "maxOutputBytes": 262144,
+    "commands": [
+      "unit-test",
+      "build"
+    ],
+    "developerFiles": [
+      "src/generated/EquipmentTool.java",
+      "test/generated/EquipmentToolTest.java",
+      "skills/equipment-query/SKILL.md"
+    ],
+    "testerFiles": [
+      "tests/plan.json",
+      "tests/proposal.json"
+    ],
+    "repair": {
+      "maxAttempts": 3,
+      "regressionFiles": [
+        "test/generated/EquipmentRepair1Test.java",
+        "test/generated/EquipmentRepair2Test.java",
+        "test/generated/EquipmentRepair3Test.java"
+      ]
+    }
+  },
+  "baseline": {
+    "id": "170f35cf-a177-40a6-98d1-53eadbdc9e70",
+    "digest": "e407fc001d15e3a797f89c69217b1254b843934c3c89dfe7414752a0352c0df4",
+    "content": {
+      "seed": "enterprise-default@1",
+      "cases": [
+        {
+          "id": "TC-001",
+          "fault": "normal",
+          "input": "查询 PUMP-001 的状态、温度、来源并提供建议。",
+          "title": "设备正常查询",
+          "required": true,
+          "scenario": "equipment-normal",
+          "assertions": [
+            {
+              "ruleId": "run-succeeded",
+              "expected": true
+            },
+            {
+              "ruleId": "equipment-report-schema",
+              "expected": "equipment-report@1"
+            },
+            {
+              "ruleId": "equipment-facts",
+              "expected": {
+                "source": "seed-equipment-001@1",
+                "status": "warning",
+                "equipmentId": "PUMP-001",
+                "temperatureCelsius": 86
+              }
+            },
+            {
+              "ruleId": "write-call-count",
+              "expected": 0
+            }
+          ],
+          "requirementIds": [
+            "BR-001",
+            "BR-002",
+            "BR-003"
+          ]
+        },
+        {
+          "id": "TC-002",
+          "fault": "normal",
+          "input": "请查询设备状态。",
+          "title": "缺少设备编号",
+          "required": true,
+          "scenario": "equipment-missing-id",
+          "assertions": [
+            {
+              "ruleId": "run-succeeded",
+              "expected": true
+            },
+            {
+              "ruleId": "asks-for-equipment-id",
+              "expected": true
+            },
+            {
+              "ruleId": "all-business-call-count",
+              "expected": 0
+            }
+          ],
+          "requirementIds": [
+            "BR-001",
+            "BR-003"
+          ]
+        },
+        {
+          "id": "TC-003",
+          "fault": "read-timeout",
+          "input": "查询 PUMP-001 的状态。",
+          "title": "只读工具超时",
+          "required": true,
+          "scenario": "equipment-tool-failure",
+          "assertions": [
+            {
+              "ruleId": "run-succeeded",
+              "expected": true
+            },
+            {
+              "ruleId": "tool-error-evidence",
+              "expected": true
+            },
+            {
+              "ruleId": "failure-output-no-facts",
+              "expected": true
+            },
+            {
+              "ruleId": "write-call-count",
+              "expected": 0
+            }
+          ],
+          "requirementIds": [
+            "BR-002",
+            "BR-003"
+          ]
+        }
+      ],
+      "draftId": "e5897330-dc66-4e1f-b34a-c7cdd38a41a3",
+      "audience": "企业 AI 平台开发人员",
+      "templateId": "equipment-read@1",
+      "requirements": [
+        {
+          "id": "BR-001",
+          "text": "通过生成 Tool 和 Skill 查询模拟设备状态及温度",
+          "source": "user"
+        },
+        {
+          "id": "BR-002",
+          "text": "设备状态报告",
+          "source": "user"
+        },
+        {
+          "id": "BR-003",
+          "text": "通过已绑定工具取得事实；缺参数先追问，工具失败时不编造状态或来源。",
+          "source": "template"
+        }
+      ],
+      "rulesVersion": "equipment-assertions@1",
+      "draftRevision": 1,
+      "schemaVersion": 1
+    },
+    "draftId": "e5897330-dc66-4e1f-b34a-c7cdd38a41a3",
+    "confirmedAt": "2026-10-22T01:46:30.214Z",
+    "confirmedBy": "local-operator",
+    "draftRevision": 1
+  },
+  "goal": "通过生成 Tool 和 Skill 查询模拟设备状态及温度",
+  "contract": "Implement generated.EquipmentTool extending the pinned OpenJiuwen Tool. Constructor EquipmentTool(Tool transport) retains transport.getCard().\ninvokeInternal validates inputs before calling transport.invoke(inputs,kwargs), preserving trusted runtime kwargs. Only equipmentId:string is accepted, nonblank. Reject every extra input field, including actorId and endpoint. Throw IllegalArgumentException(\"TOOL_INPUT_CONTRACT_INVALID\") on invalid inputs with zero transport calls.\nPinned SDK behavior: Tool.invoke copies both input and kwargs maps before invokeInternal, even with no callbacks. Verify map values with Map.equals, NEVER map object identity (==). The same original ToolCard and propagated exception objects may be checked by identity. Do not override Tool.invoke or bypass its SDK callback lifecycle. Null input/kwargs maps are normalized by the SDK to empty maps before invokeInternal. The test should start with an uncaught valid invocation so the stub really exits nonzero; catching IMPLEMENTATION_REQUIRED and returning normally is not red.\nThe transport response is an Object. A valid response is a Map containing equipmentId:string, status:string, temperatureCelsius:Integer or Long, source:string. Missing/wrong types must throw IllegalStateException(\"TOOL_RESPONSE_CONTRACT_INVALID\"); do not invent data, retry, or coerce strings into numbers. Return only these four original fields. Preserve negative temperatures and zero. Transport exceptions must propagate unchanged.\nUse only java.util.* and com.openjiuwen.core.foundation.tool.Tool/ToolCard imports. The transport owns HTTP, auth references and timeout; generated code must not take credentials, identity or endpoint from model arguments. No new dependency, shell, network client or process API.\nThe unit test must be generated.EquipmentToolTest with public static void main(String[] args) throws Exception and explicit assertions that throw on failure; -ea is also enabled. Use a recording Tool subclass as transport. Do not use JUnit or any other dependency. The first test invocation must compile and fail with IMPLEMENTATION_REQUIRED from the stub; compilation failures do not count as red. After valid red the unit test is frozen; implement the Tool without weakening the test. Run unit-test again and then build. The platform runs its own contract checks during build.\nWrite skills/equipment-query/SKILL.md with name equipment-query, a description, get_equipment invocation steps, equipmentId input, response field explanations and explicit error/no-fabrication handling. This is a business Skill instruction plus Tool adapter; it does not execute external scripts.\n"
+}

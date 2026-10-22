@@ -1,0 +1,17 @@
+{
+  "id": "652f66f1-e39f-4632-9865-f21b9a13f3af",
+  "commandId": "unit-test",
+  "executable": "java",
+  "args": [
+    "-ea",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\87f108c0-5282-4ebe-94c4-a2421a5fee4b;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+    "generated.EquipmentToolTest"
+  ],
+  "startedAt": "2026-10-21T23:05:45.102Z",
+  "finishedAt": "2026-10-21T23:05:45.682Z",
+  "exitCode": 1,
+  "status": "failed",
+  "output": "Exception in thread \"main\" java.lang.UnsupportedOperationException: IMPLEMENTATION_REQUIRED\n\tat generated.EquipmentTool.invokeInternal(EquipmentTool.java:8)\n\tat com.openjiuwen.core.foundation.tool.Tool.invoke(Tool.java:73)\n\tat generated.EquipmentToolTest.main(EquipmentToolTest.java:29)\n",
+  "truncated": false
+}

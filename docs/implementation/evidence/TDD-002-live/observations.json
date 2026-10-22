@@ -1,0 +1,15 @@
+[
+  {
+    "at": "2026-10-21T17:59:39.731Z",
+    "operation": "equipment-status",
+    "input": {
+      "equipmentId": "PUMP-001"
+    },
+    "output": {
+      "equipmentId": "PUMP-001",
+      "status": "warning",
+      "temperatureCelsius": 86,
+      "source": "mock-maintenance-v1"
+    }
+  }
+]

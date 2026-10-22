@@ -1,0 +1,44 @@
+
+ RUN  v4.1.12 D:/agent-builder-java
+
+ ❯ |integration| tests/integration/candidates.test.ts (2 tests | 1 failed) 367ms
+   × does not silently register the template when a generated job is requested but has not built 50ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |integration| tests/integration/candidates.test.ts > does not silently register the template when a generated job is requested but has not built
+AssertionError: promise resolved "{ …(9) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "agentId": "d66e755f-e69d-46a8-b94e-7ce48c15d05f",
++   "artifactDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
++   "bundleDigest": "15b23e7b5b295a68ad69d36ae20218c4719f56aeda2f2ee3bd6c657dc43396c0",
++   "createdAt": "2026-10-21T23:36:03.856Z",
++   "id": "2a23b09e-0f78-4069-ae6e-c1bbedf9c6b6",
++   "provenance": "assembled-template",
++   "snapshotDigest": "8fc38bfaf56f25a1dce6f1e80447523e3097c338a2c23e857e28de68f75210f8",
++   "snapshotId": "d8940de5-3636-4750-aa5b-3f005fe8948e",
++   "specDigest": "7676f8e0758b6ab94ff951f4ed7f85f3c55a328adb58f16aa179b535b1d9e280",
+  }
+
+ ❯ tests/integration/candidates.test.ts:42:58
+     40|  const draft=await drafts.create({...draftInput,brief:{...draftInput.b…
+     41|  const snapshot=await snapshots.create(draft.id,{expectedRevision:1,as…
+     42|  await expect(candidates.create(snapshot.id,randomUUID())).rejects.toM…
+       |                                                          ^
+     43|  expect(await candidates.list(draft.id)).toHaveLength(0);
+     44| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  07:36:02
+   Duration  1.01s (transform 206ms, setup 0ms, import 360ms, tests 367ms, environment 0ms)
+

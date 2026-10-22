@@ -1,0 +1,1 @@
+{"result":{"role":"assistant","content":"查询结果如下（依据工具返回）：\n\n- 设备编号：PUMP-001\n- 状态：warning（告警）\n- 温度：86 °C\n- 来源：mock-maintenance-v1\n\n说明：该数据来自 Mock 数据源，仅用于演示；温度 86 °C 偏高，建议现场核实运行工况与散热情况。"},"conversation_id":"java-live-1792605573338"}

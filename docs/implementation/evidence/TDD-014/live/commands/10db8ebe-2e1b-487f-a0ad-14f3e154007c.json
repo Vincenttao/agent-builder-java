@@ -1,0 +1,17 @@
+{
+  "id": "10db8ebe-2e1b-487f-a0ad-14f3e154007c",
+  "commandId": "unit-test",
+  "executable": "java",
+  "args": [
+    "-ea",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\generated-candidate-live\\ca6daf63-5312-420e-a7e2-506a1519ead0\\engineering\\tasks\\80f5e769-7e82-4c56-8c4d-180703189abf\\workspace\\control\\commands\\cac2004c-b218-4dfc-a395-a287a322f584;D:\\agent-builder-java\\.cache\\generated-candidate-live\\ca6daf63-5312-420e-a7e2-506a1519ead0\\engineering\\tasks\\80f5e769-7e82-4c56-8c4d-180703189abf\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\generated-candidate-live\\ca6daf63-5312-420e-a7e2-506a1519ead0\\engineering\\tasks\\80f5e769-7e82-4c56-8c4d-180703189abf\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+    "generated.EquipmentToolTest"
+  ],
+  "startedAt": "2026-10-21T23:47:55.614Z",
+  "finishedAt": "2026-10-21T23:47:56.373Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "ALL TESTS PASSED\n",
+  "truncated": false
+}

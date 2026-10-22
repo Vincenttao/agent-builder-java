@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-10-21T23:18:43.185Z",
+  "updatedServices": [],
+  "sourceDeployed": false,
+  "currentDeployment": "TDD-012",
+  "services": [
+    {
+      "service": "app",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:a36f111674dc85e5dfccb6f46110b8e5ee763a484bf399f09ffde254552099bc"
+    },
+    {
+      "service": "mock-services",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:925731af8a15dfcb67a89fc0aeed3ee5a578f729129fb66029b5d09b5f154b9e"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a"
+    },
+    {
+      "service": "runner",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:34da48a4bab9a3686d43bdb5fd02f9b2daeb642689c08f1d47853a0832eee804"
+    }
+  ]
+}

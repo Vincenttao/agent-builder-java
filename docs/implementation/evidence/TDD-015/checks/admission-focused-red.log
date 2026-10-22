@@ -1,0 +1,92 @@
+
+ RUN  v4.1.12 D:/agent-builder-java
+
+ ❯ |integration| tests/integration/test-deployments.test.ts (9 tests | 2 failed | 7 skipped) 365ms
+   × pins an automatic case to its validation fault, exact request and preallocated Run; rejects stale or missing execution authority 89ms
+   × cancellation fences a delayed automatic test creation and stops request admission 67ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > pins an automatic case to its validation fault, exact request and preallocated Run; rejects stale or missing execution authority
+AssertionError: expected 'normal' to be 'read-timeout' // Object.is equality
+
+Expected: "read-timeout"
+Received: "normal"
+
+ ❯ tests/integration/test-deployments.test.ts:66:42
+     64|   const h=await setup(true);const v=await validationCase(h);
+     65|   const target=await h.service.create(v.input,v.authority);
+     66|   expect(target.environmentConfig.fault).toBe('read-timeout');
+       |                                          ^
+     67|   expect(target.validation).toEqual({executionId:v.record.id,caseId:v.…
+     68|   await h.service.tick();const identity=await h.service.identity(targe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > cancellation fences a delayed automatic test creation and stops request admission
+AssertionError: promise resolved "{ …(17) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "agentId": "8fa7054d-6f3c-4230-ad5d-fbec3d975652",
++   "binding": {
++     "artifactDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
++     "baselineDigest": "e7257cc2c60031c0b3c99532c6dfc45622457d3e44368b2f68387cc71f69d49d",
++     "compatibilityKey": "1c4ab3f6476cb193befc38b67899694e9a01b9d6f62e4a389980d0ad0952afd6",
++     "mockDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
++     "modelProfile": {
++       "digest": "40208717867b65b08c748c9fe0a3c90b80e0261f7880d44aeacf9dadeb6b820d",
++       "executionMode": "simulated",
++       "model": {
++         "baseUrl": "http://127.0.0.1:1/v1",
++         "maxTokens": 1024,
++         "name": "deepseek-v4-flash",
++         "provider": "OpenAI",
++         "temperature": 0,
++         "thinking": "disabled",
++       },
++     },
++     "snapshotDigest": "2c2194f72380e89f234748be7a0b7cec1d1981e428fdc1b1f6f8454657604681",
++     "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
++   },
++   "candidateId": "5e1d17e8-c406-474a-a8f9-16fbaa8ede1c",
++   "clientRequestId": "cea6c175-8410-4a10-b592-73d500a44b2b",
++   "createdAt": "2026-10-22T00:04:25.394Z",
++   "deploymentId": "6d271655-cfdb-462b-a243-6f1a361ae11e",
++   "environmentConfig": {
++     "clock": "2026-10-21T08:00:00.000Z",
++     "fault": "normal",
++     "seed": "enterprise-default@1",
++   },
++   "environmentId": "285e45e0-4cc6-42b5-9956-55beafb392fd",
++   "expiresAt": "2026-10-22T01:04:25.394Z",
++   "failure": false,
++   "id": "5dfa43ae-aa29-4bcd-92be-9c092ec4a1a4",
++   "inputDigest": "853b274eb549893751a1fce2656eb317c8ac564cd62af46c89916eae93363a7d",
++   "purpose": "test",
++   "requirementBaselineId": "b8d1d7c0-f0e9-4bcf-a176-efebd8ca2644",
++   "snapshotId": "f00dda56-c482-4e21-9f9c-bd2063e29ea1",
++   "status": "preparing",
++   "updatedAt": "2026-10-22T00:04:25.394Z",
+  }
+
+ ❯ tests/integration/test-deployments.test.ts:82:53
+     80|   const h=await setup();const v=await validationCase(h,0);
+     81|   await pool.query("UPDATE validation_executions SET record=record || …
+     82|   await expect(h.service.create(v.input,v.authority)).rejects.toMatchO…
+       |                                                     ^
+     83|   expect(await h.service.list(h.candidate.id)).toEqual([]);
+     84| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 skipped (9)
+   Start at  08:04:24
+   Duration  1.09s (transform 337ms, setup 0ms, import 492ms, tests 365ms, environment 0ms)
+

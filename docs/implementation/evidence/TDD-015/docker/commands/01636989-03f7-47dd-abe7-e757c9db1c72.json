@@ -1,0 +1,17 @@
+{
+  "id": "01636989-03f7-47dd-abe7-e757c9db1c72",
+  "commandId": "unit-test",
+  "executable": "java",
+  "args": [
+    "-ea",
+    "-cp",
+    "/data/engineering/tasks/403f4668-ab7a-4f65-8d10-ac84f842971f/workspace/control/commands/1c7fcab0-bbf4-4edf-8ccc-5fb2d0f1ffc5:/data/engineering/tasks/403f4668-ab7a-4f65-8d10-ac84f842971f/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/403f4668-ab7a-4f65-8d10-ac84f842971f/workspace/control/sdk/BOOT-INF/lib/*",
+    "generated.EquipmentToolTest"
+  ],
+  "startedAt": "2026-10-22T00:32:21.222Z",
+  "finishedAt": "2026-10-22T00:32:21.383Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "EquipmentToolTest OK: 49 checks passed\n",
+  "truncated": false
+}

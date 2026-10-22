@@ -1,0 +1,602 @@
+{
+  "modelMode": "live-deepseek",
+  "run": {
+    "id": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+    "input": "查询 PUMP-001 的状态、温度与来源，并申请创建检查工单。",
+    "result": {
+      "result": {
+        "role": "assistant",
+        "content": "工单已成功创建，实际结果如下：\n\n- **工单编号**：b299ca93-f75e-4bb3-8af4-f27f2d957d93\n- **设备编号**：PUMP-001\n- **优先级**：normal\n- **状态**：created（已创建）\n- **创建时间**：2026-10-21T08:00:00.000Z\n- **提交人**：U1001\n- **描述**：PUMP-001 状态为 warning，温度 86 °C 偏高，申请现场检查（来源：seed-equipment-001@1）\n\n设备当前为告警状态、温度 86 °C，建议在检修前关注温度变化趋势。"
+      },
+      "conversation_id": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+    },
+    "status": "succeeded",
+    "actorId": "U1001",
+    "started": true,
+    "createdAt": "2026-10-21T19:30:38.414Z",
+    "updatedAt": "2026-10-21T19:30:54.469Z",
+    "diagnostic": "",
+    "snapshotId": "b83f8bd5-6e52-4ec3-9263-420df669fbb4",
+    "inputDigest": "b6bc923b7373149d177a8f0851d5a8868b8266bdf0a237300995486d49277eee",
+    "deploymentId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+    "environmentId": "f36d948e-20ba-4872-8a83-fbaf55cacfc2",
+    "artifactDigest": "e4cbf6ed25d30c9ee3588ad221526de6bb74aea8e072e49255afc1c4acc58d25",
+    "snapshotDigest": "f130c4a6492a53eaab5dc371f260c4f366b15194d9c29b46831ab984df19cf5a",
+    "cancelRequested": false,
+    "clientRequestId": "19f975b9-3eab-4e9e-ac4b-42aecf54ffcd",
+    "externalEvidence": [
+      {
+        "seq": 3,
+        "input": {
+          "equipmentId": "PUMP-001"
+        },
+        "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+        "result": {
+          "source": "seed-equipment-001@1",
+          "status": "warning",
+          "equipmentId": "PUMP-001",
+          "temperatureCelsius": 86
+        },
+        "status": 200,
+        "actorId": "U1001",
+        "createdAt": "2026-10-21T19:30:47.014Z",
+        "operation": "equipment-status",
+        "stateRevision": 1
+      },
+      {
+        "seq": 4,
+        "input": {
+          "priority": "normal",
+          "description": "PUMP-001 状态为 warning，温度 86 °C 偏高，申请现场检查（来源：seed-equipment-001@1）",
+          "equipmentId": "PUMP-001"
+        },
+        "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+        "result": {
+          "status": "created",
+          "actorId": "U1001",
+          "priority": "normal",
+          "createdAt": "2026-10-21T08:00:00.000Z",
+          "description": "PUMP-001 状态为 warning，温度 86 °C 偏高，申请现场检查（来源：seed-equipment-001@1）",
+          "equipmentId": "PUMP-001",
+          "workOrderId": "b299ca93-f75e-4bb3-8af4-f27f2d957d93"
+        },
+        "status": 200,
+        "actorId": "U1001",
+        "createdAt": "2026-10-21T19:30:52.611Z",
+        "operation": "work-order-create",
+        "stateRevision": 2
+      }
+    ],
+    "dependencyFailures": 0
+  },
+  "actions": [
+    {
+      "id": "4c29b960-fda9-4f14-9bcd-39d825d519e6",
+      "args": {
+        "priority": "normal",
+        "description": "PUMP-001 状态为 warning，温度 86 °C 偏高，申请现场检查（来源：seed-equipment-001@1）",
+        "equipmentId": "PUMP-001"
+      },
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "status": "succeeded",
+      "actorId": "U1001",
+      "decision": "approve",
+      "response": {
+        "result": {
+          "status": "created",
+          "actorId": "U1001",
+          "priority": "normal",
+          "createdAt": "2026-10-21T08:00:00.000Z",
+          "description": "PUMP-001 状态为 warning，温度 86 °C 偏高，申请现场检查（来源：seed-equipment-001@1）",
+          "equipmentId": "PUMP-001",
+          "workOrderId": "b299ca93-f75e-4bb3-8af4-f27f2d957d93"
+        },
+        "status": 200
+      },
+      "createdAt": "2026-10-21T19:30:49.190Z",
+      "decidedAt": "2026-10-21T19:30:51.776Z",
+      "expiresAt": "2026-10-21T19:35:49.190Z",
+      "operation": "work-order-create",
+      "updatedAt": "2026-10-21T19:30:52.616Z",
+      "actionHash": "f7149e04d86c4be02535487a86174cf2722e0bd1411ff140a1f00ce6172fc693",
+      "decisionId": "cddb6ef4-5997-4126-9f97-91c187891533",
+      "paramsHash": "dc936887e7e4369307f6e0439074127984c53b735c2f6c82732c4b5a0d66cdfd",
+      "toolCallId": "call_00_2LdoHJnBnAk9b8htHAW56147",
+      "environmentId": "f36d948e-20ba-4872-8a83-fbaf55cacfc2",
+      "artifactDigest": "e4cbf6ed25d30c9ee3588ad221526de6bb74aea8e072e49255afc1c4acc58d25",
+      "snapshotDigest": "f130c4a6492a53eaab5dc371f260c4f366b15194d9c29b46831ab984df19cf5a"
+    }
+  ],
+  "events": [
+    {
+      "seq": 60,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "platform",
+      "type": "run.queued",
+      "data": {
+        "snapshotId": "b83f8bd5-6e52-4ec3-9263-420df669fbb4",
+        "artifactDigest": "e4cbf6ed25d30c9ee3588ad221526de6bb74aea8e072e49255afc1c4acc58d25",
+        "snapshotDigest": "f130c4a6492a53eaab5dc371f260c4f366b15194d9c29b46831ab984df19cf5a"
+      },
+      "at": "2026-10-21T19:30:38.414Z"
+    },
+    {
+      "seq": 61,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "platform",
+      "type": "run.running",
+      "data": {
+        "deploymentId": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+      },
+      "at": "2026-10-21T19:30:45.043Z"
+    },
+    {
+      "seq": 62,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:45.561846740Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "before_invoke",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:46.062Z"
+    },
+    {
+      "seq": 63,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:45.627069114Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "before_model_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:46.065Z"
+    },
+    {
+      "seq": 68,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:46.982722081Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "after_model_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:47.560Z"
+    },
+    {
+      "seq": 69,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:46.983821671Z",
+        "event": {
+          "rail": "audit",
+          "event": "assistant_output",
+          "content": "我先查询 PUMP-001 的设备事实。",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+        }
+      },
+      "at": "2026-10-21T19:30:47.562Z"
+    },
+    {
+      "seq": 70,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:46.991905438Z",
+        "event": {
+          "rail": "tool-allowlist",
+          "tool": "get_equipment",
+          "event": "before_tool_call",
+          "allowed": true,
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+        }
+      },
+      "at": "2026-10-21T19:30:47.564Z"
+    },
+    {
+      "seq": 71,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:46.993303921Z",
+        "event": {
+          "rail": "audit",
+          "tool": "get_equipment",
+          "event": "before_tool_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:47.567Z"
+    },
+    {
+      "seq": 72,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:47.027098854Z",
+        "event": {
+          "rail": "audit",
+          "tool": "get_equipment",
+          "event": "after_tool_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:47.569Z"
+    },
+    {
+      "seq": 73,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:47.034833254Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "before_model_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:47.571Z"
+    },
+    {
+      "seq": 82,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.274899384Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "after_model_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:48.311Z"
+    },
+    {
+      "seq": 83,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.275629733Z",
+        "event": {
+          "rail": "audit",
+          "event": "assistant_output",
+          "content": "查询结果如下：\n\n- **设备编号**：PUMP-001\n- **状态**：warning（告警）\n- **温度**：86 °C\n- **来源**：seed-equipment-001@1\n\n设备处于告警状态且温度偏高（86 °C），建议安排检查。现在申请创建检查工单，优先级 normal，平台会弹出确认卡请你确认。",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+        }
+      },
+      "at": "2026-10-21T19:30:48.313Z"
+    },
+    {
+      "seq": 84,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.276640755Z",
+        "event": {
+          "rail": "tool-allowlist",
+          "tool": "create_work_order",
+          "event": "before_tool_call",
+          "allowed": true,
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+        }
+      },
+      "at": "2026-10-21T19:30:48.315Z"
+    },
+    {
+      "seq": 85,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.277021532Z",
+        "event": {
+          "rail": "audit",
+          "tool": "create_work_order",
+          "event": "before_tool_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:48.320Z"
+    },
+    {
+      "seq": 86,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.278811447Z",
+        "event": {
+          "rail": "write-confirm",
+          "tool": "create_work_order",
+          "event": "approval_required",
+          "approved": false,
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "toolCallId": "call_00_2LdoHJnBnAk9b8htHAW56147"
+        }
+      },
+      "at": "2026-10-21T19:30:48.325Z"
+    },
+    {
+      "seq": 87,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.280452847Z",
+        "event": {
+          "rail": "audit",
+          "tool": "create_work_order",
+          "event": "tool_error",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:48.331Z"
+    },
+    {
+      "seq": 88,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.280900481Z",
+        "event": {
+          "rail": "audit",
+          "tool": "create_work_order",
+          "event": "after_tool_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:48.333Z"
+    },
+    {
+      "seq": 89,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:48.283834551Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "after_invoke",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 1
+        }
+      },
+      "at": "2026-10-21T19:30:48.335Z"
+    },
+    {
+      "seq": 106,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "platform",
+      "type": "action.prepared",
+      "data": {
+        "actionId": "4c29b960-fda9-4f14-9bcd-39d825d519e6",
+        "actionHash": "f7149e04d86c4be02535487a86174cf2722e0bd1411ff140a1f00ce6172fc693"
+      },
+      "at": "2026-10-21T19:30:49.189Z"
+    },
+    {
+      "seq": 155,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "platform",
+      "type": "action.decided",
+      "data": {
+        "actionId": "4c29b960-fda9-4f14-9bcd-39d825d519e6",
+        "decision": "approve",
+        "decisionId": "cddb6ef4-5997-4126-9f97-91c187891533"
+      },
+      "at": "2026-10-21T19:30:51.771Z"
+    },
+    {
+      "seq": 172,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "platform",
+      "type": "action.write_succeeded",
+      "data": {
+        "status": "succeeded",
+        "actionId": "4c29b960-fda9-4f14-9bcd-39d825d519e6"
+      },
+      "at": "2026-10-21T19:30:52.615Z"
+    },
+    {
+      "seq": 189,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:52.585188551Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "before_invoke",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 2
+        }
+      },
+      "at": "2026-10-21T19:30:52.928Z"
+    },
+    {
+      "seq": 190,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:52.590728051Z",
+        "event": {
+          "rail": "tool-allowlist",
+          "tool": "create_work_order",
+          "event": "before_tool_call",
+          "allowed": true,
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+        }
+      },
+      "at": "2026-10-21T19:30:52.930Z"
+    },
+    {
+      "seq": 191,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:52.592171759Z",
+        "event": {
+          "rail": "audit",
+          "tool": "create_work_order",
+          "event": "before_tool_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 2
+        }
+      },
+      "at": "2026-10-21T19:30:52.931Z"
+    },
+    {
+      "seq": 192,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:52.594976505Z",
+        "event": {
+          "rail": "write-confirm",
+          "tool": "create_work_order",
+          "event": "approval_resumed",
+          "approved": true,
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "toolCallId": "call_00_2LdoHJnBnAk9b8htHAW56147"
+        }
+      },
+      "at": "2026-10-21T19:30:52.933Z"
+    },
+    {
+      "seq": 193,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:52.620900486Z",
+        "event": {
+          "rail": "audit",
+          "tool": "create_work_order",
+          "event": "after_tool_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 2
+        }
+      },
+      "at": "2026-10-21T19:30:52.936Z"
+    },
+    {
+      "seq": 194,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:52.622568311Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "before_model_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 2
+        }
+      },
+      "at": "2026-10-21T19:30:52.938Z"
+    },
+    {
+      "seq": 239,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:53.881486828Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "after_model_call",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 2
+        }
+      },
+      "at": "2026-10-21T19:30:54.431Z"
+    },
+    {
+      "seq": 240,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:53.882281188Z",
+        "event": {
+          "rail": "audit",
+          "event": "assistant_output",
+          "content": "工单已成功创建，实际结果如下：\n\n- **工单编号**：b299ca93-f75e-4bb3-8af4-f27f2d957d93\n- **设备编号**：PUMP-001\n- **优先级**：normal\n- **状态**：created（已创建）\n- **创建时间**：2026-10-21T08:00:00.000Z\n- **提交人**：U1001\n- **描述**：PUMP-001 状态为 warning，温度 86 °C 偏高，申请现场检查（来源：seed-equipment-001@1）\n\n设备当前为告警状态、温度 86 °C，建议在检修前关注温度变化趋势。",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6"
+        }
+      },
+      "at": "2026-10-21T19:30:54.433Z"
+    },
+    {
+      "seq": 241,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "runtime",
+      "type": "runtime.event",
+      "data": {
+        "time": "2026-10-21T19:30:53.883694438Z",
+        "event": {
+          "rail": "audit",
+          "tool": "",
+          "event": "after_invoke",
+          "sessionId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+          "turnCount": 2
+        }
+      },
+      "at": "2026-10-21T19:30:54.439Z"
+    },
+    {
+      "seq": 242,
+      "runId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+      "source": "platform",
+      "type": "run.succeeded",
+      "data": {
+        "externalCallCount": 2
+      },
+      "at": "2026-10-21T19:30:54.469Z"
+    }
+  ]
+}

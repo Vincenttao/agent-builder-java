@@ -1,0 +1,46 @@
+
+> agent-builder@0.1.0 test:e2e D:\agent-builder-java
+> node --env-file-if-exists=.env.local node_modules/@playwright/test/cli.js test "tests/e2e/workorder-validation-flow.spec.ts"
+
+
+Running 1 test using 1 worker
+
+(node:24704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"stage":"workorder-validation-started","id":"63171715-086a-4a28-81be-bc504b62ea17","draftId":"0b2285b3-e184-43ee-a6a6-f83ca97c4740","candidateId":"a8178819-6678-4791-8108-a0581f62fd80"}
+{"stage":"workorder-validation","completed":0,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":1,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":2,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":3,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":4,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":5,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":6,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":7,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+{"stage":"workorder-validation","completed":8,"total":8,"validationId":"9a756969-57bd-4e7c-a818-f85d56d1d597"}
+  x  1 tests\e2e\workorder-validation-flow.spec.ts:19:1 › Docker workorder baseline passes all eight cases then publishes and performs an approved business write (8.2m)
+
+
+  1) tests\e2e\workorder-validation-flow.spec.ts:19:1 › Docker workorder baseline passes all eight cases then publishes and performs an approved business write 
+
+    TypeError: Cannot convert undefined or null to object
+
+      49 |     const demo=page.getByTestId(`demo-app-${draft.id}`);await demo.getByLabel('模拟业务身份').selectOption('U1002');await demo.getByRole('button',{name:'进入模拟 App',exact:true}).click();await demo.getByLabel('业务请求').fill('查询 PUMP-001 的状态、温度和来源，申请创建检查工单。');await demo.getByRole('button',{name:'发送业务请求',exact:true}).click();await expect(demo.getByTestId('demo-request-status')).toHaveText('等待确认',{timeout:180000});
+      50 |     const detail=JSON.parse(await demo.getByTestId('demo-evidence').textContent()??'{}') as {requestId:string;runId:string;environmentId:string};proof.businessIds=detail;proof.beforeApproval=mockState(detail.environmentId,detail.runId);
+    > 51 |     expect((proof.beforeApproval as ReturnType<typeof mockState>).calls.items.filter(c=>c.operation==='work-order-create')).toHaveLength(0);expect(Object.keys((proof.beforeApproval as ReturnType<typeof mockState>).environment.state.workOrders??{})).toHaveLength(0);await save();
+         |                                                                                                                                                           ^
+      52 |     await demo.getByRole('button',{name:'确认模拟操作',exact:true}).click();await expect(demo.getByTestId('demo-request-status')).toHaveText('已完成',{timeout:180000});
+      53 |     const grant=await api<{token:string}>('/api/demo-sessions','POST',{agentId:draft.id,actorId:'U1002'}),authorization=`Bearer ${grant.token}`;
+      54 |     const business=await api<InvocationView>(`/agent-api/requests/${detail.requestId}`,'GET',undefined,authorization);proof.business=business;expect(business.agentVersion).toBe(version.id);expect(business.run).toMatchObject({status:'succeeded',artifactDigest:candidate.artifactDigest,actorId:'U1002'});expect(business.actions).toHaveLength(1);expect(business.actions[0]!.status).toBe('succeeded');
+        at D:\agent-builder-java\tests\e2e\workorder-validation-flow.spec.ts:51:155
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-artifacts\workorder-validation-flow--f7418--an-approved-business-write\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-artifacts\workorder-validation-flow--f7418--an-approved-business-write\error-context.md
+
+  Slow test file: tests\e2e\workorder-validation-flow.spec.ts (8.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    tests\e2e\workorder-validation-flow.spec.ts:19:1 › Docker workorder baseline passes all eight cases then publishes and performs an approved business write 
+ ELIFECYCLE  Command failed with exit code 1.

@@ -1,0 +1,81 @@
+{
+  "planDigest": "e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887",
+  "unitRed": {
+    "id": "652f66f1-e39f-4632-9865-f21b9a13f3af",
+    "commandId": "unit-test",
+    "executable": "java",
+    "args": [
+      "-ea",
+      "-cp",
+      "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\87f108c0-5282-4ebe-94c4-a2421a5fee4b;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+      "generated.EquipmentToolTest"
+    ],
+    "startedAt": "2026-10-21T23:05:45.102Z",
+    "finishedAt": "2026-10-21T23:05:45.682Z",
+    "exitCode": 1,
+    "status": "failed",
+    "output": "Exception in thread \"main\" java.lang.UnsupportedOperationException: IMPLEMENTATION_REQUIRED\n\tat generated.EquipmentTool.invokeInternal(EquipmentTool.java:8)\n\tat com.openjiuwen.core.foundation.tool.Tool.invoke(Tool.java:73)\n\tat generated.EquipmentToolTest.main(EquipmentToolTest.java:29)\n",
+    "truncated": false
+  },
+  "unitDigest": "4f7bcdab5076ac6238a93bfd11a58c0255e511f97d6960e8a9a265d7540b3d27",
+  "unitGreen": {
+    "id": "6230be5c-933f-4e9f-aa52-5873b07754fd",
+    "commandId": "unit-test",
+    "executable": "java",
+    "args": [
+      "-ea",
+      "-cp",
+      "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\1a6f0763-5902-4445-ad1c-f5c719cc2459;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+      "generated.EquipmentToolTest"
+    ],
+    "startedAt": "2026-10-21T23:06:07.191Z",
+    "finishedAt": "2026-10-21T23:06:07.521Z",
+    "exitCode": 0,
+    "status": "passed",
+    "output": "EQUIPMENT_TOOL_TEST_OK\n",
+    "truncated": false
+  },
+  "greenSourceDigest": "eaeb84eea46511b0dab9864580f6e1ae960977f998079ea8f139adb0c11499ab",
+  "bundle": {
+    "artifactDigest": "45ff2b1f15f243bc6594a19218c78257494ee72a468a845fca8415f49324dc1e",
+    "sourceDigest": "0a13a427a5a9e6b049078ad69e37341acda1579503cc4cabb899710a0de35525",
+    "profileDigest": "cfade19a93eb9a2af932b303181730bf8d1f974d6792e91dcdccb1e120ad60f0",
+    "sdkArtifactDigest": "f207d712a30a166e4030c0772dbe767b071f336ac0443a0349ebd891e87f9a73",
+    "files": [
+      {
+        "path": "src/generated/EquipmentTool.java",
+        "digest": "eaeb84eea46511b0dab9864580f6e1ae960977f998079ea8f139adb0c11499ab",
+        "size": 2975
+      },
+      {
+        "path": "test/generated/EquipmentToolTest.java",
+        "digest": "4f7bcdab5076ac6238a93bfd11a58c0255e511f97d6960e8a9a265d7540b3d27",
+        "size": 11390
+      },
+      {
+        "path": "skills/equipment-query/SKILL.md",
+        "digest": "324601cd7af159ddcc7f4a3d6d4668b46dc7e9d082c95235af1bdbba79fd4d00",
+        "size": 3047
+      },
+      {
+        "path": "test-plan.json",
+        "digest": "e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887",
+        "size": 3152
+      },
+      {
+        "path": "component.jar",
+        "digest": "45ff2b1f15f243bc6594a19218c78257494ee72a468a845fca8415f49324dc1e",
+        "size": 3742
+      }
+    ],
+    "snapshotId": "a13c01b8-d1d2-4c67-8295-ca251e97a017",
+    "baselineId": "51fbaca7-df13-4c83-9da4-c2e2391fe55b",
+    "baselineDigest": "793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1",
+    "planDigest": "e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887",
+    "unitRedId": "652f66f1-e39f-4632-9865-f21b9a13f3af",
+    "unitGreenId": "6230be5c-933f-4e9f-aa52-5873b07754fd",
+    "contractCheckId": "3ed9fe83-1105-4ee0-8cdd-864c6f334a69",
+    "buildId": "fedc93f3-243b-49b6-8c82-8e2546028397",
+    "digest": "a61f26e4159a40f101ec9f58977910cfa4c1c921e32243e4c14aba0a92975b39"
+  }
+}

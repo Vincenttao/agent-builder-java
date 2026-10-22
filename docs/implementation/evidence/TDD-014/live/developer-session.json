@@ -1,0 +1,692 @@
+{
+  "role": "developer",
+  "sessionId": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+  "status": "completed",
+  "publicParts": [
+    {
+      "id": "prt_160db90ee001Vl9PKRzycnwT7r",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db7ac6001iwIKVARDozvTDs",
+      "type": "text",
+      "text": "I'll start by inspecting the profile and reading the required context files.",
+      "time": {
+        "start": 1792626364654,
+        "end": 1792626364823
+      }
+    },
+    {
+      "id": "prt_160db9111001N2peU9mvJU1Eo1",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db7ac6001iwIKVARDozvTDs",
+      "type": "tool",
+      "callID": "call_00_ET_CrNbLMGOHE8OodGhg3ai8002",
+      "tool": "builder_profile",
+      "state": {
+        "status": "completed",
+        "input": {},
+        "output": "{\"profile\":{\"version\":\"equipment-java@2\",\"executionMode\":\"trusted-local\",\"scope\":[\"tool\",\"skill\"],\"dependencies\":[\"openjiuwen-core@0.1.17\",\"agent-builder-bridge@0.1.0\"],\"connectionProfile\":\"mock-equipment@1\",\"templates\":{\"toolStub\":\"72598841b7d919e7aae955bb2d1bffae68308b7008f20b004ecfb0334e04b39a\",\"toolContract\":\"260e4ad50931eef4902c151bb05dadff719b150f4ee498c622526d22accd279a\",\"platformContractTest\":\"7a63edea6e6f280cf7c31871a3a0a3358dd96cb6c78fb8f9f8d75ea4be705f2f\",\"tester\":\"5aec62c947dd46676953fae5eca195f841546d1bdef8c6070d066f39206d5a36\",\"developer\":\"3f833d68bb3521407f88db7cb25a1a1b7234266940e4011467b6288426489bb9\"},\"engineVersion\":\"1.19.3\",\"model\":\"deepseek-local/deepseek-v4-flash\",\"maxSteps\":16,\"maxTaskSeconds\":900,\"maxCommandSeconds\":60,\"maxFileBytes\":32768,\"maxOutputBytes\":262144,\"commands\":[\"unit-test\",\"build\"],\"developerFiles\":[\"src/generated/EquipmentTool.java\",\"test/generated/EquipmentToolTest.java\",\"skills/equipment-query/SKILL.md\"],\"testerFiles\":[\"tests/plan.json\",\"tests/proposal.json\"]},\"state\":{\"sdkArtifactDigest\":\"4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946\",\"planDigest\":\"44c69660fa0a349c987b24a29ea50f33833b5e6ffb53e0e0874391d141c85df5\"}}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626364718,
+          "end": 1792626364762
+        }
+      }
+    },
+    {
+      "id": "prt_160db9139001MgoFczXtB5l5AW",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db7ac6001iwIKVARDozvTDs",
+      "type": "tool",
+      "callID": "call_01_ET_VWVi860ZlAcBKmB9fRsX1395",
+      "tool": "builder_read",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "context.json"
+        },
+        "output": "{\n  \"profile\": {\n    \"version\": \"equipment-java@2\",\n    \"executionMode\": \"trusted-local\",\n    \"scope\": [\n      \"tool\",\n      \"skill\"\n    ],\n    \"dependencies\": [\n      \"openjiuwen-core@0.1.17\",\n      \"agent-builder-bridge@0.1.0\"\n    ],\n    \"connectionProfile\": \"mock-equipment@1\",\n    \"templates\": {\n      \"toolStub\": \"72598841b7d919e7aae955bb2d1bffae68308b7008f20b004ecfb0334e04b39a\",\n      \"toolContract\": \"260e4ad50931eef4902c151bb05dadff719b150f4ee498c622526d22accd279a\",\n      \"platformContractTest\": \"7a63edea6e6f280cf7c31871a3a0a3358dd96cb6c78fb8f9f8d75ea4be705f2f\",\n      \"tester\": \"5aec62c947dd46676953fae5eca195f841546d1bdef8c6070d066f39206d5a36\",\n      \"developer\": \"3f833d68bb3521407f88db7cb25a1a1b7234266940e4011467b6288426489bb9\"\n    },\n    \"engineVersion\": \"1.19.3\",\n    \"model\": \"deepseek-local/deepseek-v4-flash\",\n    \"maxSteps\": 16,\n    \"maxTaskSeconds\": 900,\n    \"maxCommandSeconds\": 60,\n    \"maxFileBytes\": 32768,\n    \"maxOutputBytes\": 262144,\n    \"commands\": [\n      \"unit-test\",\n      \"build\"\n    ],\n    \"developerFiles\": [\n      \"src/generated/EquipmentTool.java\",\n      \"test/generated/EquipmentToolTest.java\",\n      \"skills/equipment-query/SKILL.md\"\n    ],\n    \"testerFiles\": [\n      \"tests/plan.json\",\n      \"tests/proposal.json\"\n    ]\n  },\n  \"baseline\": {\n    \"id\": \"8504ba8f-17e4-408c-882f-cf9f01b29bdc\",\n    \"digest\": \"8313abaa087ee11267a18e2d6c8efccb5cf07a59818c597e755713d3a0f0bc5e\",\n    \"content\": {\n      \"seed\": \"enterprise-default@1\",\n      \"cases\": [\n        {\n          \"id\": \"TC-001\",\n          \"fault\": \"normal\",\n          \"input\": \"查询 PUMP-001 的状态、温度、来源并提供建议。\",\n          \"title\": \"设备正常查询\",\n          \"required\": true,\n          \"scenario\": \"equipment-normal\",\n          \"assertions\": [\n            {\n              \"ruleId\": \"run-succeeded\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"equipment-report-schema\",\n              \"expected\": \"equipment-report@1\"\n            },\n            {\n              \"ruleId\": \"equipment-facts\",\n              \"expected\": {\n                \"source\": \"seed-equipment-001@1\",\n                \"status\": \"warning\",\n                \"equipmentId\": \"PUMP-001\",\n                \"temperatureCelsius\": 86\n              }\n            },\n            {\n              \"ruleId\": \"write-call-count\",\n              \"expected\": 0\n            }\n          ],\n          \"requirementIds\": [\n            \"BR-001\",\n            \"BR-002\",\n            \"BR-003\"\n          ]\n        },\n        {\n          \"id\": \"TC-002\",\n          \"fault\": \"normal\",\n          \"input\": \"请查询设备状态。\",\n          \"title\": \"缺少设备编号\",\n          \"required\": true,\n          \"scenario\": \"equipment-missing-id\",\n          \"assertions\": [\n            {\n              \"ruleId\": \"run-succeeded\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"asks-for-equipment-id\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"all-business-call-count\",\n              \"expected\": 0\n            }\n          ],\n          \"requirementIds\": [\n            \"BR-001\",\n            \"BR-003\"\n          ]\n        },\n        {\n          \"id\": \"TC-003\",\n          \"fault\": \"read-timeout\",\n          \"input\": \"查询 PUMP-001 的状态。\",\n          \"title\": \"只读工具超时\",\n          \"required\": true,\n          \"scenario\": \"equipment-tool-failure\",\n          \"assertions\": [\n            {\n              \"ruleId\": \"run-succeeded\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"tool-error-evidence\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"failure-output-no-facts\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"write-call-count\",\n              \"expected\": 0\n            }\n          ],\n          \"requirementIds\": [\n            \"BR-002\",\n            \"BR-003\"\n          ]\n        }\n      ],\n      \"draftId\": \"2e6ec5a6-c78a-48d4-9b2a-a8ec2b67cbb1\",\n      \"audience\": \"企业 AI 平台开发人员\",\n      \"templateId\": \"equipment-read@1\",\n      \"requirements\": [\n        {\n          \"id\": \"BR-001\",\n          \"text\": \"通过生成 Tool 和 Skill 查询模拟设备状态及温度\",\n          \"source\": \"user\"\n        },\n        {\n          \"id\": \"BR-002\",\n          \"text\": \"设备状态报告\",\n          \"source\": \"user\"\n        },\n        {\n          \"id\": \"BR-003\",\n          \"text\": \"通过已绑定工具取得事实；缺参数先追问，工具失败时不编造状态或来源。\",\n          \"source\": \"template\"\n        }\n      ],\n      \"rulesVersion\": \"equipment-assertions@1\",\n      \"draftRevision\": 1,\n      \"schemaVersion\": 1\n    },\n    \"draftId\": \"2e6ec5a6-c78a-48d4-9b2a-a8ec2b67cbb1\",\n    \"confirmedAt\": \"2026-10-21T23:44:57.409Z\",\n    \"confirmedBy\": \"local-operator\",\n    \"draftRevision\": 1\n  },\n  \"goal\": \"通过生成 Tool 和 Skill 查询模拟设备状态及温度\",\n  \"contract\": \"Implement generated.EquipmentTool extending the pinned OpenJiuwen Tool. Constructor EquipmentTool(Tool transport) retains transport.getCard().\\ninvokeInternal validates inputs before calling transport.invoke(inputs,kwargs), preserving trusted runtime kwargs. Only equipmentId:string is accepted, nonblank. Reject every extra input field, including actorId and endpoint. Throw IllegalArgumentException(\\\"TOOL_INPUT_CONTRACT_INVALID\\\") on invalid inputs with zero transport calls.\\nPinned SDK behavior: Tool.invoke copies both input and kwargs maps before invokeInternal, even with no callbacks. Verify map values with Map.equals, NEVER map object identity (==). The same original ToolCard and propagated exception objects may be checked by identity. Do not override Tool.invoke or bypass its SDK callback lifecycle. Null input/kwargs maps are normalized by the SDK to empty maps before invokeInternal. The test should start with an uncaught valid invocation so the stub really exits nonzero; catching IMPLEMENTATION_REQUIRED and returning normally is not red.\\nThe transport response is an Object. A valid response is a Map containing equipmentId:string, status:string, temperatureCelsius:Integer or Long, source:string. Missing/wrong types must throw IllegalStateException(\\\"TOOL_RESPONSE_CONTRACT_INVALID\\\"); do not invent data, retry, or coerce strings into numbers. Return only these four original fields. Preserve negative temperatures and zero. Transport exceptions must propagate unchanged.\\nUse only java.util.* and com.openjiuwen.core.foundation.tool.Tool/ToolCard imports. The transport owns HTTP, auth references and timeout; generated code must not take credentials, identity or endpoint from model arguments. No new dependency, shell, network client or process API.\\nThe unit test must be generated.EquipmentToolTest with public static void main(String[] args) throws Exception and explicit assertions that throw on failure; -ea is also enabled. Use a recording Tool subclass as transport. Do not use JUnit or any other dependency. The first test invocation must compile and fail with IMPLEMENTATION_REQUIRED from the stub; compilation failures do not count as red. After valid red the unit test is frozen; implement the Tool without weakening the test. Run unit-test again and then build. The platform runs its own contract checks during build.\\nWrite skills/equipment-query/SKILL.md with name equipment-query, a description, get_equipment invocation steps, equipmentId input, response field explanations and explicit error/no-fabrication handling. This is a business Skill instruction plus Tool adapter; it does not execute external scripts.\\n\"\n}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626364750,
+          "end": 1792626364771
+        }
+      }
+    },
+    {
+      "id": "prt_160db916b00168EoxLOP2tYj58",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db7ac6001iwIKVARDozvTDs",
+      "type": "tool",
+      "callID": "call_02_ET_SUupEBMH6gCLkrb7vI5z5229",
+      "tool": "builder_read",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "engineering-skill.md"
+        },
+        "output": "# OpenJiuwen component development @1\nUse only builder MCP tools. Read context.json and follow its contract. Write the unit test before implementation; run unit-test and inspect a valid failing execution. Once red is observed the test is frozen. Implement the source, add the business Skill, rerun unit-test, then build. Inspect actual exit codes. Never report a model statement as build or acceptance success. Files and commands outside this profile are refused. If a needed capability is missing, report the concrete gap. Do not ask for permissions that the profile does not grant.",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626364818,
+          "end": 1792626364832
+        }
+      }
+    },
+    {
+      "id": "prt_160db9446001cw5RDMddL6fxZ6",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db7ac6001iwIKVARDozvTDs",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 974,
+        "input": 879,
+        "output": 95,
+        "reasoning": 0,
+        "cache": {
+          "read": 0,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dba2dc001aHKyeQnKn9qXLc",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db9464001z7hLS2YUG6KiSV",
+      "type": "text",
+      "text": "Now let me inspect the stub and the existing project structure.",
+      "time": {
+        "start": 1792626369244,
+        "end": 1792626369474
+      }
+    },
+    {
+      "id": "prt_160dba2e900128meBqnJvfIKHz",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db9464001z7hLS2YUG6KiSV",
+      "type": "tool",
+      "callID": "call_00_6AmfYbU584OdNI3GFCJO2625",
+      "tool": "builder_read",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "src/generated/EquipmentTool.java"
+        },
+        "output": "package generated;\nimport com.openjiuwen.core.foundation.tool.Tool;\nimport java.util.Map;\npublic final class EquipmentTool extends Tool {\n  private final Tool transport;\n  public EquipmentTool(Tool transport) { super(transport.getCard()); this.transport=transport; }\n  @Override protected Object invokeInternal(Map<String,Object> inputs,Map<String,Object> kwargs) throws Exception {\n    throw new UnsupportedOperationException(\"IMPLEMENTATION_REQUIRED\");\n  }\n}\n",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626369309,
+          "end": 1792626369452
+        }
+      }
+    },
+    {
+      "id": "prt_160dba325001IDk1f8dbyFvBCG",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db9464001z7hLS2YUG6KiSV",
+      "type": "tool",
+      "callID": "call_01_RXlZnD5ZaymdlNgmHYrE2590",
+      "tool": "builder_read",
+      "state": {
+        "status": "error",
+        "input": {
+          "path": "test/generated/EquipmentToolTest.java"
+        },
+        "error": "FILE_NOT_FOUND",
+        "time": {
+          "start": 1792626369366,
+          "end": 1792626369460
+        }
+      }
+    },
+    {
+      "id": "prt_160dba365001kVBJpIkl1XGX4K",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db9464001z7hLS2YUG6KiSV",
+      "type": "tool",
+      "callID": "call_02_wrPKqARPPinXErEmjapd7458",
+      "tool": "builder_read",
+      "state": {
+        "status": "error",
+        "input": {
+          "path": "skills/equipment-query/SKILL.md"
+        },
+        "error": "FILE_NOT_FOUND",
+        "time": {
+          "start": 1792626369442,
+          "end": 1792626369468
+        }
+      }
+    },
+    {
+      "id": "prt_160dba706001LQTwl7yIdWQcrM",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160db9464001z7hLS2YUG6KiSV",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 3752,
+        "input": 2700,
+        "output": 127,
+        "reasoning": 29,
+        "cache": {
+          "read": 896,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dbb4ee001MbRst11YT72lCO",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dba720001W99Xim2Pig57Uu",
+      "type": "tool",
+      "callID": "call_00_Y2I8WKqFvwGd6n8LW5hF2086",
+      "tool": "builder_read",
+      "state": {
+        "status": "error",
+        "input": {
+          "path": "pom.xml"
+        },
+        "error": "FILE_OPERATION_NOT_ALLOWED",
+        "time": {
+          "start": 1792626373917,
+          "end": 1792626373968
+        }
+      }
+    },
+    {
+      "id": "prt_160dbb525001c8CetVqMap7TmY",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dba720001W99Xim2Pig57Uu",
+      "type": "tool",
+      "callID": "call_01_AxsCjSxXYGX0Al7Gsykv5816",
+      "tool": "builder_read",
+      "state": {
+        "status": "error",
+        "input": {
+          "path": "engineering/"
+        },
+        "error": "FILE_OPERATION_NOT_ALLOWED",
+        "time": {
+          "start": 1792626373959,
+          "end": 1792626373976
+        }
+      }
+    },
+    {
+      "id": "prt_160dbb7bd001bg9mrIguP5SEmX",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dba720001W99Xim2Pig57Uu",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 4360,
+        "input": 176,
+        "output": 69,
+        "reasoning": 403,
+        "cache": {
+          "read": 3712,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dc6a79001O6IVX1p2afBZCS",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dbb7d5001XfZ47MHUJo9FDN",
+      "type": "text",
+      "text": "I have the contract and stub. I'll write the unit test first (TDD red), including a recording Tool transport and an uncaught valid invocation as the red anchor.",
+      "time": {
+        "start": 1792626420345,
+        "end": 1792626429281
+      }
+    },
+    {
+      "id": "prt_160dc6ab2001ybubywsuNT1xeS",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dbb7d5001XfZ47MHUJo9FDN",
+      "type": "tool",
+      "callID": "call_00_7rM5VQxLTQ9Zb4RLOTQ16381",
+      "tool": "builder_write",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "test/generated/EquipmentToolTest.java",
+          "content": "package generated;\n\nimport com.openjiuwen.core.foundation.tool.Tool;\nimport com.openjiuwen.core.foundation.tool.ToolCard;\nimport java.util.*;\n\npublic final class EquipmentToolTest {\n    private static ToolCard card;\n    private static RecordingTool transport;\n    private static EquipmentTool tool;\n\n    public static void main(String[] args) throws Exception {\n        card = makeCard();\n        reset(validResponse());\n\n        Map<String, Object> firstInputs = data(\"equipmentId\", \"PUMP-001\");\n        Map<String, Object> firstKwargs = data(\"actorId\", \"svc-actor\", \"requestId\", \"req-1\");\n\n        // RED ANCHOR: uncaught valid invocation. The stub must exit nonzero here.\n        Object firstResult = tool.invoke(firstInputs, firstKwargs);\n\n        check(tool.getCard() == transport.getCard(), \"constructor must retain transport.getCard() by identity\");\n        check(transport.calls == 1, \"valid invocation must call transport exactly once\");\n        check(transport.seenInputs.equals(firstInputs), \"transport inputs must equal original values (Map.equals)\");\n        check(transport.seenKwargs.equals(firstKwargs), \"trusted runtime kwargs must be preserved (Map.equals)\");\n\n        check(firstResult instanceof Map, \"valid transport response must produce a Map result\");\n        Map<String, Object> projected = asMap(firstResult);\n        check(projected.size() == 4, \"result must contain exactly the four contract fields\");\n        eq(\"PUMP-001\", projected.get(\"equipmentId\"), \"equipmentId projection\");\n        eq(\"warning\", projected.get(\"status\"), \"status projection\");\n        eq(Integer.valueOf(86), projected.get(\"temperatureCelsius\"), \"temperature projection\");\n        eq(\"seed-equipment-001@1\", projected.get(\"source\"), \"source projection\");\n        check(!projected.containsKey(\"internalToken\"), \"extra transport fields must not be exposed\");\n        check(projected.get(\"temperatureCelsius\") instanceof Integer, \"Integer temperature must keep its type\");\n        check(transport.response instanceof Map, \"test transport response sanity\");\n        eq(Integer.valueOf(5), Integer.valueOf(((Map<?, ?>) transport.response).size()),\n                \"tool must not mutate the original transport response\");\n\n        // Negative and zero temperatures are preserved numerically.\n        reset(data(\"equipmentId\", \"PUMP-002\", \"status\", \"warning\",\n                \"temperatureCelsius\", Integer.valueOf(-12), \"source\", \"sensor-2\"));\n        Map<String, Object> negative = asMap(tool.invoke(data(\"equipmentId\", \"PUMP-002\"), data()));\n        eq(Integer.valueOf(-12), negative.get(\"temperatureCelsius\"), \"negative temperature preserved\");\n        check(negative.get(\"temperatureCelsius\") instanceof Integer, \"negative Integer stays Integer\");\n\n        reset(data(\"equipmentId\", \"PUMP-003\", \"status\", \"ok\",\n                \"temperatureCelsius\", Integer.valueOf(0), \"source\", \"sensor-3\"));\n        Map<String, Object> zero = asMap(tool.invoke(data(\"equipmentId\", \"PUMP-003\"), data()));\n        eq(Integer.valueOf(0), zero.get(\"temperatureCelsius\"), \"zero temperature preserved\");\n\n        // Long temperatures are valid and must not be coerced.\n        reset(data(\"equipmentId\", \"PUMP-004\", \"status\", \"ok\",\n                \"temperatureCelsius\", Long.valueOf(87L), \"source\", \"sensor-4\"));\n        Map<String, Object> longTemp = asMap(tool.invoke(data(\"equipmentId\", \"PUMP-004\"), data()));\n        eq(Long.valueOf(87L), longTemp.get(\"temperatureCelsius\"), \"Long temperature preserved\");\n        check(longTemp.get(\"temperatureCelsius\") instanceof Long, \"Long temperature stays Long\");\n\n        // Runtime kwargs are trusted transport data, not model input fields.\n        reset(validResponse());\n        Map<String, Object> trustedKwargs = data(\"actorId\", \"svc-actor\", \"endpoint\", \"internal://equipment\",\n                \"requestId\", \"req-9\", \"timeoutMillis\", Long.valueOf(1500L));\n        tool.invoke(data(\"equipmentId\", \"PUMP-001\"), trustedKwargs);\n        check(transport.seenKwargs.equals(trustedKwargs), \"kwargs like actorId/endpoint must be preserved for transport\");\n        check(transport.calls == 1, \"kwargs invocation must call transport once\");\n\n        // Invalid responses: fail closed with the response contract error, no retry.\n        List<Object> badResponses = new ArrayList<Object>();\n        badResponses.add(null);\n        badResponses.add(\"not-a-map\");\n        badResponses.add(data(\"equipmentId\", \"PUMP-001\", \"temperatureCelsius\", Integer.valueOf(86),\n                \"source\", \"seed-equipment-001@1\")); // missing status\n        badResponses.add(data(\"equipmentId\", \"PUMP-001\", \"status\", \"warning\",\n                \"temperatureCelsius\", \"86\", \"source\", \"seed-equipment-001@1\")); // string number\n        badResponses.add(data(\"equipmentId\", \"PUMP-001\", \"status\", \"warning\",\n                \"temperatureCelsius\", Double.valueOf(86.0), \"source\", \"seed-equipment-001@1\")); // wrong numeric type\n        badResponses.add(data(\"equipmentId\", Integer.valueOf(7), \"status\", \"warning\",\n                \"temperatureCelsius\", Integer.valueOf(86), \"source\", \"seed-equipment-001@1\")); // wrong id type\n        badResponses.add(data(\"equipmentId\", \"PUMP-001\", \"status\", \"warning\",\n                \"temperatureCelsius\", Integer.valueOf(86))); // missing source\n        badResponses.add(data(\"equipmentId\", \"PUMP-001\", \"status\", Integer.valueOf(1),\n                \"temperatureCelsius\", Integer.valueOf(86), \"source\", \"seed-equipment-001@1\")); // wrong status type\n\n        for (int i = 0; i < badResponses.size(); i++) {\n            reset(badResponses.get(i));\n            final int index = i;\n            expectISE(new Call() {\n                public Object run() throws Exception {\n                    return tool.invoke(data(\"equipmentId\", \"PUMP-001\"), data());\n                }\n            }, \"bad response #\" + index);\n            check(transport.calls == 1, \"bad response #\" + index + \" must not be retried\");\n        }\n\n        // Invalid inputs: zero transport calls and the exact contract error.\n        reset(validResponse());\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(data(), data());\n            }\n        }, \"missing equipmentId\");\n        check(transport.calls == 0, \"missing equipmentId must not call transport\");\n\n        reset(validResponse());\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(data(\"equipmentId\", \"\"), data());\n            }\n        }, \"empty equipmentId\");\n        check(transport.calls == 0, \"empty equipmentId must not call transport\");\n\n        reset(validResponse());\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(data(\"equipmentId\", \"   \"), data());\n            }\n        }, \"blank equipmentId\");\n        check(transport.calls == 0, \"blank equipmentId must not call transport\");\n\n        reset(validResponse());\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(data(\"equipmentId\", Integer.valueOf(123)), data());\n            }\n        }, \"non-string equipmentId\");\n        check(transport.calls == 0, \"non-string equipmentId must not call transport\");\n\n        reset(validResponse());\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(data(\"equipmentId\", \"PUMP-001\", \"actorId\", \"mallory\"), data());\n            }\n        }, \"extra input actorId\");\n        check(transport.calls == 0, \"extra actorId input must not call transport\");\n\n        reset(validResponse());\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(data(\"equipmentId\", \"PUMP-001\", \"endpoint\", \"http://evil\"), data());\n            }\n        }, \"extra input endpoint\");\n        check(transport.calls == 0, \"extra endpoint input must not call transport\");\n\n        reset(validResponse());\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(data(\"equipmentId\", \"PUMP-001\", \"status\", \"warning\"), data());\n            }\n        }, \"extra input status\");\n        check(transport.calls == 0, \"extra status input must not call transport\");\n\n        reset(validResponse());\n        final Map<String, Object> nullMap = null;\n        expectIAE(new Call() {\n            public Object run() throws Exception {\n                return tool.invoke(nullMap, nullMap);\n            }\n        }, \"null input and kwargs maps\");\n        check(transport.calls == 0, \"null maps must be normalized to empty and rejected before transport\");\n\n        // Transport exceptions propagate unchanged (same instance).\n        reset(validResponse());\n        final RuntimeException boom = new RuntimeException(\"TRANSPORT_BOOM\");\n        transport.failure = boom;\n        boolean thrown = false;\n        try {\n            tool.invoke(data(\"equipmentId\", \"PUMP-001\"), data());\n        } catch (Throwable t) {\n            thrown = true;\n            check(t == boom, \"transport exception must propagate unchanged by identity\");\n        }\n        check(thrown, \"transport exception must be thrown\");\n        check(transport.calls == 1, \"failing transport called exactly once, no retry\");\n\n        // Original input map must not be mutated.\n        reset(validResponse());\n        Map<String, Object> originalInput = data(\"equipmentId\", \"PUMP-001\");\n        tool.invoke(originalInput, data());\n        check(originalInput.size() == 1, \"tool must not mutate caller input map\");\n\n        System.out.println(\"ALL TESTS PASSED\");\n    }\n\n    private interface Call {\n        Object run() throws Exception;\n    }\n\n    private static final class RecordingTool extends Tool {\n        Object response;\n        RuntimeException failure;\n        int calls;\n        Map<String, Object> seenInputs;\n        Map<String, Object> seenKwargs;\n\n        RecordingTool(ToolCard toolCard) {\n            super(toolCard);\n        }\n\n        @Override\n        protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs) throws Exception {\n            calls++;\n            seenInputs = inputs;\n            seenKwargs = kwargs;\n            if (failure != null) {\n                throw failure;\n            }\n            return response;\n        }\n    }\n\n    private static void reset(Object response) {\n        transport = new RecordingTool(card);\n        transport.response = response;\n        tool = new EquipmentTool(transport);\n    }\n\n    private static Map<String, Object> validResponse() {\n        Map<String, Object> m = data(\"equipmentId\", \"PUMP-001\", \"status\", \"warning\",\n                \"temperatureCelsius\", Integer.valueOf(86), \"source\", \"seed-equipment-001@1\");\n        m.put(\"internalToken\", \"must-not-leak\");\n        return m;\n    }\n\n    private static Map<String, Object> data(Object... pairs) {\n        Map<String, Object> m = new LinkedHashMap<String, Object>();\n        for (int i = 0; i < pairs.length; i += 2) {\n            m.put((String) pairs[i], pairs[i + 1]);\n        }\n        return m;\n    }\n\n    @SuppressWarnings(\"unchecked\")\n    private static Map<String, Object> asMap(Object value) {\n        return (Map<String, Object>) value;\n    }\n\n    private static void expectIAE(Call call, String label) {\n        try {\n            call.run();\n        } catch (IllegalArgumentException e) {\n            eq(\"TOOL_INPUT_CONTRACT_INVALID\", e.getMessage(), label + \" error message\");\n            return;\n        } catch (Throwable t) {\n            throw new AssertionError(label + \": expected IllegalArgumentException but got \" + t, t);\n        }\n        throw new AssertionError(label + \": expected IllegalArgumentException but call succeeded\");\n    }\n\n    private static void expectISE(Call call, String label) {\n        try {\n            call.run();\n        } catch (IllegalStateException e) {\n            eq(\"TOOL_RESPONSE_CONTRACT_INVALID\", e.getMessage(), label + \" error message\");\n            return;\n        } catch (Throwable t) {\n            throw new AssertionError(label + \": expected IllegalStateException but got \" + t, t);\n        }\n        throw new AssertionError(label + \": expected IllegalStateException but call succeeded\");\n    }\n\n    private static void check(boolean condition, String message) {\n        if (!condition) {\n            throw new AssertionError(message);\n        }\n    }\n\n    private static void eq(Object expected, Object actual, String message) {\n        if (!Objects.equals(expected, actual)) {\n            throw new AssertionError(message + \" expected=\" + expected + \" actual=\" + actual);\n        }\n    }\n\n    private static ToolCard makeCard() {\n        try {\n            java.lang.reflect.Constructor<?>[] constructors = ToolCard.class.getDeclaredConstructors();\n            for (java.lang.reflect.Constructor<?> constructor : constructors) {\n                try {\n                    constructor.setAccessible(true);\n                    Class<?>[] types = constructor.getParameterTypes();\n                    Object[] values = new Object[types.length];\n                    for (int i = 0; i < types.length; i++) {\n                        values[i] = sample(types[i]);\n                    }\n                    Object instance = constructor.newInstance(values);\n                    if (instance instanceof ToolCard) {\n                        return (ToolCard) instance;\n                    }\n                } catch (Throwable ignored) {\n                    // try the next constructor\n                }\n            }\n        } catch (Throwable ignored) {\n            // fall through to null card\n        }\n        return null;\n    }\n\n    private static Object sample(Class<?> type) {\n        if (type == String.class) {\n            return \"equipment-query-transport\";\n        }\n        if (type == int.class || type == Integer.class) {\n            return Integer.valueOf(0);\n        }\n        if (type == long.class || type == Long.class) {\n            return Long.valueOf(0L);\n        }\n        if (type == boolean.class || type == Boolean.class) {\n            return Boolean.FALSE;\n        }\n        if (type == double.class || type == Double.class) {\n            return Double.valueOf(0.0d);\n        }\n        if (type == float.class || type == Float.class) {\n            return Float.valueOf(0.0f);\n        }\n        if (type == short.class || type == Short.class) {\n            return Short.valueOf((short) 0);\n        }\n        if (type == byte.class || type == Byte.class) {\n            return Byte.valueOf((byte) 0);\n        }\n        if (type == char.class || type == Character.class) {\n            return Character.valueOf('a');\n        }\n        if (Map.class.isAssignableFrom(type)) {\n            return new LinkedHashMap<Object, Object>();\n        }\n        if (List.class.isAssignableFrom(type)) {\n            return new ArrayList<Object>();\n        }\n        if (Set.class.isAssignableFrom(type)) {\n            return new LinkedHashSet<Object>();\n        }\n        if (type.isEnum()) {\n            Object[] constants = type.getEnumConstants();\n            return constants.length > 0 ? constants[0] : null;\n        }\n        return null;\n    }\n}\n"
+        },
+        "output": "{\"path\":\"test/generated/EquipmentToolTest.java\",\"digest\":\"ca85fb00bd133cfb4997588d1622b143c123c9006e54a38abbb6ed5e5b9102ad\"}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626429193,
+          "end": 1792626429295
+        }
+      }
+    },
+    {
+      "id": "prt_160dc9338001PbxHFmjxHsj94Q",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dbb7d5001XfZ47MHUJo9FDN",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 17439,
+        "input": 172,
+        "output": 3462,
+        "reasoning": 9581,
+        "cache": {
+          "read": 4224,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dc9eed001lNy0hV43zlxoaB",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dc9371001grq14QBswbPhyj",
+      "type": "text",
+      "text": "Test written. Running `unit-test` to observe real red from the stub.",
+      "time": {
+        "start": 1792626433773,
+        "end": 1792626433838
+      }
+    },
+    {
+      "id": "prt_160dc9eff001PaJR6GMJVRuh7p",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dc9371001grq14QBswbPhyj",
+      "type": "tool",
+      "callID": "call_00_V7TAnBcmw176ESfNQVIP6387",
+      "tool": "builder_run",
+      "state": {
+        "status": "completed",
+        "input": {
+          "commandId": "unit-test"
+        },
+        "output": "{\"id\":\"e62d4c85-49ac-4645-bbd7-1e07a55597ba\",\"commandId\":\"unit-test\",\"executable\":\"java\",\"args\":[\"-ea\",\"-cp\",\"D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\commands\\\\92d0cf60-d7c8-4e82-be3f-1aee0d024a26;D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\sdk\\\\BOOT-INF\\\\classes;D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\sdk\\\\BOOT-INF\\\\lib\\\\*\",\"generated.EquipmentToolTest\"],\"startedAt\":\"2026-10-21T23:47:30.843Z\",\"finishedAt\":\"2026-10-21T23:47:31.459Z\",\"exitCode\":1,\"status\":\"failed\",\"output\":\"Exception in thread \\\"main\\\" java.lang.UnsupportedOperationException: IMPLEMENTATION_REQUIRED\\n\\tat generated.EquipmentTool.invokeInternal(EquipmentTool.java:8)\\n\\tat com.openjiuwen.core.foundation.tool.Tool.invoke(Tool.java:73)\\n\\tat generated.EquipmentToolTest.main(EquipmentToolTest.java:20)\\n\",\"truncated\":false}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626433823,
+          "end": 1792626451493
+        }
+      }
+    },
+    {
+      "id": "prt_160dce717001nIqdkMLn9Akjhu",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dc9371001grq14QBswbPhyj",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 17572,
+        "input": 223,
+        "output": 55,
+        "reasoning": 14,
+        "cache": {
+          "read": 17280,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dcf072001PpFEGxRM5QVFE5",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dce72e001ATWP2GX1ghZp6t",
+      "type": "text",
+      "text": "Valid red observed: exit code 1, `UnsupportedOperationException: IMPLEMENTATION_REQUIRED` at the first invocation. The test is now frozen. Implementing the Tool and the business Skill.",
+      "time": {
+        "start": 1792626454655,
+        "end": 1792626459028
+      }
+    },
+    {
+      "id": "prt_160dcf0a1001tkICwAEb0gPEiZ",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dce72e001ATWP2GX1ghZp6t",
+      "type": "tool",
+      "callID": "call_00_NkYEm2JMC8lWb8IiYQFT4166",
+      "tool": "builder_write",
+      "state": {
+        "status": "completed",
+        "input": {
+          "content": "package generated;\n\nimport com.openjiuwen.core.foundation.tool.Tool;\nimport java.util.Collections;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\n/**\n * Read-only equipment query adapter over a transport Tool.\n * The transport owns HTTP, auth references and timeout; model arguments can\n * never inject identity or endpoint values.\n */\npublic final class EquipmentTool extends Tool {\n    private static final String INPUT_CONTRACT_INVALID = \"TOOL_INPUT_CONTRACT_INVALID\";\n    private static final String RESPONSE_CONTRACT_INVALID = \"TOOL_RESPONSE_CONTRACT_INVALID\";\n    private static final String EQUIPMENT_ID = \"equipmentId\";\n\n    private final Tool transport;\n\n    public EquipmentTool(Tool transport) {\n        super(transport.getCard());\n        this.transport = transport;\n    }\n\n    @Override\n    protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs) throws Exception {\n        // The SDK normalizes null maps, but keep this defensive and explicit.\n        Map<String, Object> safeInputs = inputs == null ? Collections.<String, Object>emptyMap() : inputs;\n\n        // Exactly one accepted input field: a nonblank string equipmentId.\n        if (safeInputs.size() != 1 || !safeInputs.containsKey(EQUIPMENT_ID)) {\n            throw new IllegalArgumentException(INPUT_CONTRACT_INVALID);\n        }\n        Object equipmentId = safeInputs.get(EQUIPMENT_ID);\n        if (!(equipmentId instanceof String) || ((String) equipmentId).trim().isEmpty()) {\n            throw new IllegalArgumentException(INPUT_CONTRACT_INVALID);\n        }\n\n        // Trusted runtime kwargs are preserved untouched for the transport.\n        Map<String, Object> safeKwargs = kwargs == null\n                ? Collections.<String, Object>emptyMap() : kwargs;\n\n        // Transport exceptions propagate unchanged; no retry and no fabrication.\n        Object raw = transport.invoke(safeInputs, safeKwargs);\n\n        if (!(raw instanceof Map)) {\n            throw new IllegalStateException(RESPONSE_CONTRACT_INVALID);\n        }\n        Map<?, ?> response = (Map<?, ?>) raw;\n        Object returnedId = response.get(EQUIPMENT_ID);\n        Object status = response.get(\"status\");\n        Object temperature = response.get(\"temperatureCelsius\");\n        Object source = response.get(\"source\");\n\n        if (!(returnedId instanceof String)\n                || !(status instanceof String)\n                || !(source instanceof String)) {\n            throw new IllegalStateException(RESPONSE_CONTRACT_INVALID);\n        }\n        // Only Integer or Long are accepted; never coerce strings or other numbers.\n        if (!(temperature instanceof Integer) && !(temperature instanceof Long)) {\n            throw new IllegalStateException(RESPONSE_CONTRACT_INVALID);\n        }\n\n        // Return only the four original contract fields, discarding anything else.\n        Map<String, Object> result = new LinkedHashMap<String, Object>();\n        result.put(EQUIPMENT_ID, returnedId);\n        result.put(\"status\", status);\n        result.put(\"temperatureCelsius\", temperature);\n        result.put(\"source\", source);\n        return result;\n    }\n}\n",
+          "path": "src/generated/EquipmentTool.java"
+        },
+        "output": "{\"path\":\"src/generated/EquipmentTool.java\",\"digest\":\"0437df10df8921c78d9e6f470ffa703dac53c805454911895ab8adbd002a1781\"}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626456550,
+          "end": 1792626456626
+        }
+      }
+    },
+    {
+      "id": "prt_160dcf7ef001mjKaD3bQIweIz7",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dce72e001ATWP2GX1ghZp6t",
+      "type": "tool",
+      "callID": "call_01_DPn080gcwzcWQ8afGOhK4602",
+      "tool": "builder_write",
+      "state": {
+        "status": "completed",
+        "input": {
+          "content": "---\nname: equipment-query\ndescription: 查询模拟设备的状态、温度与数据来源；只通过已绑定的 get_equipment 工具获取事实，缺少设备编号时先追问，工具失败时明确报错且绝不编造状态或来源。\n---\n\n# 设备查询（equipment-query）\n\n## 用途\n\n当用户询问某台设备当前的状态、温度或数据来源时，使用本技能。\n事实只能来自已绑定的只读工具 `get_equipment`，不得依赖猜测、历史记忆或示例数据。\n\n## 输入\n\n- `equipmentId`：字符串，必填，设备编号（例如 `PUMP-001`）。\n- 不要接受或传递 `actorId`、`endpoint`、URL、令牌等身份或连接参数；这些由平台运行时通过受信任的 kwargs 注入。\n\n## 调用步骤\n\n1. 从用户消息中提取设备编号。\n2. 若缺少 `equipmentId`，先向用户追问设备编号，不要调用任何工具。\n3. 仅以 `{\"equipmentId\": \"<设备编号>\"}` 调用工具 `get_equipment`，不要附加其他输入字段。\n4. 读取工具返回的四个字段并如实转述：\n   - `equipmentId`：被查询的设备编号。\n   - `status`：设备状态（如 `ok`、`warning`）。\n   - `temperatureCelsius`：摄氏温度数值，可能为 0 或负数，保持原值。\n   - `source`：数据来源标识。\n5. 只转述工具返回的内容；返回中不存在的字段（例如位置、负责人、维护建议）不得补充或推测。\n\n## 错误处理\n\n- 输入错误 `TOOL_INPUT_CONTRACT_INVALID`：说明设备编号缺失或格式无效，追问或请用户澄清，不调用工具、不编造结果。\n- 响应错误 `TOOL_RESPONSE_CONTRACT_INVALID`：说明设备数据不可用/格式异常，明确告知查询失败，不提供任何状态、温度或来源。\n- 工具超时或其他传输异常：明确告知查询失败及可稍后重试，不重试写操作、不编造状态或来源。\n- 任何失败场景都不得输出示例值、默认值或推测值。\n\n## 约束\n\n- 本技能是业务指令加 Tool 适配层，不执行外部脚本。\n- 工具为只读查询，不执行设备写操作。\n",
+          "path": "skills/equipment-query/SKILL.md"
+        },
+        "output": "{\"path\":\"skills/equipment-query/SKILL.md\",\"digest\":\"e943b7ad98ee0977f0d5b2cafa81fc715bbf257b40555b9309b2ac9259a83bf0\"}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626459009,
+          "end": 1792626459041
+        }
+      }
+    },
+    {
+      "id": "prt_160dd068f001EHR78Cu4IQ3Ldc",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dce72e001ATWP2GX1ghZp6t",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 19479,
+        "input": 514,
+        "output": 1335,
+        "reasoning": 94,
+        "cache": {
+          "read": 17536,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dd110e001LZPVJFLVvnV2F0",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd06d4001zv1g41tEfk1Jyj",
+      "type": "text",
+      "text": "Implementation and Skill written. Rerunning `unit-test` for green.",
+      "time": {
+        "start": 1792626462990,
+        "end": 1792626463089
+      }
+    },
+    {
+      "id": "prt_160dd112e001d1kdgL91Q5yHsN",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd06d4001zv1g41tEfk1Jyj",
+      "type": "tool",
+      "callID": "call_00_6NnT3CzDTgdksAynerh78817",
+      "tool": "builder_run",
+      "state": {
+        "status": "completed",
+        "input": {
+          "commandId": "unit-test"
+        },
+        "output": "{\"id\":\"10db8ebe-2e1b-487f-a0ad-14f3e154007c\",\"commandId\":\"unit-test\",\"executable\":\"java\",\"args\":[\"-ea\",\"-cp\",\"D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\commands\\\\cac2004c-b218-4dfc-a395-a287a322f584;D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\sdk\\\\BOOT-INF\\\\classes;D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\sdk\\\\BOOT-INF\\\\lib\\\\*\",\"generated.EquipmentToolTest\"],\"startedAt\":\"2026-10-21T23:47:55.614Z\",\"finishedAt\":\"2026-10-21T23:47:56.373Z\",\"exitCode\":0,\"status\":\"passed\",\"output\":\"ALL TESTS PASSED\\n\",\"truncated\":false}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626463082,
+          "end": 1792626476408
+        }
+      }
+    },
+    {
+      "id": "prt_160dd4906001tB9emJeQx3n4Zz",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd06d4001zv1g41tEfk1Jyj",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 19666,
+        "input": 148,
+        "output": 54,
+        "reasoning": 8,
+        "cache": {
+          "read": 19456,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dd5379001jDAM2Z5NkNVXn6",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd495e001HVqL6PedN0M6ZY",
+      "type": "text",
+      "text": "Green: exit code 0, `ALL TESTS PASSED`. Now executing the build.",
+      "time": {
+        "start": 1792626479993,
+        "end": 1792626480085
+      }
+    },
+    {
+      "id": "prt_160dd53a5001lzH1l0Up7GxKsF",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd495e001HVqL6PedN0M6ZY",
+      "type": "tool",
+      "callID": "call_00_XNkyVQNwskz6dfr1KVwj8472",
+      "tool": "builder_run",
+      "state": {
+        "status": "completed",
+        "input": {
+          "commandId": "build"
+        },
+        "output": "{\"id\":\"4c3377d7-6865-4c6d-a16e-c3b56cee57ae\",\"commandId\":\"package-component\",\"executable\":\"jar\",\"args\":[\"--create\",\"--file\",\"D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\commands\\\\4bcb7fb9-8b6f-454b-8a0b-6a441bde268f\\\\component.jar\",\"-C\",\"D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\control\\\\commands\\\\4bcb7fb9-8b6f-454b-8a0b-6a441bde268f\",\"generated\",\"-C\",\"D:\\\\agent-builder-java\\\\.cache\\\\generated-candidate-live\\\\ca6daf63-5312-420e-a7e2-506a1519ead0\\\\engineering\\\\tasks\\\\80f5e769-7e82-4c56-8c4d-180703189abf\\\\workspace\\\\developer\",\"skills\"],\"startedAt\":\"2026-10-21T23:48:13.305Z\",\"finishedAt\":\"2026-10-21T23:48:14.022Z\",\"exitCode\":0,\"status\":\"passed\",\"output\":\"\",\"truncated\":false,\"bundle\":{\"artifactDigest\":\"d488091ecc66bcaab4835c1218e18eb3d4c169f8f2293ecd109148f1d66c205e\",\"sourceDigest\":\"ec56429cb0f079ba57a1fd8086d8e95a03f8e304b1f5a9272de8000d61702190\",\"profileDigest\":\"cfade19a93eb9a2af932b303181730bf8d1f974d6792e91dcdccb1e120ad60f0\",\"sdkArtifactDigest\":\"4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946\",\"files\":[{\"path\":\"src/generated/EquipmentTool.java\",\"digest\":\"0437df10df8921c78d9e6f470ffa703dac53c805454911895ab8adbd002a1781\",\"size\":3146},{\"path\":\"test/generated/EquipmentToolTest.java\",\"digest\":\"ca85fb00bd133cfb4997588d1622b143c123c9006e54a38abbb6ed5e5b9102ad\",\"size\":15285},{\"path\":\"skills/equipment-query/SKILL.md\",\"digest\":\"e943b7ad98ee0977f0d5b2cafa81fc715bbf257b40555b9309b2ac9259a83bf0\",\"size\":2099},{\"path\":\"test-plan.json\",\"digest\":\"44c69660fa0a349c987b24a29ea50f33833b5e6ffb53e0e0874391d141c85df5\",\"size\":3336},{\"path\":\"component.jar\",\"digest\":\"d488091ecc66bcaab4835c1218e18eb3d4c169f8f2293ecd109148f1d66c205e\",\"size\":3266}],\"snapshotId\":\"84eb574a-535d-48e5-833d-65fb663af1db\",\"baselineId\":\"8504ba8f-17e4-408c-882f-cf9f01b29bdc\",\"baselineDigest\":\"8313abaa087ee11267a18e2d6c8efccb5cf07a59818c597e755713d3a0f0bc5e\",\"planDigest\":\"44c69660fa0a349c987b24a29ea50f33833b5e6ffb53e0e0874391d141c85df5\",\"unitRedId\":\"e62d4c85-49ac-4645-bbd7-1e07a55597ba\",\"unitGreenId\":\"10db8ebe-2e1b-487f-a0ad-14f3e154007c\",\"contractCheckId\":\"13f11441-0c81-447f-915d-c106222d097f\",\"buildId\":\"4c3377d7-6865-4c6d-a16e-c3b56cee57ae\",\"digest\":\"ce0ac6558f473757cf6d19feb214991d563d8f4edaf1e493abb4dd82c2fe2a38\"}}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792626480076,
+          "end": 1792626496050
+        }
+      }
+    },
+    {
+      "id": "prt_160dd96f5001DtgnHi5MHgNBKo",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd495e001HVqL6PedN0M6ZY",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 20130,
+        "input": 481,
+        "output": 57,
+        "reasoning": 8,
+        "cache": {
+          "read": 19584,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160dda1a8001fHw1eQpWYBOwB5",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd9725001J0U4VSlyQY56au",
+      "type": "text",
+      "text": "TDD and build completed with real command evidence.\n\n## Delivered files\n\n| File | Digest | Size |\n|---|---|---|\n| `src/generated/EquipmentTool.java` | `0437df10df8921c78d9e6f470ffa703dac53c805454911895ab8adbd002a1781` | 3146 B |\n| `test/generated/EquipmentToolTest.java` | `ca85fb00bd133cfb4997588d1622b143c123c9006e54a38abbb6ed5e5b9102ad` | 15285 B |\n| `skills/equipment-query/SKILL.md` | `e943b7ad98ee0977f0d5b2cafa81fc715bbf257b40555b9309b2ac9259a83bf0` | 2099 B |\n\n## Command evidence\n\n1. **Red — `unit-test`** (`e62d4c85-49ac-4645-bbd7-1e07a55597ba`)\n   - `exitCode: 1`, `status: failed`\n   - `java.lang.UnsupportedOperationException: IMPLEMENTATION_REQUIRED`\n   - `at generated.EquipmentTool.invokeInternal(EquipmentTool.java:8)`\n   - `at generated.EquipmentToolTest.main(EquipmentToolTest.java:20)` — first valid invocation, uncaught.\n\n2. **Green — `unit-test`** (`10db8ebe-2e1b-487f-a0ad-14f3e154007c`)\n   - `exitCode: 0`, `status: passed`\n   - stdout: `ALL TESTS PASSED`\n\n3. **Build — `build`** (`4c3377d7-6865-4c6d-a16e-c3b56cee57ae`)\n   - `exitCode: 0`, `status: passed`\n   - `component.jar` digest `d488091ecc66bcaab4835c1218e18eb3d4c169f8f2293ecd109148f1d66c205e`, 3266 B\n   - Contract check ID: `13f11441-0c81-447f-915d-c106222d097f`\n   - Source digest: `ec56429cb0f079ba57a1fd8086d8e95a03f8e304b1f5a9272de8000d61702190`\n   - Plan digest matches pinned: `44c69660fa0a349c987b24a29ea50f33833b5e6ffb53e0e0874391d141c85df5`\n   - Bundled entries: `src/generated/EquipmentTool.java`, `test/generated/EquipmentToolTest.java`, `skills/equipment-query/SKILL.md`, `test-plan.json`, `component.jar`\n\n## Behavior verified by the frozen test\n\n- Constructor retains `transport.getCard()` by identity; transports receive equal input/kwargs values (Map.equals), with trusted kwargs such as `actorId`/`endpoint` preserved.\n- Only nonblank string `equipmentId` accepted; every extra input field and null maps throw `IllegalArgumentException(\"TOOL_INPUT_CONTRACT_INVALID\")` with zero transport calls.\n- Response must be a Map with string id/status/source and Integer or Long temperature; otherwise `IllegalStateException(\"TOOL_RESPONSE_CONTRACT_INVALID\")`, no retry, no coercion.\n- Returns exactly four projected fields, leaves the original response unmutated, preserves negative/zero/Long temperatures, and propagates transport exceptions by identity.",
+      "time": {
+        "start": 1792626500008,
+        "end": 1792626502296
+      }
+    },
+    {
+      "id": "prt_160ddae840013PRmIZMHhIOkKk",
+      "sessionID": "ses_e9f248b8dffeMGHaUCzfsP0sE8",
+      "messageID": "msg_160dd9725001J0U4VSlyQY56au",
+      "type": "step-finish",
+      "reason": "stop",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 22220,
+        "input": 1194,
+        "output": 802,
+        "reasoning": 128,
+        "cache": {
+          "read": 20096,
+          "write": 0
+        }
+      }
+    }
+  ],
+  "usage": [
+    {
+      "tokens": {
+        "total": 974,
+        "input": 879,
+        "output": 95,
+        "reasoning": 0,
+        "cache": {
+          "read": 0,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 3752,
+        "input": 2700,
+        "output": 127,
+        "reasoning": 29,
+        "cache": {
+          "read": 896,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 4360,
+        "input": 176,
+        "output": 69,
+        "reasoning": 403,
+        "cache": {
+          "read": 3712,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 17439,
+        "input": 172,
+        "output": 3462,
+        "reasoning": 9581,
+        "cache": {
+          "read": 4224,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 17572,
+        "input": 223,
+        "output": 55,
+        "reasoning": 14,
+        "cache": {
+          "read": 17280,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 19479,
+        "input": 514,
+        "output": 1335,
+        "reasoning": 94,
+        "cache": {
+          "read": 17536,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 19666,
+        "input": 148,
+        "output": 54,
+        "reasoning": 8,
+        "cache": {
+          "read": 19456,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 20130,
+        "input": 481,
+        "output": 57,
+        "reasoning": 8,
+        "cache": {
+          "read": 19584,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 22220,
+        "input": 1194,
+        "output": 802,
+        "reasoning": 128,
+        "cache": {
+          "read": 20096,
+          "write": 0
+        }
+      },
+      "cost": 0
+    }
+  ]
+}

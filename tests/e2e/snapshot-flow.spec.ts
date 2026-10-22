@@ -1,0 +1,37 @@
+import { test, expect } from '@playwright/test';
+
+test('AC-04/14 部分: 确认需求、固定快照、编辑后旧定义保持不变', async ({ page }) => {
+  const token = process.env.LOCAL_BOOTSTRAP_TOKEN;
+  if (!token) throw new Error('LOCAL_BOOTSTRAP_TOKEN required');
+  await page.goto('/');
+  await page.getByLabel('本地访问令牌').fill(token);
+  await page.getByRole('button', { name: '进入工作台' }).click();
+  await page.getByRole('button', { name: '新建草稿' }).click();
+  const name = `设备快照-${Date.now()}`;
+  await page.getByLabel('Agent 名称').fill(name);
+  await page.getByRole('textbox', { name: /目标使用者/ }).fill('设备运维人员');
+  await page.getByRole('textbox', { name: /业务目标/ }).fill('查询 PUMP-001 设备状态');
+  await page.getByRole('textbox', { name: /交付内容/ }).fill('状态、温度与来源');
+  for (const label of ['目标使用者', '业务目标', '交付内容']) await page.getByLabel(`确认${label}`, { exact: true }).check({ timeout: 5000 });
+  await page.getByRole('button', { name: '保存草稿', exact: true }).click();
+  await expect(page.getByText('已保存 · 修订 1', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '固定为测试版本' }).click();
+  await expect(page.getByTestId('snapshot-card')).toHaveCount(1);
+  const snapshot = page.getByTestId('snapshot-card').first();
+  await expect(snapshot).toContainText('草稿修订 1');
+  await snapshot.getByText('查看固定定义').click();
+  await expect(snapshot.locator('pre')).toContainText('查询 PUMP-001 设备状态');
+  await page.getByLabel('业务目标', { exact: true }).fill('查询另一个设备');
+  await expect(page.getByLabel('确认业务目标', { exact: true })).not.toBeChecked();
+  await expect(page.getByRole('button', { name: '固定为测试版本' })).toBeDisabled();
+  await page.getByRole('button', { name: '保存草稿', exact: true }).click();
+  await expect(page.getByText('已保存 · 修订 2', { exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name, exact: true }).click();
+  await expect(page.getByTestId('snapshot-card')).toHaveCount(1);
+  await page.getByText('查看固定定义').click();
+  await expect(page.getByTestId('snapshot-card').locator('pre')).toContainText('查询 PUMP-001 设备状态');
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: 'test-results/snapshot-mobile.png', fullPage: true });
+});

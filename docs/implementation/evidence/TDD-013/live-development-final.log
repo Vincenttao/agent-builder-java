@@ -1,0 +1,8 @@
+{"stage":"admitted","probeId":"88e3e19d-33b5-44fc-986b-b39d03f71630","jobId":"0467b267-eee9-420c-8219-462088962b97"}
+{"stage":"progress","jobId":"0467b267-eee9-420c-8219-462088962b97","status":"queued","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
+{"stage":"progress","jobId":"0467b267-eee9-420c-8219-462088962b97","status":"running","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
+{"stage":"progress","jobId":"0467b267-eee9-420c-8219-462088962b97","status":"running","roles":[{"role":"tester","status":"running"},{"role":"developer","status":"queued"}]}
+{"stage":"progress","jobId":"0467b267-eee9-420c-8219-462088962b97","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f430781ffepHforjEBAVCiYj"},{"role":"developer","status":"running"}]}
+{"stage":"progress","jobId":"0467b267-eee9-420c-8219-462088962b97","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f430781ffepHforjEBAVCiYj"},{"role":"developer","status":"completed","sessionId":"ses_e9f42a2c3ffexXpwl5OHymHWud"}]}
+{"stage":"progress","jobId":"0467b267-eee9-420c-8219-462088962b97","status":"built","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f430781ffepHforjEBAVCiYj"},{"role":"developer","status":"completed","sessionId":"ses_e9f42a2c3ffexXpwl5OHymHWud"}]}
+{"stage":"passed","id":"88e3e19d-33b5-44fc-986b-b39d03f71630","bundleDigest":"cf8c5528e03c84928bea7170fc57c0357db0b75b191a480ce8e0feea6f95d08a","cancelledJobId":"30f50e69-900f-4413-9403-191b24d383f9"}

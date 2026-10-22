@@ -1,0 +1,97 @@
+{
+  "baselineDigest": "31d9eccee9882bf0e97408f046523be66c6ab1451e53cf877bd0e8e6822c108c",
+  "cases": [
+    {
+      "caseId": "TC-001",
+      "requirementIds": [
+        "BR-001",
+        "BR-002",
+        "BR-003"
+      ],
+      "assertions": [
+        {
+          "ruleId": "run-succeeded",
+          "expected": true
+        },
+        {
+          "ruleId": "equipment-report-schema",
+          "expected": "equipment-report@1"
+        },
+        {
+          "ruleId": "equipment-facts",
+          "expected": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          }
+        },
+        {
+          "ruleId": "write-call-count",
+          "expected": 0
+        }
+      ],
+      "steps": [
+        "Invoke the equipment-query skill in scenario equipment-normal with the user input '查询 PUMP-001 的状态、温度、来源并提供建议。' and capture the completed run result.",
+        "Verify the run record shows run-succeeded=true and the structured output declares schema equipment-report@1.",
+        "Verify external state from the transport recording: returned equipment facts equal Map {source=seed-equipment-001@1, status=warning, equipmentId=PUMP-001, temperatureCelsius=86} with value equality, and the write-call counter remains 0."
+      ]
+    },
+    {
+      "caseId": "TC-002",
+      "requirementIds": [
+        "BR-001",
+        "BR-003"
+      ],
+      "assertions": [
+        {
+          "ruleId": "run-succeeded",
+          "expected": true
+        },
+        {
+          "ruleId": "asks-for-equipment-id",
+          "expected": true
+        },
+        {
+          "ruleId": "all-business-call-count",
+          "expected": 0
+        }
+      ],
+      "steps": [
+        "Invoke the equipment-query skill in scenario equipment-missing-id with the user input '请查询设备状态。' (no equipmentId) and capture the completed run result.",
+        "Inspect the assistant response to confirm asks-for-equipment-id is true: it requests the missing equipmentId rather than guessing an ID.",
+        "Verify external state from the transport recording that all-business-call-count is 0, i.e. no equipment query tool invocation occurred."
+      ]
+    },
+    {
+      "caseId": "TC-003",
+      "requirementIds": [
+        "BR-002",
+        "BR-003"
+      ],
+      "assertions": [
+        {
+          "ruleId": "run-succeeded",
+          "expected": true
+        },
+        {
+          "ruleId": "tool-error-evidence",
+          "expected": true
+        },
+        {
+          "ruleId": "failure-output-no-facts",
+          "expected": true
+        },
+        {
+          "ruleId": "write-call-count",
+          "expected": 0
+        }
+      ],
+      "steps": [
+        "Invoke the equipment-query skill in scenario equipment-tool-failure with read-timeout and the user input '查询 PUMP-001 的状态。' and capture the completed run result.",
+        "Verify the run record shows run-succeeded=true and exposes tool-error-evidence for the timed-out read call.",
+        "Verify external state: the failure output contains no fabricated status, temperature or source facts (failure-output-no-facts=true), and the write-call counter remains 0."
+      ]
+    }
+  ]
+}

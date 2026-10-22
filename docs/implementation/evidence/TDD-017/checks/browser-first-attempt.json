@@ -1,0 +1,205 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Program Files\\nodejs\\node.exe",
+      "D:\\agent-builder-java\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/workorder-validation-flow.spec.ts"
+    ],
+    "configFile": "D:\\agent-builder-java\\playwright.config.ts",
+    "rootDir": "D:/agent-builder-java/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/agent-builder-java/test-results/browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/agent-builder-java/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\agent-builder-java\\test-results\\browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "D:\\agent-builder-java\\tests\\e2e",
+        "snapshotDir": "D:\\agent-builder-java\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:8080",
+          "channel": "msedge",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/e2e.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "workorder-validation-flow.spec.ts",
+      "file": "workorder-validation-flow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Docker workorder baseline passes all eight cases then publishes and performs an approved business write",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 1200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 164464,
+                  "error": {
+                    "message": "Error: [{\"id\":\"TC-001\",\"status\":\"blocked\",\"reasons\":[\"EXECUTION_OR_EVIDENCE_UNAVAILABLE\"]},{\"id\":\"TC-002\",\"status\":\"passed\",\"reasons\":[]},{\"id\":\"TC-003\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-004\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-005\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-006\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-007\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-008\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]}]\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\u001b[7mpass\u001b[27med\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mblock\u001b[27med\"\u001b[39m",
+                    "stack": "Error: [{\"id\":\"TC-001\",\"status\":\"blocked\",\"reasons\":[\"EXECUTION_OR_EVIDENCE_UNAVAILABLE\"]},{\"id\":\"TC-002\",\"status\":\"passed\",\"reasons\":[]},{\"id\":\"TC-003\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-004\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-005\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-006\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-007\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-008\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]}]\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\u001b[7mpass\u001b[27med\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mblock\u001b[27med\"\u001b[39m\n    at D:\\agent-builder-java\\tests\\e2e\\workorder-validation-flow.spec.ts:44:115",
+                    "location": {
+                      "file": "D:\\agent-builder-java\\tests\\e2e\\workorder-validation-flow.spec.ts",
+                      "column": 115,
+                      "line": 44
+                    },
+                    "snippet": "  42 |     const validation=proof.validation as ValidationExecution,report=await api<ValidationReport>(`/api/validations/${validation.id}/report`);proof.report=report;\n  43 |     proof.caseEvidence=await Promise.all(report.cases.map(c=>c.evidenceId?api(`/api/validations/${validation.id}/evidence/${c.evidenceId}`):null));await save();\n> 44 |     expect(report.verdict,JSON.stringify(report.cases.map(c=>({id:c.caseId,status:c.status,reasons:c.reasons})))).toBe('passed');expect(report.cases).toHaveLength(8);expect(report.cases.every(c=>c.status==='passed')).toBe(true);expect(report.binding.candidate?.id).toBe(candidate.id);\n     |                                                                                                                   ^\n  45 |     await expect(acceptance.getByTestId('validation-status')).toHaveText('通过');await acceptance.getByText('TC-007 · 通过',{exact:true}).click();await acceptance.getByRole('button',{name:'查看证据 TC-007',exact:true}).click();await expect(acceptance.getByTestId('validation-evidence')).toContainText('action.input_rejected');\n  46 |     await acceptance.screenshot({path:`${root}/workorder-acceptance.png`});\n  47 |     const publication=page.getByTestId(`publication-${snapshot.id}`);await publication.getByLabel('我已审阅验收报告，同意切换演示入口').check();await publication.getByRole('button',{name:'发布此验证版本',exact:true}).click();await expect(publication.getByTestId('release-status')).toHaveText('发布成功',{timeout:240000});"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\agent-builder-java\\tests\\e2e\\workorder-validation-flow.spec.ts",
+                        "column": 115,
+                        "line": 44
+                      },
+                      "message": "Error: [{\"id\":\"TC-001\",\"status\":\"blocked\",\"reasons\":[\"EXECUTION_OR_EVIDENCE_UNAVAILABLE\"]},{\"id\":\"TC-002\",\"status\":\"passed\",\"reasons\":[]},{\"id\":\"TC-003\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-004\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-005\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-006\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-007\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]},{\"id\":\"TC-008\",\"status\":\"unverified\",\"reasons\":[\"VALIDATION_CANCELLED\"]}]\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\u001b[7mpass\u001b[27med\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mblock\u001b[27med\"\u001b[39m\n\n  42 |     const validation=proof.validation as ValidationExecution,report=await api<ValidationReport>(`/api/validations/${validation.id}/report`);proof.report=report;\n  43 |     proof.caseEvidence=await Promise.all(report.cases.map(c=>c.evidenceId?api(`/api/validations/${validation.id}/evidence/${c.evidenceId}`):null));await save();\n> 44 |     expect(report.verdict,JSON.stringify(report.cases.map(c=>({id:c.caseId,status:c.status,reasons:c.reasons})))).toBe('passed');expect(report.cases).toHaveLength(8);expect(report.cases.every(c=>c.status==='passed')).toBe(true);expect(report.binding.candidate?.id).toBe(candidate.id);\n     |                                                                                                                   ^\n  45 |     await expect(acceptance.getByTestId('validation-status')).toHaveText('通过');await acceptance.getByText('TC-007 · 通过',{exact:true}).click();await acceptance.getByRole('button',{name:'查看证据 TC-007',exact:true}).click();await expect(acceptance.getByTestId('validation-evidence')).toContainText('action.input_rejected');\n  46 |     await acceptance.screenshot({path:`${root}/workorder-acceptance.png`});\n  47 |     const publication=page.getByTestId(`publication-${snapshot.id}`);await publication.getByLabel('我已审阅验收报告，同意切换演示入口').check();await publication.getByRole('button',{name:'发布此验证版本',exact:true}).click();await expect(publication.getByTestId('release-status')).toHaveText('发布成功',{timeout:240000});\n    at D:\\agent-builder-java\\tests\\e2e\\workorder-validation-flow.spec.ts:44:115"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "{\"stage\":\"workorder-validation-started\",\"id\":\"1f795171-918e-4c83-ac80-c9816adf6dca\",\"draftId\":\"0b4cd545-ce14-408d-a9b5-1edcd46da535\",\"candidateId\":\"bbc83844-1321-44ce-bbb3-6e9c28146df0\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":0,\"total\":8,\"validationId\":\"3437f914-5cb4-44bd-a28f-d393637ec44c\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":1,\"total\":8,\"validationId\":\"3437f914-5cb4-44bd-a28f-d393637ec44c\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":2,\"total\":8,\"validationId\":\"3437f914-5cb4-44bd-a28f-d393637ec44c\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":3,\"total\":8,\"validationId\":\"3437f914-5cb4-44bd-a28f-d393637ec44c\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":6,\"total\":8,\"validationId\":\"3437f914-5cb4-44bd-a28f-d393637ec44c\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":8,\"total\":8,\"validationId\":\"3437f914-5cb4-44bd-a28f-d393637ec44c\"}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T02:38:10.479Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\agent-builder-java\\test-results\\browser-artifacts\\workorder-validation-flow--f7418--an-approved-business-write\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\agent-builder-java\\test-results\\browser-artifacts\\workorder-validation-flow--f7418--an-approved-business-write\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\agent-builder-java\\tests\\e2e\\workorder-validation-flow.spec.ts",
+                    "column": 115,
+                    "line": 44
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2ec1f3d13c5fb885219d-e895f7407c2441fb7e9d",
+          "file": "workorder-validation-flow.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T02:38:04.763Z",
+    "duration": 172282.02000000002,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

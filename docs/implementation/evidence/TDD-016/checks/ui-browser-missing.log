@@ -1,0 +1,24 @@
+
+Running 1 test using 1 worker
+
+(node:22652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\development-ui.spec.ts:11:1 › development UI restores tasks, cancels, and displays source and command evidence using explicit API fixtures (5ms)
+
+
+  1) tests\e2e\development-ui.spec.ts:11:1 › development UI restores tasks, cancels, and displays source and command evidence using explicit API fixtures 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\vincent\AppData\Local\ms-playwright\chromium_headless_shell-1248\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\browser-artifacts\development-ui-development-5137e-using-explicit-API-fixtures\error-context.md
+
+  1 failed
+    tests\e2e\development-ui.spec.ts:11:1 › development UI restores tasks, cancels, and displays source and command evidence using explicit API fixtures 

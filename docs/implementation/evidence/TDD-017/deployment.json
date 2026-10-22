@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-10-22T03:10:09.825Z",
+  "sourceDigest": "11c21fb3a398f2cd1913d2eb11c27eb4120d3b47320eba9bd37b6494d63461f8",
+  "services": [
+    {
+      "service": "app",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:893aca7ad5b84f369f106b4eb12d74fd7b505381c54b2ce0e7aac63371201f01"
+    },
+    {
+      "service": "mock-services",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:893aca7ad5b84f369f106b4eb12d74fd7b505381c54b2ce0e7aac63371201f01"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a"
+    },
+    {
+      "service": "runner",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:fc7205dfe6ecbc545b8c3cedf70181ab859906a03328b5acccba716f64523880"
+    }
+  ],
+  "runtime": {
+    "bootId": "d46eccf6-82fc-4384-83b0-0980c5d94bff",
+    "artifactDigest": "0a7f589b59b2d4a70bcb8d549adf7a36a37597f04513121d1ff4c26972a71ebf",
+    "executionMode": "trusted-local",
+    "modelConfigured": true,
+    "modelProfile": {
+      "executionMode": "live-mock",
+      "model": {
+        "provider": "OpenAI",
+        "baseUrl": "https://api.deepseek.com/v1",
+        "name": "deepseek-v4-flash",
+        "temperature": 0,
+        "maxTokens": 1024,
+        "thinking": "disabled"
+      },
+      "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a"
+    },
+    "invocationConcurrencyPerDeployment": 1
+  }
+}

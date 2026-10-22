@@ -1,0 +1,9 @@
+{"stage":"admitted","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","jobId":"80f5e769-7e82-4c56-8c4d-180703189abf"}
+{"stage":"development","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","status":"queued","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
+{"stage":"development","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","status":"running","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
+{"stage":"development","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","status":"running","roles":[{"role":"tester","status":"running"},{"role":"developer","status":"queued"}]}
+{"stage":"development","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f251b6cffeBAIiOFIwumPwM0"},{"role":"developer","status":"running"}]}
+{"stage":"development","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f251b6cffeBAIiOFIwumPwM0"},{"role":"developer","status":"completed","sessionId":"ses_e9f248b8dffeMGHaUCzfsP0sE8"}]}
+{"stage":"development","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","status":"built","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f251b6cffeBAIiOFIwumPwM0"},{"role":"developer","status":"completed","sessionId":"ses_e9f248b8dffeMGHaUCzfsP0sE8"}]}
+{"stage":"candidate-ready","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","candidateId":"ee717958-91e4-4d6d-9f70-499c5e7d4345","artifactDigest":"1059ebeae355214f36ac5230c0ec723c4f37359913e060a2bd4a1d8d084ff4c8"}
+{"stage":"passed","id":"ca6daf63-5312-420e-a7e2-506a1519ead0","jobId":"80f5e769-7e82-4c56-8c4d-180703189abf","candidateId":"ee717958-91e4-4d6d-9f70-499c5e7d4345"}

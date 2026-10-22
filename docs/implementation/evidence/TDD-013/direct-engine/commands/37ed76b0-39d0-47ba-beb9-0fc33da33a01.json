@@ -1,0 +1,23 @@
+{
+  "id": "37ed76b0-39d0-47ba-beb9-0fc33da33a01",
+  "commandId": "compile-unit",
+  "executable": "javac",
+  "args": [
+    "-encoding",
+    "UTF-8",
+    "--release",
+    "21",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\sdk\\BOOT-INF\\lib\\*",
+    "-d",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\commands\\f1a17b18-1b69-47b6-9fe0-d1aa8435c01f",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\developer\\src\\generated\\EquipmentTool.java",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\developer\\test\\generated\\EquipmentToolTest.java"
+  ],
+  "startedAt": "2026-10-21T22:42:54.084Z",
+  "finishedAt": "2026-10-21T22:42:59.386Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "ע: ��������·���з�����һ�����������������������\n  ��ע������δ�����а�� javac ���ܻ������ע������\n  �������ٰ�����ָ����һ���������� (-processor)��\n  ��ָ��������·�� (--processor-path, --processor-module-path)��\n  ����ʽ��������ע���� (-proc:only, -proc:full)��\n  ��ʹ�� -Xlint:-options ���ش���Ϣ��\n  ��ʹ�� -proc:none ������ע������\n",
+  "truncated": false
+}

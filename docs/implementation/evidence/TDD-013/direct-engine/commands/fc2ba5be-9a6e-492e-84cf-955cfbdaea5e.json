@@ -1,0 +1,17 @@
+{
+  "id": "fc2ba5be-9a6e-492e-84cf-955cfbdaea5e",
+  "commandId": "platform-contract",
+  "executable": "java",
+  "args": [
+    "-ea",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\commands\\1d318c52-474a-4cd2-99ef-58ed35369544;D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\sdk\\BOOT-INF\\lib\\*",
+    "verification.EquipmentContract"
+  ],
+  "startedAt": "2026-10-21T22:43:27.983Z",
+  "finishedAt": "2026-10-21T22:43:28.408Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "PLATFORM_CONTRACT_OK\n",
+  "truncated": false
+}

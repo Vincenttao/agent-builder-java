@@ -1,0 +1,451 @@
+{
+  "id": "cba9b1ff-89c1-479c-9b99-50902976e026",
+  "startedAt": "2026-10-21T23:03:06.341Z",
+  "status": "failed",
+  "job": {
+    "id": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "completed",
+        "sessionId": "ses_e9f4b6bedffe30ZW47FFlcBQVi"
+      },
+      {
+        "role": "developer",
+        "status": "completed",
+        "sessionId": "ses_e9f4aba40ffeU3PQtzLo0MZsX2"
+      }
+    ],
+    "bundle": {
+      "files": [
+        {
+          "path": "src/generated/EquipmentTool.java",
+          "size": 2975,
+          "digest": "eaeb84eea46511b0dab9864580f6e1ae960977f998079ea8f139adb0c11499ab"
+        },
+        {
+          "path": "test/generated/EquipmentToolTest.java",
+          "size": 11390,
+          "digest": "4f7bcdab5076ac6238a93bfd11a58c0255e511f97d6960e8a9a265d7540b3d27"
+        },
+        {
+          "path": "skills/equipment-query/SKILL.md",
+          "size": 3047,
+          "digest": "324601cd7af159ddcc7f4a3d6d4668b46dc7e9d082c95235af1bdbba79fd4d00"
+        },
+        {
+          "path": "test-plan.json",
+          "size": 3152,
+          "digest": "e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887"
+        },
+        {
+          "path": "component.jar",
+          "size": 3742,
+          "digest": "45ff2b1f15f243bc6594a19218c78257494ee72a468a845fca8415f49324dc1e"
+        }
+      ],
+      "digest": "a61f26e4159a40f101ec9f58977910cfa4c1c921e32243e4c14aba0a92975b39",
+      "buildId": "fedc93f3-243b-49b6-8c82-8e2546028397",
+      "unitRedId": "652f66f1-e39f-4632-9865-f21b9a13f3af",
+      "baselineId": "51fbaca7-df13-4c83-9da4-c2e2391fe55b",
+      "planDigest": "e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887",
+      "snapshotId": "a13c01b8-d1d2-4c67-8295-ca251e97a017",
+      "unitGreenId": "6230be5c-933f-4e9f-aa52-5873b07754fd",
+      "sourceDigest": "0a13a427a5a9e6b049078ad69e37341acda1579503cc4cabb899710a0de35525",
+      "profileDigest": "cfade19a93eb9a2af932b303181730bf8d1f974d6792e91dcdccb1e120ad60f0",
+      "artifactDigest": "45ff2b1f15f243bc6594a19218c78257494ee72a468a845fca8415f49324dc1e",
+      "baselineDigest": "793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1",
+      "contractCheckId": "3ed9fe83-1105-4ee0-8cdd-864c6f334a69",
+      "sdkArtifactDigest": "f207d712a30a166e4030c0772dbe767b071f336ac0443a0349ebd891e87f9a73"
+    },
+    "status": "built",
+    "agentId": "18cef271-de7d-4f06-be3d-1e4e0fd65751",
+    "createdAt": "2026-10-21T23:03:06.576Z",
+    "updatedAt": "2026-10-21T23:06:23.354Z",
+    "baselineId": "51fbaca7-df13-4c83-9da4-c2e2391fe55b",
+    "snapshotId": "a13c01b8-d1d2-4c67-8295-ca251e97a017",
+    "inputDigest": "081270ab8656043d50c98840f9bfc40509582f510667fdf635e9f604b2366c1a",
+    "baselineDigest": "793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1"
+  },
+  "events": [
+    {
+      "data": {
+        "path": "tests/plan.json",
+        "bytes": 3152,
+        "digest": "e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887"
+      },
+      "role": "tester",
+      "type": "file.written",
+      "sequence": 1,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:04:04.119Z"
+    },
+    {
+      "data": {
+        "path": "test/generated/EquipmentToolTest.java",
+        "bytes": 11390,
+        "digest": "4f7bcdab5076ac6238a93bfd11a58c0255e511f97d6960e8a9a265d7540b3d27"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 2,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:05:30.551Z"
+    },
+    {
+      "data": {
+        "id": "55cf8e47-9c0b-4abe-99f8-61c9361286b4",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "prepare-sdk",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 3,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:05:36.800Z"
+    },
+    {
+      "data": {
+        "id": "bfd0545f-af8f-49b4-a402-db1105153e51",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "compile-unit",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 4,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:05:45.102Z"
+    },
+    {
+      "data": {
+        "id": "652f66f1-e39f-4632-9865-f21b9a13f3af",
+        "status": "failed",
+        "exitCode": 1,
+        "commandId": "unit-test",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 5,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:05:45.685Z"
+    },
+    {
+      "data": {
+        "path": "src/generated/EquipmentTool.java",
+        "bytes": 2975,
+        "digest": "eaeb84eea46511b0dab9864580f6e1ae960977f998079ea8f139adb0c11499ab"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 6,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:05:56.252Z"
+    },
+    {
+      "data": {
+        "path": "skills/equipment-query/SKILL.md",
+        "bytes": 3047,
+        "digest": "324601cd7af159ddcc7f4a3d6d4668b46dc7e9d082c95235af1bdbba79fd4d00"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 7,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:05:59.376Z"
+    },
+    {
+      "data": {
+        "id": "c334b41c-41f2-43f7-8027-ee1a18d2a3a4",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "compile-unit",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 8,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:06:07.190Z"
+    },
+    {
+      "data": {
+        "id": "6230be5c-933f-4e9f-aa52-5873b07754fd",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "unit-test",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 9,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:06:07.522Z"
+    },
+    {
+      "data": {
+        "id": "7a8303bd-c696-45f9-9ebd-4d35eb9618a4",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "compile-contract",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 10,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:06:14.777Z"
+    },
+    {
+      "data": {
+        "id": "3ed9fe83-1105-4ee0-8cdd-864c6f334a69",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "platform-contract",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 11,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:06:15.126Z"
+    },
+    {
+      "data": {
+        "id": "fedc93f3-243b-49b6-8c82-8e2546028397",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "package-component",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 12,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:06:15.588Z"
+    },
+    {
+      "data": {
+        "digest": "a61f26e4159a40f101ec9f58977910cfa4c1c921e32243e4c14aba0a92975b39",
+        "artifactDigest": "45ff2b1f15f243bc6594a19218c78257494ee72a468a845fca8415f49324dc1e"
+      },
+      "role": "developer",
+      "type": "bundle.created",
+      "sequence": 13,
+      "subjectId": "2471fcff-6511-4bce-a0f8-0ab5fa3018f7",
+      "occurredAt": "2026-10-21T23:06:16.211Z"
+    }
+  ],
+  "commands": [
+    {
+      "id": "55cf8e47-9c0b-4abe-99f8-61c9361286b4",
+      "commandId": "prepare-sdk",
+      "executable": "jar",
+      "args": [
+        "--extract",
+        "--file",
+        "D:\\agent-builder-java\\java\\runtime-bridge\\target\\runtime-bridge-0.1.0.jar",
+        "BOOT-INF/classes",
+        "BOOT-INF/lib"
+      ],
+      "startedAt": "2026-10-21T23:05:33.160Z",
+      "finishedAt": "2026-10-21T23:05:36.773Z",
+      "exitCode": 0,
+      "status": "passed",
+      "output": "",
+      "truncated": false
+    },
+    {
+      "id": "bfd0545f-af8f-49b4-a402-db1105153e51",
+      "commandId": "compile-unit",
+      "executable": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        "--release",
+        "21",
+        "-cp",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+        "-d",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\87f108c0-5282-4ebe-94c4-a2421a5fee4b",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\developer\\src\\generated\\EquipmentTool.java",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\developer\\test\\generated\\EquipmentToolTest.java"
+      ],
+      "startedAt": "2026-10-21T23:05:36.857Z",
+      "finishedAt": "2026-10-21T23:05:45.100Z",
+      "exitCode": 0,
+      "status": "passed",
+      "output": "ע: ��������·���з�����һ�����������������������\n  ��ע������δ�����а�� javac ���ܻ������ע������\n  �������ٰ�����ָ����һ���������� (-processor)��\n  ��ָ��������·�� (--processor-path, --processor-module-path)��\n  ����ʽ��������ע���� (-proc:only, -proc:full)��\n  ��ʹ�� -Xlint:-options ���ش���Ϣ��\n  ��ʹ�� -proc:none ������ע������\n",
+      "truncated": false
+    },
+    {
+      "id": "652f66f1-e39f-4632-9865-f21b9a13f3af",
+      "commandId": "unit-test",
+      "executable": "java",
+      "args": [
+        "-ea",
+        "-cp",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\87f108c0-5282-4ebe-94c4-a2421a5fee4b;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+        "generated.EquipmentToolTest"
+      ],
+      "startedAt": "2026-10-21T23:05:45.102Z",
+      "finishedAt": "2026-10-21T23:05:45.682Z",
+      "exitCode": 1,
+      "status": "failed",
+      "output": "Exception in thread \"main\" java.lang.UnsupportedOperationException: IMPLEMENTATION_REQUIRED\n\tat generated.EquipmentTool.invokeInternal(EquipmentTool.java:8)\n\tat com.openjiuwen.core.foundation.tool.Tool.invoke(Tool.java:73)\n\tat generated.EquipmentToolTest.main(EquipmentToolTest.java:29)\n",
+      "truncated": false
+    },
+    {
+      "id": "c334b41c-41f2-43f7-8027-ee1a18d2a3a4",
+      "commandId": "compile-unit",
+      "executable": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        "--release",
+        "21",
+        "-cp",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+        "-d",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\1a6f0763-5902-4445-ad1c-f5c719cc2459",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\developer\\src\\generated\\EquipmentTool.java",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\developer\\test\\generated\\EquipmentToolTest.java"
+      ],
+      "startedAt": "2026-10-21T23:06:01.099Z",
+      "finishedAt": "2026-10-21T23:06:07.189Z",
+      "exitCode": 0,
+      "status": "passed",
+      "output": "ע: ��������·���з�����һ�����������������������\n  ��ע������δ�����а�� javac ���ܻ������ע������\n  �������ٰ�����ָ����һ���������� (-processor)��\n  ��ָ��������·�� (--processor-path, --processor-module-path)��\n  ����ʽ��������ע���� (-proc:only, -proc:full)��\n  ��ʹ�� -Xlint:-options ���ش���Ϣ��\n  ��ʹ�� -proc:none ������ע������\n",
+      "truncated": false
+    },
+    {
+      "id": "6230be5c-933f-4e9f-aa52-5873b07754fd",
+      "commandId": "unit-test",
+      "executable": "java",
+      "args": [
+        "-ea",
+        "-cp",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\1a6f0763-5902-4445-ad1c-f5c719cc2459;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+        "generated.EquipmentToolTest"
+      ],
+      "startedAt": "2026-10-21T23:06:07.191Z",
+      "finishedAt": "2026-10-21T23:06:07.521Z",
+      "exitCode": 0,
+      "status": "passed",
+      "output": "EQUIPMENT_TOOL_TEST_OK\n",
+      "truncated": false
+    },
+    {
+      "id": "7a8303bd-c696-45f9-9ebd-4d35eb9618a4",
+      "commandId": "compile-contract",
+      "executable": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        "--release",
+        "21",
+        "-cp",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+        "-d",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\fecce1d3-e776-42c7-b27b-022852d7a2bb",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\developer\\src\\generated\\EquipmentTool.java",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\checks\\verification\\EquipmentContract.java"
+      ],
+      "startedAt": "2026-10-21T23:06:09.764Z",
+      "finishedAt": "2026-10-21T23:06:14.775Z",
+      "exitCode": 0,
+      "status": "passed",
+      "output": "ע: ��������·���з�����һ�����������������������\n  ��ע������δ�����а�� javac ���ܻ������ע������\n  �������ٰ�����ָ����һ���������� (-processor)��\n  ��ָ��������·�� (--processor-path, --processor-module-path)��\n  ����ʽ��������ע���� (-proc:only, -proc:full)��\n  ��ʹ�� -Xlint:-options ���ش���Ϣ��\n  ��ʹ�� -proc:none ������ע������\n",
+      "truncated": false
+    },
+    {
+      "id": "3ed9fe83-1105-4ee0-8cdd-864c6f334a69",
+      "commandId": "platform-contract",
+      "executable": "java",
+      "args": [
+        "-ea",
+        "-cp",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\fecce1d3-e776-42c7-b27b-022852d7a2bb;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+        "verification.EquipmentContract"
+      ],
+      "startedAt": "2026-10-21T23:06:14.778Z",
+      "finishedAt": "2026-10-21T23:06:15.125Z",
+      "exitCode": 0,
+      "status": "passed",
+      "output": "PLATFORM_CONTRACT_OK\n",
+      "truncated": false
+    },
+    {
+      "id": "fedc93f3-243b-49b6-8c82-8e2546028397",
+      "commandId": "package-component",
+      "executable": "jar",
+      "args": [
+        "--create",
+        "--file",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\fecce1d3-e776-42c7-b27b-022852d7a2bb\\component.jar",
+        "-C",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\control\\commands\\fecce1d3-e776-42c7-b27b-022852d7a2bb",
+        "generated",
+        "-C",
+        "D:\\agent-builder-java\\.cache\\development-live\\cba9b1ff-89c1-479c-9b99-50902976e026\\runner\\tasks\\2471fcff-6511-4bce-a0f8-0ab5fa3018f7\\workspace\\developer",
+        "skills"
+      ],
+      "startedAt": "2026-10-21T23:06:15.127Z",
+      "finishedAt": "2026-10-21T23:06:15.586Z",
+      "exitCode": 0,
+      "status": "passed",
+      "output": "",
+      "truncated": false
+    }
+  ],
+  "files": [
+    {
+      "path": "src/generated/EquipmentTool.java",
+      "digest": "eaeb84eea46511b0dab9864580f6e1ae960977f998079ea8f139adb0c11499ab",
+      "content": "package generated;\n\nimport com.openjiuwen.core.foundation.tool.Tool;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\n/**\n * Tool adapter for the bound equipment transport.\n *\n * <p>The transport owns HTTP, credentials, identity and timeouts. This adapter only\n * accepts the business input {@code equipmentId} and forwards trusted runtime kwargs.\n */\npublic final class EquipmentTool extends Tool {\n\n  private static final String INPUT_ERROR = \"TOOL_INPUT_CONTRACT_INVALID\";\n  private static final String RESPONSE_ERROR = \"TOOL_RESPONSE_CONTRACT_INVALID\";\n  private static final String EQUIPMENT_ID = \"equipmentId\";\n  private static final String STATUS = \"status\";\n  private static final String TEMPERATURE = \"temperatureCelsius\";\n  private static final String SOURCE = \"source\";\n\n  private final Tool transport;\n\n  public EquipmentTool(Tool transport) {\n    super(transport.getCard());\n    this.transport = transport;\n  }\n\n  @Override\n  protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs)\n      throws Exception {\n    validateInputs(inputs);\n\n    // Trusted runtime kwargs are passed through unchanged; transport exceptions\n    // intentionally propagate to the caller without wrapping or retrying.\n    Object response = transport.invoke(inputs, kwargs);\n\n    return validateResponse(response);\n  }\n\n  private static void validateInputs(Map<String, Object> inputs) {\n    if (inputs == null || inputs.size() != 1 || !inputs.containsKey(EQUIPMENT_ID)) {\n      throw new IllegalArgumentException(INPUT_ERROR);\n    }\n    Object equipmentId = inputs.get(EQUIPMENT_ID);\n    if (!(equipmentId instanceof String) || ((String) equipmentId).trim().isEmpty()) {\n      throw new IllegalArgumentException(INPUT_ERROR);\n    }\n  }\n\n  private static Map<String, Object> validateResponse(Object response) {\n    if (!(response instanceof Map)) {\n      throw new IllegalStateException(RESPONSE_ERROR);\n    }\n    Map<?, ?> source = (Map<?, ?>) response;\n    if (!source.containsKey(EQUIPMENT_ID)\n        || !source.containsKey(STATUS)\n        || !source.containsKey(TEMPERATURE)\n        || !source.containsKey(SOURCE)) {\n      throw new IllegalStateException(RESPONSE_ERROR);\n    }\n\n    Object equipmentId = source.get(EQUIPMENT_ID);\n    Object status = source.get(STATUS);\n    Object temperature = source.get(TEMPERATURE);\n    Object origin = source.get(SOURCE);\n\n    if (!(equipmentId instanceof String)\n        || !(status instanceof String)\n        || !(temperature instanceof Integer || temperature instanceof Long)\n        || !(origin instanceof String)) {\n      throw new IllegalStateException(RESPONSE_ERROR);\n    }\n\n    // Return only the four original fields, preserving values and numeric types.\n    Map<String, Object> result = new LinkedHashMap<String, Object>();\n    result.put(EQUIPMENT_ID, equipmentId);\n    result.put(STATUS, status);\n    result.put(TEMPERATURE, temperature);\n    result.put(SOURCE, origin);\n    return result;\n  }\n}\n"
+    },
+    {
+      "path": "test/generated/EquipmentToolTest.java",
+      "digest": "4f7bcdab5076ac6238a93bfd11a58c0255e511f97d6960e8a9a265d7540b3d27",
+      "content": "package generated;\n\nimport com.openjiuwen.core.foundation.tool.Tool;\nimport com.openjiuwen.core.foundation.tool.ToolCard;\nimport java.util.ArrayList;\nimport java.util.LinkedHashMap;\nimport java.util.LinkedHashSet;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.Set;\n\npublic final class EquipmentToolTest {\n\n  public static void main(String[] args) throws Exception {\n    ToolCard card = makeCard();\n    RecordingTool transport = new RecordingTool(card);\n    Map<String, Object> rawResponse = response(Integer.valueOf(-5));\n    rawResponse.put(\"modelInjected\", \"must-not-leak\");\n    transport.response = rawResponse;\n\n    EquipmentTool tool = new EquipmentTool(transport);\n    check(tool.getCard() == transport.getCard(), \"constructor must retain transport card\");\n\n    Map<String, Object> inputs = map(\"equipmentId\", \"PUMP-001\");\n    Map<String, Object> kwargs = map(\"runtimeKey\", \"runtimeValue\", \"traceId\", \"t-1\");\n\n    // This first invocation is deliberately uncaught so the stub exits nonzero.\n    Object first = tool.invoke(inputs, kwargs);\n\n    check(first instanceof Map, \"valid result must be a Map\");\n    Map<String, Object> expected = map(\n        \"equipmentId\", \"PUMP-001\",\n        \"status\", \"warning\",\n        \"temperatureCelsius\", Integer.valueOf(-5),\n        \"source\", \"seed-equipment-001@1\");\n    check(expected.equals(first), \"valid result must contain exactly the four original fields\");\n    check(!((Map<?, ?>) first).containsKey(\"modelInjected\"), \"extra transport field must be dropped\");\n    check(Integer.valueOf(-5).equals(((Map<?, ?>) first).get(\"temperatureCelsius\")),\n        \"negative integer temperature must be preserved\");\n\n    check(transport.calls == 1, \"valid invocation must call transport once\");\n    check(inputs.equals(transport.lastInputs), \"transport inputs must equal original values\");\n    check(kwargs.equals(transport.lastKwargs), \"trusted runtime kwargs must be preserved\");\n    check(transport.lastInputs.size() == 1, \"only equipmentId may be forwarded as input\");\n\n    // Zero and Long temperatures must be preserved with their original type.\n    RecordingTool zeroTransport = new RecordingTool(card);\n    zeroTransport.response = response(Long.valueOf(0L));\n    EquipmentTool zeroTool = new EquipmentTool(zeroTransport);\n    Object zeroResult = zeroTool.invoke(map(\"equipmentId\", \"PUMP-001\"), map());\n    check(zeroResult instanceof Map, \"zero result must be a Map\");\n    Object zeroTemp = ((Map<?, ?>) zeroResult).get(\"temperatureCelsius\");\n    check(Long.valueOf(0L).equals(zeroTemp), \"zero temperature must be preserved\");\n    check(zeroTemp instanceof Long, \"zero Long temperature type must be preserved\");\n    check(zeroTransport.lastKwargs.isEmpty(), \"empty kwargs must stay empty\");\n\n    // Input contract rejections must use IllegalArgumentException and zero transport calls.\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        return newTool(card, response(Integer.valueOf(20))).invoke(map(), map());\n      }\n    }, \"missing equipmentId\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        return newTool(card, response(Integer.valueOf(20))).invoke(map(\"equipmentId\", \"\"), map());\n      }\n    }, \"empty equipmentId\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        return newTool(card, response(Integer.valueOf(20))).invoke(map(\"equipmentId\", \"   \"), map());\n      }\n    }, \"blank equipmentId\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        Map<String, Object> m = new LinkedHashMap<String, Object>();\n        m.put(\"equipmentId\", null);\n        return newTool(card, response(Integer.valueOf(20))).invoke(m, map());\n      }\n    }, \"null equipmentId\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        return newTool(card, response(Integer.valueOf(20))).invoke(map(\"equipmentId\", Integer.valueOf(7)), map());\n      }\n    }, \"non-string equipmentId\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        Map<String, Object> m = map(\"equipmentId\", \"PUMP-001\");\n        m.put(\"actorId\", \"model-controlled\");\n        return newTool(card, response(Integer.valueOf(20))).invoke(m, map());\n      }\n    }, \"extra actorId input\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        Map<String, Object> m = map(\"equipmentId\", \"PUMP-001\");\n        m.put(\"endpoint\", \"http://model-controlled.invalid\");\n        return newTool(card, response(Integer.valueOf(20))).invoke(m, map());\n      }\n    }, \"extra endpoint input\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        Map<String, Object> m = map(\"equipmentId\", \"PUMP-001\");\n        m.put(\"unexpected\", \"x\");\n        return newTool(card, response(Integer.valueOf(20))).invoke(m, map());\n      }\n    }, \"extra arbitrary input\");\n    expectInvalidInput(new Call() {\n      public Object run() throws Exception {\n        return newTool(card, response(Integer.valueOf(20)))\n            .invoke((Map<String, Object>) null, (Map<String, Object>) null);\n      }\n    }, \"null maps normalize to empty and fail validation\");\n\n    // Response contract rejections must use IllegalStateException and no invention.\n    List<Object> badResponses = new ArrayList<Object>();\n    badResponses.add(null);\n    badResponses.add(\"not-a-map\");\n    badResponses.add(responseWithout(\"equipmentId\"));\n    badResponses.add(responseWithout(\"status\"));\n    badResponses.add(responseWithout(\"temperatureCelsius\"));\n    badResponses.add(responseWithout(\"source\"));\n    badResponses.add(responseWith(\"equipmentId\", Integer.valueOf(1)));\n    badResponses.add(responseWith(\"status\", Integer.valueOf(1)));\n    badResponses.add(responseWith(\"source\", Boolean.TRUE));\n    badResponses.add(responseWith(\"temperatureCelsius\", \"86\"));\n    badResponses.add(responseWith(\"temperatureCelsius\", Double.valueOf(86.5)));\n    badResponses.add(responseWith(\"temperatureCelsius\", null));\n\n    for (int i = 0; i < badResponses.size(); i++) {\n      final Object bad = badResponses.get(i);\n      expectInvalidResponse(new Call() {\n        public Object run() throws Exception {\n          RecordingTool t = new RecordingTool(card);\n          t.response = bad;\n          return new EquipmentTool(t).invoke(map(\"equipmentId\", \"PUMP-001\"), map());\n        }\n      }, \"invalid response index \" + i);\n    }\n\n    // Transport exceptions must propagate unchanged, including identity.\n    RecordingTool failing = new RecordingTool(card);\n    RuntimeException boom = new IllegalStateException(\"transport-boom\");\n    failing.failure = boom;\n    try {\n      new EquipmentTool(failing).invoke(map(\"equipmentId\", \"PUMP-001\"), map());\n      throw new AssertionError(\"transport failure must propagate\");\n    } catch (Exception e) {\n      check(e == boom, \"transport exception object must propagate unchanged\");\n    }\n\n    System.out.println(\"EQUIPMENT_TOOL_TEST_OK\");\n  }\n\n  private static EquipmentTool newTool(ToolCard card, Object response) {\n    RecordingTool t = new RecordingTool(card);\n    t.response = response;\n    return new EquipmentTool(t);\n  }\n\n  private static void expectInvalidInput(Call call, String label) throws Exception {\n    try {\n      call.run();\n      throw new AssertionError(label + \": expected IllegalArgumentException\");\n    } catch (IllegalArgumentException e) {\n      check(\"TOOL_INPUT_CONTRACT_INVALID\".equals(e.getMessage()),\n          label + \": wrong message \" + e.getMessage());\n    }\n  }\n\n  private static void expectInvalidResponse(Call call, String label) throws Exception {\n    try {\n      call.run();\n      throw new AssertionError(label + \": expected IllegalStateException\");\n    } catch (IllegalStateException e) {\n      check(\"TOOL_RESPONSE_CONTRACT_INVALID\".equals(e.getMessage()),\n          label + \": wrong message \" + e.getMessage());\n    }\n  }\n\n  private interface Call {\n    Object run() throws Exception;\n  }\n\n  private static final class RecordingTool extends Tool {\n    Object response;\n    RuntimeException failure;\n    Map<String, Object> lastInputs;\n    Map<String, Object> lastKwargs;\n    int calls;\n\n    RecordingTool(ToolCard card) {\n      super(card);\n    }\n\n    @Override\n    protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs)\n        throws Exception {\n      calls++;\n      lastInputs = inputs;\n      lastKwargs = kwargs;\n      if (failure != null) {\n        throw failure;\n      }\n      return response;\n    }\n  }\n\n  private static Map<String, Object> response(Object temperature) {\n    return map(\n        \"equipmentId\", \"PUMP-001\",\n        \"status\", \"warning\",\n        \"temperatureCelsius\", temperature,\n        \"source\", \"seed-equipment-001@1\");\n  }\n\n  private static Map<String, Object> responseWithout(String key) {\n    Map<String, Object> m = response(Integer.valueOf(20));\n    m.remove(key);\n    return m;\n  }\n\n  private static Map<String, Object> responseWith(String key, Object value) {\n    Map<String, Object> m = response(Integer.valueOf(20));\n    m.put(key, value);\n    return m;\n  }\n\n  private static Map<String, Object> map(Object... pairs) {\n    Map<String, Object> m = new LinkedHashMap<String, Object>();\n    for (int i = 0; i < pairs.length; i += 2) {\n      m.put((String) pairs[i], pairs[i + 1]);\n    }\n    return m;\n  }\n\n  private static void check(boolean condition, String message) {\n    if (!condition) {\n      throw new AssertionError(message);\n    }\n  }\n\n  private static ToolCard makeCard() {\n    try {\n      java.lang.reflect.Constructor<?>[] ctors = ToolCard.class.getDeclaredConstructors();\n      for (java.lang.reflect.Constructor<?> ctor : ctors) {\n        Class<?>[] types = ctor.getParameterTypes();\n        Object[] args = new Object[types.length];\n        for (int i = 0; i < types.length; i++) {\n          args[i] = sample(types[i]);\n        }\n        try {\n          ctor.setAccessible(true);\n          Object card = ctor.newInstance(args);\n          if (card != null) {\n            return (ToolCard) card;\n          }\n        } catch (Throwable ignored) {\n          // Try the next constructor shape.\n        }\n      }\n    } catch (Throwable ignored) {\n      // Fall back to null; the pinned Tool constructor accepts the card value.\n    }\n    return null;\n  }\n\n  private static Object sample(Class<?> type) {\n    if (type == String.class || type == CharSequence.class) {\n      return \"transport\";\n    }\n    if (type == boolean.class || type == Boolean.class) {\n      return Boolean.FALSE;\n    }\n    if (type == int.class || type == Integer.class) {\n      return Integer.valueOf(0);\n    }\n    if (type == long.class || type == Long.class) {\n      return Long.valueOf(0L);\n    }\n    if (type == double.class || type == Double.class) {\n      return Double.valueOf(0.0d);\n    }\n    if (Map.class.isAssignableFrom(type)) {\n      return new LinkedHashMap<String, Object>();\n    }\n    if (Set.class.isAssignableFrom(type)) {\n      return new LinkedHashSet<Object>();\n    }\n    if (java.util.Queue.class.isAssignableFrom(type)) {\n      return new LinkedList<Object>();\n    }\n    if (java.util.Collection.class.isAssignableFrom(type)) {\n      return new ArrayList<Object>();\n    }\n    if (type.isEnum()) {\n      return type.getEnumConstants()[0];\n    }\n    return null;\n  }\n}\n"
+    },
+    {
+      "path": "skills/equipment-query/SKILL.md",
+      "digest": "324601cd7af159ddcc7f4a3d6d4668b46dc7e9d082c95235af1bdbba79fd4d00",
+      "content": "---\nname: equipment-query\ndescription: 按设备编号查询模拟设备状态和温度，并基于已绑定工具返回的事实生成设备状态报告。缺少设备编号时先追问；工具失败时不编造状态、温度或来源。\n---\n\n# 设备查询（equipment-query）\n\n## 适用场景\n\n当用户需要查询某台模拟设备的运行状态、温度或来源，并希望得到一份设备状态报告时使用本 Skill。查询必须通过已绑定的 `get_equipment` 工具取得事实，不执行任何外部脚本。\n\n## 输入\n\n| 字段 | 类型 | 必填 | 说明 |\n| --- | --- | --- | --- |\n| `equipmentId` | string | 是 | 设备编号，必须为非空字符串，例如 `PUMP-001`。前后空白视为未提供有效编号。 |\n\n约束：\n\n- 只允许 `equipmentId` 一个业务输入字段。\n- 不要接受或传递 `actorId`、`endpoint`、凭据、令牌等模型侧参数。身份、认证与端点由运行时绑定的 transport 负责。\n- 若用户未提供设备编号，或编号为空/纯空白，先向用户追问设备编号，**不要调用工具**。\n\n## 调用步骤\n\n1. 从用户消息中提取设备编号，检查其是否为非空字符串。\n2. 编号缺失或无效时，直接追问用户，例如：“请提供需要查询的设备编号。”\n3. 编号有效时，调用 `get_equipment`，参数仅为一个对象：\n   ```json\n   { \"equipmentId\": \"PUMP-001\" }\n   ```\n4. 保留运行时传入的可信 kwargs，不要在模型参数中自行构造身份、端点或凭证。\n5. 读取工具返回的四个字段，并据此撰写设备状态报告；报告中的事实必须与工具返回值一致。\n\n## 响应字段\n\n| 字段 | 类型 | 说明 |\n| --- | --- | --- |\n| `equipmentId` | string | 被查询的设备编号。 |\n| `status` | string | 设备状态，例如 `normal`、`warning`。 |\n| `temperatureCelsius` | integer | 设备温度（摄氏度），可能为负数或零，必须原样保留。 |\n| `source` | string | 事实来源标识，例如 `seed-equipment-001@1`。 |\n\n工具只返回以上四个字段。报告中不要补充工具未返回的状态、温度、来源或其他字段。\n\n## 报告要求\n\n- 明确列出设备编号、状态、温度（摄氏度）和来源。\n- 数值必须与工具返回完全一致，负数与零不得改写。\n- 可以给出基于事实的建议，但必须与返回状态相符，不得虚构未提供的遥测数据。\n\n## 错误与不编造处理\n\n- `TOOL_INPUT_CONTRACT_INVALID`：说明输入不符合要求（只接受非空 `equipmentId`），请用户补充或更正设备编号。不要重试猜测参数，也不要调用其他工具替代。\n- `TOOL_RESPONSE_CONTRACT_INVALID`：告知用户当前无法取得有效的设备数据。不要猜测、补齐或编造缺失字段。\n- 传输异常或超时：明确报告本次查询失败。不要编造设备状态、温度或来源，不要声称已读取未实际返回的数据。\n- 任何失败场景下都不得写入或修改设备状态；本 Skill 仅执行只读查询。\n"
+    },
+    {
+      "path": "test-plan.json",
+      "digest": "e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887",
+      "content": "{\n  \"baselineDigest\": \"793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1\",\n  \"cases\": [\n    {\n      \"caseId\": \"TC-001\",\n      \"requirementIds\": [\n        \"BR-001\",\n        \"BR-002\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"equipment-report-schema\",\n          \"expected\": \"equipment-report@1\"\n        },\n        {\n          \"ruleId\": \"equipment-facts\",\n          \"expected\": {\n            \"source\": \"seed-equipment-001@1\",\n            \"status\": \"warning\",\n            \"equipmentId\": \"PUMP-001\",\n            \"temperatureCelsius\": 86\n          }\n        },\n        {\n          \"ruleId\": \"write-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“查询 PUMP-001 的状态、温度、来源并提供建议。”触发被测入口，并使用记录型 Tool transport 提供 seed-equipment-001@1 的正常设备数据。\",\n        \"核验运行成功，且返回结果符合 equipment-report@1 报告结构。\",\n        \"检查记录型 transport 的外部调用日志，确认只发生一次按 equipmentId=PUMP-001 的读取调用且写调用次数为 0；同时核验报告事实严格等于 equipmentId=PUMP-001、status=warning、temperatureCelsius=86、source=seed-equipment-001@1。\"\n      ]\n    },\n    {\n      \"caseId\": \"TC-002\",\n      \"requirementIds\": [\n        \"BR-001\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"asks-for-equipment-id\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"all-business-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“请查询设备状态。”触发被测入口，输入中不包含任何 equipmentId。\",\n        \"核验运行成功，且输出明确向用户追问缺失的设备编号。\",\n        \"检查记录型 transport 的外部调用日志，确认业务工具调用总数为 0，未发生任何读取或写入调用。\"\n      ]\n    },\n    {\n      \"caseId\": \"TC-003\",\n      \"requirementIds\": [\n        \"BR-002\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"tool-error-evidence\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"failure-output-no-facts\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"write-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“查询 PUMP-001 的状态。”触发被测入口，并让记录型 Tool transport 在读取 equipmentId=PUMP-001 时抛出超时异常。\",\n        \"核验运行成功且输出保留可追溯的工具错误证据。\",\n        \"检查失败输出，确认不含任何设备状态或数据来源事实；同时检查记录型 transport 的外部调用日志，确认写调用次数为 0，且超时未被吞掉或改写为编造数据。\"\n      ]\n    }\n  ]\n}\n"
+    }
+  ],
+  "cancelledJob": {
+    "id": "0e2bc0f0-2360-43f6-8eff-8d908a23be2f",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "running"
+      },
+      {
+        "role": "developer",
+        "status": "queued"
+      }
+    ],
+    "status": "cancelling",
+    "agentId": "18cef271-de7d-4f06-be3d-1e4e0fd65751",
+    "createdAt": "2026-10-21T23:06:23.874Z",
+    "updatedAt": "2026-10-21T23:07:53.108Z",
+    "baselineId": "51fbaca7-df13-4c83-9da4-c2e2391fe55b",
+    "diagnostic": "ENGINEERING_STOP_UNCONFIRMED",
+    "snapshotId": "a13c01b8-d1d2-4c67-8295-ca251e97a017",
+    "inputDigest": "081270ab8656043d50c98840f9bfc40509582f510667fdf635e9f604b2366c1a",
+    "baselineDigest": "793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1"
+  },
+  "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'cancelling'\n- 'cancelled'\n          ^\n",
+  "finishedAt": "2026-10-21T23:07:54.030Z"
+}

@@ -1,0 +1,184 @@
+{
+  "checkedAt": "2026-10-21T22:26:40.726Z",
+  "modelMode": "live-deepseek",
+  "draftId": "41ff4e8e-5399-42b8-b612-16e7adbab149",
+  "snapshotId": "14dba9bc-faca-43c4-9288-876a2421952e",
+  "target": {
+    "id": "2b0a1b61-7744-4c5c-86b6-f9cf181564a4",
+    "status": "ready",
+    "agentId": "41ff4e8e-5399-42b8-b612-16e7adbab149",
+    "binding": {
+      "mockDigest": "c701102f439b795371e06f1539febd981ca9ba91bd78acf88bf58cb32667e294",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
+      "artifactDigest": "f699eb87a05bdd63dc2363e4bc0a34a8aed040a8486e3669c5b2960f52f18b2b",
+      "baselineDigest": "c0db41cfbe984d393ec93ebf289fa0bfd38338846534824885125569a1411f31",
+      "snapshotDigest": "4320750a456e84ac1991a2ef38df639cf6e9df71b6eb0414f7f0ac28b9cb9c76",
+      "compatibilityKey": "f82467c634461b972f3ef93f64eaa82335292b4ab41388ac5ad90b4391d26f26"
+    },
+    "failure": false,
+    "purpose": "preview",
+    "createdAt": "2026-10-21T22:26:23.423Z",
+    "expiresAt": "2026-10-21T23:26:23.423Z",
+    "updatedAt": "2026-10-21T22:26:30.680Z",
+    "snapshotId": "14dba9bc-faca-43c4-9288-876a2421952e",
+    "candidateId": "d0de7c79-f2e1-4060-b657-7d664f0e76e2",
+    "inputDigest": "c956b0a7184cf237108624a8d71691f6f432317f68d0834742ae02d632690fbe",
+    "deploymentId": "c39a9762-91eb-4a8d-80f5-763f8078d18a",
+    "environmentId": "ca681988-2b51-405e-a5b1-0f810543f15c",
+    "clientRequestId": "9cd992b6-d0ea-4a62-bce2-fa1d6327f034",
+    "environmentConfig": {
+      "seed": "enterprise-default@1",
+      "clock": "2026-10-21T08:00:00.000Z",
+      "fault": "normal"
+    },
+    "requirementBaselineId": "1bf1e611-9cae-4003-a329-f3feb089ba19"
+  },
+  "evidence": {
+    "requestId": "dbf65548-0354-43b4-8b75-6a6e3780afe9",
+    "runId": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b",
+    "conversationId": "e772cc98-8426-41cd-9006-ae43ebfe6e87",
+    "agentVersion": null,
+    "testDeploymentId": "2b0a1b61-7744-4c5c-86b6-f9cf181564a4",
+    "candidateId": "d0de7c79-f2e1-4060-b657-7d664f0e76e2",
+    "artifactDigest": "f699eb87a05bdd63dc2363e4bc0a34a8aed040a8486e3669c5b2960f52f18b2b",
+    "actorId": "U1002",
+    "environmentId": "ca681988-2b51-405e-a5b1-0f810543f15c",
+    "deploymentId": "c39a9762-91eb-4a8d-80f5-763f8078d18a",
+    "externalEvidence": [
+      {
+        "seq": 32,
+        "input": {
+          "equipmentId": "PUMP-001"
+        },
+        "runId": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b",
+        "result": {
+          "source": "seed-equipment-001@1",
+          "status": "warning",
+          "equipmentId": "PUMP-001",
+          "temperatureCelsius": 86
+        },
+        "status": 200,
+        "actorId": "U1002",
+        "createdAt": "2026-10-21T22:26:34.352Z",
+        "operation": "equipment-status",
+        "stateRevision": 1
+      }
+    ]
+  },
+  "history": {
+    "requestId": "dbf65548-0354-43b4-8b75-6a6e3780afe9",
+    "runId": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b",
+    "conversationId": "e772cc98-8426-41cd-9006-ae43ebfe6e87",
+    "agentVersion": null,
+    "testDeploymentId": "2b0a1b61-7744-4c5c-86b6-f9cf181564a4",
+    "candidateId": "d0de7c79-f2e1-4060-b657-7d664f0e76e2",
+    "artifactDigest": "f699eb87a05bdd63dc2363e4bc0a34a8aed040a8486e3669c5b2960f52f18b2b",
+    "request": {
+      "id": "dbf65548-0354-43b4-8b75-6a6e3780afe9",
+      "input": "查询 PUMP-001 的状态、温度与来源。",
+      "runId": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b",
+      "status": "admitted",
+      "actorId": "U1002",
+      "agentId": "41ff4e8e-5399-42b8-b612-16e7adbab149",
+      "createdAt": "2026-10-21T22:26:31.586Z",
+      "updatedAt": "2026-10-21T22:26:32.035Z",
+      "candidateId": "d0de7c79-f2e1-4060-b657-7d664f0e76e2",
+      "inputDigest": "2a2fa50bf095aa4a156aeb7fb995f763c32d461d6a20075b468f2ebd10f17823",
+      "agentVersion": null,
+      "environmentId": "ca681988-2b51-405e-a5b1-0f810543f15c",
+      "artifactDigest": "f699eb87a05bdd63dc2363e4bc0a34a8aed040a8486e3669c5b2960f52f18b2b",
+      "conversationId": "e772cc98-8426-41cd-9006-ae43ebfe6e87",
+      "clientRequestId": "8eceaedd-20ea-4410-aa82-e3116e089efb",
+      "testDeploymentId": "2b0a1b61-7744-4c5c-86b6-f9cf181564a4"
+    },
+    "run": {
+      "id": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b",
+      "input": "查询 PUMP-001 的状态、温度与来源。",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"设备处于警告状态，温度达 86°C，偏高。建议尽快检查冷却与润滑系统、确认负载与散热是否正常，并安排现场巡检；若温度继续上升，请按规程降载或停机检修。\"}"
+        },
+        "conversation_id": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b"
+      },
+      "status": "succeeded",
+      "actorId": "U1002",
+      "started": true,
+      "createdAt": "2026-10-21T22:26:32.035Z",
+      "updatedAt": "2026-10-21T22:26:36.593Z",
+      "diagnostic": "",
+      "snapshotId": "14dba9bc-faca-43c4-9288-876a2421952e",
+      "inputDigest": "272df333575e47a3403edfc54a8c058b36a779196a49bd0111761e5ee1b7d01e",
+      "deploymentId": "c39a9762-91eb-4a8d-80f5-763f8078d18a",
+      "invocationId": "dbf65548-0354-43b4-8b75-6a6e3780afe9",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "sharedTarget": {
+        "kind": "test",
+        "candidateId": "d0de7c79-f2e1-4060-b657-7d664f0e76e2",
+        "testDeploymentId": "2b0a1b61-7744-4c5c-86b6-f9cf181564a4"
+      },
+      "environmentId": "ca681988-2b51-405e-a5b1-0f810543f15c",
+      "artifactDigest": "f699eb87a05bdd63dc2363e4bc0a34a8aed040a8486e3669c5b2960f52f18b2b",
+      "conversationId": "e772cc98-8426-41cd-9006-ae43ebfe6e87",
+      "snapshotDigest": "4320750a456e84ac1991a2ef38df639cf6e9df71b6eb0414f7f0ac28b9cb9c76",
+      "cancelRequested": false,
+      "clientRequestId": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b",
+      "externalEvidence": [
+        {
+          "seq": 32,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "3459913e-a83e-4b3f-a1a3-2e8e020b6a2b",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-21T22:26:34.352Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "environmentConfig": {
+        "seed": "enterprise-default@1",
+        "clock": "2026-10-21T08:00:00.000Z",
+        "fault": "normal"
+      },
+      "dependencyFailures": 0
+    },
+    "actions": []
+  },
+  "releases": {
+    "pointer": null,
+    "operations": [],
+    "versions": [],
+    "cleanupPending": []
+  }
+}

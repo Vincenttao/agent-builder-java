@@ -1,0 +1,18 @@
+{
+  "id": "1f989eb2-8755-4b87-b867-914dacd560e2",
+  "commandId": "prepare-sdk",
+  "executable": "jar",
+  "args": [
+    "--extract",
+    "--file",
+    "/opt/builder/runtime-bridge.jar",
+    "BOOT-INF/classes",
+    "BOOT-INF/lib"
+  ],
+  "startedAt": "2026-10-22T00:31:54.955Z",
+  "finishedAt": "2026-10-22T00:31:55.733Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "",
+  "truncated": false
+}

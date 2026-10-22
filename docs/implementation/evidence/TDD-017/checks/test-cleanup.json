@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-22T02:50:17.937Z",
+  "removed": [
+    "it_platform_a4ad003293414ae381d5a46f1c64770a",
+    "it_business_a4ad003293414ae381d5a46f1c64770a",
+    "workorder_e66ac35e2f0b430a8fbf2f2d3abd342a",
+    "workorder_mock_e66ac35e2f0b430a8fbf2f2d3abd342a"
+  ],
+  "scope": "Exact temporary schemas from this batch only; frozen file evidence retained"
+}

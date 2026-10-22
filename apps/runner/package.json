@@ -1,0 +1,11 @@
+{
+  "name": "@agent-builder/runner",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Trusted-local Java deployment and execution runner with pinned OpenCode toolchain",
+  "dependencies": {
+    "fastify": "^5.12.7",
+    "opencode-ai": "1.19.3"
+  }
+}

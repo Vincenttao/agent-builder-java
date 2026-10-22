@@ -1,0 +1,5 @@
+
+> agent-builder@0.1.0 test D:\agent-builder-java
+> vitest run --project unit --project contract "--maxWorkers=4" "--reporter=json" "--outputFile=.cache/tdd016/unit-contract.json"
+
+JSON report written to D:/agent-builder-java/.cache/tdd016/unit-contract.json

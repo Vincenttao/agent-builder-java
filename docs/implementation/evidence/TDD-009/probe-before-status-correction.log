@@ -1,0 +1,21 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'stopped'
+- 'interrupted'
+
+    at file:///D:/agent-builder-java/scripts/probe-release-restart.mjs:31:118
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'stopped',
+  expected: 'interrupted',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.20.0

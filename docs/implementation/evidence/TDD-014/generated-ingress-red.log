@@ -1,0 +1,22 @@
+
+ RUN  v4.1.12 D:/agent-builder-java
+
+ ❯ |integration| tests/integration/test-deployments.test.ts (7 tests | 1 failed) 4113ms
+   × runs a registered generated artifact through the first-candidate ingress and blocks missing bytes without a template fallback 93ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |integration| tests/integration/test-deployments.test.ts > runs a registered generated artifact through the first-candidate ingress and blocks missing bytes without a template fallback
+Error: 候选制品或模型环境不可执行
+ ❯ TestDeploymentService.create apps/server/src/candidates/test-deployment-service.ts:38:154
+
+ ❯ tests/integration/test-deployments.test.ts:56:41
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 9 passed (10)
+   Start at  07:38:04
+   Duration  4.96s (transform 636ms, setup 0ms, import 979ms, tests 4.66s, environment 0ms)
+

@@ -1,0 +1,14 @@
+{"stage":"admitted","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","jobId":"a817e9b6-bdfc-4cc8-9e4d-105fbcb590a9"}
+{"stage":"development","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","status":"queued","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
+{"stage":"development","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","status":"running","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
+{"stage":"development","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","status":"running","roles":[{"role":"tester","status":"running"},{"role":"developer","status":"queued"}]}
+{"stage":"development","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f0a3bcaffeIW8Ps18vF5kPTR"},{"role":"developer","status":"running"}]}
+{"stage":"development","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","status":"built","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f0a3bcaffeIW8Ps18vF5kPTR"},{"role":"developer","status":"completed","sessionId":"ses_e9f09daf1ffeFeAoM2rhsuwKAR"}]}
+{"stage":"candidate-ready","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","candidateId":"a6dca8c4-20a0-4750-9e02-ef3c2e44cf42","artifactDigest":"41bb78136c0bff415cb97990ab40f5c2f0b864b81296dbb25c7cce0a6b17b8dc"}
+{"stage":"validation-started","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","validationId":"0df7c0e2-4c5f-497c-ab9c-7b0bc0f18527"}
+{"stage":"validation-progress","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","completed":0,"results":[]}
+{"stage":"validation-progress","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","completed":1,"results":[{"caseId":"TC-001","status":"passed","reasons":[]}]}
+{"stage":"validation-progress","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","completed":2,"results":[{"caseId":"TC-001","status":"passed","reasons":[]},{"caseId":"TC-002","status":"passed","reasons":[]}]}
+{"stage":"validation-progress","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","completed":3,"results":[{"caseId":"TC-001","status":"passed","reasons":[]},{"caseId":"TC-002","status":"passed","reasons":[]},{"caseId":"TC-003","status":"passed","reasons":[]}]}
+{"stage":"release-started","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","releaseId":"12887f89-1e60-4a84-bc26-20b08fe684ef"}
+{"stage":"passed","id":"c5c74956-bac1-47a3-b416-2b9e972a9127","jobId":"a817e9b6-bdfc-4cc8-9e4d-105fbcb590a9","candidateId":"a6dca8c4-20a0-4750-9e02-ef3c2e44cf42"}

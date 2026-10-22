@@ -1,0 +1,384 @@
+{
+  "role": "tester",
+  "sessionId": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+  "status": "completed",
+  "publicParts": [
+    {
+      "id": "prt_160b4d3a1001QV1pDpwL2OYDsA",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4a25f001Bp4OU5N3M2u014",
+      "type": "text",
+      "text": "I'll start by reading the required context and engineering skill files.",
+      "time": {
+        "start": 1792623825825,
+        "end": 1792623826000
+      }
+    },
+    {
+      "id": "prt_160b4d3ce001od1YLXvK6iZO3l",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4a25f001Bp4OU5N3M2u014",
+      "type": "tool",
+      "callID": "call_00_ET_HPfmTWbSSKgre3FwC2943703",
+      "tool": "builder_read",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "context.json"
+        },
+        "output": "{\n  \"profile\": {\n    \"version\": \"equipment-java@2\",\n    \"executionMode\": \"trusted-local\",\n    \"scope\": [\n      \"tool\",\n      \"skill\"\n    ],\n    \"dependencies\": [\n      \"openjiuwen-core@0.1.17\",\n      \"agent-builder-bridge@0.1.0\"\n    ],\n    \"connectionProfile\": \"mock-equipment@1\",\n    \"templates\": {\n      \"toolStub\": \"72598841b7d919e7aae955bb2d1bffae68308b7008f20b004ecfb0334e04b39a\",\n      \"toolContract\": \"260e4ad50931eef4902c151bb05dadff719b150f4ee498c622526d22accd279a\",\n      \"platformContractTest\": \"7a63edea6e6f280cf7c31871a3a0a3358dd96cb6c78fb8f9f8d75ea4be705f2f\",\n      \"tester\": \"5aec62c947dd46676953fae5eca195f841546d1bdef8c6070d066f39206d5a36\",\n      \"developer\": \"3f833d68bb3521407f88db7cb25a1a1b7234266940e4011467b6288426489bb9\"\n    },\n    \"engineVersion\": \"1.19.3\",\n    \"model\": \"deepseek-local/deepseek-v4-flash\",\n    \"maxSteps\": 16,\n    \"maxTaskSeconds\": 900,\n    \"maxCommandSeconds\": 60,\n    \"maxFileBytes\": 32768,\n    \"maxOutputBytes\": 262144,\n    \"commands\": [\n      \"unit-test\",\n      \"build\"\n    ],\n    \"developerFiles\": [\n      \"src/generated/EquipmentTool.java\",\n      \"test/generated/EquipmentToolTest.java\",\n      \"skills/equipment-query/SKILL.md\"\n    ],\n    \"testerFiles\": [\n      \"tests/plan.json\",\n      \"tests/proposal.json\"\n    ]\n  },\n  \"baseline\": {\n    \"id\": \"51fbaca7-df13-4c83-9da4-c2e2391fe55b\",\n    \"digest\": \"793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1\",\n    \"content\": {\n      \"seed\": \"enterprise-default@1\",\n      \"cases\": [\n        {\n          \"id\": \"TC-001\",\n          \"fault\": \"normal\",\n          \"input\": \"查询 PUMP-001 的状态、温度、来源并提供建议。\",\n          \"title\": \"设备正常查询\",\n          \"required\": true,\n          \"scenario\": \"equipment-normal\",\n          \"assertions\": [\n            {\n              \"ruleId\": \"run-succeeded\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"equipment-report-schema\",\n              \"expected\": \"equipment-report@1\"\n            },\n            {\n              \"ruleId\": \"equipment-facts\",\n              \"expected\": {\n                \"source\": \"seed-equipment-001@1\",\n                \"status\": \"warning\",\n                \"equipmentId\": \"PUMP-001\",\n                \"temperatureCelsius\": 86\n              }\n            },\n            {\n              \"ruleId\": \"write-call-count\",\n              \"expected\": 0\n            }\n          ],\n          \"requirementIds\": [\n            \"BR-001\",\n            \"BR-002\",\n            \"BR-003\"\n          ]\n        },\n        {\n          \"id\": \"TC-002\",\n          \"fault\": \"normal\",\n          \"input\": \"请查询设备状态。\",\n          \"title\": \"缺少设备编号\",\n          \"required\": true,\n          \"scenario\": \"equipment-missing-id\",\n          \"assertions\": [\n            {\n              \"ruleId\": \"run-succeeded\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"asks-for-equipment-id\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"all-business-call-count\",\n              \"expected\": 0\n            }\n          ],\n          \"requirementIds\": [\n            \"BR-001\",\n            \"BR-003\"\n          ]\n        },\n        {\n          \"id\": \"TC-003\",\n          \"fault\": \"read-timeout\",\n          \"input\": \"查询 PUMP-001 的状态。\",\n          \"title\": \"只读工具超时\",\n          \"required\": true,\n          \"scenario\": \"equipment-tool-failure\",\n          \"assertions\": [\n            {\n              \"ruleId\": \"run-succeeded\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"tool-error-evidence\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"failure-output-no-facts\",\n              \"expected\": true\n            },\n            {\n              \"ruleId\": \"write-call-count\",\n              \"expected\": 0\n            }\n          ],\n          \"requirementIds\": [\n            \"BR-002\",\n            \"BR-003\"\n          ]\n        }\n      ],\n      \"draftId\": \"18cef271-de7d-4f06-be3d-1e4e0fd65751\",\n      \"audience\": \"企业 AI 平台开发人员\",\n      \"templateId\": \"equipment-read@1\",\n      \"requirements\": [\n        {\n          \"id\": \"BR-001\",\n          \"text\": \"按设备编号查询模拟设备状态和温度\",\n          \"source\": \"user\"\n        },\n        {\n          \"id\": \"BR-002\",\n          \"text\": \"设备状态报告\",\n          \"source\": \"user\"\n        },\n        {\n          \"id\": \"BR-003\",\n          \"text\": \"通过已绑定工具取得事实；缺参数先追问，工具失败时不编造状态或来源。\",\n          \"source\": \"template\"\n        }\n      ],\n      \"rulesVersion\": \"equipment-assertions@1\",\n      \"draftRevision\": 1,\n      \"schemaVersion\": 1\n    },\n    \"draftId\": \"18cef271-de7d-4f06-be3d-1e4e0fd65751\",\n    \"confirmedAt\": \"2026-10-21T23:03:06.554Z\",\n    \"confirmedBy\": \"local-operator\",\n    \"draftRevision\": 1\n  },\n  \"goal\": \"按设备编号查询模拟设备状态和温度\",\n  \"contract\": \"Implement generated.EquipmentTool extending the pinned OpenJiuwen Tool. Constructor EquipmentTool(Tool transport) retains transport.getCard().\\ninvokeInternal validates inputs before calling transport.invoke(inputs,kwargs), preserving trusted runtime kwargs. Only equipmentId:string is accepted, nonblank. Reject every extra input field, including actorId and endpoint. Throw IllegalArgumentException(\\\"TOOL_INPUT_CONTRACT_INVALID\\\") on invalid inputs with zero transport calls.\\nPinned SDK behavior: Tool.invoke copies both input and kwargs maps before invokeInternal, even with no callbacks. Verify map values with Map.equals, NEVER map object identity (==). The same original ToolCard and propagated exception objects may be checked by identity. Do not override Tool.invoke or bypass its SDK callback lifecycle. Null input/kwargs maps are normalized by the SDK to empty maps before invokeInternal. The test should start with an uncaught valid invocation so the stub really exits nonzero; catching IMPLEMENTATION_REQUIRED and returning normally is not red.\\nThe transport response is an Object. A valid response is a Map containing equipmentId:string, status:string, temperatureCelsius:Integer or Long, source:string. Missing/wrong types must throw IllegalStateException(\\\"TOOL_RESPONSE_CONTRACT_INVALID\\\"); do not invent data, retry, or coerce strings into numbers. Return only these four original fields. Preserve negative temperatures and zero. Transport exceptions must propagate unchanged.\\nUse only java.util.* and com.openjiuwen.core.foundation.tool.Tool/ToolCard imports. The transport owns HTTP, auth references and timeout; generated code must not take credentials, identity or endpoint from model arguments. No new dependency, shell, network client or process API.\\nThe unit test must be generated.EquipmentToolTest with public static void main(String[] args) throws Exception and explicit assertions that throw on failure; -ea is also enabled. Use a recording Tool subclass as transport. Do not use JUnit or any other dependency. The first test invocation must compile and fail with IMPLEMENTATION_REQUIRED from the stub; compilation failures do not count as red. After valid red the unit test is frozen; implement the Tool without weakening the test. Run unit-test again and then build. The platform runs its own contract checks during build.\\nWrite skills/equipment-query/SKILL.md with name equipment-query, a description, get_equipment invocation steps, equipmentId input, response field explanations and explicit error/no-fabrication handling. This is a business Skill instruction plus Tool adapter; it does not execute external scripts.\\n\"\n}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792623825924,
+          "end": 1792623826021
+        }
+      }
+    },
+    {
+      "id": "prt_160b4d411001ybzRFGl4VnwU9L",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4a25f001Bp4OU5N3M2u014",
+      "type": "tool",
+      "callID": "call_01_ET_rALGZNWqicqa12ZfSteb5820",
+      "tool": "builder_read",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "engineering-skill.md"
+        },
+        "output": "# OpenJiuwen acceptance testing @1\nRead context.json. Before implementation, write tests/plan.json using the confirmed baseline. Include baselineDigest and exactly one case for every baseline.content.cases item: caseId, requirementIds, assertions copied without changes, and steps (at least two concrete strings describing invocation and external-state verification). Requirements, expected values and required cases are immutable. Changes may only be proposed in tests/proposal.json. You may read implementation files but cannot modify them. A plan is not a passing business report. Finish after saving the valid plan.",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792623825993,
+          "end": 1792623826035
+        }
+      }
+    },
+    {
+      "id": "prt_160b4e04a001AvR1zwj37rifOM",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4a25f001Bp4OU5N3M2u014",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 841,
+        "input": 759,
+        "output": 82,
+        "reasoning": 0,
+        "cache": {
+          "read": 0,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160b4ec4c001xNlAPqXZUNiJPf",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4e0b3001Nhhk1JmcWDTm34",
+      "type": "text",
+      "text": "Now let me inspect the implementation files the plan will exercise.",
+      "time": {
+        "start": 1792623832140,
+        "end": 1792623832398
+      }
+    },
+    {
+      "id": "prt_160b4ec59001WY09jD2EO4pUNV",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4e0b3001Nhhk1JmcWDTm34",
+      "type": "tool",
+      "callID": "call_00_yFfRYi3fZYONBeHIDHy33872",
+      "tool": "builder_read",
+      "state": {
+        "status": "error",
+        "input": {
+          "path": "src/generated/EquipmentTool.java"
+        },
+        "error": "FILE_OPERATION_NOT_ALLOWED",
+        "time": {
+          "start": 1792623832193,
+          "end": 1792623832291
+        }
+      }
+    },
+    {
+      "id": "prt_160b4ec91001nEfDpsxA29Ka3D",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4e0b3001Nhhk1JmcWDTm34",
+      "type": "tool",
+      "callID": "call_01_61lyRbDVO0slKVwi1l6W0824",
+      "tool": "builder_read",
+      "state": {
+        "status": "error",
+        "input": {
+          "path": "test/generated/EquipmentToolTest.java"
+        },
+        "error": "FILE_OPERATION_NOT_ALLOWED",
+        "time": {
+          "start": 1792623832275,
+          "end": 1792623832307
+        }
+      }
+    },
+    {
+      "id": "prt_160b4eceb001R8rwuiMrogVpar",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4e0b3001Nhhk1JmcWDTm34",
+      "type": "tool",
+      "callID": "call_02_AZndJOfn9jRog30lzzAK4840",
+      "tool": "builder_read",
+      "state": {
+        "status": "error",
+        "input": {
+          "path": "skills/equipment-query/SKILL.md"
+        },
+        "error": "FILE_OPERATION_NOT_ALLOWED",
+        "time": {
+          "start": 1792623832377,
+          "end": 1792623832406
+        }
+      }
+    },
+    {
+      "id": "prt_160b4ed3f00115My2XVhke0CSK",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4e0b3001Nhhk1JmcWDTm34",
+      "type": "tool",
+      "callID": "call_03_aOcFnIKdq6qOj271tSOe9876",
+      "tool": "builder_profile",
+      "state": {
+        "status": "completed",
+        "input": {},
+        "output": "{\"profile\":{\"version\":\"equipment-java@2\",\"executionMode\":\"trusted-local\",\"scope\":[\"tool\",\"skill\"],\"dependencies\":[\"openjiuwen-core@0.1.17\",\"agent-builder-bridge@0.1.0\"],\"connectionProfile\":\"mock-equipment@1\",\"templates\":{\"toolStub\":\"72598841b7d919e7aae955bb2d1bffae68308b7008f20b004ecfb0334e04b39a\",\"toolContract\":\"260e4ad50931eef4902c151bb05dadff719b150f4ee498c622526d22accd279a\",\"platformContractTest\":\"7a63edea6e6f280cf7c31871a3a0a3358dd96cb6c78fb8f9f8d75ea4be705f2f\",\"tester\":\"5aec62c947dd46676953fae5eca195f841546d1bdef8c6070d066f39206d5a36\",\"developer\":\"3f833d68bb3521407f88db7cb25a1a1b7234266940e4011467b6288426489bb9\"},\"engineVersion\":\"1.19.3\",\"model\":\"deepseek-local/deepseek-v4-flash\",\"maxSteps\":16,\"maxTaskSeconds\":900,\"maxCommandSeconds\":60,\"maxFileBytes\":32768,\"maxOutputBytes\":262144,\"commands\":[\"unit-test\",\"build\"],\"developerFiles\":[\"src/generated/EquipmentTool.java\",\"test/generated/EquipmentToolTest.java\",\"skills/equipment-query/SKILL.md\"],\"testerFiles\":[\"tests/plan.json\",\"tests/proposal.json\"]},\"state\":{}}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792623832392,
+          "end": 1792623832419
+        }
+      }
+    },
+    {
+      "id": "prt_160b4f054001AgYBvszkBHY92c",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4e0b3001Nhhk1JmcWDTm34",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 3166,
+        "input": 2191,
+        "output": 139,
+        "reasoning": 68,
+        "cache": {
+          "read": 768,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160b50f7e001c8FfdErgHDmpE2",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4f08e001vGhi1HmVo944sR",
+      "type": "text",
+      "text": "I have the confirmed baseline. I'll now write the independent test plan with every assertion preserved verbatim.",
+      "time": {
+        "start": 1792623841150,
+        "end": 1792623844124
+      }
+    },
+    {
+      "id": "prt_160b50fff001BYw4oF6Jq4BOaT",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4f08e001vGhi1HmVo944sR",
+      "type": "tool",
+      "callID": "call_00_R0bc1YDS5rXvffCLn9I92160",
+      "tool": "builder_write",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "tests/plan.json",
+          "content": "{\n  \"baselineDigest\": \"793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1\",\n  \"cases\": [\n    {\n      \"caseId\": \"TC-001\",\n      \"requirementIds\": [\n        \"BR-001\",\n        \"BR-002\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"equipment-report-schema\",\n          \"expected\": \"equipment-report@1\"\n        },\n        {\n          \"ruleId\": \"equipment-facts\",\n          \"expected\": {\n            \"source\": \"seed-equipment-001@1\",\n            \"status\": \"warning\",\n            \"equipmentId\": \"PUMP-001\",\n            \"temperatureCelsius\": 86\n          }\n        },\n        {\n          \"ruleId\": \"write-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“查询 PUMP-001 的状态、温度、来源并提供建议。”触发被测入口，并使用记录型 Tool transport 提供 seed-equipment-001@1 的正常设备数据。\",\n        \"核验运行成功，且返回结果符合 equipment-report@1 报告结构。\",\n        \"检查记录型 transport 的外部调用日志，确认只发生一次按 equipmentId=PUMP-001 的读取调用且写调用次数为 0；同时核验报告事实严格等于 equipmentId=PUMP-001、status=warning、temperatureCelsius=86、source=seed-equipment-001@1。\"\n      ]\n    },\n    {\n      \"caseId\": \"TC-002\",\n      \"requirementIds\": [\n        \"BR-001\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"asks-for-equipment-id\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"all-business-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“请查询设备状态。”触发被测入口，输入中不包含任何 equipmentId。\",\n        \"核验运行成功，且输出明确向用户追问缺失的设备编号。\",\n        \"检查记录型 transport 的外部调用日志，确认业务工具调用总数为 0，未发生任何读取或写入调用。\"\n      ]\n    },\n    {\n      \"caseId\": \"TC-003\",\n      \"requirementIds\": [\n        \"BR-002\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"tool-error-evidence\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"failure-output-no-facts\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"write-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“查询 PUMP-001 的状态。”触发被测入口，并让记录型 Tool transport 在读取 equipmentId=PUMP-001 时抛出超时异常。\",\n        \"核验运行成功且输出保留可追溯的工具错误证据。\",\n        \"检查失败输出，确认不含任何设备状态或数据来源事实；同时检查记录型 transport 的外部调用日志，确认写调用次数为 0，且超时未被吞掉或改写为编造数据。\"\n      ]\n    }\n  ]\n}\n"
+        },
+        "output": "{\"path\":\"tests/plan.json\",\"digest\":\"e675486232a7792ac46b62ddc8cc99080abb9a7e3f8608f9d27638f7931c5887\"}",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792623844115,
+          "end": 1792623844138
+        }
+      }
+    },
+    {
+      "id": "prt_160b51deb001KC5DFKX5njo289",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b4f08e001vGhi1HmVo944sR",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 5698,
+        "input": 541,
+        "output": 878,
+        "reasoning": 1207,
+        "cache": {
+          "read": 3072,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160b526090013bsZjRfGhr3TE1",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b51e17001Q0togPJD9At9kg",
+      "type": "tool",
+      "callID": "call_00_27jlzz4UzHQIATIOhNpz1831",
+      "tool": "builder_read",
+      "state": {
+        "status": "completed",
+        "input": {
+          "path": "tests/plan.json"
+        },
+        "output": "{\n  \"baselineDigest\": \"793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1\",\n  \"cases\": [\n    {\n      \"caseId\": \"TC-001\",\n      \"requirementIds\": [\n        \"BR-001\",\n        \"BR-002\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"equipment-report-schema\",\n          \"expected\": \"equipment-report@1\"\n        },\n        {\n          \"ruleId\": \"equipment-facts\",\n          \"expected\": {\n            \"source\": \"seed-equipment-001@1\",\n            \"status\": \"warning\",\n            \"equipmentId\": \"PUMP-001\",\n            \"temperatureCelsius\": 86\n          }\n        },\n        {\n          \"ruleId\": \"write-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“查询 PUMP-001 的状态、温度、来源并提供建议。”触发被测入口，并使用记录型 Tool transport 提供 seed-equipment-001@1 的正常设备数据。\",\n        \"核验运行成功，且返回结果符合 equipment-report@1 报告结构。\",\n        \"检查记录型 transport 的外部调用日志，确认只发生一次按 equipmentId=PUMP-001 的读取调用且写调用次数为 0；同时核验报告事实严格等于 equipmentId=PUMP-001、status=warning、temperatureCelsius=86、source=seed-equipment-001@1。\"\n      ]\n    },\n    {\n      \"caseId\": \"TC-002\",\n      \"requirementIds\": [\n        \"BR-001\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"asks-for-equipment-id\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"all-business-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“请查询设备状态。”触发被测入口，输入中不包含任何 equipmentId。\",\n        \"核验运行成功，且输出明确向用户追问缺失的设备编号。\",\n        \"检查记录型 transport 的外部调用日志，确认业务工具调用总数为 0，未发生任何读取或写入调用。\"\n      ]\n    },\n    {\n      \"caseId\": \"TC-003\",\n      \"requirementIds\": [\n        \"BR-002\",\n        \"BR-003\"\n      ],\n      \"assertions\": [\n        {\n          \"ruleId\": \"run-succeeded\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"tool-error-evidence\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"failure-output-no-facts\",\n          \"expected\": true\n        },\n        {\n          \"ruleId\": \"write-call-count\",\n          \"expected\": 0\n        }\n      ],\n      \"steps\": [\n        \"以业务输入“查询 PUMP-001 的状态。”触发被测入口，并让记录型 Tool transport 在读取 equipmentId=PUMP-001 时抛出超时异常。\",\n        \"核验运行成功且输出保留可追溯的工具错误证据。\",\n        \"检查失败输出，确认不含任何设备状态或数据来源事实；同时检查记录型 transport 的外部调用日志，确认写调用次数为 0，且超时未被吞掉或改写为编造数据。\"\n      ]\n    }\n  ]\n}\n",
+        "title": "",
+        "metadata": {
+          "truncated": false
+        },
+        "time": {
+          "start": 1792623846957,
+          "end": 1792623846969
+        }
+      }
+    },
+    {
+      "id": "prt_160b52952001ACf7zY47KwjcH0",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b51e17001Q0togPJD9At9kg",
+      "type": "step-finish",
+      "reason": "tool-calls",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 5826,
+        "input": 255,
+        "output": 41,
+        "reasoning": 26,
+        "cache": {
+          "read": 5504,
+          "write": 0
+        }
+      }
+    },
+    {
+      "id": "prt_160b53409001DmYgEe5egqUrUj",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b52970001JQFLgUGuXCQ6YY",
+      "type": "text",
+      "text": "Saved `tests/plan.json` against the confirmed baseline.\n\n- Baseline digest: `793e2482795c1444591d60002459381638500b15e38d4beb6b3a21800f648be1`\n- Cases: `TC-001`, `TC-002`, `TC-003` — exactly one per baseline case\n- `requirementIds` and `assertions` copied unchanged for every case\n- Each case has three concrete steps covering invocation, expected output, and external transport-state verification (read/write call counts, facts, and error evidence)\n- No implementation files were modified, and no baseline changes were proposed, so `tests/proposal.json` was not needed.",
+      "time": {
+        "start": 1792623850505,
+        "end": 1792623851072
+      }
+    },
+    {
+      "id": "prt_160b53904001wBB7qLBl7d91dL",
+      "sessionID": "ses_e9f4b6bedffe30ZW47FFlcBQVi",
+      "messageID": "msg_160b52970001JQFLgUGuXCQ6YY",
+      "type": "step-finish",
+      "reason": "stop",
+      "snapshot": "",
+      "cost": 0,
+      "tokens": {
+        "total": 6975,
+        "input": 880,
+        "output": 151,
+        "reasoning": 184,
+        "cache": {
+          "read": 5760,
+          "write": 0
+        }
+      }
+    }
+  ],
+  "usage": [
+    {
+      "tokens": {
+        "total": 841,
+        "input": 759,
+        "output": 82,
+        "reasoning": 0,
+        "cache": {
+          "read": 0,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 3166,
+        "input": 2191,
+        "output": 139,
+        "reasoning": 68,
+        "cache": {
+          "read": 768,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 5698,
+        "input": 541,
+        "output": 878,
+        "reasoning": 1207,
+        "cache": {
+          "read": 3072,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 5826,
+        "input": 255,
+        "output": 41,
+        "reasoning": 26,
+        "cache": {
+          "read": 5504,
+          "write": 0
+        }
+      },
+      "cost": 0
+    },
+    {
+      "tokens": {
+        "total": 6975,
+        "input": 880,
+        "output": 151,
+        "reasoning": 184,
+        "cache": {
+          "read": 5760,
+          "write": 0
+        }
+      },
+      "cost": 0
+    }
+  ]
+}

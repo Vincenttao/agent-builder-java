@@ -1,0 +1,94 @@
+{
+  "baselineDigest": "8313abaa087ee11267a18e2d6c8efccb5cf07a59818c597e755713d3a0f0bc5e",
+  "cases": [
+    {
+      "caseId": "TC-001",
+      "requirementIds": [
+        "BR-001",
+        "BR-002",
+        "BR-003"
+      ],
+      "assertions": [
+        {
+          "ruleId": "run-succeeded",
+          "expected": true
+        },
+        {
+          "ruleId": "equipment-report-schema",
+          "expected": "equipment-report@1"
+        },
+        {
+          "ruleId": "equipment-facts",
+          "expected": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          }
+        },
+        {
+          "ruleId": "write-call-count",
+          "expected": 0
+        }
+      ],
+      "steps": [
+        "Invoke the equipment-query skill with the user input \"查询 PUMP-001 的状态、温度、来源并提供建议。\" under scenario equipment-normal with fault normal, allowing exactly one get_equipment read for equipmentId PUMP-001 through the bound mock transport.",
+        "Inspect the completed run report and the mock transport call log: verify run-succeeded is true, the report schema is equipment-report@1, the four equipment facts equal source seed-equipment-001@1, status warning, equipmentId PUMP-001, and temperatureCelsius 86, and the transport recorded zero write calls."
+      ]
+    },
+    {
+      "caseId": "TC-002",
+      "requirementIds": [
+        "BR-001",
+        "BR-003"
+      ],
+      "assertions": [
+        {
+          "ruleId": "run-succeeded",
+          "expected": true
+        },
+        {
+          "ruleId": "asks-for-equipment-id",
+          "expected": true
+        },
+        {
+          "ruleId": "all-business-call-count",
+          "expected": 0
+        }
+      ],
+      "steps": [
+        "Invoke the equipment-query skill with the user input \"请查询设备状态。\" under scenario equipment-missing-id with fault normal and no equipmentId supplied, and capture the complete agent response.",
+        "Verify externally that the run-succeeded check is true, the response asks the user for an equipmentId before querying, and the mock transport call log contains zero business calls of any kind."
+      ]
+    },
+    {
+      "caseId": "TC-003",
+      "requirementIds": [
+        "BR-002",
+        "BR-003"
+      ],
+      "assertions": [
+        {
+          "ruleId": "run-succeeded",
+          "expected": true
+        },
+        {
+          "ruleId": "tool-error-evidence",
+          "expected": true
+        },
+        {
+          "ruleId": "failure-output-no-facts",
+          "expected": true
+        },
+        {
+          "ruleId": "write-call-count",
+          "expected": 0
+        }
+      ],
+      "steps": [
+        "Invoke the equipment-query skill with the user input \"查询 PUMP-001 的状态。\" under scenario equipment-tool-failure, injecting the read-timeout fault into the mock transport get_equipment read for equipmentId PUMP-001.",
+        "Inspect the run report, execution trace, and mock transport call log: verify run-succeeded is true, tool-error evidence for the failed read is present, the final answer states the failure without fabricating any status, source, or temperature facts, and the transport recorded zero write calls."
+      ]
+    }
+  ]
+}

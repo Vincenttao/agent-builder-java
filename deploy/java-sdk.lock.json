@@ -1,0 +1,13 @@
+{
+  "jdk": 21,
+  "core": {
+    "repository": "https://github.com/openJiuwen-ai/agent-core-java.git",
+    "commit": "89c7810ca35dface93cea797816f89af1fe4c588",
+    "version": "0.1.17"
+  },
+  "runtime": {
+    "repository": "https://github.com/openJiuwen-ai/agent-runtime-java.git",
+    "commit": "2e755dcee97eb8d5adb33a3ce21f6a482981b287",
+    "version": "0.1.4"
+  }
+}

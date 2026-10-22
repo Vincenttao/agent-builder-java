@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["apps/server/src/**/*.ts", "apps/runner/src/**/*.ts", "apps/mock-services/src/**/*.ts", "packages/contracts/src/**/*.ts"],
+  "exclude": ["**/*.test.ts", "**/node_modules", "**/dist"],
+  "compilerOptions": { "sourceMap": true }
+}

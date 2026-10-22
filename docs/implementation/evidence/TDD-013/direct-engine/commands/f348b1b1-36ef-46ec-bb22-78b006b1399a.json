@@ -1,0 +1,22 @@
+{
+  "id": "f348b1b1-36ef-46ec-bb22-78b006b1399a",
+  "commandId": "package-component",
+  "executable": "jar",
+  "args": [
+    "--create",
+    "--file",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\commands\\1d318c52-474a-4cd2-99ef-58ed35369544\\component.jar",
+    "-C",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\control\\commands\\1d318c52-474a-4cd2-99ef-58ed35369544",
+    "generated",
+    "-C",
+    "D:\\agent-builder-java\\.cache\\engineering-live\\21856ea3-47b8-4f63-95ef-cd611a1bca7c\\developer",
+    "skills"
+  ],
+  "startedAt": "2026-10-21T22:43:28.410Z",
+  "finishedAt": "2026-10-21T22:43:28.913Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "",
+  "truncated": false
+}

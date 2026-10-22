@@ -1,0 +1,5235 @@
+{
+  "scope": "Real JVM, HTTP and PostgreSQL; deterministic model; test-only action clock advancement for expiry",
+  "target": {
+    "draft": {
+      "name": "工单八项验收 48f1851f-ad0c-4840-8e49-aeca60c73b34",
+      "brief": {
+        "audience": {
+          "value": "企业 AI 平台开发人员",
+          "source": "user",
+          "confirmed": true
+        },
+        "goal": {
+          "value": "查询设备事实；用户申请时，经有效确认创建模拟工单",
+          "source": "user",
+          "confirmed": true
+        },
+        "output": {
+          "value": "设备报告与可核查的模拟工单",
+          "source": "user",
+          "confirmed": true
+        }
+      },
+      "id": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+      "revision": 1,
+      "createdAt": "2026-10-22T02:32:44.119Z",
+      "updatedAt": "2026-10-22T02:32:44.119Z"
+    },
+    "baseline": {
+      "id": "94aa6c4c-58bf-426d-8a02-29866e141e0b",
+      "draftId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+      "draftRevision": 1,
+      "digest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+      "confirmedAt": "2026-10-22T02:32:44.131Z",
+      "confirmedBy": "local-operator",
+      "content": {
+        "schemaVersion": 1,
+        "templateId": "equipment-workorder@1",
+        "draftId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+        "draftRevision": 1,
+        "audience": "企业 AI 平台开发人员",
+        "requirements": [
+          {
+            "id": "BR-001",
+            "text": "查询设备事实；用户申请时，经有效确认创建模拟工单",
+            "source": "user"
+          },
+          {
+            "id": "BR-002",
+            "text": "设备报告与可核查的模拟工单",
+            "source": "user"
+          },
+          {
+            "id": "BR-003",
+            "text": "通过已绑定工具取得事实；缺参数先追问，工具失败时不编造状态或来源。",
+            "source": "template"
+          },
+          {
+            "id": "BR-004",
+            "text": "工单写入必须经绑定参数的有效确认；拒绝、过期或改变参数不得写入；重复确认及写后超时不能重复创建。",
+            "source": "template"
+          }
+        ],
+        "cases": [
+          {
+            "id": "TC-001",
+            "scenario": "equipment-normal",
+            "title": "设备正常查询",
+            "requirementIds": [
+              "BR-001",
+              "BR-002",
+              "BR-003"
+            ],
+            "required": true,
+            "input": "查询 PUMP-001 的状态、温度、来源并提供建议。",
+            "fault": "normal",
+            "assertions": [
+              {
+                "ruleId": "run-succeeded",
+                "expected": true
+              },
+              {
+                "ruleId": "equipment-report-schema",
+                "expected": "equipment-report@1"
+              },
+              {
+                "ruleId": "equipment-facts",
+                "expected": {
+                  "equipmentId": "PUMP-001",
+                  "status": "warning",
+                  "temperatureCelsius": 86,
+                  "source": "seed-equipment-001@1"
+                }
+              },
+              {
+                "ruleId": "write-call-count",
+                "expected": 0
+              }
+            ]
+          },
+          {
+            "id": "TC-002",
+            "scenario": "equipment-missing-id",
+            "title": "缺少设备编号",
+            "requirementIds": [
+              "BR-001",
+              "BR-003"
+            ],
+            "required": true,
+            "input": "请查询设备状态。",
+            "fault": "normal",
+            "assertions": [
+              {
+                "ruleId": "run-succeeded",
+                "expected": true
+              },
+              {
+                "ruleId": "asks-for-equipment-id",
+                "expected": true
+              },
+              {
+                "ruleId": "all-business-call-count",
+                "expected": 0
+              }
+            ]
+          },
+          {
+            "id": "TC-003",
+            "scenario": "equipment-tool-failure",
+            "title": "只读工具超时",
+            "requirementIds": [
+              "BR-002",
+              "BR-003"
+            ],
+            "required": true,
+            "input": "查询 PUMP-001 的状态。",
+            "fault": "read-timeout",
+            "assertions": [
+              {
+                "ruleId": "run-succeeded",
+                "expected": true
+              },
+              {
+                "ruleId": "tool-error-evidence",
+                "expected": true
+              },
+              {
+                "ruleId": "failure-output-no-facts",
+                "expected": true
+              },
+              {
+                "ruleId": "write-call-count",
+                "expected": 0
+              }
+            ]
+          },
+          {
+            "id": "TC-004",
+            "scenario": "workorder-approve",
+            "title": "批准与重复确认",
+            "requirementIds": [
+              "BR-001",
+              "BR-004"
+            ],
+            "required": true,
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "fault": "normal",
+            "assertions": [
+              {
+                "ruleId": "run-status",
+                "expected": "succeeded"
+              },
+              {
+                "ruleId": "before-approval-write-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "write-call-count",
+                "expected": 1
+              },
+              {
+                "ruleId": "workorder-state-count",
+                "expected": 1
+              },
+              {
+                "ruleId": "effective-decision-count",
+                "expected": 1
+              }
+            ]
+          },
+          {
+            "id": "TC-005",
+            "scenario": "workorder-reject",
+            "title": "拒绝确认",
+            "requirementIds": [
+              "BR-001",
+              "BR-004"
+            ],
+            "required": true,
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "fault": "normal",
+            "assertions": [
+              {
+                "ruleId": "run-status",
+                "expected": "cancelled"
+              },
+              {
+                "ruleId": "before-approval-write-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "write-call-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "workorder-state-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "retained-analysis",
+                "expected": true
+              }
+            ]
+          },
+          {
+            "id": "TC-006",
+            "scenario": "workorder-expired",
+            "title": "确认过期",
+            "requirementIds": [
+              "BR-001",
+              "BR-004"
+            ],
+            "required": true,
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "fault": "normal",
+            "assertions": [
+              {
+                "ruleId": "run-status",
+                "expected": "cancelled"
+              },
+              {
+                "ruleId": "before-approval-write-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "write-call-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "workorder-state-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "retained-analysis",
+                "expected": true
+              }
+            ]
+          },
+          {
+            "id": "TC-007",
+            "scenario": "workorder-changed-arguments",
+            "title": "批准后改变参数",
+            "requirementIds": [
+              "BR-001",
+              "BR-004"
+            ],
+            "required": true,
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "fault": "normal",
+            "assertions": [
+              {
+                "ruleId": "run-status",
+                "expected": "cancelled"
+              },
+              {
+                "ruleId": "before-approval-write-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "write-call-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "workorder-state-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "retained-analysis",
+                "expected": true
+              },
+              {
+                "ruleId": "changed-arguments-rejected",
+                "expected": true
+              }
+            ]
+          },
+          {
+            "id": "TC-008",
+            "scenario": "workorder-write-timeout",
+            "title": "写入后响应超时",
+            "requirementIds": [
+              "BR-001",
+              "BR-004"
+            ],
+            "required": true,
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "fault": "write-after-timeout",
+            "assertions": [
+              {
+                "ruleId": "run-status",
+                "expected": "succeeded"
+              },
+              {
+                "ruleId": "before-approval-write-count",
+                "expected": 0
+              },
+              {
+                "ruleId": "write-call-count",
+                "expected": 1
+              },
+              {
+                "ruleId": "workorder-state-count",
+                "expected": 1
+              },
+              {
+                "ruleId": "effective-decision-count",
+                "expected": 1
+              },
+              {
+                "ruleId": "original-key-reconciliation",
+                "expected": true
+              }
+            ]
+          }
+        ],
+        "seed": "enterprise-default@1",
+        "rulesVersion": "equipment-assertions@1"
+      }
+    },
+    "snapshot": {
+      "id": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+      "draftId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+      "draftRevision": 1,
+      "content": {
+        "draft": {
+          "id": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "revision": 1,
+          "name": "工单八项验收 48f1851f-ad0c-4840-8e49-aeca60c73b34",
+          "brief": {
+            "goal": {
+              "value": "查询设备事实；用户申请时，经有效确认创建模拟工单",
+              "source": "user",
+              "confirmed": true
+            },
+            "output": {
+              "value": "设备报告与可核查的模拟工单",
+              "source": "user",
+              "confirmed": true
+            },
+            "audience": {
+              "value": "企业 AI 平台开发人员",
+              "source": "user",
+              "confirmed": true
+            }
+          },
+          "createdAt": "2026-10-22T02:32:44.119Z",
+          "updatedAt": "2026-10-22T02:32:44.119Z"
+        },
+        "assembly": {
+          "agentType": "DeepAgent",
+          "maxIterations": 6,
+          "railIds": [
+            "audit@1",
+            "tool-allowlist@1",
+            "write-confirm@1"
+          ],
+          "toolIds": [
+            "equipment-status@1",
+            "work-order-create@1"
+          ],
+          "systemPrompt": "你是设备运维助手。业务目标：查询设备并申请工单。缺少设备编号时不得猜测或调用工具，输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}。\n有设备编号时必须调用 get_equipment 获取事实。只读查询完成后仅输出一个 JSON 对象（不添加其他字段）：kind 固定为 equipment-report，equipmentId、status、temperatureCelsius、source 原样取自工具结果，recommendation 为基于事实的中文建议。\n工具报错、超时或数据缺失时不编造事实，不重试；仅输出 {\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"说明工具不可用，设备状态未知\"}。\n只有当前用户明确要求创建工单时才调用 create_work_order；普通查询不得创建工单。申请工单前先调用 get_equipment，并向用户说明真实温度、状态、来源和建议，再调用 create_work_order（priority 为 normal）。平台会暂停等待确认。成功后报告真实工单编号，失败时说明实际结果；禁止编造工单或重复创建。"
+        },
+        "runtimeSpec": {
+          "agent": {
+            "id": "snapshot-1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "type": "DeepAgent",
+            "systemPrompt": "你是设备运维助手。业务目标：查询设备并申请工单。缺少设备编号时不得猜测或调用工具，输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}。\n有设备编号时必须调用 get_equipment 获取事实。只读查询完成后仅输出一个 JSON 对象（不添加其他字段）：kind 固定为 equipment-report，equipmentId、status、temperatureCelsius、source 原样取自工具结果，recommendation 为基于事实的中文建议。\n工具报错、超时或数据缺失时不编造事实，不重试；仅输出 {\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"说明工具不可用，设备状态未知\"}。\n只有当前用户明确要求创建工单时才调用 create_work_order；普通查询不得创建工单。申请工单前先调用 get_equipment，并向用户说明真实温度、状态、来源和建议，再调用 create_work_order（priority 为 normal）。平台会暂停等待确认。成功后报告真实工单编号，失败时说明实际结果；禁止编造工单或重复创建。",
+            "maxIterations": 6,
+            "rails": [
+              "audit",
+              "tool-allowlist",
+              "write-confirm"
+            ]
+          },
+          "tools": [
+            {
+              "name": "get_equipment",
+              "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+              "operationId": "equipment-status",
+              "inputFields": {
+                "equipmentId": "string"
+              },
+              "responseFields": {
+                "equipmentId": "string",
+                "status": "string",
+                "temperatureCelsius": "integer",
+                "source": "string"
+              }
+            },
+            {
+              "name": "create_work_order",
+              "description": "申请创建模拟维修工单；执行前必须获得用户确认。priority 为 normal 或 urgent。",
+              "operationId": "work-order-create",
+              "inputFields": {
+                "equipmentId": "string",
+                "description": "string",
+                "priority": "string"
+              },
+              "responseFields": {
+                "workOrderId": "string",
+                "status": "string"
+              }
+            }
+          ]
+        },
+        "executionMode": "trusted-local",
+        "sdk": {
+          "core": "0.1.17",
+          "runtime": "0.1.4"
+        },
+        "modelProfile": "deepseek-v4-flash@1",
+        "connectionProfile": "equipment-mock@1"
+      },
+      "digest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+      "createdAt": "2026-10-22T02:32:44.135Z"
+    },
+    "candidate": {
+      "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+      "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+      "createdAt": "2026-10-22T02:27:44.139Z",
+      "provenance": "assembled-template",
+      "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+      "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+      "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009",
+      "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+      "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+    },
+    "validation": {
+      "id": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+      "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+      "baselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b",
+      "clientRequestId": "58fe22b3-a4aa-4b31-b70b-e45fbe519f60",
+      "inputDigest": "0285fc8ae850582c9665cebf53a70f00e5e2a5163ce7cf37bf7e1c369bfd1bf5",
+      "allowMockWrites": true,
+      "binding": {
+        "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+        "modelProfile": {
+          "executionMode": "simulated",
+          "model": {
+            "provider": "OpenAI",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "name": "deepseek-v4-flash",
+            "temperature": 0,
+            "maxTokens": 1024,
+            "thinking": "disabled"
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4"
+        },
+        "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+        "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009",
+          "provenance": "assembled-template"
+        }
+      },
+      "status": "queued",
+      "cases": [
+        {
+          "caseId": "TC-001",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "state": "queued"
+        },
+        {
+          "caseId": "TC-002",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "state": "queued"
+        },
+        {
+          "caseId": "TC-003",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "state": "queued"
+        },
+        {
+          "caseId": "TC-004",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "state": "queued"
+        },
+        {
+          "caseId": "TC-005",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "state": "queued"
+        },
+        {
+          "caseId": "TC-006",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "state": "queued"
+        },
+        {
+          "caseId": "TC-007",
+          "runId": "e6dc2f4a-6cf3-4230-a49c-1d7ee5ad5dda",
+          "state": "queued"
+        },
+        {
+          "caseId": "TC-008",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "state": "queued"
+        }
+      ],
+      "results": [],
+      "createdAt": "2026-10-22T02:32:44.158Z",
+      "updatedAt": "2026-10-22T02:32:44.158Z"
+    }
+  },
+  "report": {
+    "cases": [
+      {
+        "caseId": "TC-001",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": "equipment-report@1",
+            "ruleId": "equipment-report-schema",
+            "status": "passed",
+            "expected": "equipment-report@1"
+          },
+          {
+            "actual": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "ruleId": "equipment-facts",
+            "status": "passed",
+            "expected": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            }
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "1b735861-0e31-4950-96ff-ba88d1e9615f",
+        "evidenceDigest": "96a96c6f3dfca069686134bc6a31a5c334d851ed6fa852c66af359662fa443d7"
+      },
+      {
+        "caseId": "TC-002",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "asks-for-equipment-id",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "all-business-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "ed5cc7f9-44ae-406b-b32a-185559f35e15",
+        "evidenceDigest": "4de5b9b34343b803aaa33b10be575a67b180ba2d0daaaca2c9076d7d60aba6ed"
+      },
+      {
+        "caseId": "TC-003",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "tool-error-evidence",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "failure-output-no-facts",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "9d145236-0b2e-481e-ada0-b9fbb9d5d755",
+        "evidenceDigest": "108a5bf19efa2adcb882e64c4eb706f8772fcfd9e8476db98ac1b18c1f88fccc"
+      },
+      {
+        "caseId": "TC-004",
+        "status": "blocked",
+        "reasons": [
+          "EVIDENCE_INCOMPLETE"
+        ],
+        "assertions": [],
+        "evidenceId": "a65b0a29-c781-43c8-b977-1610c8c9dcb1",
+        "evidenceDigest": "57472a8a205bf4dbd158e617625f873beda1659a4e7365e274df68b233afbbdd"
+      },
+      {
+        "caseId": "TC-005",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": "cancelled",
+            "ruleId": "run-status",
+            "status": "passed",
+            "expected": "cancelled"
+          },
+          {
+            "actual": 0,
+            "ruleId": "before-approval-write-count",
+            "status": "passed",
+            "expected": 0
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          },
+          {
+            "actual": 0,
+            "ruleId": "workorder-state-count",
+            "status": "passed",
+            "expected": 0
+          },
+          {
+            "actual": true,
+            "ruleId": "retained-analysis",
+            "status": "passed",
+            "expected": true
+          }
+        ],
+        "evidenceId": "2974301f-d321-4b1c-b10f-8d0784ff4b51",
+        "evidenceDigest": "d596c9dc26fe97c3ea2caab62c19a36f8e83868698b449e9efb25af373570fe9"
+      },
+      {
+        "caseId": "TC-006",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": "cancelled",
+            "ruleId": "run-status",
+            "status": "passed",
+            "expected": "cancelled"
+          },
+          {
+            "actual": 0,
+            "ruleId": "before-approval-write-count",
+            "status": "passed",
+            "expected": 0
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          },
+          {
+            "actual": 0,
+            "ruleId": "workorder-state-count",
+            "status": "passed",
+            "expected": 0
+          },
+          {
+            "actual": true,
+            "ruleId": "retained-analysis",
+            "status": "passed",
+            "expected": true
+          }
+        ],
+        "evidenceId": "bac010e3-2d99-44d1-90ec-440bfff70b78",
+        "evidenceDigest": "3ea40712fe074e7951b8f0a496b9ff98401a87f3578d6dcf68333017c4694b68"
+      },
+      {
+        "caseId": "TC-007",
+        "status": "unverified",
+        "reasons": [
+          "ARGUMENT_REVISION_SCENARIO_NOT_IMPLEMENTED"
+        ],
+        "assertions": []
+      },
+      {
+        "caseId": "TC-008",
+        "status": "blocked",
+        "reasons": [
+          "EVIDENCE_INCOMPLETE"
+        ],
+        "assertions": [],
+        "evidenceId": "96cffec8-cb1b-42d1-97b9-59fafd9a0b0d",
+        "evidenceDigest": "427c6496833958ecca932e4bf68f251d07e7017e3df602db66160912b4d4af49"
+      }
+    ],
+    "binding": {
+      "candidate": {
+        "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+        "provenance": "assembled-template",
+        "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+      },
+      "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "http://127.0.0.1:25204/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+        "executionMode": "simulated"
+      },
+      "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+      "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+      "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+      "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+      "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+    },
+    "reasons": [
+      "REAL_MODEL_REQUIRED"
+    ],
+    "verdict": "blocked",
+    "createdAt": "2026-10-22T02:39:30.379Z",
+    "baselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b",
+    "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+    "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+  },
+  "proof": [
+    {
+      "run": {
+        "id": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+        "input": "查询 PUMP-001 的状态、温度、来源并提供建议。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"检查温度告警\"}"
+          },
+          "conversation_id": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-22T02:27:54.465Z",
+        "updatedAt": "2026-10-22T02:27:56.945Z",
+        "diagnostic": "",
+        "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+        "inputDigest": "e9151b91852e97636a10d77a48a5ed74d1d39ce058d61703589c27780ac5d81b",
+        "deploymentId": "ab1c4c87-b1a6-42e3-af38-04054d45ec32",
+        "invocationId": "303bb767-fbb1-4577-8161-56890f2d8452",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+          "executionMode": "simulated"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "testDeploymentId": "1c3eaa74-3544-41b8-ad62-1c18e56b7681"
+        },
+        "validationId": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+        "environmentId": "bbb1e6bd-8804-426f-a79c-98dc798aeef1",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "conversationId": "27ec8ad4-d775-45e4-8e2e-b37ecff8de3d",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "cancelRequested": false,
+        "clientRequestId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+        "externalEvidence": [
+          {
+            "seq": 10,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:27:56.056Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 10,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:27:56.056Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-22T02:27:54.463Z",
+          "seq": 1003,
+          "data": {
+            "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+          },
+          "type": "run.queued",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:27:55.085Z",
+          "seq": 1004,
+          "data": {
+            "deploymentId": "ab1c4c87-b1a6-42e3-af38-04054d45ec32"
+          },
+          "type": "run.running",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:27:56.018Z",
+          "seq": 1005,
+          "data": {
+            "time": "2026-10-22T02:27:55.795560200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.025Z",
+          "seq": 1006,
+          "data": {
+            "time": "2026-10-22T02:27:55.866928400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.035Z",
+          "seq": 1007,
+          "data": {
+            "time": "2026-10-22T02:27:55.990756400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.041Z",
+          "seq": 1008,
+          "data": {
+            "time": "2026-10-22T02:27:55.992385600Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "正在查询",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.046Z",
+          "seq": 1009,
+          "data": {
+            "time": "2026-10-22T02:27:56.006110800Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.051Z",
+          "seq": 1010,
+          "data": {
+            "time": "2026-10-22T02:27:56.012618600Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.324Z",
+          "seq": 1017,
+          "data": {
+            "time": "2026-10-22T02:27:56.083738200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.329Z",
+          "seq": 1018,
+          "data": {
+            "time": "2026-10-22T02:27:56.097402Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.333Z",
+          "seq": 1019,
+          "data": {
+            "time": "2026-10-22T02:27:56.106927Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.338Z",
+          "seq": 1020,
+          "data": {
+            "time": "2026-10-22T02:27:56.108127900Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"检查温度告警\"}",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.343Z",
+          "seq": 1021,
+          "data": {
+            "time": "2026-10-22T02:27:56.111979200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:27:56.924Z",
+          "seq": 1044,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.succeeded",
+          "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "provenance": "assembled-template",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+        },
+        "requestId": "303bb767-fbb1-4577-8161-56890f2d8452",
+        "loadedManifest": {
+          "id": "ab1c4c87-b1a6-42e3-af38-04054d45ec32",
+          "port": 25716,
+          "bootId": "036ffe5b-e99d-4990-b942-341eb5486d2f",
+          "status": "stopped",
+          "createdAt": "2026-10-22T02:27:44.855Z",
+          "updatedAt": "2026-10-22T02:27:57.472Z",
+          "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "http://127.0.0.1:25204/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+            "executionMode": "simulated"
+          },
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946"
+        },
+        "testDeployment": {
+          "id": "1c3eaa74-3544-41b8-ad62-1c18e56b7681",
+          "status": "stopped",
+          "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "binding": {
+            "candidate": {
+              "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+              "provenance": "assembled-template",
+              "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+            },
+            "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "http://127.0.0.1:25204/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+              "executionMode": "simulated"
+            },
+            "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+            "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-22T02:27:44.197Z",
+          "expiresAt": "2026-10-22T02:42:44.197Z",
+          "updatedAt": "2026-10-22T02:27:57.483Z",
+          "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+          "validation": {
+            "input": "查询 PUMP-001 的状态、温度、来源并提供建议。",
+            "runId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+            "caseId": "TC-001",
+            "actorId": "U1001",
+            "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+          },
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "inputDigest": "ad9588af40622e79d9c51b020dbadd9d859639cc45772adc6db56dabf6808c9c",
+          "deploymentId": "ab1c4c87-b1a6-42e3-af38-04054d45ec32",
+          "environmentId": "bbb1e6bd-8804-426f-a79c-98dc798aeef1",
+          "clientRequestId": "d3514d0a-820b-4ba8-a7e4-2f4d70752eb9",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b"
+        }
+      }
+    },
+    {
+      "run": {
+        "id": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+        "input": "请查询设备状态。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}"
+          },
+          "conversation_id": "58f92546-1ea0-47e6-8de5-1e7c93fd0024"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-22T02:28:05.864Z",
+        "updatedAt": "2026-10-22T02:28:08.272Z",
+        "diagnostic": "",
+        "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+        "inputDigest": "1cd748639e2ec34ef7bc3750206b45e1dac7741ba4e98ced56d03bee91efad60",
+        "deploymentId": "6e4cbaf9-5090-458c-897d-fac442e5bd4f",
+        "invocationId": "5177c4f8-8029-4c0c-8e0d-43b6d437d4a2",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+          "executionMode": "simulated"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "testDeploymentId": "51d48de7-4406-4734-8082-a525d7fd8961"
+        },
+        "validationId": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+        "environmentId": "4a7a2da9-4df5-48a2-b4fc-66d8eb81fa92",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "conversationId": "743ba53d-df85-4bf7-b27c-84aca6c8298f",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "cancelRequested": false,
+        "clientRequestId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+        "externalEvidence": [],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [],
+      "events": [
+        {
+          "at": "2026-10-22T02:28:05.859Z",
+          "seq": 1045,
+          "data": {
+            "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+          },
+          "type": "run.queued",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:06.303Z",
+          "seq": 1046,
+          "data": {
+            "deploymentId": "6e4cbaf9-5090-458c-897d-fac442e5bd4f"
+          },
+          "type": "run.running",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:07.255Z",
+          "seq": 1047,
+          "data": {
+            "time": "2026-10-22T02:28:07.076893200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:07.261Z",
+          "seq": 1048,
+          "data": {
+            "time": "2026-10-22T02:28:07.144359800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:07.617Z",
+          "seq": 1051,
+          "data": {
+            "time": "2026-10-22T02:28:07.341234100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:07.623Z",
+          "seq": 1052,
+          "data": {
+            "time": "2026-10-22T02:28:07.342994900Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}",
+              "sessionId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:07.631Z",
+          "seq": 1053,
+          "data": {
+            "time": "2026-10-22T02:28:07.348600900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:08.289Z",
+          "seq": 1064,
+          "data": {
+            "externalCallCount": 0
+          },
+          "type": "run.succeeded",
+          "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "provenance": "assembled-template",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+        },
+        "requestId": "5177c4f8-8029-4c0c-8e0d-43b6d437d4a2",
+        "loadedManifest": {
+          "id": "6e4cbaf9-5090-458c-897d-fac442e5bd4f",
+          "port": 25814,
+          "bootId": "036ffe5b-e99d-4990-b942-341eb5486d2f",
+          "status": "stopped",
+          "createdAt": "2026-10-22T02:27:58.318Z",
+          "updatedAt": "2026-10-22T02:28:08.801Z",
+          "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "http://127.0.0.1:25204/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+            "executionMode": "simulated"
+          },
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946"
+        },
+        "testDeployment": {
+          "id": "51d48de7-4406-4734-8082-a525d7fd8961",
+          "status": "stopped",
+          "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "binding": {
+            "candidate": {
+              "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+              "provenance": "assembled-template",
+              "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+            },
+            "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "http://127.0.0.1:25204/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+              "executionMode": "simulated"
+            },
+            "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+            "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-22T02:27:57.674Z",
+          "expiresAt": "2026-10-22T02:42:57.674Z",
+          "updatedAt": "2026-10-22T02:28:08.813Z",
+          "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+          "validation": {
+            "input": "请查询设备状态。",
+            "runId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+            "caseId": "TC-002",
+            "actorId": "U1001",
+            "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+          },
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "inputDigest": "e9ca45c710bfbb8a8e25d4fbb60193a1a4cfd1caa27e256afeebb641294900fd",
+          "deploymentId": "6e4cbaf9-5090-458c-897d-fac442e5bd4f",
+          "environmentId": "4a7a2da9-4df5-48a2-b4fc-66d8eb81fa92",
+          "clientRequestId": "58f92546-1ea0-47e6-8de5-1e7c93fd0024",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b"
+        }
+      }
+    },
+    {
+      "run": {
+        "id": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+        "input": "查询 PUMP-001 的状态。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"工具超时，设备状态未知\"}"
+          },
+          "conversation_id": "d1ca50eb-b3a4-430e-ba12-a020788094f3"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-22T02:28:20.218Z",
+        "updatedAt": "2026-10-22T02:28:28.014Z",
+        "diagnostic": "",
+        "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+        "inputDigest": "113947c6dfe192b4af1e3a945c9173057b3890a704147a2749572ac8ab9ceb04",
+        "deploymentId": "146ad460-4cdf-46b0-88f4-f22838f13ec4",
+        "invocationId": "c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+          "executionMode": "simulated"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "testDeploymentId": "8132ba3a-ca7d-4564-a10f-08b8a5667187"
+        },
+        "validationId": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+        "environmentId": "d32c2a81-9596-4dd0-be77-c50e1493ab0e",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "conversationId": "5789efc6-35a4-44c2-9619-df29ba6dc3f0",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "cancelRequested": false,
+        "clientRequestId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+        "externalEvidence": [
+          {
+            "seq": 11,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:28:22.123Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "read-timeout"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 11,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:28:22.123Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-22T02:28:20.241Z",
+          "seq": 1065,
+          "data": {
+            "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+          },
+          "type": "run.queued",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:20.971Z",
+          "seq": 1066,
+          "data": {
+            "deploymentId": "146ad460-4cdf-46b0-88f4-f22838f13ec4"
+          },
+          "type": "run.running",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:22.016Z",
+          "seq": 1067,
+          "data": {
+            "time": "2026-10-22T02:28:21.853934100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:22.027Z",
+          "seq": 1068,
+          "data": {
+            "time": "2026-10-22T02:28:21.912651400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:22.284Z",
+          "seq": 1071,
+          "data": {
+            "time": "2026-10-22T02:28:22.057515Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:22.290Z",
+          "seq": 1072,
+          "data": {
+            "time": "2026-10-22T02:28:22.058627200Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "正在查询",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:22.297Z",
+          "seq": 1073,
+          "data": {
+            "time": "2026-10-22T02:28:22.072580Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:22.303Z",
+          "seq": 1074,
+          "data": {
+            "time": "2026-10-22T02:28:22.077969900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:27.284Z",
+          "seq": 1213,
+          "data": {
+            "time": "2026-10-22T02:28:27.100123500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "tool_error",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:27.290Z",
+          "seq": 1214,
+          "data": {
+            "time": "2026-10-22T02:28:27.101867500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:27.299Z",
+          "seq": 1215,
+          "data": {
+            "time": "2026-10-22T02:28:27.115365200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:27.311Z",
+          "seq": 1216,
+          "data": {
+            "time": "2026-10-22T02:28:27.122364500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:27.326Z",
+          "seq": 1217,
+          "data": {
+            "time": "2026-10-22T02:28:27.124365100Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"工具超时，设备状态未知\"}",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:27.333Z",
+          "seq": 1218,
+          "data": {
+            "time": "2026-10-22T02:28:27.127369400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:27.986Z",
+          "seq": 1243,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.succeeded",
+          "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "provenance": "assembled-template",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+        },
+        "requestId": "c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b",
+        "loadedManifest": {
+          "id": "146ad460-4cdf-46b0-88f4-f22838f13ec4",
+          "port": 25874,
+          "bootId": "036ffe5b-e99d-4990-b942-341eb5486d2f",
+          "status": "stopped",
+          "createdAt": "2026-10-22T02:28:09.607Z",
+          "updatedAt": "2026-10-22T02:28:28.630Z",
+          "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "http://127.0.0.1:25204/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+            "executionMode": "simulated"
+          },
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946"
+        },
+        "testDeployment": {
+          "id": "8132ba3a-ca7d-4564-a10f-08b8a5667187",
+          "status": "stopped",
+          "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "binding": {
+            "candidate": {
+              "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+              "provenance": "assembled-template",
+              "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+            },
+            "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "http://127.0.0.1:25204/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+              "executionMode": "simulated"
+            },
+            "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+            "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-22T02:28:09.045Z",
+          "expiresAt": "2026-10-22T02:43:09.045Z",
+          "updatedAt": "2026-10-22T02:28:28.643Z",
+          "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+          "validation": {
+            "input": "查询 PUMP-001 的状态。",
+            "runId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+            "caseId": "TC-003",
+            "actorId": "U1001",
+            "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+          },
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "inputDigest": "8adda536e85bbaf4298e690015e3076977914e93da252b8d1752b4dc6ebfe3a4",
+          "deploymentId": "146ad460-4cdf-46b0-88f4-f22838f13ec4",
+          "environmentId": "d32c2a81-9596-4dd0-be77-c50e1493ab0e",
+          "clientRequestId": "d1ca50eb-b3a4-430e-ba12-a020788094f3",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "read-timeout"
+          },
+          "requirementBaselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b"
+        }
+      }
+    },
+    {
+      "run": {
+        "id": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+        "input": "查询 PUMP-001 并申请创建检查工单。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"message\":\"已返回实际工单结果\",\"result\":\"{workOrderId=c1f91eec-0e4f-46cd-9857-8c05643c63d0, equipmentId=PUMP-001, description=检查温度告警, priority=normal, actorId=U1001, status=created, createdAt=2026-10-21T08:00:00.000Z}\"}"
+          },
+          "conversation_id": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-22T02:28:40.643Z",
+        "updatedAt": "2026-10-22T02:28:46.661Z",
+        "diagnostic": "",
+        "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+        "inputDigest": "0005f4971af83ea1e9a1926dbb5a4e3953c15cf6337d54a2e34129d2aeddcd20",
+        "deploymentId": "a7b51053-59a2-499f-945e-d3de42bce61a",
+        "invocationId": "bbbb02da-6adc-449a-a239-4aa1caa541eb",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+          "executionMode": "simulated"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "testDeploymentId": "3c6cf732-cd64-4510-ac2b-1075c439ab15"
+        },
+        "validationId": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+        "environmentId": "8db6408b-ef44-4c87-a256-0b60a6a837b2",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "conversationId": "dae3cde6-d004-4aa7-81ab-faf664928742",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "cancelRequested": false,
+        "clientRequestId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+        "externalEvidence": [
+          {
+            "seq": 12,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:28:42.654Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          },
+          {
+            "seq": 13,
+            "input": {
+              "priority": "normal",
+              "description": "检查温度告警",
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+            "result": {
+              "status": "created",
+              "actorId": "U1001",
+              "priority": "normal",
+              "createdAt": "2026-10-21T08:00:00.000Z",
+              "description": "检查温度告警",
+              "equipmentId": "PUMP-001",
+              "workOrderId": "c1f91eec-0e4f-46cd-9857-8c05643c63d0"
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:28:45.543Z",
+            "operation": "work-order-create",
+            "stateRevision": 2
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 12,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:28:42.654Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        },
+        {
+          "seq": 13,
+          "input": {
+            "priority": "normal",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "result": {
+            "status": "created",
+            "actorId": "U1001",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "c1f91eec-0e4f-46cd-9857-8c05643c63d0"
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:28:45.543Z",
+          "operation": "work-order-create",
+          "stateRevision": 2
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-22T02:28:40.676Z",
+          "seq": 1244,
+          "data": {
+            "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+          },
+          "type": "run.queued",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:41.355Z",
+          "seq": 1245,
+          "data": {
+            "deploymentId": "a7b51053-59a2-499f-945e-d3de42bce61a"
+          },
+          "type": "run.running",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:42.501Z",
+          "seq": 1246,
+          "data": {
+            "time": "2026-10-22T02:28:42.214098300Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.508Z",
+          "seq": 1247,
+          "data": {
+            "time": "2026-10-22T02:28:42.320273600Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.868Z",
+          "seq": 1250,
+          "data": {
+            "time": "2026-10-22T02:28:42.508824400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.875Z",
+          "seq": 1251,
+          "data": {
+            "time": "2026-10-22T02:28:42.510573800Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "正在查询",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.887Z",
+          "seq": 1252,
+          "data": {
+            "time": "2026-10-22T02:28:42.534614400Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.893Z",
+          "seq": 1253,
+          "data": {
+            "time": "2026-10-22T02:28:42.543214200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.903Z",
+          "seq": 1254,
+          "data": {
+            "time": "2026-10-22T02:28:42.634864Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.912Z",
+          "seq": 1255,
+          "data": {
+            "time": "2026-10-22T02:28:42.648754800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.920Z",
+          "seq": 1256,
+          "data": {
+            "time": "2026-10-22T02:28:42.659066700Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.927Z",
+          "seq": 1257,
+          "data": {
+            "time": "2026-10-22T02:28:42.661067700Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "设备温度 86°C，状态 warning，来源 seed-equipment-001@1，建议检查后创建工单。",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.933Z",
+          "seq": 1258,
+          "data": {
+            "time": "2026-10-22T02:28:42.663066300Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.939Z",
+          "seq": 1259,
+          "data": {
+            "time": "2026-10-22T02:28:42.664064900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.946Z",
+          "seq": 1260,
+          "data": {
+            "time": "2026-10-22T02:28:42.667287200Z",
+            "event": {
+              "rail": "write-confirm",
+              "tool": "create_work_order",
+              "event": "approval_required",
+              "approved": false,
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "toolCallId": "write"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.954Z",
+          "seq": 1261,
+          "data": {
+            "time": "2026-10-22T02:28:42.669285500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "tool_error",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.976Z",
+          "seq": 1262,
+          "data": {
+            "time": "2026-10-22T02:28:42.669285500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "after_tool_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:42.991Z",
+          "seq": 1263,
+          "data": {
+            "time": "2026-10-22T02:28:42.677520100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:43.866Z",
+          "seq": 1296,
+          "data": {
+            "actionId": "03e4fdd9-b285-4981-a5c8-3549b63ca4d9",
+            "actionHash": "13e90fa62713bbbe95704bf1feab1965e73052bca98d36d33d35a3beed85a4b2"
+          },
+          "type": "action.prepared",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:44.314Z",
+          "seq": 1313,
+          "data": {
+            "actionId": "03e4fdd9-b285-4981-a5c8-3549b63ca4d9",
+            "decision": "approve",
+            "decisionId": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+          },
+          "type": "action.decided",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:45.557Z",
+          "seq": 1350,
+          "data": {
+            "status": "succeeded",
+            "actionId": "03e4fdd9-b285-4981-a5c8-3549b63ca4d9"
+          },
+          "type": "action.write_succeeded",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:45.636Z",
+          "seq": 1363,
+          "data": {
+            "time": "2026-10-22T02:28:45.465422800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:45.641Z",
+          "seq": 1364,
+          "data": {
+            "time": "2026-10-22T02:28:45.476025300Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:45.647Z",
+          "seq": 1365,
+          "data": {
+            "time": "2026-10-22T02:28:45.477660600Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:45.652Z",
+          "seq": 1366,
+          "data": {
+            "time": "2026-10-22T02:28:45.478727900Z",
+            "event": {
+              "rail": "write-confirm",
+              "tool": "create_work_order",
+              "event": "approval_resumed",
+              "approved": true,
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "toolCallId": "write"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:46.241Z",
+          "seq": 1387,
+          "data": {
+            "time": "2026-10-22T02:28:45.533307400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "after_tool_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:46.247Z",
+          "seq": 1388,
+          "data": {
+            "time": "2026-10-22T02:28:45.539999500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:46.253Z",
+          "seq": 1389,
+          "data": {
+            "time": "2026-10-22T02:28:45.552598600Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:46.260Z",
+          "seq": 1390,
+          "data": {
+            "time": "2026-10-22T02:28:45.555380800Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"message\":\"已返回实际工单结果\",\"result\":\"{workOrderId=c1f91eec-0e4f-46cd-9857-8c05643c63d0, equipmentId=PUMP-001, description=检查温度告警, priority=normal, actorId=U1001, status=created, createdAt=2026-10-21T08:00:00.000Z}\"}",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:46.266Z",
+          "seq": 1391,
+          "data": {
+            "time": "2026-10-22T02:28:45.557094200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:46.694Z",
+          "seq": 1417,
+          "data": {
+            "externalCallCount": 2
+          },
+          "type": "run.succeeded",
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "source": "platform"
+        }
+      ],
+      "actions": [
+        {
+          "id": "03e4fdd9-b285-4981-a5c8-3549b63ca4d9",
+          "args": {
+            "priority": "normal",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "status": "succeeded",
+          "actorId": "U1001",
+          "decision": "approve",
+          "response": {
+            "result": {
+              "status": "created",
+              "actorId": "U1001",
+              "priority": "normal",
+              "createdAt": "2026-10-21T08:00:00.000Z",
+              "description": "检查温度告警",
+              "equipmentId": "PUMP-001",
+              "workOrderId": "c1f91eec-0e4f-46cd-9857-8c05643c63d0"
+            },
+            "status": 200
+          },
+          "createdAt": "2026-10-22T02:33:43.836Z",
+          "decidedAt": "2026-10-22T02:33:44.281Z",
+          "expiresAt": "2026-10-22T02:38:43.836Z",
+          "operation": "work-order-create",
+          "updatedAt": "2026-10-22T02:33:45.523Z",
+          "actionHash": "13e90fa62713bbbe95704bf1feab1965e73052bca98d36d33d35a3beed85a4b2",
+          "decisionId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "paramsHash": "4fd582c8d31632e1a6cd3475aa19cd0006a79f50cb0f34579143450b010ed06f",
+          "toolCallId": "write",
+          "environmentId": "8db6408b-ef44-4c87-a256-0b60a6a837b2",
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+          "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+        }
+      ],
+      "attempts": [
+        {
+          "seq": 6,
+          "data": {
+            "idempotencyKey": "03e4fdd9-b285-4981-a5c8-3549b63ca4d9"
+          },
+          "type": "write_started"
+        },
+        {
+          "seq": 7,
+          "data": {
+            "idempotencyKey": "03e4fdd9-b285-4981-a5c8-3549b63ca4d9"
+          },
+          "type": "write_succeeded"
+        }
+      ],
+      "complete": false,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        },
+        "workOrders": {
+          "c1f91eec-0e4f-46cd-9857-8c05643c63d0": {
+            "status": "created",
+            "actorId": "U1001",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "c1f91eec-0e4f-46cd-9857-8c05643c63d0"
+          }
+        },
+        "workOrderKeys": {
+          "U1001:03e4fdd9-b285-4981-a5c8-3549b63ca4d9": {
+            "input": "{\"description\":\"检查温度告警\",\"equipmentId\":\"PUMP-001\",\"priority\":\"normal\"}",
+            "workOrderId": "c1f91eec-0e4f-46cd-9857-8c05643c63d0"
+          }
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "provenance": "assembled-template",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+        },
+        "requestId": "bbbb02da-6adc-449a-a239-4aa1caa541eb",
+        "loadedManifest": {
+          "id": "a7b51053-59a2-499f-945e-d3de42bce61a",
+          "port": 40715,
+          "bootId": "036ffe5b-e99d-4990-b942-341eb5486d2f",
+          "status": "stopped",
+          "createdAt": "2026-10-22T02:28:29.553Z",
+          "updatedAt": "2026-10-22T02:28:47.251Z",
+          "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "http://127.0.0.1:25204/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+            "executionMode": "simulated"
+          },
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946"
+        },
+        "testDeployment": {
+          "id": "3c6cf732-cd64-4510-ac2b-1075c439ab15",
+          "status": "stopped",
+          "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "binding": {
+            "candidate": {
+              "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+              "provenance": "assembled-template",
+              "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+            },
+            "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "http://127.0.0.1:25204/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+              "executionMode": "simulated"
+            },
+            "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+            "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-22T02:28:28.859Z",
+          "expiresAt": "2026-10-22T02:43:28.859Z",
+          "updatedAt": "2026-10-22T02:28:47.269Z",
+          "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+          "validation": {
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+            "caseId": "TC-004",
+            "actorId": "U1001",
+            "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+          },
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "inputDigest": "8961b5387a6ee87cd8c4ec4c42c3eb9ae5fc651c3b92a05a7069c103721db9cc",
+          "deploymentId": "a7b51053-59a2-499f-945e-d3de42bce61a",
+          "environmentId": "8db6408b-ef44-4c87-a256-0b60a6a837b2",
+          "clientRequestId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b"
+        }
+      },
+      "beforeApprovalCalls": [
+        {
+          "seq": 12,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "258adf84-0e71-4892-97af-06da2cc6fbaa",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:28:42.654Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ]
+    },
+    {
+      "run": {
+        "id": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+        "input": "查询 PUMP-001 并申请创建检查工单。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "设备温度 86°C，状态 warning，来源 seed-equipment-001@1，建议检查后创建工单。",
+            "_interrupt": {
+              "type": "__interaction__",
+              "index": 0,
+              "message": "请确认以下模拟写入操作",
+              "payload": {
+                "id": "write",
+                "value": {
+                  "index": 0,
+                  "message": "请确认以下模拟写入操作",
+                  "tool_args": "{\"equipmentId\":\"PUMP-001\",\"description\":\"检查温度告警\",\"priority\":\"normal\"}",
+                  "tool_name": "create_work_order",
+                  "tool_call_id": "write",
+                  "payload_schema": {
+                    "type": "object",
+                    "required": [
+                      "approved"
+                    ],
+                    "properties": {
+                      "approved": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "auto_confirm_key": ""
+                },
+                "metadata": {}
+              },
+              "toolName": "create_work_order",
+              "toolCallId": "write"
+            }
+          },
+          "conversation_id": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d"
+        },
+        "status": "cancelled",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-22T02:28:57.237Z",
+        "updatedAt": "2026-10-22T02:29:00.881Z",
+        "diagnostic": "",
+        "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+        "inputDigest": "c9861f782b5ef2fb2d6377b9a2eff26b4515bc67044e208a9b4fdb0e91498bb9",
+        "deploymentId": "efcd96a8-91b6-483d-805b-1d9f05bd218b",
+        "invocationId": "0fe9c359-6856-4eb4-9f9b-760fa29d9f5c",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+          "executionMode": "simulated"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "testDeploymentId": "c4ee4b9c-b6e4-471a-8887-59a591be4cce"
+        },
+        "validationId": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+        "environmentId": "35d669e8-3d24-4bdc-ab04-841ff9a35da6",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "conversationId": "0842046d-b1ac-49ab-a110-587daeda4010",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "cancelRequested": true,
+        "clientRequestId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+        "externalEvidence": [
+          {
+            "seq": 14,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:28:58.924Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 14,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:28:58.924Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-22T02:28:57.213Z",
+          "seq": 1418,
+          "data": {
+            "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+          },
+          "type": "run.queued",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:57.822Z",
+          "seq": 1419,
+          "data": {
+            "deploymentId": "efcd96a8-91b6-483d-805b-1d9f05bd218b"
+          },
+          "type": "run.running",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:28:58.806Z",
+          "seq": 1420,
+          "data": {
+            "time": "2026-10-22T02:28:58.638682Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:58.812Z",
+          "seq": 1421,
+          "data": {
+            "time": "2026-10-22T02:28:58.725559500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.060Z",
+          "seq": 1424,
+          "data": {
+            "time": "2026-10-22T02:28:58.895923300Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.066Z",
+          "seq": 1425,
+          "data": {
+            "time": "2026-10-22T02:28:58.898603900Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "正在查询",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.071Z",
+          "seq": 1426,
+          "data": {
+            "time": "2026-10-22T02:28:58.917886300Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.078Z",
+          "seq": 1427,
+          "data": {
+            "time": "2026-10-22T02:28:58.924731900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.084Z",
+          "seq": 1428,
+          "data": {
+            "time": "2026-10-22T02:28:58.984064300Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.089Z",
+          "seq": 1429,
+          "data": {
+            "time": "2026-10-22T02:28:59.002044800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.096Z",
+          "seq": 1430,
+          "data": {
+            "time": "2026-10-22T02:28:59.011061100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.101Z",
+          "seq": 1431,
+          "data": {
+            "time": "2026-10-22T02:28:59.012059800Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "设备温度 86°C，状态 warning，来源 seed-equipment-001@1，建议检查后创建工单。",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.110Z",
+          "seq": 1432,
+          "data": {
+            "time": "2026-10-22T02:28:59.014059500Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.116Z",
+          "seq": 1433,
+          "data": {
+            "time": "2026-10-22T02:28:59.015059900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.122Z",
+          "seq": 1434,
+          "data": {
+            "time": "2026-10-22T02:28:59.018059700Z",
+            "event": {
+              "rail": "write-confirm",
+              "tool": "create_work_order",
+              "event": "approval_required",
+              "approved": false,
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "toolCallId": "write"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.129Z",
+          "seq": 1435,
+          "data": {
+            "time": "2026-10-22T02:28:59.022120800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "tool_error",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.135Z",
+          "seq": 1436,
+          "data": {
+            "time": "2026-10-22T02:28:59.023097Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "after_tool_call",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.142Z",
+          "seq": 1437,
+          "data": {
+            "time": "2026-10-22T02:28:59.030099500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:28:59.946Z",
+          "seq": 1470,
+          "data": {
+            "actionId": "acf84661-5365-4a70-9e85-de3bef883f2f",
+            "actionHash": "6ab5c25bb14a539db6cd8385a9284ac938c4d349303161f133325099aecd72c5"
+          },
+          "type": "action.prepared",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:00.421Z",
+          "seq": 1487,
+          "data": {
+            "actionId": "acf84661-5365-4a70-9e85-de3bef883f2f",
+            "decision": "reject",
+            "decisionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d"
+          },
+          "type": "action.decided",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:00.828Z",
+          "seq": 1504,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.cancelled",
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "source": "platform"
+        }
+      ],
+      "actions": [
+        {
+          "id": "acf84661-5365-4a70-9e85-de3bef883f2f",
+          "args": {
+            "priority": "normal",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "status": "rejected",
+          "actorId": "U1001",
+          "decision": "reject",
+          "createdAt": "2026-10-22T02:33:59.998Z",
+          "decidedAt": "2026-10-22T02:34:00.475Z",
+          "expiresAt": "2026-10-22T02:38:59.998Z",
+          "operation": "work-order-create",
+          "updatedAt": "2026-10-22T02:34:00.475Z",
+          "actionHash": "6ab5c25bb14a539db6cd8385a9284ac938c4d349303161f133325099aecd72c5",
+          "decisionId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "paramsHash": "4fd582c8d31632e1a6cd3475aa19cd0006a79f50cb0f34579143450b010ed06f",
+          "toolCallId": "write",
+          "environmentId": "35d669e8-3d24-4bdc-ab04-841ff9a35da6",
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+          "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+        }
+      ],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "provenance": "assembled-template",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+        },
+        "requestId": "0fe9c359-6856-4eb4-9f9b-760fa29d9f5c",
+        "loadedManifest": {
+          "id": "efcd96a8-91b6-483d-805b-1d9f05bd218b",
+          "port": 40823,
+          "bootId": "036ffe5b-e99d-4990-b942-341eb5486d2f",
+          "status": "stopped",
+          "createdAt": "2026-10-22T02:28:48.185Z",
+          "updatedAt": "2026-10-22T02:29:01.524Z",
+          "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "http://127.0.0.1:25204/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+            "executionMode": "simulated"
+          },
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946"
+        },
+        "testDeployment": {
+          "id": "c4ee4b9c-b6e4-471a-8887-59a591be4cce",
+          "status": "stopped",
+          "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "binding": {
+            "candidate": {
+              "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+              "provenance": "assembled-template",
+              "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+            },
+            "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "http://127.0.0.1:25204/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+              "executionMode": "simulated"
+            },
+            "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+            "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-22T02:28:47.543Z",
+          "expiresAt": "2026-10-22T02:43:47.543Z",
+          "updatedAt": "2026-10-22T02:29:01.544Z",
+          "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+          "validation": {
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+            "caseId": "TC-005",
+            "actorId": "U1001",
+            "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+          },
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "inputDigest": "2978d2e036d1cc2e8b7b7fae00874f6263820fac55013853d4e11e1a7ae1c687",
+          "deploymentId": "efcd96a8-91b6-483d-805b-1d9f05bd218b",
+          "environmentId": "35d669e8-3d24-4bdc-ab04-841ff9a35da6",
+          "clientRequestId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b"
+        }
+      },
+      "beforeApprovalCalls": [
+        {
+          "seq": 14,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "57dfc6cc-3c45-40e8-bf51-3bb76de5639d",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:28:58.924Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ]
+    },
+    {
+      "run": {
+        "id": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+        "input": "查询 PUMP-001 并申请创建检查工单。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "设备温度 86°C，状态 warning，来源 seed-equipment-001@1，建议检查后创建工单。",
+            "_interrupt": {
+              "type": "__interaction__",
+              "index": 0,
+              "message": "请确认以下模拟写入操作",
+              "payload": {
+                "id": "write",
+                "value": {
+                  "index": 0,
+                  "message": "请确认以下模拟写入操作",
+                  "tool_args": "{\"equipmentId\":\"PUMP-001\",\"description\":\"检查温度告警\",\"priority\":\"normal\"}",
+                  "tool_name": "create_work_order",
+                  "tool_call_id": "write",
+                  "payload_schema": {
+                    "type": "object",
+                    "required": [
+                      "approved"
+                    ],
+                    "properties": {
+                      "approved": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "auto_confirm_key": ""
+                },
+                "metadata": {}
+              },
+              "toolName": "create_work_order",
+              "toolCallId": "write"
+            }
+          },
+          "conversation_id": "db83be76-d674-449d-b8a7-2ebeb57e0ba6"
+        },
+        "status": "cancelled",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-22T02:29:11.001Z",
+        "updatedAt": "2026-10-22T02:29:13.710Z",
+        "diagnostic": "",
+        "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+        "inputDigest": "8099b18c5b664cb331f9b23be815bced4f2fc95ba7bc4110c9a664036b3544e9",
+        "deploymentId": "c17aab16-eec8-4de5-9224-179111feb300",
+        "invocationId": "d6b01832-d152-4ffa-a313-9efef4292056",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+          "executionMode": "simulated"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "testDeploymentId": "c8c1ddad-9a07-4fda-bc2a-9811001cd405"
+        },
+        "validationId": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+        "environmentId": "cdd0b34f-2219-43be-9c43-746f44e1d595",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "conversationId": "161aa2a7-ae6f-4262-ad81-397eabe039fa",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "cancelRequested": true,
+        "clientRequestId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+        "externalEvidence": [
+          {
+            "seq": 15,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:29:12.451Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 15,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:29:12.451Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-22T02:29:11.042Z",
+          "seq": 1505,
+          "data": {
+            "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+          },
+          "type": "run.queued",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:11.473Z",
+          "seq": 1506,
+          "data": {
+            "deploymentId": "c17aab16-eec8-4de5-9224-179111feb300"
+          },
+          "type": "run.running",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:12.180Z",
+          "seq": 1507,
+          "data": {
+            "time": "2026-10-22T02:29:12.075006100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.458Z",
+          "seq": 1509,
+          "data": {
+            "time": "2026-10-22T02:29:12.146763400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.464Z",
+          "seq": 1510,
+          "data": {
+            "time": "2026-10-22T02:29:12.311660100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.470Z",
+          "seq": 1511,
+          "data": {
+            "time": "2026-10-22T02:29:12.312659500Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "正在查询",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.478Z",
+          "seq": 1512,
+          "data": {
+            "time": "2026-10-22T02:29:12.340253700Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.484Z",
+          "seq": 1513,
+          "data": {
+            "time": "2026-10-22T02:29:12.346752400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.736Z",
+          "seq": 1520,
+          "data": {
+            "time": "2026-10-22T02:29:12.422719400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.740Z",
+          "seq": 1521,
+          "data": {
+            "time": "2026-10-22T02:29:12.437095900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.744Z",
+          "seq": 1522,
+          "data": {
+            "time": "2026-10-22T02:29:12.444668200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.750Z",
+          "seq": 1523,
+          "data": {
+            "time": "2026-10-22T02:29:12.446298400Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "设备温度 86°C，状态 warning，来源 seed-equipment-001@1，建议检查后创建工单。",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.755Z",
+          "seq": 1524,
+          "data": {
+            "time": "2026-10-22T02:29:12.448412500Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.759Z",
+          "seq": 1525,
+          "data": {
+            "time": "2026-10-22T02:29:12.450274700Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.770Z",
+          "seq": 1526,
+          "data": {
+            "time": "2026-10-22T02:29:12.454098400Z",
+            "event": {
+              "rail": "write-confirm",
+              "tool": "create_work_order",
+              "event": "approval_required",
+              "approved": false,
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "toolCallId": "write"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.779Z",
+          "seq": 1527,
+          "data": {
+            "time": "2026-10-22T02:29:12.456264200Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "tool_error",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.785Z",
+          "seq": 1528,
+          "data": {
+            "time": "2026-10-22T02:29:12.458430300Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "after_tool_call",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:12.797Z",
+          "seq": 1529,
+          "data": {
+            "time": "2026-10-22T02:29:12.467421100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:13.398Z",
+          "seq": 1562,
+          "data": {
+            "actionId": "16c9ce3f-e8ea-4e6f-af26-588469e95016",
+            "actionHash": "9de1fc3c3c41ef21dd690b80d83a00d7e6ed8912640937c853126f49ced62ed8"
+          },
+          "type": "action.prepared",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:13.587Z",
+          "seq": 1563,
+          "data": {
+            "actionId": "16c9ce3f-e8ea-4e6f-af26-588469e95016"
+          },
+          "type": "action.expired",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:13.754Z",
+          "seq": 1580,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.cancelled",
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "source": "platform"
+        }
+      ],
+      "actions": [
+        {
+          "id": "16c9ce3f-e8ea-4e6f-af26-588469e95016",
+          "args": {
+            "priority": "normal",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "status": "expired",
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:34:13.357Z",
+          "expiresAt": "2026-10-22T02:39:13.357Z",
+          "operation": "work-order-create",
+          "updatedAt": "2026-10-22T02:39:13.545Z",
+          "actionHash": "9de1fc3c3c41ef21dd690b80d83a00d7e6ed8912640937c853126f49ced62ed8",
+          "paramsHash": "4fd582c8d31632e1a6cd3475aa19cd0006a79f50cb0f34579143450b010ed06f",
+          "toolCallId": "write",
+          "environmentId": "cdd0b34f-2219-43be-9c43-746f44e1d595",
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+          "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+        }
+      ],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "provenance": "assembled-template",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+        },
+        "requestId": "d6b01832-d152-4ffa-a313-9efef4292056",
+        "loadedManifest": {
+          "id": "c17aab16-eec8-4de5-9224-179111feb300",
+          "port": 41006,
+          "bootId": "036ffe5b-e99d-4990-b942-341eb5486d2f",
+          "status": "stopped",
+          "createdAt": "2026-10-22T02:29:02.508Z",
+          "updatedAt": "2026-10-22T02:29:14.209Z",
+          "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "http://127.0.0.1:25204/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+            "executionMode": "simulated"
+          },
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946"
+        },
+        "testDeployment": {
+          "id": "c8c1ddad-9a07-4fda-bc2a-9811001cd405",
+          "status": "stopped",
+          "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "binding": {
+            "candidate": {
+              "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+              "provenance": "assembled-template",
+              "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+            },
+            "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "http://127.0.0.1:25204/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+              "executionMode": "simulated"
+            },
+            "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+            "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-22T02:29:01.790Z",
+          "expiresAt": "2026-10-22T02:44:01.790Z",
+          "updatedAt": "2026-10-22T02:29:14.219Z",
+          "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+          "validation": {
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+            "caseId": "TC-006",
+            "actorId": "U1001",
+            "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+          },
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "inputDigest": "e5f576bafac4352172479083a97d858619ec861950dc2b97c148bc9e77ac1608",
+          "deploymentId": "c17aab16-eec8-4de5-9224-179111feb300",
+          "environmentId": "cdd0b34f-2219-43be-9c43-746f44e1d595",
+          "clientRequestId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b"
+        }
+      },
+      "beforeApprovalCalls": [
+        {
+          "seq": 15,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "db83be76-d674-449d-b8a7-2ebeb57e0ba6",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:29:12.451Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ]
+    },
+    null,
+    {
+      "run": {
+        "id": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+        "input": "查询 PUMP-001 并申请创建检查工单。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"message\":\"已返回实际工单结果\",\"result\":\"{status=created, actorId=U1001, priority=normal, createdAt=2026-10-21T08:00:00.000Z, description=检查温度告警, equipmentId=PUMP-001, workOrderId=fa68780d-36c9-4d92-b271-48eadcd3104e}\"}"
+          },
+          "conversation_id": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-22T02:29:22.856Z",
+        "updatedAt": "2026-10-22T02:29:29.788Z",
+        "diagnostic": "",
+        "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+        "inputDigest": "fd83cf147bf2f60cb3455f963b12e3f05a0ac1e7b7be5fd054e17d38713e2fe3",
+        "deploymentId": "a32dc023-ac36-47ae-99e1-d014aad058cf",
+        "invocationId": "465de553-a049-48c0-93c6-ae19e9c0bf34",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "http://127.0.0.1:25204/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+          "executionMode": "simulated"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "testDeploymentId": "8db86086-33bb-43cd-a6f5-4a0691b9075f"
+        },
+        "validationId": "f2b3217d-7a11-46cb-a4c0-a454808018fe",
+        "environmentId": "7a33668c-ad9f-45c0-8750-1f2dcac7f889",
+        "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+        "conversationId": "244dd95f-e7f0-4526-b5a7-701a7029b319",
+        "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+        "cancelRequested": false,
+        "clientRequestId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+        "externalEvidence": [
+          {
+            "seq": 16,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:29:24.530Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          },
+          {
+            "seq": 17,
+            "input": {
+              "priority": "normal",
+              "description": "检查温度告警",
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+            "result": {
+              "status": "created",
+              "actorId": "U1001",
+              "priority": "normal",
+              "createdAt": "2026-10-21T08:00:00.000Z",
+              "description": "检查温度告警",
+              "equipmentId": "PUMP-001",
+              "workOrderId": "fa68780d-36c9-4d92-b271-48eadcd3104e"
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:29:26.739Z",
+            "operation": "work-order-create",
+            "stateRevision": 2
+          },
+          {
+            "seq": 18,
+            "input": {
+              "key": "417d412f-44d4-4c7d-b89e-a303ade323b7"
+            },
+            "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+            "result": {
+              "status": "created",
+              "actorId": "U1001",
+              "priority": "normal",
+              "createdAt": "2026-10-21T08:00:00.000Z",
+              "description": "检查温度告警",
+              "equipmentId": "PUMP-001",
+              "workOrderId": "fa68780d-36c9-4d92-b271-48eadcd3104e"
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-22T02:29:28.735Z",
+            "operation": "work-order-by-key",
+            "stateRevision": 2
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "write-after-timeout"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 16,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:29:24.530Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        },
+        {
+          "seq": 17,
+          "input": {
+            "priority": "normal",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "result": {
+            "status": "created",
+            "actorId": "U1001",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "fa68780d-36c9-4d92-b271-48eadcd3104e"
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:29:26.739Z",
+          "operation": "work-order-create",
+          "stateRevision": 2
+        },
+        {
+          "seq": 18,
+          "input": {
+            "key": "417d412f-44d4-4c7d-b89e-a303ade323b7"
+          },
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "result": {
+            "status": "created",
+            "actorId": "U1001",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "fa68780d-36c9-4d92-b271-48eadcd3104e"
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:29:28.735Z",
+          "operation": "work-order-by-key",
+          "stateRevision": 2
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-22T02:29:22.867Z",
+          "seq": 1581,
+          "data": {
+            "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+          },
+          "type": "run.queued",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:23.477Z",
+          "seq": 1582,
+          "data": {
+            "deploymentId": "a32dc023-ac36-47ae-99e1-d014aad058cf"
+          },
+          "type": "run.running",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:24.411Z",
+          "seq": 1583,
+          "data": {
+            "time": "2026-10-22T02:29:24.237907800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.417Z",
+          "seq": 1584,
+          "data": {
+            "time": "2026-10-22T02:29:24.311172900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.733Z",
+          "seq": 1587,
+          "data": {
+            "time": "2026-10-22T02:29:24.470076100Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.744Z",
+          "seq": 1588,
+          "data": {
+            "time": "2026-10-22T02:29:24.472230400Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "正在查询",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.755Z",
+          "seq": 1589,
+          "data": {
+            "time": "2026-10-22T02:29:24.494277700Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.761Z",
+          "seq": 1590,
+          "data": {
+            "time": "2026-10-22T02:29:24.495849800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.771Z",
+          "seq": 1591,
+          "data": {
+            "time": "2026-10-22T02:29:24.548190500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.777Z",
+          "seq": 1592,
+          "data": {
+            "time": "2026-10-22T02:29:24.561837Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.783Z",
+          "seq": 1593,
+          "data": {
+            "time": "2026-10-22T02:29:24.570800800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.790Z",
+          "seq": 1594,
+          "data": {
+            "time": "2026-10-22T02:29:24.572336300Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "设备温度 86°C，状态 warning，来源 seed-equipment-001@1，建议检查后创建工单。",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.795Z",
+          "seq": 1595,
+          "data": {
+            "time": "2026-10-22T02:29:24.573962100Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.801Z",
+          "seq": 1596,
+          "data": {
+            "time": "2026-10-22T02:29:24.575109900Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.810Z",
+          "seq": 1597,
+          "data": {
+            "time": "2026-10-22T02:29:24.578823300Z",
+            "event": {
+              "rail": "write-confirm",
+              "tool": "create_work_order",
+              "event": "approval_required",
+              "approved": false,
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "toolCallId": "write"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.822Z",
+          "seq": 1598,
+          "data": {
+            "time": "2026-10-22T02:29:24.581593300Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "tool_error",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.847Z",
+          "seq": 1599,
+          "data": {
+            "time": "2026-10-22T02:29:24.583239Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "after_tool_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:24.876Z",
+          "seq": 1600,
+          "data": {
+            "time": "2026-10-22T02:29:24.591519600Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:25.517Z",
+          "seq": 1633,
+          "data": {
+            "actionId": "417d412f-44d4-4c7d-b89e-a303ade323b7",
+            "actionHash": "63d6046a0585d66d0f88cc6b37827c1bab8f5f3b1558af3009ddf9f9a67580fe"
+          },
+          "type": "action.prepared",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:25.839Z",
+          "seq": 1650,
+          "data": {
+            "actionId": "417d412f-44d4-4c7d-b89e-a303ade323b7",
+            "decision": "approve",
+            "decisionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+          },
+          "type": "action.decided",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:27.004Z",
+          "seq": 1715,
+          "data": {
+            "time": "2026-10-22T02:29:26.699546500Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:27.009Z",
+          "seq": 1716,
+          "data": {
+            "time": "2026-10-22T02:29:26.706850100Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:27.017Z",
+          "seq": 1717,
+          "data": {
+            "time": "2026-10-22T02:29:26.708584400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "before_tool_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:27.022Z",
+          "seq": 1718,
+          "data": {
+            "time": "2026-10-22T02:29:26.709668800Z",
+            "event": {
+              "rail": "write-confirm",
+              "tool": "create_work_order",
+              "event": "approval_resumed",
+              "approved": true,
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "toolCallId": "write"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:28.727Z",
+          "seq": 1839,
+          "data": {
+            "status": "unknown",
+            "actionId": "417d412f-44d4-4c7d-b89e-a303ade323b7"
+          },
+          "type": "action.write_unknown",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:28.739Z",
+          "seq": 1840,
+          "data": {
+            "status": "succeeded",
+            "actionId": "417d412f-44d4-4c7d-b89e-a303ade323b7"
+          },
+          "type": "action.reconcile_found",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-22T02:29:28.980Z",
+          "seq": 1861,
+          "data": {
+            "time": "2026-10-22T02:29:28.780772800Z",
+            "event": {
+              "rail": "audit",
+              "tool": "create_work_order",
+              "event": "after_tool_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:28.984Z",
+          "seq": 1862,
+          "data": {
+            "time": "2026-10-22T02:29:28.787812600Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:28.989Z",
+          "seq": 1863,
+          "data": {
+            "time": "2026-10-22T02:29:28.796087400Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:29.003Z",
+          "seq": 1864,
+          "data": {
+            "time": "2026-10-22T02:29:28.797084Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"message\":\"已返回实际工单结果\",\"result\":\"{status=created, actorId=U1001, priority=normal, createdAt=2026-10-21T08:00:00.000Z, description=检查温度告警, equipmentId=PUMP-001, workOrderId=fa68780d-36c9-4d92-b271-48eadcd3104e}\"}",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:29.014Z",
+          "seq": 1865,
+          "data": {
+            "time": "2026-10-22T02:29:28.800088700Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+              "turnCount": 2
+            }
+          },
+          "type": "runtime.event",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-22T02:29:29.745Z",
+          "seq": 1916,
+          "data": {
+            "externalCallCount": 3
+          },
+          "type": "run.succeeded",
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "source": "platform"
+        }
+      ],
+      "actions": [
+        {
+          "id": "417d412f-44d4-4c7d-b89e-a303ade323b7",
+          "args": {
+            "priority": "normal",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "status": "succeeded",
+          "actorId": "U1001",
+          "decision": "approve",
+          "response": {
+            "result": {
+              "status": "created",
+              "actorId": "U1001",
+              "priority": "normal",
+              "createdAt": "2026-10-21T08:00:00.000Z",
+              "description": "检查温度告警",
+              "equipmentId": "PUMP-001",
+              "workOrderId": "fa68780d-36c9-4d92-b271-48eadcd3104e"
+            },
+            "status": 200
+          },
+          "createdAt": "2026-10-22T02:39:25.531Z",
+          "decidedAt": "2026-10-22T02:39:25.856Z",
+          "expiresAt": "2026-10-22T02:44:25.531Z",
+          "operation": "work-order-create",
+          "updatedAt": "2026-10-22T02:39:28.775Z",
+          "actionHash": "63d6046a0585d66d0f88cc6b37827c1bab8f5f3b1558af3009ddf9f9a67580fe",
+          "decisionId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "paramsHash": "4fd582c8d31632e1a6cd3475aa19cd0006a79f50cb0f34579143450b010ed06f",
+          "toolCallId": "write",
+          "environmentId": "7a33668c-ad9f-45c0-8750-1f2dcac7f889",
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+          "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16"
+        }
+      ],
+      "attempts": [
+        {
+          "seq": 8,
+          "data": {
+            "idempotencyKey": "417d412f-44d4-4c7d-b89e-a303ade323b7"
+          },
+          "type": "write_started"
+        },
+        {
+          "seq": 9,
+          "data": {
+            "idempotencyKey": "417d412f-44d4-4c7d-b89e-a303ade323b7"
+          },
+          "type": "write_unknown"
+        },
+        {
+          "seq": 10,
+          "data": {
+            "idempotencyKey": "417d412f-44d4-4c7d-b89e-a303ade323b7"
+          },
+          "type": "reconcile_found"
+        }
+      ],
+      "complete": false,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        },
+        "workOrders": {
+          "fa68780d-36c9-4d92-b271-48eadcd3104e": {
+            "status": "created",
+            "actorId": "U1001",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "检查温度告警",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "fa68780d-36c9-4d92-b271-48eadcd3104e"
+          }
+        },
+        "workOrderKeys": {
+          "U1001:417d412f-44d4-4c7d-b89e-a303ade323b7": {
+            "input": "{\"description\":\"检查温度告警\",\"equipmentId\":\"PUMP-001\",\"priority\":\"normal\"}",
+            "workOrderId": "fa68780d-36c9-4d92-b271-48eadcd3104e"
+          }
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f",
+        "candidate": {
+          "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "provenance": "assembled-template",
+          "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+        },
+        "requestId": "465de553-a049-48c0-93c6-ae19e9c0bf34",
+        "loadedManifest": {
+          "id": "a32dc023-ac36-47ae-99e1-d014aad058cf",
+          "port": 6982,
+          "bootId": "036ffe5b-e99d-4990-b942-341eb5486d2f",
+          "status": "stopped",
+          "createdAt": "2026-10-22T02:29:15.230Z",
+          "updatedAt": "2026-10-22T02:29:30.309Z",
+          "specDigest": "0f2ef428143abad504b78135724bfb618f31d6bc7e29a0fd1120b86663635707",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "http://127.0.0.1:25204/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+            "executionMode": "simulated"
+          },
+          "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946"
+        },
+        "testDeployment": {
+          "id": "8db86086-33bb-43cd-a6f5-4a0691b9075f",
+          "status": "stopped",
+          "agentId": "51ec3332-3fbe-4a7d-8fd6-abca18da3bd7",
+          "binding": {
+            "candidate": {
+              "id": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+              "provenance": "assembled-template",
+              "bundleDigest": "d057b2fdfd0dd3bf96c80e11de55461a310fb96faf8d2dd04b1aec7a311b7009"
+            },
+            "mockDigest": "46264396d019990b323985ec27157ef170ab946228a963cbd42ff72833edb75c",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "http://127.0.0.1:25204/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "9e0470caaacd52c66f6e5d44ccdb28d2f02d1accf6683e75759e317989de9cc4",
+              "executionMode": "simulated"
+            },
+            "testSetDigest": "d15fe61fca1dcf528cd2379d0088b0820bcd533a2b92c538e40cc1c56448a7d3",
+            "artifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+            "baselineDigest": "44fb9b5628972a2f09ad6e5f2beb91d8b768f47143180e7dca558516f41cbd41",
+            "snapshotDigest": "dc9d68e777b1578b4eb64639ccd385aedd32af35702ea061ea312e6e37080d16",
+            "compatibilityKey": "f5afb487394083888f719f54990c775a9c0a68954c85cf5eac6e24df59763dc8"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-22T02:29:14.578Z",
+          "expiresAt": "2026-10-22T02:44:14.578Z",
+          "updatedAt": "2026-10-22T02:29:30.320Z",
+          "snapshotId": "1bb3c215-3da6-4853-8f54-d6b922624e80",
+          "validation": {
+            "input": "查询 PUMP-001 并申请创建检查工单。",
+            "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+            "caseId": "TC-008",
+            "actorId": "U1001",
+            "executionId": "f2b3217d-7a11-46cb-a4c0-a454808018fe"
+          },
+          "candidateId": "827dfeea-ee3f-4733-9a15-062baeee5c8c",
+          "inputDigest": "02d9d883e858c7762f12abc5ee82d5981f17a24c48d89a35513ed60c09139772",
+          "deploymentId": "a32dc023-ac36-47ae-99e1-d014aad058cf",
+          "environmentId": "7a33668c-ad9f-45c0-8750-1f2dcac7f889",
+          "clientRequestId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "write-after-timeout"
+          },
+          "requirementBaselineId": "94aa6c4c-58bf-426d-8a02-29866e141e0b"
+        }
+      },
+      "beforeApprovalCalls": [
+        {
+          "seq": 16,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "dacbeec6-fdfb-42af-a218-d4f8076c8f13",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-22T02:29:24.530Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ]
+    }
+  ],
+  "ingress": [
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/1c3eaa74-3544-41b8-ad62-1c18e56b7681/requests/303bb767-fbb1-4577-8161-56890f2d8452"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/51d48de7-4406-4734-8082-a525d7fd8961/requests/5177c4f8-8029-4c0c-8e0d-43b6d437d4a2"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8132ba3a-ca7d-4564-a10f-08b8a5667187/requests/c01ed6d7-bc86-4f3c-a8c3-3a3046fe567b"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb/actions/03e4fdd9-b285-4981-a5c8-3549b63ca4d9/decision"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb/actions/03e4fdd9-b285-4981-a5c8-3549b63ca4d9/decision"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/3c6cf732-cd64-4510-ac2b-1075c439ab15/requests/bbbb02da-6adc-449a-a239-4aa1caa541eb"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c/actions/acf84661-5365-4a70-9e85-de3bef883f2f/decision"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c4ee4b9c-b6e4-471a-8887-59a591be4cce/requests/0fe9c359-6856-4eb4-9f9b-760fa29d9f5c"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/c8c1ddad-9a07-4fda-bc2a-9811001cd405/requests/d6b01832-d152-4ffa-a313-9efef4292056"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34/actions/417d412f-44d4-4c7d-b89e-a303ade323b7/decision"
+    },
+    {
+      "method": "POST",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34/actions/417d412f-44d4-4c7d-b89e-a303ade323b7/decision"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    },
+    {
+      "method": "GET",
+      "path": "/test-api/deployments/8db86086-33bb-43cd-a6f5-4a0691b9075f/requests/465de553-a049-48c0-93c6-ae19e9c0bf34"
+    }
+  ]
+}

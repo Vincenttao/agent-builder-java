@@ -1,0 +1,182 @@
+{
+  "config": {
+    "argv": [
+      "D:\\Program Files\\nodejs\\node.exe",
+      "D:\\agent-builder-java\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/workorder-validation-flow.spec.ts"
+    ],
+    "configFile": "D:\\agent-builder-java\\playwright.config.ts",
+    "rootDir": "D:/agent-builder-java/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/agent-builder-java/test-results/browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/agent-builder-java/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\agent-builder-java\\test-results\\browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "D:\\agent-builder-java\\tests\\e2e",
+        "snapshotDir": "D:\\agent-builder-java\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:8080",
+          "channel": "msedge",
+          "headless": true,
+          "trace": "off",
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/e2e.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "workorder-validation-flow.spec.ts",
+      "file": "workorder-validation-flow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Docker workorder baseline passes all eight cases then publishes and performs an approved business write",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 1200000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 487774,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"stage\":\"workorder-validation-started\",\"id\":\"1c7d8d00-5e35-4ab6-9245-f6d02f0002b6\",\"draftId\":\"6672f336-fab1-4a50-a3cd-91044653a81b\",\"candidateId\":\"a186534c-c21b-4eff-ba83-c6b02751dc81\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":0,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":1,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":2,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":3,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":4,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":5,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":6,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":7,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-validation\",\"completed\":8,\"total\":8,\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\"}\n"
+                    },
+                    {
+                      "text": "{\"stage\":\"workorder-live-passed\",\"id\":\"1c7d8d00-5e35-4ab6-9245-f6d02f0002b6\",\"validationId\":\"b73885e7-076b-4a1a-bbfc-563f7f0f8e43\",\"versionId\":\"4fff5f03-c67e-471a-8b61-bca74c40e647\",\"requestId\":\"48f87b93-b89a-4bec-9004-f458529dd2e3\"}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T03:00:54.205Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2ec1f3d13c5fb885219d-e895f7407c2441fb7e9d",
+          "file": "workorder-validation-flow.spec.ts",
+          "line": 19,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T03:00:52.961Z",
+    "duration": 489909.498,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

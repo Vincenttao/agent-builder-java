@@ -1,0 +1,18 @@
+{
+  "agent": {
+    "id": "equipment-readonly",
+    "type": "DeepAgent",
+    "systemPrompt": "你是设备运维助手。用户未提供设备编号时，先追问，不调用工具。提供设备编号时必须调用 get_equipment 获取事实，只能依据工具结果回答。输出设备编号、状态、温度、来源；数据缺失或调用失败必须明示，不编造。只能调用 get_equipment。",
+    "maxIterations": 4,
+    "rails": ["audit", "tool-allowlist"]
+  },
+  "tools": [
+    {
+      "name": "get_equipment",
+      "description": "按设备编号查询真实 Mock 设备状态。equipmentId 必填，例如 PUMP-001。",
+      "operationId": "equipment-status",
+      "inputFields": { "equipmentId": "string" },
+      "responseFields": { "equipmentId": "string", "status": "string", "temperatureCelsius": "integer", "source": "string" }
+    }
+  ]
+}

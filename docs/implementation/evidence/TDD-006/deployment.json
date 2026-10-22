@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-10-21T19:33:28.490Z",
+  "services": [
+    {
+      "service": "app",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:4c18e96c4c694ece67f2a6fb74f7cdce9cada2a50699924f611bd404927a5432"
+    },
+    {
+      "service": "mock-services",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:4c18e96c4c694ece67f2a6fb74f7cdce9cada2a50699924f611bd404927a5432"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a"
+    },
+    {
+      "service": "runner",
+      "state": "running",
+      "health": "healthy",
+      "image": "sha256:d3029e455dad0f60f0f60e3c90d4e65e6dae45ddaa93ff2cdee1040307cf9e7a"
+    }
+  ],
+  "productionSourceDigest": "232b62d876ecea2b975aafc687f54cc6b7d3edf7fb519d9249e73e3d22068083",
+  "artifactDigest": "e4cbf6ed25d30c9ee3588ad221526de6bb74aea8e072e49255afc1c4acc58d25",
+  "approvalRunId": "663f7028-8937-42fc-a90a-f598ad98ecb6",
+  "note": "Terminal restart evidence only; native JVM session restart recovery is unsupported."
+}

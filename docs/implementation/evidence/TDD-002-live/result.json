@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "executionMode": "live-mock",
+  "runId": "java-live-1792605573338",
+  "startedAt": "2026-10-21T17:59:33.361Z",
+  "finishedAt": "2026-10-21T17:59:40.658Z",
+  "requestedModel": "deepseek-v4-flash",
+  "artifactDigest": "124421e9d573208810cb782af048d1ca3b76520cf7306d52f8c1317bf5ac1eea",
+  "specDigest": "7bb0ec511ac3c049fca0989b46c420c585fb0db1b022e9382cf3caf63d0cdaea",
+  "sdk": {
+    "jdk": 21,
+    "core": {
+      "repository": "https://github.com/openJiuwen-ai/agent-core-java.git",
+      "commit": "89c7810ca35dface93cea797816f89af1fe4c588",
+      "version": "0.1.17"
+    },
+    "runtime": {
+      "repository": "https://github.com/openJiuwen-ai/agent-runtime-java.git",
+      "commit": "2e755dcee97eb8d5adb33a3ce21f6a482981b287",
+      "version": "0.1.4"
+    }
+  },
+  "actualHttpCalls": 1,
+  "assertions": [
+    "actual Model/Core/AgentServer",
+    "tool HTTP observation",
+    "response contains observed temperature and source",
+    "two rail events",
+    "no configured credentials in response/events"
+  ]
+}

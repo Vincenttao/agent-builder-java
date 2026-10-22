@@ -1,0 +1,22 @@
+{
+  "id": "bb9e661e-4a82-46a0-89a1-7a4e5bcd72ab",
+  "commandId": "package-component",
+  "executable": "jar",
+  "args": [
+    "--create",
+    "--file",
+    "/data/engineering/tasks/403f4668-ab7a-4f65-8d10-ac84f842971f/workspace/control/commands/8853cdf9-ca33-4888-82ca-7924cdf7cb01/component.jar",
+    "-C",
+    "/data/engineering/tasks/403f4668-ab7a-4f65-8d10-ac84f842971f/workspace/control/commands/8853cdf9-ca33-4888-82ca-7924cdf7cb01",
+    "generated",
+    "-C",
+    "/data/engineering/tasks/403f4668-ab7a-4f65-8d10-ac84f842971f/workspace/developer",
+    "skills"
+  ],
+  "startedAt": "2026-10-22T00:32:32.942Z",
+  "finishedAt": "2026-10-22T00:32:33.231Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "",
+  "truncated": false
+}

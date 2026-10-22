@@ -1,0 +1,237 @@
+{
+  "run": {
+    "id": "fd493102-7254-4938-952c-2081f3eda815",
+    "input": "查询 PUMP-001 的状态、温度与来源。",
+    "result": {
+      "result": {
+        "role": "assistant",
+        "content": "PUMP-001 查询结果：\n\n- **状态**：warning（告警）\n- **温度**：86 °C\n- **来源**：seed-equipment-001@1\n\n说明：以上数据来自 get_equipment 工具返回。状态为告警且温度偏高（86 °C），建议现场核查泵体散热与负载情况；如需进一步判断，请提供该设备的正常温度阈值或历史趋势数据。"
+      },
+      "conversation_id": "fd493102-7254-4938-952c-2081f3eda815"
+    },
+    "status": "succeeded",
+    "actorId": "U1001",
+    "started": true,
+    "createdAt": "2026-10-21T18:59:20.445Z",
+    "updatedAt": "2026-10-21T18:59:33.755Z",
+    "diagnostic": "",
+    "snapshotId": "e994669e-2eca-4a3f-b120-a6305358b87e",
+    "inputDigest": "d7925473dc8844b058ab07c7c9f21acb759eb2ae1916ef073dc0dbcc013e6409",
+    "deploymentId": "fd493102-7254-4938-952c-2081f3eda815",
+    "environmentId": "0f8ce636-9583-45be-9e91-4f0b212508e4",
+    "artifactDigest": "8bcabf3116663bc97870e8e6f15f9d750b0bb5049974af74137427e1fdc4a41a",
+    "snapshotDigest": "bb630147e263b7c1fdc21d1a2dc3502369a942a24b05fed7f8c6bb515fb0a142",
+    "cancelRequested": false,
+    "clientRequestId": "15479a15-549d-4e35-bf42-1ce340e86da4",
+    "externalEvidence": [
+      {
+        "seq": 1,
+        "input": {
+          "equipmentId": "PUMP-001"
+        },
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "result": {
+          "source": "seed-equipment-001@1",
+          "status": "warning",
+          "equipmentId": "PUMP-001",
+          "temperatureCelsius": 86
+        },
+        "status": 200,
+        "actorId": "U1001",
+        "createdAt": "2026-10-21T18:59:31.923Z",
+        "operation": "equipment-status",
+        "stateRevision": 1
+      }
+    ],
+    "dependencyFailures": 0
+  },
+  "events": {
+    "items": [
+      {
+        "seq": 1,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "platform",
+        "type": "run.queued",
+        "data": {
+          "snapshotId": "e994669e-2eca-4a3f-b120-a6305358b87e",
+          "artifactDigest": "8bcabf3116663bc97870e8e6f15f9d750b0bb5049974af74137427e1fdc4a41a",
+          "snapshotDigest": "bb630147e263b7c1fdc21d1a2dc3502369a942a24b05fed7f8c6bb515fb0a142"
+        },
+        "at": "2026-10-21T18:59:20.445Z"
+      },
+      {
+        "seq": 2,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "platform",
+        "type": "run.running",
+        "data": {
+          "deploymentId": "fd493102-7254-4938-952c-2081f3eda815"
+        },
+        "at": "2026-10-21T18:59:30.113Z"
+      },
+      {
+        "seq": 3,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:30.856183890Z",
+          "event": {
+            "rail": "audit",
+            "tool": "",
+            "event": "before_invoke",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:31.466Z"
+      },
+      {
+        "seq": 4,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:30.938638072Z",
+          "event": {
+            "rail": "audit",
+            "tool": "",
+            "event": "before_model_call",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:31.470Z"
+      },
+      {
+        "seq": 7,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:31.892558936Z",
+          "event": {
+            "rail": "audit",
+            "tool": "",
+            "event": "after_model_call",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:32.210Z"
+      },
+      {
+        "seq": 8,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:31.900348463Z",
+          "event": {
+            "rail": "tool-allowlist",
+            "tool": "get_equipment",
+            "event": "before_tool_call",
+            "allowed": true,
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815"
+          }
+        },
+        "at": "2026-10-21T18:59:32.213Z"
+      },
+      {
+        "seq": 9,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:31.901241339Z",
+          "event": {
+            "rail": "audit",
+            "tool": "get_equipment",
+            "event": "before_tool_call",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:32.214Z"
+      },
+      {
+        "seq": 10,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:31.937158316Z",
+          "event": {
+            "rail": "audit",
+            "tool": "get_equipment",
+            "event": "after_tool_call",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:32.216Z"
+      },
+      {
+        "seq": 11,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:31.943530546Z",
+          "event": {
+            "rail": "audit",
+            "tool": "",
+            "event": "before_model_call",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:32.217Z"
+      },
+      {
+        "seq": 19,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:32.817014128Z",
+          "event": {
+            "rail": "audit",
+            "tool": "",
+            "event": "after_model_call",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:32.969Z"
+      },
+      {
+        "seq": 20,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "runtime",
+        "type": "runtime.event",
+        "data": {
+          "time": "2026-10-21T18:59:32.820723913Z",
+          "event": {
+            "rail": "audit",
+            "tool": "",
+            "event": "after_invoke",
+            "sessionId": "fd493102-7254-4938-952c-2081f3eda815",
+            "turnCount": 1
+          }
+        },
+        "at": "2026-10-21T18:59:32.971Z"
+      },
+      {
+        "seq": 30,
+        "runId": "fd493102-7254-4938-952c-2081f3eda815",
+        "source": "platform",
+        "type": "run.succeeded",
+        "data": {
+          "externalCallCount": 1
+        },
+        "at": "2026-10-21T18:59:33.754Z"
+      }
+    ]
+  }
+}

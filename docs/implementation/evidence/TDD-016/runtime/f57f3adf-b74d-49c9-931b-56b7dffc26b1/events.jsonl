@@ -1,0 +1,17 @@
+{"time":"2026-10-22T01:50:19.029801800Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"before_invoke"}}
+{"time":"2026-10-22T01:50:19.133663700Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"before_model_call"}}
+{"time":"2026-10-22T01:50:20.683011Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"after_model_call"}}
+{"time":"2026-10-22T01:50:20.703503500Z","event":{"rail":"tool-allowlist","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","allowed":true,"tool":"skill_tool","event":"before_tool_call"}}
+{"time":"2026-10-22T01:50:20.705504200Z","event":{"turnCount":1,"rail":"audit","tool":"skill_tool","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"before_tool_call"}}
+{"time":"2026-10-22T01:50:20.719655100Z","event":{"skill":"equipment-query","developmentBundleDigest":"2b7b9e905c97f76f2f983000dba82716508f1fe673ebffcaa35fec2c8102d3df","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","skillDigest":"19eb6ed2d412ac812f57d2d1171cdc529fbb05e5363a4fb5b776aa8cab360fe8","event":"skill_loaded"}}
+{"time":"2026-10-22T01:50:20.742473700Z","event":{"turnCount":1,"rail":"audit","tool":"skill_tool","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"after_tool_call"}}
+{"time":"2026-10-22T01:50:20.762014400Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"before_model_call"}}
+{"time":"2026-10-22T01:50:21.235442900Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"after_model_call"}}
+{"time":"2026-10-22T01:50:21.239326Z","event":{"rail":"tool-allowlist","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","allowed":true,"tool":"get_equipment","event":"before_tool_call"}}
+{"time":"2026-10-22T01:50:21.241325200Z","event":{"turnCount":1,"rail":"audit","tool":"get_equipment","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"before_tool_call"}}
+{"time":"2026-10-22T01:50:21.245215100Z","event":{"componentDigest":"efe7dfc956dd239d333c2ebf5f193c7456154c26d289df8fa53eef28c3ead18d","developmentBundleDigest":"2b7b9e905c97f76f2f983000dba82716508f1fe673ebffcaa35fec2c8102d3df","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","className":"generated.EquipmentTool","event":"generated_tool_invoked"}}
+{"time":"2026-10-22T01:50:21.362406100Z","event":{"turnCount":1,"rail":"audit","tool":"get_equipment","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"after_tool_call"}}
+{"time":"2026-10-22T01:50:21.372452500Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"before_model_call"}}
+{"time":"2026-10-22T01:50:22.369692300Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"after_model_call"}}
+{"time":"2026-10-22T01:50:22.371374300Z","event":{"content":"{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"设备处于警告状态，温度 86°C 偏高，建议立即检查冷却与润滑系统、确认负载与运行参数是否异常，并安排现场巡检；若温度继续上升，请按规程降载或停机检修。\"}","event":"assistant_output","rail":"audit","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6"}}
+{"time":"2026-10-22T01:50:22.378348600Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"da2f9d5d-78ab-4298-adde-b248176f02f6","event":"after_invoke"}}

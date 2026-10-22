@@ -1,0 +1,9 @@
+{
+  "checked": [
+    "README.md",
+    "docs\\README.md",
+    "docs\\implementation\\PROGRESS.md",
+    "docs\\implementation\\TDD-016.md"
+  ],
+  "broken": []
+}

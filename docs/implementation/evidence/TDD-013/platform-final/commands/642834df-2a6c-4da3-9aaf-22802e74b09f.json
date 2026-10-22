@@ -1,0 +1,23 @@
+{
+  "id": "642834df-2a6c-4da3-9aaf-22802e74b09f",
+  "commandId": "compile-contract",
+  "executable": "javac",
+  "args": [
+    "-encoding",
+    "UTF-8",
+    "--release",
+    "21",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+    "-d",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\commands\\f79885ae-2788-4007-a50a-5d0748c0cfc9",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\developer\\src\\generated\\EquipmentTool.java",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\checks\\verification\\EquipmentContract.java"
+  ],
+  "startedAt": "2026-10-21T23:14:58.210Z",
+  "finishedAt": "2026-10-21T23:15:14.020Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "ע: ��������·���з�����һ�����������������������\n  ��ע������δ�����а�� javac ���ܻ������ע������\n  �������ٰ�����ָ����һ���������� (-processor)��\n  ��ָ��������·�� (--processor-path, --processor-module-path)��\n  ����ʽ��������ע���� (-proc:only, -proc:full)��\n  ��ʹ�� -Xlint:-options ���ش���Ϣ��\n  ��ʹ�� -proc:none ������ע������\n",
+  "truncated": false
+}

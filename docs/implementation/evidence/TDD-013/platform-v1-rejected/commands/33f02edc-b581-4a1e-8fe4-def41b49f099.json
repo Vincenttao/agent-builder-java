@@ -1,0 +1,17 @@
+{
+  "id": "33f02edc-b581-4a1e-8fe4-def41b49f099",
+  "commandId": "unit-test",
+  "executable": "java",
+  "args": [
+    "-ea",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\development-live\\d0df022a-7382-4e74-bdf3-ed173199b34d\\runner\\tasks\\b13f259c-bffa-4ffd-a055-a5a9b78023b2\\workspace\\control\\commands\\63f1c68e-0f26-4615-9afd-e76c172ee9dd;D:\\agent-builder-java\\.cache\\development-live\\d0df022a-7382-4e74-bdf3-ed173199b34d\\runner\\tasks\\b13f259c-bffa-4ffd-a055-a5a9b78023b2\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\d0df022a-7382-4e74-bdf3-ed173199b34d\\runner\\tasks\\b13f259c-bffa-4ffd-a055-a5a9b78023b2\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+    "generated.EquipmentToolTest"
+  ],
+  "startedAt": "2026-10-21T23:00:07.280Z",
+  "finishedAt": "2026-10-21T23:00:07.759Z",
+  "exitCode": 1,
+  "status": "failed",
+  "output": "Exception in thread \"main\" java.lang.AssertionError: ASSERTION_FAILED: valid call forwards the original inputs map\n\tat generated.EquipmentToolTest.check(EquipmentToolTest.java:45)\n\tat generated.EquipmentToolTest.main(EquipmentToolTest.java:118)\n",
+  "truncated": false
+}

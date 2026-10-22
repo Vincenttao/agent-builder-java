@@ -1,0 +1,17 @@
+{
+  "id": "b000c17c-f3ab-4398-bc5e-442f0a6a3040",
+  "commandId": "unit-test",
+  "executable": "java",
+  "args": [
+    "-ea",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\commands\\29e3f20d-8e4e-4008-975a-b34b926dace4;D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+    "generated.EquipmentToolTest"
+  ],
+  "startedAt": "2026-10-21T23:14:47.798Z",
+  "finishedAt": "2026-10-21T23:14:48.824Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "PASS EquipmentToolTest\n",
+  "truncated": false
+}

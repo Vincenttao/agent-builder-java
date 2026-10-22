@@ -1,0 +1,1143 @@
+{
+  "checkedAt": "2026-10-22T03:10:09.828Z",
+  "sourceDigest": "11c21fb3a398f2cd1913d2eb11c27eb4120d3b47320eba9bd37b6494d63461f8",
+  "sourceFiles": 146,
+  "checks": [
+    {
+      "name": "unit-contract-integration",
+      "passed": 179,
+      "total": 179,
+      "tests": [
+        {
+          "file": "tests/contract/acceptance-manifest.test.ts",
+          "name": "keeps the complete cumulative acceptance set and references in sync with the PRD",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/agent-api.test.ts",
+          "name": "issues an actor-bound demo credential through protected management API; agent-api never accepts admin cookies or actor overrides",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 release admission accepts only an explicit target and returns an asynchronous operation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 未登录无法读取草稿",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 错误本地令牌不得创建会话",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 AC-01: 未配置模型仍能保存和恢复完整草稿",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 AC-01/42a: 环境说明无沙箱，运行被阻塞并定位模型和 Runtime",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 有模型凭据不表示实际连通，更不表示 Runtime 可运行",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 AC-42a: 拒绝 production 业务连接类型",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 AC-42a: 拒绝 unknown 业务连接类型",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 Mock 尚未接入时不虚构已连接的资产",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 不静默删除未知字段或把类型错误转换为有效输入",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 旧修订更新返回 409，保留最新草稿",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 跨来源和缺 CSRF 的写入均拒绝",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 退出后旧会话失效",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 数据库故障应显示未就绪；错误不泄露底层凭据",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/api.test.ts",
+          "name": "TD-01 HTTP 契约与本地工作台保护 内部异常不把连接字符串或密钥返回给浏览器",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/development-api.test.ts",
+          "name": "Runner authenticates generation admission, validates fixed inputs and rejects shell/credential overrides",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/development-api.test.ts",
+          "name": "management requires login and CSRF, and cannot accept caller-supplied baseline content or verdicts",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/engineering-mcp.test.ts",
+          "name": "MCP binds role outside model input, validates operation arguments, and never exposes shell or another role credential",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/runner-api.test.ts",
+          "name": "rejects deployment stop while any session still has an active execution",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/runner-api.test.ts",
+          "name": "Runner authenticates commands, rejects arbitrary options and preserves idempotent execution results",
+          "status": "passed"
+        },
+        {
+          "file": "tests/contract/test-api.test.ts",
+          "name": "binds short-lived test authorization to deployment and actor, rejects spoofing and published grants, and revokes business access on stop",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation worker expiry and cancellation revoke approved actions before their first write",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation separate service instances cannot claim the same approved write twice",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation prepares one immutable action per native tool call and normalizes parameters",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation rejects absent approval, other identity/run, stale hashes and changed execution arguments with zero writes",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation concurrent duplicate decisions and tool requests produce one effective decision and one write",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation reject and expire cancel the original run, preserve analysis, and never authorize a write",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation a write that committed before a timeout is reconciled by the original key without another write",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/actions.test.ts",
+          "name": "TD-05 durable action authorization and reconciliation an unresolved write remains unknown and repeated requests only look up its original key",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/baselines.test.ts",
+          "name": "independent, user-confirmed project acceptance baseline preserves historical workorder rules but requires explicit confirmation of current rules before reuse",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/baselines.test.ts",
+          "name": "independent, user-confirmed project acceptance baseline provides a reviewable preview and rejects confirmation of a different reviewed digest",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/baselines.test.ts",
+          "name": "independent, user-confirmed project acceptance baseline requires confirmed requirements and explicit baseline confirmation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/baselines.test.ts",
+          "name": "independent, user-confirmed project acceptance baseline freezes all required scenarios, deduplicates confirmation and rejects database mutation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/baselines.test.ts",
+          "name": "independent, user-confirmed project acceptance baseline a code/config repair can reuse a baseline; changed requirements cannot reuse it",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/baselines.test.ts",
+          "name": "independent, user-confirmed project acceptance baseline read-only acceptance cannot authorize a snapshot that binds a write tool",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/baselines.test.ts",
+          "name": "independent, user-confirmed project acceptance baseline management API rejects caller-supplied reduced cases, anonymous confirmation and confirmation without CSRF",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/candidates.test.ts",
+          "name": "registers a fixed assembled candidate from the actual Runner artifact; retries preserve it across draft edits and new builds",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/candidates.test.ts",
+          "name": "does not silently register the template when a generated job is requested but has not built",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/candidates.test.ts",
+          "name": "binds an actual Runner registration to the exact built job and rejects a mismatched composition response",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/development-repair.test.ts",
+          "name": "freezes verified failed evidence and old files, deduplicates retries, and prevents baseline or report substitution",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/development-repair.test.ts",
+          "name": "rejects passed, blocked and unverified reports, cross-target reports, missing repair support and altered source bytes",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/development-repair.test.ts",
+          "name": "counts cancelled attempts against a shared three-attempt budget and serializes concurrent repair starts",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/development.test.ts",
+          "name": "freezes confirmed inputs, deduplicates admission, and recovers an uncertain submit without starting another task",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/development.test.ts",
+          "name": "rejects a different baseline and preserves cancellation across an in-flight late submit",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/development.test.ts",
+          "name": "does not promote a mismatched runner binding or a nonterminal cancellation to success",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/development.test.ts",
+          "name": "reports explicit pre-execution model configuration rejection instead of leaving a task queued forever",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/drafts.test.ts",
+          "name": "TD-02 真实 PostgreSQL AC-01: 服务对象重建后草稿仍可恢复",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/drafts.test.ts",
+          "name": "TD-02 真实 PostgreSQL AC-14 部分: 同一修订的并发修改只能一个成功，历史不可覆盖",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/drafts.test.ts",
+          "name": "TD-02 真实 PostgreSQL 历史写入失败时整个更新回滚，不能只改当前草稿",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/drafts.test.ts",
+          "name": "TD-02 真实 PostgreSQL 重复迁移不丢数据，已应用迁移有校验摘要",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/invocations.test.ts",
+          "name": "blocks a published target when the actual business service changes after validation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/invocations.test.ts",
+          "name": "deduplicates before resolving the pointer, pins conversations and routes new conversations after publish/rollback",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/invocations.test.ts",
+          "name": "concurrent retries admit exactly one Run; identity, environment and agent cannot reuse another conversation or request",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/invocations.test.ts",
+          "name": "cancellation fences a delayed admission, survives service reconstruction, and never starts a Run",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/invocations.test.ts",
+          "name": "stopped targets remain blocked on their original version across pointer changes and can be cancelled without execution",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/invocations.test.ts",
+          "name": "reserved requests survive service reconstruction and enforce database target immutability",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/invocations.test.ts",
+          "name": "business action decisions and event reads use the owned request identity and reject foreign actions",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "a release before a delayed environment setup permanently prevents that Run reservation from becoming active",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "persistent enterprise Mock / external state evidence deduplicates work orders, binds their owner and reconciles committed writes after timeout",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "persistent enterprise Mock / external state evidence separates control and business authentication and rejects missing context",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "persistent enterprise Mock / external state evidence records actual equipment output, denied account access and immutable call history",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "persistent enterprise Mock / external state evidence atomically deduplicates writes, rejects changed parameters, and isolates environments",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "persistent enterprise Mock / external state evidence rejects invalid and insufficient amounts without ledger effects; write-timeout retains reconcilable success",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "persistent enterprise Mock / external state evidence prevents reset during a run, enforces revision and retains prior state batches",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/mock-services.test.ts",
+          "name": "persistent enterprise Mock / external state evidence preserves a committed order after the real HTTP caller times out and retries the same key",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/releases.test.ts",
+          "name": "serialized publication, smoke gating and immutable history rejects a different candidate on the same snapshot when rolling back a historical version",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/releases.test.ts",
+          "name": "serialized publication, smoke gating and immutable history a pending smoke does not starve another agent publication",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/releases.test.ts",
+          "name": "serialized publication, smoke gating and immutable history persists failed deployment cleanup and retries it after a worker restart",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/releases.test.ts",
+          "name": "serialized publication, smoke gating and immutable history a stale worker cannot stop the deployment successfully published by its successor",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/releases.test.ts",
+          "name": "serialized publication, smoke gating and immutable history deduplicates an operation and switches the pointer only after readiness and successful smoke",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/releases.test.ts",
+          "name": "serialized publication, smoke gating and immutable history keeps v1 serving after v2 fails and rolls back through a new deployment without resetting the business environment",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/releases.test.ts",
+          "name": "serialized publication, smoke gating and immutable history a failing smoke or changed validation binding cannot switch an existing pointer",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/run-leases.test.ts",
+          "name": "an expired worker cannot deploy after a new owner accepts pre-start cancellation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/run-leases.test.ts",
+          "name": "a late result from an expired worker cannot overwrite the new owner terminal state or event",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/run-leases.test.ts",
+          "name": "a stale dependency failure cannot update a completed Run or append misleading failure evidence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/run-leases.test.ts",
+          "name": "renews a live lease during a long dependency call without allowing a second worker to take over",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/run-leases.test.ts",
+          "name": "dependency exhaustion remains reconcilable until remote execution and evidence can be observed",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/run-leases.test.ts",
+          "name": "after dependency recovery a native approval interrupt can still create its pending action",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/runs.test.ts",
+          "name": "TD-04 durable Run orchestration an accepted cancellation wins over a terminal runtime response and retains the earlier analysis",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/runs.test.ts",
+          "name": "TD-04 durable Run orchestration does not expose another session events from a shared deployment",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/runs.test.ts",
+          "name": "TD-04 durable Run orchestration freezes the target and deduplicates concurrent requests, including changed input conflict",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/runs.test.ts",
+          "name": "TD-04 durable Run orchestration recovers an accepted execution after response loss without starting another model request",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/runs.test.ts",
+          "name": "TD-04 durable Run orchestration keeps missing external evidence pending and resumes collection instead of treating absence as zero calls",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/runs.test.ts",
+          "name": "TD-04 durable Run orchestration cancels a queued request without deploying; an active request only becomes cancelled after Runner confirmation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/runs.test.ts",
+          "name": "TD-04 durable Run orchestration commits terminal state and its final event atomically when event persistence fails",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/shared-runs.test.ts",
+          "name": "the real release driver checks loaded manifests and independently asserts smoke output and external evidence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/shared-runs.test.ts",
+          "name": "completing or cancelling a published Run preserves its shared deployment and persistent environment",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/shared-runs.test.ts",
+          "name": "rejects forged published deployment bindings and missing versions before admitting a Run",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/shared-runs.test.ts",
+          "name": "admits a smoke Run only under its current release lease and exposes only read operations",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/snapshots.test.ts",
+          "name": "TD-02 不可变快照／真实数据库 requires confirmed, nonempty requirements before freezing a runnable definition",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/snapshots.test.ts",
+          "name": "TD-02 不可变快照／真实数据库 old snapshots retain exact fields, assembly and digest after editing the draft",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/snapshots.test.ts",
+          "name": "TD-02 不可变快照／真实数据库 rejects stale revision, unknown component, unsupported type and duplicate Rails",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/snapshots.test.ts",
+          "name": "TD-02 不可变快照／真实数据库 database refuses mutation of the immutable snapshot",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/snapshots.test.ts",
+          "name": "TD-02 不可变快照／真实数据库 repository detects a draft revision change between validation and persistence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/snapshots.test.ts",
+          "name": "TD-02 不可变快照／真实数据库 HTTP creates, reads and lists snapshots, rejects illegal fields and exposes no mutation route",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "pins an automatic case to its validation fault, exact request and preallocated Run; rejects stale or missing execution authority",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "cancellation fences a delayed automatic test creation and stops request admission",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "the public test API rejects forged, manual and stale validation grants, while lease takeover reuses one request",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "runs a registered generated artifact through the first-candidate ingress and blocks missing bytes without a template fallback",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "tests the first candidate without a release, scopes idempotency and conversations to the fixed deployment, and retains history after stop",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "blocks mismatched loaded bytes and retires failed preparation while preserving its fixed target",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "expires a ready deployment and cancels an admitted request before starting a model execution",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "freezes test bindings, rejects changed suites and retry input, and returns the original deployment after service reconstruction",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "stopping a preparing deployment fences its late startup and never resurrects ready state",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/test-deployments.test.ts",
+          "name": "stop wins against a delayed request admission without creating a Run",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validation-admission.test.ts",
+          "name": "accepted cancellation prevents a delayed worker from admitting a new Run",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validation-admission.test.ts",
+          "name": "a stale worker error cannot cancel a Run admitted by the new lease owner",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validation-admission.test.ts",
+          "name": "validation cancellation immediately blocks approval and writing, before the next worker tick",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validations.test.ts",
+          "name": "durable project validation and immutable reports cancellation accepted during the final observation wins over a late passing result",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validations.test.ts",
+          "name": "durable project validation and immutable reports requires a candidate-aware executor and pins candidate identity instead of silently validating the template",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validations.test.ts",
+          "name": "durable project validation and immutable reports deduplicates admission, records every case, and never promotes a simulated model into a publishable result",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validations.test.ts",
+          "name": "durable project validation and immutable reports a failing deterministic assertion remains failed and the next attempt does not overwrite it",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validations.test.ts",
+          "name": "durable project validation and immutable reports records blocked cases when evidence cannot be collected, including every remaining case",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validations.test.ts",
+          "name": "durable project validation and immutable reports fences a stale worker after lease takeover without duplicating or replacing evidence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/integration/validations.test.ts",
+          "name": "durable project validation and immutable reports cancels every preallocated run after restart and keeps incomplete cases unverified",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/engineering/engine-binary.test.ts",
+          "name": "uses the package bin entry even when a Linux native executable has an exe suffix",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/engineering/profile.test.ts",
+          "name": "reviewed generation profile rejects unsupported scopes, dependency declarations and business connections without relaxing the fixed profile",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/engineering/profile.test.ts",
+          "name": "reviewed generation profile restricts normal tool operations by role and exact paths, with no shell or mutable acceptance baseline",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/engineering/task-manager.test.ts",
+          "name": "deduplicates jobs, preserves cancelled IDs against delayed starts, and waits for actual executor stop before cancelled",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/engineering/task-manager.test.ts",
+          "name": "retains budget exhaustion when user cancellation overlaps and marks uncertain cleanup for reconciliation",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/fence.test.ts",
+          "name": "rejects old or absent worker tokens, persists monotonic ownership, and fences late starts after cancellation across restart",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/fence.test.ts",
+          "name": "orders an in-flight command before takeover while a command arriving after takeover cannot run",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/journal.test.ts",
+          "name": "persistent execution request journal retains only the current session events in its execution evidence",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/journal.test.ts",
+          "name": "persistent execution request journal pauses native tool calls, deduplicates resume without replaying the initial task, and preserves decisions after restart",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/journal.test.ts",
+          "name": "persistent execution request journal marks waiting sessions interrupted after a Runner restart rather than silently replaying the task",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/journal.test.ts",
+          "name": "persistent execution request journal concurrent identical submissions run once, retain result and recover it without replay",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/journal.test.ts",
+          "name": "persistent execution request journal persists the execution before invoking the runtime",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/journal.test.ts",
+          "name": "persistent execution request journal marks interrupted requests for reconciliation after restart and does not replay",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/executions/journal.test.ts",
+          "name": "persistent execution request journal cancelled is only recorded after the runtime confirms stop",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/runtime/artifact-registry.test.ts",
+          "name": "Generated component admission admits only fixed Skill and EquipmentTool class entries, rejecting archives before extraction",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/runtime/artifact-registry.test.ts",
+          "name": "Generated component admission verifies default bytes and never accepts arbitrary digests or modified registered bytes",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/runtime/model-profile.test.ts",
+          "name": "model execution provenance is assigned by the Runner configuration recognizes the configured live provider and excludes credentials from profile contents",
+          "status": "passed"
+        },
+        {
+          "file": "apps/runner/src/runtime/retirement.test.ts",
+          "name": "durably retires an unseen deployment before a delayed start can create a JVM",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/models/probe.test.ts",
+          "name": "模型探测使用指定模型并校验实际工具调用参数，保留返回的模型名",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/models/probe.test.ts",
+          "name": "鉴权失败不泄漏供应商响应和密钥",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/models/probe.test.ts",
+          "name": "模型只说成功但没有工具调用时不可标记支持工具",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/models/probe.test.ts",
+          "name": "不把已提供的 DeepSeek 密钥发送到其他域名",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/runs/http-ports.test.ts",
+          "name": "preserves recognized dependency control errors but never forwards arbitrary error strings",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/runs/tool-proxy.test.ts",
+          "name": "business proxy uses trusted runtime context write proxy requires native call context and rejects model-supplied identity, approval and idempotency overrides",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/runs/tool-proxy.test.ts",
+          "name": "business proxy uses trusted runtime context rejects absent credentials/context, spoofed identity and unknown operations without a downstream call",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/runs/tool-proxy.test.ts",
+          "name": "business proxy uses trusted runtime context rejects an operation absent from the pinned snapshot",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/releases/project-release-gate.test.ts",
+          "name": "does not accept simulated or unverified reports as permission to publish",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/releases/project-release-gate.test.ts",
+          "name": "requires every fixed case and assertion, evidence references and exact target bindings",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/releases/project-release-gate.test.ts",
+          "name": "rechecks the actual environment and accepts only the same validated target",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/releases/project-release-gate.test.ts",
+          "name": "revalidates the exact generated candidate and plan instead of substituting the default template",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate accepts complete assertions with readable, matching external evidence",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate never treats an empty test set or missing required branch as passing",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate does not promote skipped",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate does not promote unverified",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate does not promote blocked",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate does not promote failed",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate model score cannot override failed deterministic assertions",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate rejects a model-only assertion and simulated execution",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate invalidates changed baselineDigest",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate invalidates changed artifactDigest",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate invalidates changed testSetDigest",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate invalidates changed compatibilityKey",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate rejects candidate modification after execution",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate blocks when evidence is inaccessible, mismatched, or missing a required kind",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate does not select a successful retry over an earlier failure in one report",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate rejects duplicate requirements and unknown result branches",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/acceptance-gate.test.ts",
+          "name": "independent acceptance gate rejects unsafe evidence paths before accessing storage",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/candidate-evidence.test.ts",
+          "name": "requires stopped actual candidate bytes and source-matched Skill/Tool events from the same Run",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict requires schema, matching facts and zero write calls for the read scenario",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict missing evidence is blocked; unknown rules are unverified and cannot pass",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict an order claim is insufficient without a committed order and one approved immutable action",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict cannot pass a failed run even when it contains a valid clarification",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict a changed-argument success flag cannot replace a bound rejection event and invalidated approval",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict cancellation alone does not prove the required approval outcome (4)",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict cancellation alone does not prove the required approval outcome (5)",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict requires a matching invalidated approval, rejected attempt and platform event",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/application/case-assertions.test.ts",
+          "name": "project assertions use observed business facts, not an Agent verdict binds the committed order to the approved actor, arguments, response and original key",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/acceptance/adapters/validation-write-fault.test.ts",
+          "name": "a validation-tagged run with no persisted execution cannot reach the write service",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/drafts/application/draft-service.test.ts",
+          "name": "TD-01/02 草稿行为 AC-01: 无模型依赖也可创建、保存并恢复草稿",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/drafts/application/draft-service.test.ts",
+          "name": "TD-01/02 草稿行为 AC-02: 更新保留字段来源与确认状态，修订递增",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/drafts/application/draft-service.test.ts",
+          "name": "TD-01/02 草稿行为 AC-14 部分: 旧修订更新冲突，不能覆盖新内容",
+          "status": "passed"
+        },
+        {
+          "file": "apps/server/src/drafts/application/draft-service.test.ts",
+          "name": "TD-01/02 草稿行为 不存在的草稿明确返回未找到",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "existing-adapters",
+      "passed": 24,
+      "total": 24,
+      "tests": [
+        {
+          "file": "tests/adapters/engineering-commands.test.ts",
+          "name": "records real exit codes, excludes service credentials, and confirms owned process cancellation and time limits",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/engineering-workspace.test.ts",
+          "name": "requires independent baseline-bound planning, observes a real failing Java unit test before implementation, and freezes its assertions",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/engineering-workspace.test.ts",
+          "name": "pins SDK bytes before engineering commands and rejects replacement under the same path",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/engineering-workspace.test.ts",
+          "name": "reproduces a repair defect against old source, freezes prior tests and plan, then builds a new bundle with all regression tests",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/generated-candidate.test.ts",
+          "name": "packages fixed generated bytes, loads the real class and SDK Skill in a JVM and refuses altered identities",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/java-deployments.test.ts",
+          "name": "TD-08/09 real Java deployment adapter pins two independent JVMs, deduplicates deployment input and never routes to the other version",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/java-deployments.test.ts",
+          "name": "TD-08/09 real Java deployment adapter rejects path traversal and wrong artifact identity without starting a JVM",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/java-deployments.test.ts",
+          "name": "TD-08/09 real Java deployment adapter rejects a changed spec before invocation and retains the terminal state across manager restart",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/opencode-engine.test.ts",
+          "name": "pinned OpenCode starts with authenticated API and distinct role directories, and stops its owned process",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-approval.test.ts",
+          "name": "native approval via platform API: approve",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-approval.test.ts",
+          "name": "native approval via platform API: reject",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-approval.test.ts",
+          "name": "native approval via platform API: expire",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-approval.test.ts",
+          "name": "native approval via platform API: timeout",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-runtime.test.ts",
+          "name": "cancels a blocked native model wait before retiring the dedicated JVM with zero external tool calls",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-runtime.test.ts",
+          "name": "generated Tool and Skill reach the unpublished test API through real packaging, JVM, trusted proxy and PostgreSQL evidence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-runtime.test.ts",
+          "name": "a replacement worker fences a delayed HTTP start before confirming native cancellation",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-runtime.test.ts",
+          "name": "real platform HTTP → durable Run → Runner HTTP → Java Core/Runtime → trusted proxy → PostgreSQL Mock evidence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-runtime.test.ts",
+          "name": "shared Run lifecycle retains a real JVM across completion, cancellation and a later request",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/platform-runtime.test.ts",
+          "name": "native release smoke, failure retention and rollback preserve the actual business ledger",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/process-supervisor.test.ts",
+          "name": "TD-08 managed process adapter confirms parent and managed descendant stop before returning cancelled",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/process-supervisor.test.ts",
+          "name": "TD-08 managed process adapter redacts credentials split across stdout chunks and reports actual nonzero exit",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/process-supervisor.test.ts",
+          "name": "TD-08 managed process adapter does not count a missing executable as a successfully stopped process",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/project-validation.test.ts",
+          "name": "executes all baseline cases through the real JVM and normal platform APIs, retaining external evidence",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/shared-deployment.test.ts",
+          "name": "cancels only the requested execution and leaves queued sessions and the deployment usable",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "workorder-adapters",
+      "passed": 2,
+      "total": 2,
+      "tests": [
+        {
+          "file": "tests/adapters/workorder-validation.test.ts",
+          "name": "all eight workorder cases execute with actual gates and external state (snapshot)",
+          "status": "passed"
+        },
+        {
+          "file": "tests/adapters/workorder-validation.test.ts",
+          "name": "all eight workorder cases execute with actual gates and external state (candidate HTTP)",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "total": 205,
+  "java": {
+    "sourceUnchangedFrom": "TDD-016",
+    "testsNotRerunSeparately": true
+  },
+  "native": {
+    "model": "deterministic HTTP fixture",
+    "realJVM": true,
+    "expiry": "test clock advanced",
+    "casesPerEntry": 8,
+    "entrypoints": [
+      "snapshot",
+      "candidate HTTP"
+    ]
+  },
+  "liveAttempts": [
+    {
+      "id": "1c7d8d00-5e35-4ab6-9245-f6d02f0002b6",
+      "recordedStatus": "passed-live-docker-workorder-validation-publication",
+      "finishedAt": "2026-10-22T03:09:02.375Z",
+      "reportVerdict": "passed",
+      "passedCases": 8,
+      "publishedVersion": "4fff5f03-c67e-471a-8b61-bca74c40e647",
+      "evidence": "live/live-1c7d8d00-5e35-4ab6-9245-f6d02f0002b6/live-docker-workorder.json"
+    },
+    {
+      "id": "1f795171-918e-4c83-ac80-c9816adf6dca",
+      "recordedStatus": "running",
+      "finishedAt": "2026-10-22T02:40:56.454Z",
+      "reportVerdict": "blocked",
+      "passedCases": 1,
+      "publishedVersion": null,
+      "evidence": "live/live-1f795171-918e-4c83-ac80-c9816adf6dca/live-docker-workorder.json"
+    },
+    {
+      "id": "63171715-086a-4a28-81be-bc504b62ea17",
+      "recordedStatus": "failed-live-docker-workorder-validation-publication",
+      "finishedAt": "2026-10-22T03:00:27.904Z",
+      "reportVerdict": "passed",
+      "passedCases": 8,
+      "publishedVersion": "ed72abdb-bba8-461c-b24a-63e894144cdd",
+      "evidence": "live/live-63171715-086a-4a28-81be-bc504b62ea17/live-docker-workorder.json"
+    }
+  ],
+  "live": {
+    "id": "1c7d8d00-5e35-4ab6-9245-f6d02f0002b6",
+    "proof": "live/live-1c7d8d00-5e35-4ab6-9245-f6d02f0002b6/live-docker-workorder.json",
+    "scope": "Real DeepSeek, Docker JVM and PostgreSQL Mock; real five-minute expiry; fixed template candidate; browser review, validation, release and business approval",
+    "candidateId": "a186534c-c21b-4eff-ba83-c6b02751dc81",
+    "validationId": "b73885e7-076b-4a1a-bbfc-563f7f0f8e43",
+    "artifactDigest": "0a7f589b59b2d4a70bcb8d549adf7a36a37597f04513121d1ff4c26972a71ebf",
+    "versionId": "4fff5f03-c67e-471a-8b61-bca74c40e647",
+    "requestId": "48f87b93-b89a-4bec-9004-f458529dd2e3",
+    "expiryMs": 300000,
+    "cases": [
+      {
+        "id": "TC-001",
+        "status": "passed"
+      },
+      {
+        "id": "TC-002",
+        "status": "passed"
+      },
+      {
+        "id": "TC-003",
+        "status": "passed"
+      },
+      {
+        "id": "TC-004",
+        "status": "passed"
+      },
+      {
+        "id": "TC-005",
+        "status": "passed"
+      },
+      {
+        "id": "TC-006",
+        "status": "passed"
+      },
+      {
+        "id": "TC-007",
+        "status": "passed"
+      },
+      {
+        "id": "TC-008",
+        "status": "passed"
+      }
+    ]
+  },
+  "platformAcceptance": "P0-C remains unverified; no full AC or NF item promoted"
+}

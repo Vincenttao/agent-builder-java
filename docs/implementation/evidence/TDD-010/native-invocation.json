@@ -1,0 +1,458 @@
+{
+  "modelMode": "deterministic-fixture",
+  "fullValidationAdmission": "fixture-only",
+  "firstMessage": {
+    "requestId": "221cc8b2-5280-42fc-8aab-e13b60291c88",
+    "runId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+    "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+    "agentVersion": "77f20967-061a-4a9b-bdc5-8ba8383febc2",
+    "request": {
+      "id": "221cc8b2-5280-42fc-8aab-e13b60291c88",
+      "input": "查询 PUMP-001",
+      "runId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+      "status": "admitted",
+      "actorId": "U1002",
+      "agentId": "0f01ff1b-2fb2-4105-9ff9-1a080bb9dba8",
+      "createdAt": "2026-10-21T21:29:32.413Z",
+      "updatedAt": "2026-10-21T21:29:32.487Z",
+      "inputDigest": "c57224e126953181dca6b8cbc0dc84644e6aa81a3f2dff33003cccae0b7fed27",
+      "agentVersion": "77f20967-061a-4a9b-bdc5-8ba8383febc2",
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+      "clientRequestId": "e7d1646f-9657-484e-aea7-f29f8080b841"
+    },
+    "run": {
+      "id": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+      "input": "查询 PUMP-001",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"版本一建议\"}"
+        },
+        "conversation_id": "2de519f4-4b74-481a-89d3-4846b1476f3b"
+      },
+      "status": "succeeded",
+      "actorId": "U1002",
+      "started": true,
+      "createdAt": "2026-10-21T21:29:32.487Z",
+      "updatedAt": "2026-10-21T21:29:34.806Z",
+      "diagnostic": "",
+      "snapshotId": "c17d7fe4-3774-43b3-8f70-f75417d17d38",
+      "inputDigest": "f037a4e40cc6c1e8cefce023e46fe83a087ee695a6b66812baa541a35ba1544f",
+      "deploymentId": "937dd88e-e18b-47d6-8d0b-db06f44e610f",
+      "invocationId": "221cc8b2-5280-42fc-8aab-e13b60291c88",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "http://127.0.0.1:7974/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "ec69325317a586f5a05078405c09ef40cc9d0d0adcabc63aa0fc17393ca3fd01",
+        "executionMode": "simulated"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "77f20967-061a-4a9b-bdc5-8ba8383febc2"
+      },
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "artifactDigest": "f207d712a30a166e4030c0772dbe767b071f336ac0443a0349ebd891e87f9a73",
+      "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+      "snapshotDigest": "f7e9a34f200a5c9ed846220093e5d789503dc6e17654f7623c474133a8d765e3",
+      "cancelRequested": false,
+      "clientRequestId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+      "externalEvidence": [
+        {
+          "seq": 5,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-21T21:29:33.837Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": []
+  },
+  "secondMessage": {
+    "requestId": "a9a8498d-daad-49e0-84db-4e2d46718ed7",
+    "runId": "a6d27484-cca9-4476-ba25-4477b832c990",
+    "conversationId": "b3c83cd7-50d4-4584-9e09-65af6555aa5a",
+    "agentVersion": "4b4ee9e1-b3ca-44c8-8b8e-25c18399d499",
+    "request": {
+      "id": "a9a8498d-daad-49e0-84db-4e2d46718ed7",
+      "input": "查询 PUMP-001",
+      "runId": "a6d27484-cca9-4476-ba25-4477b832c990",
+      "status": "admitted",
+      "actorId": "U1002",
+      "agentId": "0f01ff1b-2fb2-4105-9ff9-1a080bb9dba8",
+      "createdAt": "2026-10-21T21:30:00.590Z",
+      "updatedAt": "2026-10-21T21:30:00.614Z",
+      "inputDigest": "fe6b493993de7f6e5bf0995c4589e7a69042431ca9ad45f5ee85fdb9281e1be0",
+      "agentVersion": "4b4ee9e1-b3ca-44c8-8b8e-25c18399d499",
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "conversationId": "b3c83cd7-50d4-4584-9e09-65af6555aa5a",
+      "clientRequestId": "c04b2009-db73-494a-b43b-8f9fa865ab18"
+    },
+    "run": {
+      "id": "a6d27484-cca9-4476-ba25-4477b832c990",
+      "input": "查询 PUMP-001",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"版本二建议\"}"
+        },
+        "conversation_id": "a6d27484-cca9-4476-ba25-4477b832c990"
+      },
+      "status": "succeeded",
+      "actorId": "U1002",
+      "started": true,
+      "createdAt": "2026-10-21T21:30:00.614Z",
+      "updatedAt": "2026-10-21T21:30:02.000Z",
+      "diagnostic": "",
+      "snapshotId": "a1767b5c-7a80-4b2b-9ae3-ade7042bd635",
+      "inputDigest": "cb4d3ffaa0eba83f90fb1a4eacf9e04564a46a37a99df1ca5e54c5f75445a298",
+      "deploymentId": "56a0339d-a0e8-4d2e-af2b-eb683459190d",
+      "invocationId": "a9a8498d-daad-49e0-84db-4e2d46718ed7",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "http://127.0.0.1:7974/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "ec69325317a586f5a05078405c09ef40cc9d0d0adcabc63aa0fc17393ca3fd01",
+        "executionMode": "simulated"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "4b4ee9e1-b3ca-44c8-8b8e-25c18399d499"
+      },
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "artifactDigest": "f207d712a30a166e4030c0772dbe767b071f336ac0443a0349ebd891e87f9a73",
+      "conversationId": "b3c83cd7-50d4-4584-9e09-65af6555aa5a",
+      "snapshotDigest": "52a5cac2cdf32025afc9559434267a3e30afbafd239b7a684ea610a47b684838",
+      "cancelRequested": false,
+      "clientRequestId": "a6d27484-cca9-4476-ba25-4477b832c990",
+      "externalEvidence": [
+        {
+          "seq": 10,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "a6d27484-cca9-4476-ba25-4477b832c990",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-21T21:30:01.295Z",
+          "operation": "equipment-status",
+          "stateRevision": 2
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": []
+  },
+  "pinnedMessage": {
+    "requestId": "b9c6d353-8685-4da5-9814-2f6ad7172c7e",
+    "runId": "24d070c5-83c0-4b41-98b9-7fc2343d0e31",
+    "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+    "agentVersion": "77f20967-061a-4a9b-bdc5-8ba8383febc2",
+    "request": {
+      "id": "b9c6d353-8685-4da5-9814-2f6ad7172c7e",
+      "input": "查询 PUMP-001",
+      "runId": "24d070c5-83c0-4b41-98b9-7fc2343d0e31",
+      "status": "admitted",
+      "actorId": "U1002",
+      "agentId": "0f01ff1b-2fb2-4105-9ff9-1a080bb9dba8",
+      "createdAt": "2026-10-21T21:30:02.027Z",
+      "updatedAt": "2026-10-21T21:30:02.048Z",
+      "inputDigest": "5b574d2219bc87586652083d0c8cbaaed6e28653ac496544f0f6a2ab45f0c0ec",
+      "agentVersion": "77f20967-061a-4a9b-bdc5-8ba8383febc2",
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+      "clientRequestId": "6a422875-43cf-42e3-a697-53ce1c2b4573"
+    },
+    "run": {
+      "id": "24d070c5-83c0-4b41-98b9-7fc2343d0e31",
+      "input": "查询 PUMP-001",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"版本一建议\"}"
+        },
+        "conversation_id": "24d070c5-83c0-4b41-98b9-7fc2343d0e31"
+      },
+      "status": "succeeded",
+      "actorId": "U1002",
+      "started": true,
+      "createdAt": "2026-10-21T21:30:02.048Z",
+      "updatedAt": "2026-10-21T21:30:03.887Z",
+      "diagnostic": "",
+      "snapshotId": "c17d7fe4-3774-43b3-8f70-f75417d17d38",
+      "inputDigest": "32180910e2694fc7f6acfd78dbe95cf7d0ca54230187f9b0838aa2cea13cbfaa",
+      "deploymentId": "937dd88e-e18b-47d6-8d0b-db06f44e610f",
+      "invocationId": "b9c6d353-8685-4da5-9814-2f6ad7172c7e",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "http://127.0.0.1:7974/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "ec69325317a586f5a05078405c09ef40cc9d0d0adcabc63aa0fc17393ca3fd01",
+        "executionMode": "simulated"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "77f20967-061a-4a9b-bdc5-8ba8383febc2"
+      },
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "artifactDigest": "f207d712a30a166e4030c0772dbe767b071f336ac0443a0349ebd891e87f9a73",
+      "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+      "snapshotDigest": "f7e9a34f200a5c9ed846220093e5d789503dc6e17654f7623c474133a8d765e3",
+      "cancelRequested": false,
+      "clientRequestId": "24d070c5-83c0-4b41-98b9-7fc2343d0e31",
+      "externalEvidence": [
+        {
+          "seq": 11,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "24d070c5-83c0-4b41-98b9-7fc2343d0e31",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-21T21:30:03.073Z",
+          "operation": "equipment-status",
+          "stateRevision": 2
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": []
+  },
+  "rollbackMessage": {
+    "requestId": "874dd2b6-ebf5-4009-b46e-388bdd03766e",
+    "runId": "86df1a87-bfc2-4b78-88df-aa0777af40d3",
+    "conversationId": "22094f01-c5fe-4f0f-bf47-22c5438060ae",
+    "agentVersion": "0ed5bdd4-0f59-4524-8af2-855091bc2059",
+    "request": {
+      "id": "874dd2b6-ebf5-4009-b46e-388bdd03766e",
+      "input": "查询 PUMP-001",
+      "runId": "86df1a87-bfc2-4b78-88df-aa0777af40d3",
+      "status": "admitted",
+      "actorId": "U1002",
+      "agentId": "0f01ff1b-2fb2-4105-9ff9-1a080bb9dba8",
+      "createdAt": "2026-10-21T21:30:17.326Z",
+      "updatedAt": "2026-10-21T21:30:17.359Z",
+      "inputDigest": "ca85a3fbe5f1d1d6a0385e5cb43223f0d38365301cfa6f95b529223c14717cf1",
+      "agentVersion": "0ed5bdd4-0f59-4524-8af2-855091bc2059",
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "conversationId": "22094f01-c5fe-4f0f-bf47-22c5438060ae",
+      "clientRequestId": "d0ce9e76-d11c-4eaf-8969-7fcdc0f0601c"
+    },
+    "run": {
+      "id": "86df1a87-bfc2-4b78-88df-aa0777af40d3",
+      "input": "查询 PUMP-001",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"版本一建议\"}"
+        },
+        "conversation_id": "86df1a87-bfc2-4b78-88df-aa0777af40d3"
+      },
+      "status": "succeeded",
+      "actorId": "U1002",
+      "started": true,
+      "createdAt": "2026-10-21T21:30:17.359Z",
+      "updatedAt": "2026-10-21T21:30:18.998Z",
+      "diagnostic": "",
+      "snapshotId": "c17d7fe4-3774-43b3-8f70-f75417d17d38",
+      "inputDigest": "5d2ee6b33d7808aa06b80523b0897f2db330b3176a57e2c7b0bae4168bf34dcd",
+      "deploymentId": "b782b0a7-d3e8-4624-adf3-b07842b4006e",
+      "invocationId": "874dd2b6-ebf5-4009-b46e-388bdd03766e",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "http://127.0.0.1:7974/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "ec69325317a586f5a05078405c09ef40cc9d0d0adcabc63aa0fc17393ca3fd01",
+        "executionMode": "simulated"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "0ed5bdd4-0f59-4524-8af2-855091bc2059"
+      },
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "artifactDigest": "f207d712a30a166e4030c0772dbe767b071f336ac0443a0349ebd891e87f9a73",
+      "conversationId": "22094f01-c5fe-4f0f-bf47-22c5438060ae",
+      "snapshotDigest": "f7e9a34f200a5c9ed846220093e5d789503dc6e17654f7623c474133a8d765e3",
+      "cancelRequested": false,
+      "clientRequestId": "86df1a87-bfc2-4b78-88df-aa0777af40d3",
+      "externalEvidence": [
+        {
+          "seq": 13,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "86df1a87-bfc2-4b78-88df-aa0777af40d3",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-21T21:30:18.114Z",
+          "operation": "equipment-status",
+          "stateRevision": 2
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": []
+  },
+  "stoppedMessage": {
+    "requestId": "236e31a3-f58f-4d38-9c78-5fbe6047632a",
+    "runId": "576d196a-848b-45e0-b538-53db346e5021",
+    "conversationId": "b3c83cd7-50d4-4584-9e09-65af6555aa5a",
+    "agentVersion": "4b4ee9e1-b3ca-44c8-8b8e-25c18399d499",
+    "request": {
+      "id": "236e31a3-f58f-4d38-9c78-5fbe6047632a",
+      "input": "查询 PUMP-001",
+      "runId": "576d196a-848b-45e0-b538-53db346e5021",
+      "status": "blocked",
+      "actorId": "U1002",
+      "agentId": "0f01ff1b-2fb2-4105-9ff9-1a080bb9dba8",
+      "createdAt": "2026-10-21T21:30:19.429Z",
+      "updatedAt": "2026-10-21T21:30:19.446Z",
+      "diagnostic": "DEPLOYMENT_NOT_READY",
+      "inputDigest": "41121801d9f6f1e36e2169b3fa370b2246a9805db1b7513f4bad024c90ee6647",
+      "agentVersion": "4b4ee9e1-b3ca-44c8-8b8e-25c18399d499",
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "conversationId": "b3c83cd7-50d4-4584-9e09-65af6555aa5a",
+      "clientRequestId": "ddb8c779-97e0-421e-a882-8d99da50e4de"
+    },
+    "run": null,
+    "actions": []
+  },
+  "originalAfterRollback": {
+    "requestId": "221cc8b2-5280-42fc-8aab-e13b60291c88",
+    "runId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+    "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+    "agentVersion": "77f20967-061a-4a9b-bdc5-8ba8383febc2",
+    "request": {
+      "id": "221cc8b2-5280-42fc-8aab-e13b60291c88",
+      "input": "查询 PUMP-001",
+      "runId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+      "status": "admitted",
+      "actorId": "U1002",
+      "agentId": "0f01ff1b-2fb2-4105-9ff9-1a080bb9dba8",
+      "createdAt": "2026-10-21T21:29:32.413Z",
+      "updatedAt": "2026-10-21T21:29:32.487Z",
+      "inputDigest": "c57224e126953181dca6b8cbc0dc84644e6aa81a3f2dff33003cccae0b7fed27",
+      "agentVersion": "77f20967-061a-4a9b-bdc5-8ba8383febc2",
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+      "clientRequestId": "e7d1646f-9657-484e-aea7-f29f8080b841"
+    },
+    "run": {
+      "id": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+      "input": "查询 PUMP-001",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"版本一建议\"}"
+        },
+        "conversation_id": "2de519f4-4b74-481a-89d3-4846b1476f3b"
+      },
+      "status": "succeeded",
+      "actorId": "U1002",
+      "started": true,
+      "createdAt": "2026-10-21T21:29:32.487Z",
+      "updatedAt": "2026-10-21T21:29:34.806Z",
+      "diagnostic": "",
+      "snapshotId": "c17d7fe4-3774-43b3-8f70-f75417d17d38",
+      "inputDigest": "f037a4e40cc6c1e8cefce023e46fe83a087ee695a6b66812baa541a35ba1544f",
+      "deploymentId": "937dd88e-e18b-47d6-8d0b-db06f44e610f",
+      "invocationId": "221cc8b2-5280-42fc-8aab-e13b60291c88",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "http://127.0.0.1:7974/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "ec69325317a586f5a05078405c09ef40cc9d0d0adcabc63aa0fc17393ca3fd01",
+        "executionMode": "simulated"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "77f20967-061a-4a9b-bdc5-8ba8383febc2"
+      },
+      "environmentId": "b3d52e55-8e29-4bae-8e70-608f735b285e",
+      "artifactDigest": "f207d712a30a166e4030c0772dbe767b071f336ac0443a0349ebd891e87f9a73",
+      "conversationId": "d77c38a0-0208-41e4-9c41-f489fc1d1555",
+      "snapshotDigest": "f7e9a34f200a5c9ed846220093e5d789503dc6e17654f7623c474133a8d765e3",
+      "cancelRequested": false,
+      "clientRequestId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+      "externalEvidence": [
+        {
+          "seq": 5,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "2de519f4-4b74-481a-89d3-4846b1476f3b",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-21T21:29:33.837Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": []
+  }
+}

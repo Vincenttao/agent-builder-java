@@ -1,0 +1,5 @@
+{"time":"2026-10-22T01:50:52.999648700Z","event":{"sessionId":"29179e45-4621-49ae-b9e2-07750fdca2da","tool":"","rail":"audit","turnCount":1,"event":"before_invoke"}}
+{"time":"2026-10-22T01:50:53.157022800Z","event":{"sessionId":"29179e45-4621-49ae-b9e2-07750fdca2da","tool":"","rail":"audit","turnCount":1,"event":"before_model_call"}}
+{"time":"2026-10-22T01:50:54.353323700Z","event":{"sessionId":"29179e45-4621-49ae-b9e2-07750fdca2da","tool":"","rail":"audit","turnCount":1,"event":"after_model_call"}}
+{"time":"2026-10-22T01:50:54.355992100Z","event":{"sessionId":"29179e45-4621-49ae-b9e2-07750fdca2da","rail":"audit","event":"assistant_output","content":"{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}"}}
+{"time":"2026-10-22T01:50:54.360797700Z","event":{"sessionId":"29179e45-4621-49ae-b9e2-07750fdca2da","tool":"","rail":"audit","turnCount":1,"event":"after_invoke"}}

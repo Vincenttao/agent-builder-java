@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+(node:17688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"stage":"docker-development-started","draftId":"6a57b37a-fc84-41d4-b706-8729864ed8c7"}

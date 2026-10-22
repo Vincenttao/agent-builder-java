@@ -1,0 +1,23 @@
+{
+  "id": "1a6e78be-0f1d-462d-8ed0-7917374a6e88",
+  "commandId": "compile-unit",
+  "executable": "javac",
+  "args": [
+    "-encoding",
+    "UTF-8",
+    "--release",
+    "21",
+    "-cp",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\sdk\\BOOT-INF\\classes;D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\sdk\\BOOT-INF\\lib\\*",
+    "-d",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\control\\commands\\29e3f20d-8e4e-4008-975a-b34b926dace4",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\developer\\src\\generated\\EquipmentTool.java",
+    "D:\\agent-builder-java\\.cache\\development-live\\88e3e19d-33b5-44fc-986b-b39d03f71630\\runner\\tasks\\0467b267-eee9-420c-8219-462088962b97\\workspace\\developer\\test\\generated\\EquipmentToolTest.java"
+  ],
+  "startedAt": "2026-10-21T23:14:32.744Z",
+  "finishedAt": "2026-10-21T23:14:47.787Z",
+  "exitCode": 0,
+  "status": "passed",
+  "output": "ע: ��������·���з�����һ�����������������������\n  ��ע������δ�����а�� javac ���ܻ������ע������\n  �������ٰ�����ָ����һ���������� (-processor)��\n  ��ָ��������·�� (--processor-path, --processor-module-path)��\n  ����ʽ��������ע���� (-proc:only, -proc:full)��\n  ��ʹ�� -Xlint:-options ���ش���Ϣ��\n  ��ʹ�� -proc:none ������ע������\n",
+  "truncated": false
+}

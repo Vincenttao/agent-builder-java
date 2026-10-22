@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/agent-builder-java
+
+
+ Test Files  2 passed (2)
+      Tests  8 passed (8)
+   Start at  08:16:33
+   Duration  2.56s (transform 624ms, setup 0ms, import 911ms, tests 1.58s, environment 1ms)
+

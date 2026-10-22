@@ -1,0 +1,34 @@
+{
+  "id": "35650d55-be57-460e-91ec-39b5707ec8a6",
+  "bootId": "f2f937e9-9d3d-4d98-bed5-e3be730c106f",
+  "status": "stopped",
+  "artifactDigest": "1059ebeae355214f36ac5230c0ec723c4f37359913e060a2bd4a1d8d084ff4c8",
+  "specDigest": "3933100dbb2a115a41b9e83c6e98c2bb80118f643bf98d569f7a554f7c56dbac",
+  "modelProfile": {
+    "executionMode": "live-mock",
+    "model": {
+      "provider": "OpenAI",
+      "baseUrl": "https://api.deepseek.com/v1",
+      "name": "deepseek-v4-flash",
+      "temperature": 0,
+      "maxTokens": 1024,
+      "thinking": "disabled"
+    },
+    "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a"
+  },
+  "generated": {
+    "classes": {
+      "generated/EquipmentTool.class": "dcff3f9eaefaad76710f5e131068587f2346b08188ef33626dc58cc6d87c8efb"
+    },
+    "componentDigest": "d488091ecc66bcaab4835c1218e18eb3d4c169f8f2293ecd109148f1d66c205e",
+    "developmentBundleDigest": "ce0ac6558f473757cf6d19feb214991d563d8f4edaf1e493abb4dd82c2fe2a38",
+    "kind": "equipment-tool-skill@1",
+    "sdkArtifactDigest": "4e7918e988a2f51d8089bf326cb7912190f74651d86543ae5799c39600111946",
+    "skillDigest": "e943b7ad98ee0977f0d5b2cafa81fc715bbf257b40555b9309b2ac9259a83bf0",
+    "snapshotId": "84eb574a-535d-48e5-833d-65fb663af1db",
+    "specDigest": "3933100dbb2a115a41b9e83c6e98c2bb80118f643bf98d569f7a554f7c56dbac"
+  },
+  "createdAt": "2026-10-21T23:48:39.346Z",
+  "updatedAt": "2026-10-21T23:49:13.804Z",
+  "port": 24474
+}

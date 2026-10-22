@@ -1,0 +1,13 @@
+node_modules/
+.tools/
+.cache/
+dist/
+coverage/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+**/target/
+**/.flattened-pom.xml

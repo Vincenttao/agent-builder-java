@@ -1,0 +1,100 @@
+{
+  "id": "7b456dec-595f-4405-a50e-869b47e8fa93",
+  "input": "查询 PUMP-001 并申请创建检查工单。",
+  "result": {
+    "result": {
+      "role": "assistant",
+      "content": "PUMP-001 查询结果如下：\n\n- 设备编号：PUMP-001\n- 状态：warning（告警）\n- 温度：86 °C\n- 数据来源：seed-equipment-001@1\n\n建议：当前设备处于告警状态且温度偏高（86 °C），建议尽快安排现场检查，确认润滑、冷却与负载情况，并在检查前加强温度监控。\n\n您已明确要求创建检查工单，我将以 normal 优先级提交，平台会暂停等待您确认。",
+      "_interrupt": {
+        "type": "__interaction__",
+        "index": 0,
+        "message": "请确认以下模拟写入操作",
+        "payload": {
+          "id": "call_00_KdXz9umcC2qmvio3w4W02179",
+          "value": {
+            "index": 0,
+            "message": "请确认以下模拟写入操作",
+            "tool_args": "{\"description\": \"PUMP-001 状态为 warning，温度 86°C 偏高，申请现场检查润滑、冷却与负载情况。\", \"equipmentId\": \"PUMP-001\", \"priority\": \"normal\"}",
+            "tool_name": "create_work_order",
+            "tool_call_id": "call_00_KdXz9umcC2qmvio3w4W02179",
+            "payload_schema": {
+              "type": "object",
+              "required": [
+                "approved"
+              ],
+              "properties": {
+                "approved": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "auto_confirm_key": ""
+          },
+          "metadata": {}
+        },
+        "toolName": "create_work_order",
+        "toolCallId": "call_00_KdXz9umcC2qmvio3w4W02179"
+      }
+    },
+    "conversation_id": "7b456dec-595f-4405-a50e-869b47e8fa93"
+  },
+  "status": "waiting_confirmation",
+  "actorId": "U1001",
+  "started": true,
+  "createdAt": "2026-10-22T02:54:06.019Z",
+  "updatedAt": "2026-10-22T02:56:58.361Z",
+  "snapshotId": "494778e9-d92d-447c-9649-0b60493e280a",
+  "inputDigest": "3965ea85d59502456a1fcb1591de2a727154c44a626e862b5ccbb7a99412eba5",
+  "deploymentId": "61b02e89-980d-4e85-80ac-0cc0e2635bbf",
+  "invocationId": "887e4d5e-bf1b-4c49-955b-83a72d38b3aa",
+  "modelProfile": {
+    "model": {
+      "name": "deepseek-v4-flash",
+      "baseUrl": "https://api.deepseek.com/v1",
+      "provider": "OpenAI",
+      "thinking": "disabled",
+      "maxTokens": 1024,
+      "temperature": 0
+    },
+    "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+    "executionMode": "live-mock"
+  },
+  "sharedTarget": {
+    "kind": "test",
+    "candidateId": "a8178819-6678-4791-8108-a0581f62fd80",
+    "testDeploymentId": "3cd61a86-c358-47e2-843f-3ae24aaf0b9d"
+  },
+  "validationId": "9a756969-57bd-4e7c-a818-f85d56d1d597",
+  "environmentId": "71afba7f-6cf8-4b9c-a3db-85ad03c1363f",
+  "artifactDigest": "0a7f589b59b2d4a70bcb8d549adf7a36a37597f04513121d1ff4c26972a71ebf",
+  "conversationId": "64bb98ad-8058-42e0-a094-22afbafa1191",
+  "snapshotDigest": "9b2a16fefaa4868c0d8d148dfc936336e0be96a875a2ebf404a3e2c512b4f669",
+  "cancelRequested": false,
+  "clientRequestId": "7b456dec-595f-4405-a50e-869b47e8fa93",
+  "externalEvidence": [
+    {
+      "seq": 45,
+      "input": {
+        "equipmentId": "PUMP-001"
+      },
+      "runId": "7b456dec-595f-4405-a50e-869b47e8fa93",
+      "result": {
+        "source": "seed-equipment-001@1",
+        "status": "warning",
+        "equipmentId": "PUMP-001",
+        "temperatureCelsius": 86
+      },
+      "status": 200,
+      "actorId": "U1001",
+      "createdAt": "2026-10-22T02:54:09.608Z",
+      "operation": "equipment-status",
+      "stateRevision": 1
+    }
+  ],
+  "environmentConfig": {
+    "seed": "enterprise-default@1",
+    "clock": "2026-10-21T08:00:00.000Z",
+    "fault": "normal"
+  },
+  "dependencyFailures": 0
+}

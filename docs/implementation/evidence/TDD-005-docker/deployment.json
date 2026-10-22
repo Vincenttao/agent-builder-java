@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-10-21T19:03:52.846Z",
+  "services": [
+    {
+      "name": "/agent-builder-platform-app-1",
+      "image": "sha256:da12fdf126c21f9b662fc140b7a6d0ece6a908c0d077307e964b71d6a4b773bf",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "name": "/agent-builder-platform-runner-1",
+      "image": "sha256:8feedb899588facef48b63ff4a50428c2040750ba738f97c3ca2873bd5bba056",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "name": "/agent-builder-platform-mock-services-1",
+      "image": "sha256:da12fdf126c21f9b662fc140b7a6d0ece6a908c0d077307e964b71d6a4b773bf",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "name": "/agent-builder-platform-postgres-1",
+      "image": "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a",
+      "state": "running",
+      "health": "healthy"
+    }
+  ],
+  "mockRole": {
+    "superuser": false,
+    "createDatabase": false,
+    "createRole": false
+  }
+}

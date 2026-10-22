@@ -1,0 +1,38 @@
+
+Running 1 test using 1 worker
+
+(node:1164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\development-ui.spec.ts:9:1 › development UI restores tasks, cancels, and displays source and command evidence using explicit API fixtures (30.4s)
+
+
+  1) tests\e2e\development-ui.spec.ts:9:1 › development UI restores tasks, cancels, and displays source and command evidence using explicit API fixtures 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByTestId('development-67377062-25c9-4b6b-94fb-92f8933d375a').getByRole('button', { name: '启动双角色开发', exact: true })
+        - locator resolved to <button disabled type="button" class="secondary">启动双角色开发</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+      - element was detached from the DOM, retrying
+
+
+      36 |  });
+      37 |  await page.goto('/');await page.getByRole('button',{name:draft.name,exact:true}).click();let panel=page.getByTestId(`development-${snapshotId}`);
+    > 38 |  await panel.getByRole('button',{name:'启动双角色开发',exact:true}).click();await expect(panel.getByTestId('development-status')).toHaveText('开发中');
+         |                                                              ^
+      39 |  await page.reload();await page.getByRole('button',{name:draft.name,exact:true}).click();panel=page.getByTestId(`development-${snapshotId}`);await expect(panel.getByTestId('development-status')).toHaveText('开发中');
+      40 |  await panel.getByRole('button',{name:'取消开发任务',exact:true}).click();await expect(panel.getByTestId('development-status')).toHaveText('已取消');await expect(panel.getByRole('button',{name:'启动双角色开发',exact:true})).toBeEnabled();
+      41 |  await panel.getByRole('button',{name:'启动双角色开发',exact:true}).click();await expect(panel.getByTestId('development-status')).toHaveText('构建完成');
+        at D:\agent-builder-java\tests\e2e\development-ui.spec.ts:38:62
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-artifacts\development-ui-development-5137e-using-explicit-API-fixtures\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-artifacts\development-ui-development-5137e-using-explicit-API-fixtures\error-context.md
+
+  1 failed
+    tests\e2e\development-ui.spec.ts:9:1 › development UI restores tasks, cancels, and displays source and command evidence using explicit API fixtures 

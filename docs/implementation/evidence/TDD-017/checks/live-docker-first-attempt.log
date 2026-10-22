@@ -1,0 +1,46 @@
+
+> agent-builder@0.1.0 test:e2e D:\agent-builder-java
+> node --env-file-if-exists=.env.local node_modules/@playwright/test/cli.js test "tests/e2e/workorder-validation-flow.spec.ts"
+
+
+Running 1 test using 1 worker
+
+(node:29676) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"stage":"workorder-validation-started","id":"1f795171-918e-4c83-ac80-c9816adf6dca","draftId":"0b4cd545-ce14-408d-a9b5-1edcd46da535","candidateId":"bbc83844-1321-44ce-bbb3-6e9c28146df0"}
+{"stage":"workorder-validation","completed":0,"total":8,"validationId":"3437f914-5cb4-44bd-a28f-d393637ec44c"}
+{"stage":"workorder-validation","completed":1,"total":8,"validationId":"3437f914-5cb4-44bd-a28f-d393637ec44c"}
+{"stage":"workorder-validation","completed":2,"total":8,"validationId":"3437f914-5cb4-44bd-a28f-d393637ec44c"}
+{"stage":"workorder-validation","completed":3,"total":8,"validationId":"3437f914-5cb4-44bd-a28f-d393637ec44c"}
+{"stage":"workorder-validation","completed":6,"total":8,"validationId":"3437f914-5cb4-44bd-a28f-d393637ec44c"}
+{"stage":"workorder-validation","completed":8,"total":8,"validationId":"3437f914-5cb4-44bd-a28f-d393637ec44c"}
+  x  1 tests\e2e\workorder-validation-flow.spec.ts:19:1 › Docker workorder baseline passes all eight cases then publishes and performs an approved business write (2.7m)
+
+
+  1) tests\e2e\workorder-validation-flow.spec.ts:19:1 › Docker workorder baseline passes all eight cases then publishes and performs an approved business write 
+
+    Error: [{"id":"TC-001","status":"blocked","reasons":["EXECUTION_OR_EVIDENCE_UNAVAILABLE"]},{"id":"TC-002","status":"passed","reasons":[]},{"id":"TC-003","status":"unverified","reasons":["VALIDATION_CANCELLED"]},{"id":"TC-004","status":"unverified","reasons":["VALIDATION_CANCELLED"]},{"id":"TC-005","status":"unverified","reasons":["VALIDATION_CANCELLED"]},{"id":"TC-006","status":"unverified","reasons":["VALIDATION_CANCELLED"]},{"id":"TC-007","status":"unverified","reasons":["VALIDATION_CANCELLED"]},{"id":"TC-008","status":"unverified","reasons":["VALIDATION_CANCELLED"]}]
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "passed"
+    Received: "blocked"
+
+      42 |     const validation=proof.validation as ValidationExecution,report=await api<ValidationReport>(`/api/validations/${validation.id}/report`);proof.report=report;
+      43 |     proof.caseEvidence=await Promise.all(report.cases.map(c=>c.evidenceId?api(`/api/validations/${validation.id}/evidence/${c.evidenceId}`):null));await save();
+    > 44 |     expect(report.verdict,JSON.stringify(report.cases.map(c=>({id:c.caseId,status:c.status,reasons:c.reasons})))).toBe('passed');expect(report.cases).toHaveLength(8);expect(report.cases.every(c=>c.status==='passed')).toBe(true);expect(report.binding.candidate?.id).toBe(candidate.id);
+         |                                                                                                                   ^
+      45 |     await expect(acceptance.getByTestId('validation-status')).toHaveText('通过');await acceptance.getByText('TC-007 · 通过',{exact:true}).click();await acceptance.getByRole('button',{name:'查看证据 TC-007',exact:true}).click();await expect(acceptance.getByTestId('validation-evidence')).toContainText('action.input_rejected');
+      46 |     await acceptance.screenshot({path:`${root}/workorder-acceptance.png`});
+      47 |     const publication=page.getByTestId(`publication-${snapshot.id}`);await publication.getByLabel('我已审阅验收报告，同意切换演示入口').check();await publication.getByRole('button',{name:'发布此验证版本',exact:true}).click();await expect(publication.getByTestId('release-status')).toHaveText('发布成功',{timeout:240000});
+        at D:\agent-builder-java\tests\e2e\workorder-validation-flow.spec.ts:44:115
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-artifacts\workorder-validation-flow--f7418--an-approved-business-write\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-artifacts\workorder-validation-flow--f7418--an-approved-business-write\error-context.md
+
+  1 failed
+    tests\e2e\workorder-validation-flow.spec.ts:19:1 › Docker workorder baseline passes all eight cases then publishes and performs an approved business write 
+ ELIFECYCLE  Command failed with exit code 1.
