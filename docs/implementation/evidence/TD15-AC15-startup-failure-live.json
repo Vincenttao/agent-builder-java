@@ -2,12 +2,34 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-15 failed v2 startup preserves the current v1 release",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T09:51:43.369Z",
+  "measuredAt": "2026-10-23T17:11:42.146Z",
   "composeProject": "agent-builder-td15-nf01",
+  "baseUrl": "http://127.0.0.1:18080",
   "targetImageIds": [
     "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
     "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
   ],
-  "verdict": "failed",
-  "failure": "AssertionError [ERR_ASSERTION]: AC15_PLATFORM_LOGIN_FAILED\n\n403 !== 200\n\n    at file:///D:/agent-builder-java/scripts/verify-td15-ac15-startup-failure-live.mjs:29:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+  "agentId": "66466fd2-8b75-4d2d-93cd-58d651d7acb3",
+  "oldPointer": {
+    "agentId": "66466fd2-8b75-4d2d-93cd-58d651d7acb3",
+    "revision": 6,
+    "versionId": "40f5d02e-b063-400f-bf2f-a6d53c0e22a9",
+    "deploymentId": "a0a1c534-5122-4239-8fef-d29e4c2fb653",
+    "environmentId": "f49ab730-6cd1-4487-9c23-f41002fd514c"
+  },
+  "validationId": "4c0dfb59-fe43-4678-aebb-8b20525338ea",
+  "failedOperation": {
+    "id": "6b7a2c26-dccb-45f8-9678-71a5fac3a013",
+    "status": "failed",
+    "diagnostic": "DEPENDENCY_UNAVAILABLE"
+  },
+  "runnerRecovered": true,
+  "runnerRecoveryDurationMs": 195174,
+  "pointerUnchanged": true,
+  "readOnlyRun": {
+    "id": "70646c69-5159-4a54-9069-17861c94872b",
+    "status": "succeeded",
+    "snapshotId": "981e6db3-1ab5-4810-b2e6-a6e36dc1f3c7"
+  },
+  "verdict": "passed"
 }

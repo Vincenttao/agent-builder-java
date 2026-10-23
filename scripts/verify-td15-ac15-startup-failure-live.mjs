@@ -6,6 +6,8 @@ import assert from 'node:assert/strict';
 const project = process.env.TD15_ACCEPTANCE_COMPOSE_PROJECT ?? 'agent-builder-td15-nf01';
 const base = process.env.TD15_ACCEPTANCE_BASE_URL ?? 'http://127.0.0.1:18080';
 const origin = process.env.TD15_ACCEPTANCE_ORIGIN ?? base;
+const runnerRecoveryTimeoutMs = Number(process.env.TD15_AC15_RUNNER_RECOVERY_TIMEOUT_MS ?? 360_000);
+assert.ok(Number.isInteger(runnerRecoveryTimeoutMs) && runnerRecoveryTimeoutMs >= 180_000, 'AC15_RUNNER_RECOVERY_TIMEOUT_INVALID');
 const compose = (...args) => execFileSync('docker', ['compose', '--env-file', '.env.local', '-p', project, ...args], { encoding: 'utf8', windowsHide: true }).trim();
 const envText = await readFile('.env.local', 'utf8');
 const tokenLine = envText.split(/\r?\n/).find(line => line.startsWith('LOCAL_BOOTSTRAP_TOKEN='));
@@ -126,7 +128,7 @@ try {
   compose('start', 'runner'); runnerStopped = false;
   // Runner restores retained JVM deployments sequentially before opening its HTTP listener.
   // Allow the full Compose health-check window when the stack has accumulated many releases.
-  const readyDeadline = Date.now() + 180000;
+  const readyDeadline = Date.now() + runnerRecoveryTimeoutMs;
   let runnerReady = false;
   while (Date.now() < readyDeadline) {
     try { runnerReady = compose('ps', 'runner').includes('(healthy)'); if (runnerReady) break; } catch {}
