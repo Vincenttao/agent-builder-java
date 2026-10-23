@@ -24,6 +24,8 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
   ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
   ['docs/implementation/evidence/TD15-AC05-two-rails-live.json','AC05'],
+  ['docs/implementation/evidence/TD15-AC11-duplicates-live.json','AC11'],
+  ['docs/implementation/evidence/TD15-NF01-validation-branches.json','NF01-validation'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
   ['docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json','AC25'],
   ['docs/implementation/evidence/TD15-AC27-fixed-regression-live.json','AC27'],
@@ -33,7 +35,9 @@ const results=[];
 for(const [sourcePath,kind] of sources){
   const source=JSON.parse(await readFile(sourcePath,'utf8'));
   assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
-  assert.equal(source.verdict,'passed',`${kind}_NOT_PASSED`);
+  if(kind==='AC11'||kind==='NF01-validation'){
+    assert.ok(source.branches.length>0&&source.branches.every(branch=>branch.status==='passed'&&branch.assertions.every(item=>item.passed===true)),`${kind}_BRANCH_NOT_PASSED`);
+  }else assert.equal(source.verdict,'passed',`${kind}_NOT_PASSED`);
   const destination=`test-results/acceptance/evidence/${sourcePath.split('/').at(-1)}`;
   const bytes=await readFile(sourcePath);await writeFile(destination,bytes);
   const evidencePath=destination.replace(/^test-results\//,'');const evidence=[
@@ -65,6 +69,8 @@ for(const [sourcePath,kind] of sources){
       'two-rails-triggered':source.auditBeforeTool&&source.allowlistAllowed&&source.mockCalls?.some(call=>call.operation==='equipment-status'&&call.status===200)
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-05',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC11'||kind==='NF01-validation'){
+    for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else if(kind==='AC21-AC22'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else if(kind==='AC25'||kind==='AC27'){

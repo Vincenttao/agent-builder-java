@@ -2,30 +2,30 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-11 sequential and concurrent duplicate approval",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T21:27:55.310Z",
+  "measuredAt": "2026-10-23T23:02:25.820Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
+    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
   ],
-  "validationId": "29807592-f5ca-4597-8cec-8c1f040f2fd6",
-  "candidateId": "73c2a502-5abf-4f54-8c51-4c38764f3890",
+  "validationId": "aec37f19-3426-4e61-ae36-2f048307cee0",
+  "candidateId": "1a2abe1b-1553-4a1e-bdd1-bc7c567951e8",
   "artifactDigest": "ed8a9390746e1ad3faece4412a0a749c33fc23d6b070460b046a674be46c9658",
-  "runId": "4acba8eb-115d-4659-bf36-7a7963487712",
-  "actionId": "4d353dc2-2290-4fe6-b325-46aa6921585c",
-  "approvalDecisionId": "4acba8eb-115d-4659-bf36-7a7963487712",
-  "sequentialDuplicateDecisionId": "4acba8eb-115d-4659-bf36-7a7963487712",
+  "runId": "377061b0-99ef-4765-9376-972aa5a54ca1",
+  "actionId": "7dd71b75-5b63-4426-918f-bca952c8c93e",
+  "approvalDecisionId": "377061b0-99ef-4765-9376-972aa5a54ca1",
+  "sequentialDuplicateDecisionId": "377061b0-99ef-4765-9376-972aa5a54ca1",
   "concurrentDuplicateDecisionIds": [
-    "4acba8eb-115d-4659-bf36-7a7963487712",
-    "4acba8eb-115d-4659-bf36-7a7963487712",
-    "4acba8eb-115d-4659-bf36-7a7963487712"
+    "377061b0-99ef-4765-9376-972aa5a54ca1",
+    "377061b0-99ef-4765-9376-972aa5a54ca1",
+    "377061b0-99ef-4765-9376-972aa5a54ca1"
   ],
   "externalEffect": {
     "createWorkOrderCalls": 1,
     "workOrderCount": 1,
     "basis": "persisted Run external evidence for fixed-candidate validation case TC-004; action remained one succeeded action with the original decisionId"
   },
-  "expectedInterruptedRun": "163bedc3-28a3-4c7a-9aec-8ff8ffa9d959",
+  "expectedInterruptedRun": "98e110e1-6cff-47b7-8dcc-3abc736a6098",
   "overallValidationVerdict": "failed",
   "branches": [
     {

@@ -2,23 +2,23 @@
   "schemaVersion": 1,
   "requirement": "TD-15/NF-01 Runner and App container crash during committed Mock write response",
   "executionMode": "isolated-live-docker",
-  "measuredAt": "2026-10-23T21:27:42.615Z",
+  "measuredAt": "2026-10-23T23:02:21.128Z",
   "composeProject": "agent-builder-td15-nf01",
-  "draftId": "b499f074-ec39-459f-8c67-e8002d8d72e5",
-  "snapshotId": "ed5d4a69-b27e-4422-9a14-0594d6531057",
-  "baselineId": "72a3e2b8-51f4-4349-968e-e5c9841a5729",
-  "candidateId": "73c2a502-5abf-4f54-8c51-4c38764f3890",
+  "draftId": "9b68a699-4982-4414-b4e7-13341b74ef42",
+  "snapshotId": "1236b988-768b-4882-a4ec-d3b25361040c",
+  "baselineId": "d3e24037-1487-47db-826f-00f769a864bc",
+  "candidateId": "1a2abe1b-1553-4a1e-bdd1-bc7c567951e8",
   "candidateArtifactDigest": "ed8a9390746e1ad3faece4412a0a749c33fc23d6b070460b046a674be46c9658",
-  "validationId": "29807592-f5ca-4597-8cec-8c1f040f2fd6",
+  "validationId": "aec37f19-3426-4e61-ae36-2f048307cee0",
   "validationStatus": "completed",
   "caseId": "TC-008",
-  "runId": "163bedc3-28a3-4c7a-9aec-8ff8ffa9d959",
-  "testDeploymentId": "fb4d75d3-09cd-4c78-b16a-408d0e05676c",
+  "runId": "98e110e1-6cff-47b7-8dcc-3abc736a6098",
+  "testDeploymentId": "a132d14a-c956-4b0a-9d16-30c9268551d8",
   "beforeRestart": {
     "validationStatus": "running",
     "caseId": "TC-008",
-    "runId": "163bedc3-28a3-4c7a-9aec-8ff8ffa9d959",
-    "testDeploymentId": "fb4d75d3-09cd-4c78-b16a-408d0e05676c",
+    "runId": "98e110e1-6cff-47b7-8dcc-3abc736a6098",
+    "testDeploymentId": "a132d14a-c956-4b0a-9d16-30c9268551d8",
     "runStatus": "running",
     "actionStatuses": [
       "executing"
@@ -38,7 +38,7 @@
       "workOrderCount": 1,
       "workOrders": [
         {
-          "workOrderId": "a8525e9b-f804-44dc-9bfe-86f34502bdcb",
+          "workOrderId": "f61f2d10-7a87-4480-a64c-5505f85cc118",
           "status": "created"
         }
       ]
@@ -49,7 +49,7 @@
     "appRunnerKilled": true,
     "appRunnerHealthyAfterRestart": true,
     "runnerJournal": {
-      "id": "163bedc3-28a3-4c7a-9aec-8ff8ffa9d959",
+      "id": "98e110e1-6cff-47b7-8dcc-3abc736a6098",
       "status": "interrupted",
       "error": "RUNNER_RESTART_REQUIRES_RECONCILIATION",
       "eventCount": 17
@@ -78,7 +78,7 @@
       "workOrderCount": 1,
       "workOrders": [
         {
-          "workOrderId": "a8525e9b-f804-44dc-9bfe-86f34502bdcb",
+          "workOrderId": "f61f2d10-7a87-4480-a64c-5505f85cc118",
           "status": "created"
         }
       ]
@@ -185,7 +185,7 @@
   "verdict": "passed-safety-with-expected-interruption",
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
+    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
   ],
   "acceptanceResultsPath": "test-results/acceptance/td15-nf01-results.json"
 }
