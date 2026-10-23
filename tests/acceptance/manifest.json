@@ -855,7 +855,7 @@
         "FR-012",
         "FR-020"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac25-baseline-integrity-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
