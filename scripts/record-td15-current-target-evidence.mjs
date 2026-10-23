@@ -23,6 +23,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC01-no-model.json','AC01'],
   ['docs/implementation/evidence/TD15-AC02-mode-switch.json','AC02'],
   ['docs/implementation/evidence/TD15-AC03-requirement-impact.json','AC03'],
+  ['docs/implementation/evidence/TD15-NF01-sse-reconnect.json','AC13-NF01'],
   ['docs/implementation/evidence/TD15-AC04-invalid-assembly.json','AC04'],
   ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
   ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
@@ -61,6 +62,15 @@ for(const [sourcePath,kind] of sources){
       'run-blocked':source.model==='not_configured'&&source.canRun===false&&source.blockerCodes.includes('MODEL_NOT_CONFIGURED')&&source.runAttemptHttpStatus===409&&source.runAttemptCode==='ENVIRONMENT_BLOCKED'
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-01',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed},{name:'app_image_matches_current_target',passed:source.targetImageIds[0]===appImageId}],evidence});
+  }else if(kind==='AC13-NF01'){
+    const checks={
+      'refresh':source.runFoundAfterRefresh&&source.snapshotDigestBefore===source.snapshotDigestAfter,
+      'sse-reconnect':source.cursorResumed&&source.resumedEventIds.length>0,
+      'duplicate-events':source.noDuplicates&&source.noGaps
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-13',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+    const nf01Passed=source.verdict==='passed'&&source.runFoundAfterRefresh&&source.cursorResumed&&source.noDuplicates&&source.noGaps;
+    results.push({caseId:'NF-01',branchId:'refresh-reconnect',binding,executionMode:'live-mock',status:nf01Passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'run_and_event_stream_resume_without_gaps',passed:nf01Passed}],evidence});
   }else if(kind==='AC04'){
     const checks={
       'unknown-tool':source.unknownToolRejected&&source.unknownToolReasons.includes('UNKNOWN_TOOL:unknown-business-tool@1'),
