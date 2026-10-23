@@ -29,7 +29,7 @@ try{
     output:{value:'余额查询返回账户、币种、可用余额分、时间；产品查询返回产品编号、名称、状态、最低金额、说明和目录版本。',source:'user',confirmed:true}
   }});evidence.draftId=draft.id;
   const assembly={agentType:'DeepAgent',maxIterations:6,railIds:['audit@1','tool-allowlist@1'],toolIds:[],generationProfileVersion:'wealth-assistant-java@1',
-    systemPrompt:'你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。只报告工具返回字段，不推断收益、条款或可购买性。数据缺失或工具错误时明确说明未知。只读，不申购、不转账。'};
+    systemPrompt:'你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。余额成功时必须仅输出一个 JSON 对象，不加 Markdown 或自然语言，格式为 {"kind":"account-balance","accountId":"接口返回值","currency":"接口返回值","availableBalanceFen":接口返回整数,"asOf":"接口返回值"}，所有值必须逐字来自工具结果。产品查询时必须仅输出一个 JSON 对象，格式为 {"kind":"wealth-products","version":"接口返回值","items":[{"productId":"接口返回值","name":"接口返回值","status":"接口返回值","minimumAmountFen":接口返回整数,"description":"接口返回值"}]}，完整保留工具返回的每个产品。缺少账户编号时用一句话追问，不调用余额工具；工具错误或数据缺失时说明未知，不能输出推测值。只读，不申购、不转账。'};
   const snapshot=await api(`/api/drafts/${draft.id}/snapshots`,'POST',{expectedRevision:draft.revision,assembly});evidence.snapshotId=snapshot.id;
   const preview=await api(`/api/drafts/${draft.id}/baseline-preview?templateId=${encodeURIComponent('wealth-balance-read@1')}`);
   const baseline=await api(`/api/drafts/${draft.id}/baselines`,'POST',{expectedRevision:draft.revision,templateId:'wealth-balance-read@1',expectedDigest:preview.digest,confirmed:true});evidence.baselineId=baseline.id;evidence.baselineDigest=baseline.digest;

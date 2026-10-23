@@ -1,0 +1,438 @@
+{
+  "schemaVersion": 1,
+  "caseId": "AC-32",
+  "executionMode": "live-mock",
+  "startedAt": "2026-10-23T19:33:51.430Z",
+  "base": "http://127.0.0.1:18083",
+  "composeProject": "agent-builder-td15-ac32",
+  "verdict": "failed",
+  "targetImageIds": [
+    "sha256:e9cc259e2cb7db97b141757034c8aab5fe0543ea0516c1c083fe5bc86720630f",
+    "sha256:cbf436f35d7a963ff3ef31341ba748eb57e1829b56e801ea857f053ccb418869"
+  ],
+  "draftId": "8fe89e52-48d1-4f57-894e-c0c24db56862",
+  "snapshotId": "dd08ceed-aa12-41aa-a682-95829a7f5563",
+  "baselineId": "243820a0-6b04-4c60-aa0e-81676aace48a",
+  "baselineDigest": "1a6633b3013e87ca9cb0d6962fd200ea092b35448be99e44c53266d50028c967",
+  "developmentJobId": "96b9cd8d-728d-4eef-9f8c-8b70a2ebb671",
+  "development": {
+    "id": "96b9cd8d-728d-4eef-9f8c-8b70a2ebb671",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "completed",
+        "sessionId": "ses_e95be8df7ffeQ4S6fpzu2a5c3k"
+      },
+      {
+        "role": "developer",
+        "status": "completed",
+        "sessionId": "ses_e95be4929ffeyxDfTindQwYzcr"
+      }
+    ],
+    "bundle": {
+      "files": [
+        {
+          "path": "src/generated/WealthQueryTool.java",
+          "size": 4565,
+          "digest": "c436fb885ac9fc6504fafe56545f9a773e0f22a3e2ffcc3183f6d09a24c558b4"
+        },
+        {
+          "path": "test/generated/WealthQueryToolTest.java",
+          "size": 12769,
+          "digest": "f93e3ec82b4dd8e168177631a3298d3edf7964f058f4ce5b8a606fca39eebc42"
+        },
+        {
+          "path": "skills/wealth-query/SKILL.md",
+          "size": 2313,
+          "digest": "fa263d2ec15db1b6526b0ff83a251a2a8451c6b3f49988db97d59c4c9adf209b"
+        },
+        {
+          "path": "rails/definition.json",
+          "size": 30,
+          "digest": "9d6d0d73242e79be0f2d005cc09a000ec4f279d676443b6e8dcd57b35116b01f"
+        },
+        {
+          "path": "test-plan.json",
+          "size": 3708,
+          "digest": "e563c0b89426e5ba5d2d4eaf6c18185a4defc5d33d15fe713899036b76331933"
+        },
+        {
+          "path": "component.jar",
+          "size": 4279,
+          "digest": "acad9e5159a1f58ebd9f3d221cfefc7e23474039342bd37425f1084a02a83284"
+        }
+      ],
+      "digest": "0feb6695efa81e1367821b164cfeecb080a089e3b0e9ee0a93152183303e585c",
+      "buildId": "a32c0647-fe19-4528-afb7-d4eee5f39984",
+      "unitRedId": "562420e2-d7d6-4b6e-a312-f7ccbf6244e4",
+      "baselineId": "243820a0-6b04-4c60-aa0e-81676aace48a",
+      "planDigest": "e563c0b89426e5ba5d2d4eaf6c18185a4defc5d33d15fe713899036b76331933",
+      "snapshotId": "dd08ceed-aa12-41aa-a682-95829a7f5563",
+      "runtimeSpec": {
+        "agent": {
+          "id": "snapshot-dd08ceed-aa12-41aa-a682-95829a7f5563",
+          "type": "DeepAgent",
+          "rails": [
+            "audit",
+            "tool-allowlist"
+          ],
+          "systemPrompt": "你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。只报告工具返回字段，不推断收益、条款或可购买性。数据缺失或工具错误时明确说明未知。只读，不申购、不转账。",
+          "maxIterations": 6
+        },
+        "tools": [
+          {
+            "name": "get_account_balance",
+            "protocol": "http",
+            "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+            "inputFields": {
+              "accountId": "string"
+            },
+            "operationId": "getAccountBalance",
+            "toolVersion": "account-balance-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "asOf": "string",
+              "currency": "string",
+              "accountId": "string",
+              "availableBalanceFen": "integer"
+            }
+          },
+          {
+            "name": "list_wealth_products",
+            "protocol": "http",
+            "description": "查询 Mock 理财产品目录和状态；只展示接口返回的名称、状态、最低金额和说明。",
+            "inputFields": {},
+            "operationId": "listWealthProducts",
+            "toolVersion": "wealth-products-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "items": "array",
+              "version": "string"
+            }
+          }
+        ]
+      },
+      "unitGreenId": "3de65afc-1c34-4678-a10e-12a54b9dd33f",
+      "sourceDigest": "1fdd964ce82ce2f93dbf66cd584260e496e59771a14c1994da0fe1d153f197c5",
+      "profileDigest": "891590208196455e6d79d77768a6fcdb7465aae8df78f4c145ad9620b3eb4740",
+      "artifactDigest": "acad9e5159a1f58ebd9f3d221cfefc7e23474039342bd37425f1084a02a83284",
+      "baselineDigest": "1a6633b3013e87ca9cb0d6962fd200ea092b35448be99e44c53266d50028c967",
+      "profileVersion": "wealth-assistant-java@1",
+      "railDefinition": {
+        "rails": [],
+        "schemaVersion": 1
+      },
+      "contractCheckId": "19b57627-b997-4301-bcf3-68283f44852c",
+      "sdkArtifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f"
+    },
+    "status": "built",
+    "agentId": "8fe89e52-48d1-4f57-894e-c0c24db56862",
+    "createdAt": "2026-10-23T19:33:52.104Z",
+    "updatedAt": "2026-10-23T19:35:28.462Z",
+    "baselineId": "243820a0-6b04-4c60-aa0e-81676aace48a",
+    "snapshotId": "dd08ceed-aa12-41aa-a682-95829a7f5563",
+    "inputDigest": "a97e1eaacd3b6a89fb78924fa714c7eea9faf21de22578464f3e2c8cf7a0a533",
+    "baselineDigest": "1a6633b3013e87ca9cb0d6962fd200ea092b35448be99e44c53266d50028c967"
+  },
+  "generatedFiles": [
+    {
+      "path": "src/generated/WealthQueryTool.java",
+      "digest": "c436fb885ac9fc6504fafe56545f9a773e0f22a3e2ffcc3183f6d09a24c558b4",
+      "content": "package generated;\n\nimport com.openjiuwen.core.foundation.tool.Tool;\nimport com.openjiuwen.core.foundation.tool.ToolCard;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.LinkedHashMap;\nimport java.util.List;\nimport java.util.Map;\n\npublic final class WealthQueryTool extends Tool {\n  private static final String BALANCE_OPERATION = \"get_account_balance\";\n  private static final String PRODUCTS_OPERATION = \"list_wealth_products\";\n  private static final String INPUT_ERROR = \"TOOL_INPUT_CONTRACT_INVALID\";\n  private static final String RESPONSE_ERROR = \"TOOL_RESPONSE_CONTRACT_INVALID\";\n  private static final String CARD_ERROR = \"TOOL_CARD_CONTRACT_INVALID\";\n\n  private final Tool transport;\n  private final String operation;\n\n  public WealthQueryTool(Tool transport) {\n    super(transport.getCard());\n    this.transport = transport;\n    String cardName = transport.getCard().getName();\n    if (!BALANCE_OPERATION.equals(cardName) && !PRODUCTS_OPERATION.equals(cardName)) {\n      throw new IllegalArgumentException(CARD_ERROR);\n    }\n    this.operation = cardName;\n  }\n\n  @Override\n  protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs) throws Exception {\n    if (BALANCE_OPERATION.equals(operation)) {\n      return invokeBalance(inputs, kwargs);\n    }\n    return invokeProducts(inputs, kwargs);\n  }\n\n  private Object invokeBalance(Map<String, Object> inputs, Map<String, Object> kwargs) throws Exception {\n    String accountId = requireBalanceInput(inputs);\n    Object response = transport.invoke(Collections.singletonMap(\"accountId\", accountId), kwargs);\n    if (!(response instanceof Map<?, ?> balance)) {\n      throw responseError();\n    }\n    Map<String, Object> result = new LinkedHashMap<>();\n    result.put(\"accountId\", requireText(balance, \"accountId\"));\n    result.put(\"currency\", requireText(balance, \"currency\"));\n    result.put(\"availableBalanceFen\", requireAmount(balance, \"availableBalanceFen\"));\n    result.put(\"asOf\", requireText(balance, \"asOf\"));\n    return result;\n  }\n\n  private Object invokeProducts(Map<String, Object> inputs, Map<String, Object> kwargs) throws Exception {\n    requireProductsInput(inputs);\n    Object response = transport.invoke(Collections.emptyMap(), kwargs);\n    if (!(response instanceof Map<?, ?> catalogue)) {\n      throw responseError();\n    }\n    Object rawItems = catalogue.get(\"items\");\n    if (!(rawItems instanceof List<?> items)) {\n      throw responseError();\n    }\n    String version = requireText(catalogue, \"version\");\n    List<Map<String, Object>> normalizedItems = new ArrayList<>();\n    for (Object rawItem : items) {\n      if (!(rawItem instanceof Map<?, ?> item)) {\n        throw responseError();\n      }\n      Map<String, Object> normalizedItem = new LinkedHashMap<>();\n      normalizedItem.put(\"productId\", requireText(item, \"productId\"));\n      normalizedItem.put(\"name\", requireText(item, \"name\"));\n      normalizedItem.put(\"status\", requireText(item, \"status\"));\n      normalizedItem.put(\"minimumAmountFen\", requireAmount(item, \"minimumAmountFen\"));\n      normalizedItem.put(\"description\", requireText(item, \"description\"));\n      normalizedItems.add(normalizedItem);\n    }\n    Map<String, Object> result = new LinkedHashMap<>();\n    result.put(\"items\", normalizedItems);\n    result.put(\"version\", version);\n    return result;\n  }\n\n  private static String requireBalanceInput(Map<String, Object> inputs) {\n    if (inputs == null || inputs.size() != 1 || !inputs.containsKey(\"accountId\")) {\n      throw inputError();\n    }\n    Object value = inputs.get(\"accountId\");\n    if (!(value instanceof String accountId) || accountId.trim().isEmpty()) {\n      throw inputError();\n    }\n    return accountId;\n  }\n\n  private static void requireProductsInput(Map<String, Object> inputs) {\n    if (inputs == null || !inputs.isEmpty()) {\n      throw inputError();\n    }\n  }\n\n  private static String requireText(Map<?, ?> source, String field) {\n    Object value = source.get(field);\n    if (!(value instanceof String text)) {\n      throw responseError();\n    }\n    return text;\n  }\n\n  private static Object requireAmount(Map<?, ?> source, String field) {\n    Object value = source.get(field);\n    if (!(value instanceof Integer) && !(value instanceof Long)) {\n      throw responseError();\n    }\n    return value;\n  }\n\n  private static IllegalArgumentException inputError() {\n    return new IllegalArgumentException(INPUT_ERROR);\n  }\n\n  private static IllegalStateException responseError() {\n    return new IllegalStateException(RESPONSE_ERROR);\n  }\n}\n"
+    },
+    {
+      "path": "skills/wealth-query/SKILL.md",
+      "digest": "fa263d2ec15db1b6526b0ff83a251a2a8451c6b3f49988db97d59c4c9adf209b",
+      "content": "---\nname: wealth-query\ndescription: 查询企业模拟银行账户可用余额或理财产品目录。只读；所有业务事实必须来自 get_account_balance 和 list_wealth_products 的返回结果。\n---\n\n# wealth-query\n\n本技能用于只读查询两类企业模拟接口数据。不得推断、补全或编造任何账户或产品事实。\n\n## 何时使用\n\n- 用户询问指定账户的可用余额、币种或更新时间时，使用 `get_account_balance`。\n- 用户询问理财产品目录、产品状态、最低金额或产品说明时，使用 `list_wealth_products`。\n\n## get_account_balance\n\n参数（必须且仅允许以下字段）：\n\n- `accountId`：字符串，必填，不能为空或空白。不要接受或传递账户名、手机号、actorId、endpoint、凭据或审批信息。\n\n返回字段（只能向用户报告这些字段）：\n\n- `accountId`：字符串，账户编号。\n- `currency`：字符串，币种。\n- `availableBalanceFen`：整数，可用余额（分）。\n- `asOf`：字符串，余额对应的查询时间。\n\n若用户未提供账户编号，先追问账户编号，不得猜测或调用工具。若接口失败，如实说明查询失败，不得编造余额、币种或时间。\n\n## list_wealth_products\n\n参数：无。调用时不得传入任何参数（包括账户编号、身份、endpoint、凭据或审批信息）。\n\n返回字段：\n\n- `items`：产品数组，每项包含 `productId`（字符串）、`name`（字符串）、`status`（字符串）、`minimumAmountFen`（整数，分）、`description`（字符串）。\n- `version`：字符串，产品目录版本。\n\n## 回复约束\n\n- 只报告接口实际返回的字段和值；不要补充未返回的账户或产品信息。\n- 产品状态必须按返回的 `status` 原样解释和展示（例如 `paused` 就说明为已暂停），不得改写为可购买或不可购买。\n- 不得推断收益、收益率、可用性、风险、期限、费率或产品条款，也不得推断余额的未来变化。\n- 不得将不同产品、不同账户或不同时间的数据混合、汇总或重新计算。\n- 接口异常时保留原始错误证据，不重试、不补数据、不虚构成功结果。\n- 本技能只读，不执行任何写操作、转账、购买、审批或账户变更。\n"
+    }
+  ],
+  "commands": [
+    {
+      "id": "21b37564-6358-4464-973d-74d4b555afb9",
+      "commandId": "prepare-sdk",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "cc536b7f-d31d-4dfa-a972-8422afccc178",
+      "commandId": "compile-unit",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "562420e2-d7d6-4b6e-a312-f7ccbf6244e4",
+      "commandId": "unit-test",
+      "exitCode": 1,
+      "status": "failed"
+    },
+    {
+      "id": "1caf9c8c-86a9-410a-a864-841147088009",
+      "commandId": "compile-unit",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "3de65afc-1c34-4678-a10e-12a54b9dd33f",
+      "commandId": "unit-test",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "ef694e61-36e7-455e-bf7b-e9e0a97041ef",
+      "commandId": "compile-contract",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "19b57627-b997-4301-bcf3-68283f44852c",
+      "commandId": "platform-contract",
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "a32c0647-fe19-4528-afb7-d4eee5f39984",
+      "commandId": "package-component",
+      "exitCode": 0,
+      "status": "passed"
+    }
+  ],
+  "candidate": {
+    "id": "b82b7552-c7f3-4e82-ab67-771dbb40e873",
+    "agentId": "8fe89e52-48d1-4f57-894e-c0c24db56862",
+    "createdAt": "2026-10-23T19:35:32.094Z",
+    "generated": {
+      "baselineId": "243820a0-6b04-4c60-aa0e-81676aace48a",
+      "sourceDigest": "1fdd964ce82ce2f93dbf66cd584260e496e59771a14c1994da0fe1d153f197c5",
+      "baselineDigest": "1a6633b3013e87ca9cb0d6962fd200ea092b35448be99e44c53266d50028c967",
+      "runtimeArtifact": {
+        "kind": "generated-component",
+        "generated": {
+          "kind": "generated-tool-skill@2",
+          "classes": {
+            "generated/WealthQueryTool.class": "df81b7abefbbf1c198d829a027b0b22cb2b47b919d163be40708e2a5aa14d8b0"
+          },
+          "toolName": "get_account_balance",
+          "skillName": "wealth-query",
+          "skillPath": "skills/wealth-query/SKILL.md",
+          "snapshotId": "dd08ceed-aa12-41aa-a682-95829a7f5563",
+          "specDigest": "d512c59c4ab8ac02cddb22b8bb37992ea6869679f85f9c962e2503a3b2a0aa10",
+          "operationId": "getAccountBalance",
+          "skillDigest": "fa263d2ec15db1b6526b0ff83a251a2a8451c6b3f49988db97d59c4c9adf209b",
+          "toolBindings": [
+            {
+              "toolName": "get_account_balance",
+              "operationId": "getAccountBalance",
+              "toolClassName": "generated.WealthQueryTool"
+            },
+            {
+              "toolName": "list_wealth_products",
+              "operationId": "listWealthProducts",
+              "toolClassName": "generated.WealthQueryTool"
+            }
+          ],
+          "toolClassName": "generated.WealthQueryTool",
+          "componentDigest": "acad9e5159a1f58ebd9f3d221cfefc7e23474039342bd37425f1084a02a83284",
+          "sdkArtifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f",
+          "developmentBundleDigest": "0feb6695efa81e1367821b164cfeecb080a089e3b0e9ee0a93152183303e585c"
+        },
+        "artifactDigest": "767749ba309772af36c054cb2ca7fe1f499a28b77d4a0fa1d7fc1a2a363c953f",
+        "sdkArtifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f"
+      },
+      "developmentJobId": "96b9cd8d-728d-4eef-9f8c-8b70a2ebb671",
+      "developmentBundleDigest": "0feb6695efa81e1367821b164cfeecb080a089e3b0e9ee0a93152183303e585c"
+    },
+    "provenance": "generated-component",
+    "snapshotId": "dd08ceed-aa12-41aa-a682-95829a7f5563",
+    "specDigest": "d512c59c4ab8ac02cddb22b8bb37992ea6869679f85f9c962e2503a3b2a0aa10",
+    "runtimeSpec": {
+      "agent": {
+        "id": "snapshot-dd08ceed-aa12-41aa-a682-95829a7f5563",
+        "type": "DeepAgent",
+        "rails": [
+          "audit",
+          "tool-allowlist"
+        ],
+        "systemPrompt": "你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。只报告工具返回字段，不推断收益、条款或可购买性。数据缺失或工具错误时明确说明未知。只读，不申购、不转账。",
+        "maxIterations": 6
+      },
+      "tools": [
+        {
+          "name": "get_account_balance",
+          "protocol": "http",
+          "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+          "inputFields": {
+            "accountId": "string"
+          },
+          "operationId": "getAccountBalance",
+          "toolVersion": "account-balance-http@1",
+          "connectionRef": "enterprise-mock-http@1",
+          "responseFields": {
+            "asOf": "string",
+            "currency": "string",
+            "accountId": "string",
+            "availableBalanceFen": "integer"
+          }
+        },
+        {
+          "name": "list_wealth_products",
+          "protocol": "http",
+          "description": "查询 Mock 理财产品目录和状态；只展示接口返回的名称、状态、最低金额和说明。",
+          "inputFields": {},
+          "operationId": "listWealthProducts",
+          "toolVersion": "wealth-products-http@1",
+          "connectionRef": "enterprise-mock-http@1",
+          "responseFields": {
+            "items": "array",
+            "version": "string"
+          }
+        }
+      ]
+    },
+    "bundleDigest": "7b99e143e600167e5ed40a2186c16e1f3115371416ffd38c06ab28ba6080a85d",
+    "artifactDigest": "767749ba309772af36c054cb2ca7fe1f499a28b77d4a0fa1d7fc1a2a363c953f",
+    "snapshotDigest": "b43c9fbfe3e7bf234be16ebadc3ae4cef856d4ecfd4a0813bd125d1dfba77bec"
+  },
+  "validationId": "c266b58e-c6fc-474a-a64c-67fc7e90a124",
+  "validation": {
+    "cases": [
+      {
+        "caseId": "TC-BAL-001",
+        "status": "failed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": null,
+            "ruleId": "balance-report-schema",
+            "status": "failed",
+            "expected": "account-balance@1"
+          },
+          {
+            "actual": null,
+            "ruleId": "balance-facts",
+            "status": "failed",
+            "expected": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            }
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "2d9cffcf-db97-4b80-b651-03fc43306aab",
+        "evidenceDigest": "7de7977f11e5498fc028c483da49cea2946f87cf9c9a9a8beefc7d9921865f70"
+      },
+      {
+        "caseId": "TC-BAL-002",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "asks-for-account-id",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "all-business-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "01615a38-44e4-4c3e-8b44-cae384a1a40c",
+        "evidenceDigest": "28cd53097ae99caa722745e97d6b4b10f3a401043f67d204df9e68d2bff510ae"
+      },
+      {
+        "caseId": "TC-BAL-003",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "tool-error-evidence",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "failure-output-no-facts",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "c40eb8bb-19ec-4bc8-8c78-7ca4ea53a82e",
+        "evidenceDigest": "8232292bfcd1830537da221399fe473bdf35c8072a1a8f00518ef1b3a074673f"
+      }
+    ],
+    "binding": {
+      "candidate": {
+        "id": "b82b7552-c7f3-4e82-ab67-771dbb40e873",
+        "provenance": "generated-component",
+        "specDigest": "d512c59c4ab8ac02cddb22b8bb37992ea6869679f85f9c962e2503a3b2a0aa10",
+        "bundleDigest": "7b99e143e600167e5ed40a2186c16e1f3115371416ffd38c06ab28ba6080a85d",
+        "testPlanDigest": "e563c0b89426e5ba5d2d4eaf6c18185a4defc5d33d15fe713899036b76331933",
+        "developmentJobId": "96b9cd8d-728d-4eef-9f8c-8b70a2ebb671"
+      },
+      "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+      "artifactDigest": "767749ba309772af36c054cb2ca7fe1f499a28b77d4a0fa1d7fc1a2a363c953f",
+      "baselineDigest": "1a6633b3013e87ca9cb0d6962fd200ea092b35448be99e44c53266d50028c967",
+      "snapshotDigest": "b43c9fbfe3e7bf234be16ebadc3ae4cef856d4ecfd4a0813bd125d1dfba77bec",
+      "compatibilityKey": "996cc1d0b68d6480792a03ad571dad27f4dcef822ac621f724a5c273bdbfb0ae"
+    },
+    "reasons": [],
+    "verdict": "failed",
+    "createdAt": "2026-10-23T19:36:49.499Z",
+    "baselineId": "243820a0-6b04-4c60-aa0e-81676aace48a",
+    "snapshotId": "dd08ceed-aa12-41aa-a682-95829a7f5563",
+    "executionId": "c266b58e-c6fc-474a-a64c-67fc7e90a124"
+  },
+  "error": "AssertionError [ERR_ASSERTION]: VALIDATION_failed\n\n'failed' !== 'passed'\n\n    at file:///D:/agent-builder-java/scripts/verify-td15-ac32-wealth-assistant-live.mjs:49:145\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "finishedAt": "2026-10-23T19:36:50.014Z",
+  "finalTargetImageIds": [
+    "sha256:e9cc259e2cb7db97b141757034c8aab5fe0543ea0516c1c083fe5bc86720630f",
+    "sha256:cbf436f35d7a963ff3ef31341ba748eb57e1829b56e801ea857f053ccb418869"
+  ]
+}
