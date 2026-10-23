@@ -23,6 +23,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC04-invalid-assembly.json','AC04'],
   ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
   ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
+  ['docs/implementation/evidence/TD15-AC05-two-rails-live.json','AC05'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
   ['docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json','AC25'],
   ['docs/implementation/evidence/TD15-AC27-fixed-regression-live.json','AC27'],
@@ -58,6 +59,12 @@ for(const [sourcePath,kind] of sources){
       'mcp-tool':source.mcp.runStatus==='succeeded'&&source.mcp.mcpCall?.status==='succeeded'&&source.mcp.mockCalls?.some(call=>call.operation==='equipment-status'&&call.status===200)
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-07',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC05'){
+    const checks={
+      'two-rails-loaded':source.railsLoaded&&['audit','tool-allowlist'].every(name=>source.runtimeRailNames.includes(name)),
+      'two-rails-triggered':source.auditBeforeTool&&source.allowlistAllowed&&source.mockCalls?.some(call=>call.operation==='equipment-status'&&call.status===200)
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-05',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
   }else if(kind==='AC21-AC22'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else if(kind==='AC25'||kind==='AC27'){
