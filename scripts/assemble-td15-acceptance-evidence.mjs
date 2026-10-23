@@ -21,6 +21,7 @@ const nf01TwoSessions = JSON.parse(await readFile('docs/implementation/evidence/
 const nf01Sse = JSON.parse(await readFile('docs/implementation/evidence/TD15-NF01-sse-reconnect.json', 'utf8'));
 const nf05 = JSON.parse(await readFile('docs/implementation/evidence/TD15-NF05-workspace.json', 'utf8'));
 const ac24 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC24-candidate-integrity-live.json', 'utf8'));
+const ac26 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC26-docker-live.json', 'utf8'));
 const ac23 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'utf8'));
 const ac30 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC30-mock-isolation-live.json', 'utf8'));
 const ac31 = JSON.parse(await readFile('docs/implementation/evidence/TDD-086/finance-generation-live.json', 'utf8'));
@@ -176,6 +177,14 @@ assert.equal(ac31.validationEvidence[0].calls.length, 1, 'AC31_BALANCE_CALL_MISS
 assert.equal(ac31.validationEvidence[1].calls.length, 0, 'AC31_MISSING_ACCOUNT_MUST_NOT_CALL');
 assert.ok(ac31.validationEvidence[2].events.some(item => item.data?.event?.errorCode === 'TOOL_TIMEOUT')
   && ac31.validationEvidence[2].run.result.result.content.includes('"code":"TOOL_TIMEOUT"'), 'AC31_TIMEOUT_NOT_VERIFIED');
+assert.deepEqual(ac26.targetImageIds, currentImages, 'AC26_REPAIR_TARGET_CHANGED');
+assert.equal(ac26.verdict, 'passed', 'AC26_REPAIR_NOT_PASSED');
+assert.deepEqual(ac26.branches, { defectObserved: true, newCandidate: true, sameAssertion: true, failureHistoryRetained: true }, 'AC26_REPAIR_BRANCH_ASSERTIONS_FAILED');
+assert.equal(ac26.firstVerdict, 'failed', 'AC26_ORIGINAL_DEFECT_NOT_OBSERVED');
+assert.ok(ac26.repairAttempts.length > 0 && ac26.repairAttempts.every(attempt => attempt.verdict === 'passed'), 'AC26_REPAIR_ATTEMPT_FAILED');
+assert.equal(ac26.releaseStatus, 'succeeded', 'AC26_REPAIRED_CANDIDATE_NOT_RELEASED');
+assert.equal(ac26.businessRunStatus, 'succeeded', 'AC26_REPAIRED_AGENT_NOT_INVOKED');
+assert.equal(ac26.businessExternalEvidenceCount, 1, 'AC26_EXTERNAL_BUSINESS_EVIDENCE_MISSING');
 await writeFile('test-results/acceptance/td15-platform-target.json', JSON.stringify(target, null, 2) + '\n');
 const binding = { baselineDigest: manifest.baselineDigest, artifactDigest, testSetDigest: createHash('sha256').update(manifestBytes).digest('hex'), compatibilityKey };
 
@@ -199,6 +208,7 @@ const nf01TwoSessionEvidence = await managedEvidence('docs/implementation/eviden
 const nf01SseEvidence = await managedEvidence('docs/implementation/evidence/TD15-NF01-sse-reconnect.json', 'test-results/acceptance/evidence/TD15-NF01-sse-reconnect.json');
 const nf05Evidence = await managedEvidence('docs/implementation/evidence/TD15-NF05-workspace.json', 'test-results/acceptance/evidence/TD15-NF05-workspace.json');
 const ac24Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC24-candidate-integrity-live.json', 'test-results/acceptance/evidence/TD15-AC24-candidate-integrity-live.json');
+const ac26Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC26-docker-live.json', 'test-results/acceptance/evidence/TD15-AC26-docker-live.json');
 const ac23Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'test-results/acceptance/evidence/TD15-AC23-policy-audit-live.json');
 const ac30Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC30-mock-isolation-live.json', 'test-results/acceptance/evidence/TD15-AC30-mock-isolation-live.json');
 const ac31Evidence = await managedEvidence('docs/implementation/evidence/TDD-086/finance-generation-live.json', 'test-results/acceptance/evidence/TDD-086-finance-generation-live.json');
@@ -285,6 +295,14 @@ const results = [
     assertions: [{ name: 'candidate_digest_is_recorded_before_test', passed: /^[a-f0-9]{64}$/.test(ac24.candidateArtifactDigestBefore) && /^[a-f0-9]{64}$/.test(ac24.candidateBundleDigestBefore) }], evidence: ac24Evidence },
   { caseId: 'AC-24', branchId: 'digest-after', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
     assertions: [{ name: 'candidate_tampering_is_detected_and_original_digest_remains_fixed', passed: ac24.assertions.tamperedCandidateDigestRejected && ac24.assertions.candidateDigestStable }], evidence: ac24Evidence },
+  { caseId: 'AC-26', branchId: 'defect-observed', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'failing_candidate_preserves_fixed_assertion_failure', passed: ac26.firstVerdict === 'failed' && ac26.failedCaseId === 'TC-001' && ac26.failedRuleId === 'equipment-facts' && ac26.expectedTemperatureCelsius !== ac26.actualTemperatureCelsius }], evidence: ac26Evidence },
+  { caseId: 'AC-26', branchId: 'new-candidate', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'repair_creates_distinct_candidate_with_passing_validation', passed: ac26.firstCandidateId !== ac26.repairedCandidateId && ac26.repairAttempts.length > 0 && ac26.repairAttempts.every(attempt => attempt.verdict === 'passed') }], evidence: ac26Evidence },
+  { caseId: 'AC-26', branchId: 'same-assertion', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'repair_retests_same_case_and_rule_against_expected_value', passed: ac26.failedCaseId === ac26.repairedCaseId && ac26.failedRuleId === ac26.repairedRuleId && ac26.repairedTemperatureCelsius === ac26.expectedTemperatureCelsius }], evidence: ac26Evidence },
+  { caseId: 'AC-26', branchId: 'failure-history-retained', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'original_failure_report_is_retained_after_successful_repair', passed: ac26.failureHistoryRetained && /^[a-f0-9]{64}$/.test(ac26.originalReportDigest) && ac26.firstValidationId !== ac26.repairValidationId }], evidence: ac26Evidence },
   { caseId: 'AC-23', branchId: 'directory', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
     assertions: [{ name: 'runner_mcp_rejects_traversal_path_and_audits_it', passed: ac23.results.find(item => item.name === 'directory')?.mcp?.text === 'FILE_OPERATION_NOT_ALLOWED' && ac23.results.find(item => item.name === 'directory')?.mcp?.rejectedEvent === true }], evidence: ac23Evidence },
   { caseId: 'AC-23', branchId: 'dependency', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,

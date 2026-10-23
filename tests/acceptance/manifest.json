@@ -882,7 +882,7 @@
         "FR-017",
         "FR-020"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac26-docker-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
