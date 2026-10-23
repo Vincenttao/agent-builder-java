@@ -47,7 +47,7 @@ try{
   const started=await api(`/api/snapshots/${snapshot.id}/validations`,'POST',{clientRequestId:randomUUID(),baselineId:baseline.id,allowMockWrites:false,candidateId:candidate.id});evidence.validationId=started.id;
   const validation=await poll(`/api/validations/${started.id}`,['completed','failed','cancelled'],15*60_000,'VALIDATION');
   const report=await api(`/api/validations/${started.id}/report`);evidence.validation=report;assert.equal(validation.status,'completed');assert.equal(report.verdict,'passed',`VALIDATION_${report.verdict}`);
-  const releaseStarted=await api(`/api/drafts/${draft.id}/releases`,'POST',{clientRequestId:randomUUID(),snapshotId:snapshot.id,validationId:started.id,expectedRevision:draft.revision});
+  const releaseState=await api(`/api/drafts/${draft.id}/releases`);const releaseStarted=await api(`/api/drafts/${draft.id}/releases`,'POST',{clientRequestId:randomUUID(),snapshotId:snapshot.id,validationId:started.id,expectedRevision:releaseState.pointer?.revision??0});
   const release=await poll(`/api/releases/${releaseStarted.id}`,['succeeded','failed'],180_000,'RELEASE');evidence.release=release;assert.equal(release.status,'succeeded',`RELEASE_${release.diagnostic??release.status}`);
   const overview=await api(`/api/drafts/${draft.id}/releases`);const version=overview.versions.find(item=>item.operationId===release.id);assert.ok(version,'PUBLISHED_VERSION_MISSING');evidence.agentVersion=version.id;
   const grant=await api('/api/demo-sessions','POST',{agentId:draft.id,actorId:'U1001'});evidence.actorId=grant.actorId;
