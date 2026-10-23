@@ -107,7 +107,7 @@ const implementedTestFiles = {
   'NF-03': 'scripts/benchmark-td15-nf03.mjs',
   'NF-04': 'scripts/verify-td15-nf04-event-retention-live.mjs',
   'NF-05': 'scripts/verify-td15-nf05-workspace.mjs',
-  'AC-29a': 'scripts/verify-td15-ac29a-cancel-child-process.mjs',
+  'AC-29a': 'scripts/verify-td15-ac29a-live.mjs',
   'NF-06': 'scripts/verify-td15-ac29a-cancel-child-process.mjs'
 };
 const manifest = {

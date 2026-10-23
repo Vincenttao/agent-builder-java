@@ -969,7 +969,7 @@
         "FR-017",
         "FR-019"
       ],
-      "testFile": "scripts/verify-td15-ac29a-cancel-child-process.mjs",
+      "testFile": "scripts/verify-td15-ac29a-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {

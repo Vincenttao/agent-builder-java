@@ -25,6 +25,7 @@ const ac26 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC26-d
 const ac23 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'utf8'));
 const ac30 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC30-mock-isolation-live.json', 'utf8'));
 const ac31 = JSON.parse(await readFile('docs/implementation/evidence/TDD-086/finance-generation-live.json', 'utf8'));
+const ac29aBudgetRestart = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC29a-budget-restart-live.json', 'utf8'));
 const ac01 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC01-no-model.json', 'utf8'));
 const ac02 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC02-mode-switch.json', 'utf8'));
 const ac03 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC03-requirement-impact.json', 'utf8'));
@@ -185,6 +186,20 @@ assert.ok(ac26.repairAttempts.length > 0 && ac26.repairAttempts.every(attempt =>
 assert.equal(ac26.releaseStatus, 'succeeded', 'AC26_REPAIRED_CANDIDATE_NOT_RELEASED');
 assert.equal(ac26.businessRunStatus, 'succeeded', 'AC26_REPAIRED_AGENT_NOT_INVOKED');
 assert.equal(ac26.businessExternalEvidenceCount, 1, 'AC26_EXTERNAL_BUSINESS_EVIDENCE_MISSING');
+assert.equal(ac29aBudgetRestart.verdict, 'passed', 'AC29A_BUDGET_RESTART_NOT_PASSED');
+assert.equal(ac29aBudgetRestart.composeProject, 'agent-builder-td15-ac29a', 'AC29A_MUST_USE_ISOLATED_STACK');
+assert.deepEqual(ac29aBudgetRestart.targetImageIds, currentImages, 'AC29A_BUDGET_TARGET_CHANGED');
+assert.deepEqual(ac29aBudgetRestart.finalTargetImageIds, currentImages, 'AC29A_RESTART_TARGET_CHANGED');
+assert.equal(ac29aBudgetRestart.budgetResult.diagnostic, 'ENGINEERING_BUDGET_EXCEEDED', 'AC29A_BUDGET_DIAGNOSTIC_MISSING');
+assert.equal(ac29aBudgetRestart.budgetResult.runningRoleObserved, true, 'AC29A_BUDGET_ROLE_NOT_OBSERVED');
+assert.ok(ac29aBudgetRestart.budgetResult.maxOpenCodeProcessesDuring > 0, 'AC29A_BUDGET_CHILD_NOT_OBSERVED');
+assert.equal(ac29aBudgetRestart.budgetResult.processCountAfter, 0, 'AC29A_BUDGET_CHILD_NOT_TERMINATED');
+assert.equal(ac29aBudgetRestart.restart.appRunnerHealthy, true, 'AC29A_STACK_NOT_HEALTHY_AFTER_RESTART');
+assert.deepEqual(ac29aBudgetRestart.restart.statusAfter, ac29aBudgetRestart.restart.statusBefore, 'AC29A_TERMINAL_JOB_CHANGED_AFTER_RESTART');
+assert.deepEqual(ac29aBudgetRestart.restart.eventSequencesAfter, ac29aBudgetRestart.restart.eventSequencesBefore, 'AC29A_EVENT_HISTORY_CHANGED_AFTER_RESTART');
+assert.deepEqual(ac29aBudgetRestart.restart.eventSequencesAfterStabilityWindow, ac29aBudgetRestart.restart.eventSequencesAfter, 'AC29A_TASK_REPLAYED_AFTER_RESTART');
+assert.equal(ac29aBudgetRestart.restart.processCountAfter, 0, 'AC29A_RESTART_STARTED_CHILD_PROCESS');
+assert.ok(ac29aBudgetRestart.finalHealth.every(status => status === 'healthy'), 'AC29A_FINAL_STACK_UNHEALTHY');
 await writeFile('test-results/acceptance/td15-platform-target.json', JSON.stringify(target, null, 2) + '\n');
 const binding = { baselineDigest: manifest.baselineDigest, artifactDigest, testSetDigest: createHash('sha256').update(manifestBytes).digest('hex'), compatibilityKey };
 
@@ -212,6 +227,7 @@ const ac26Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC
 const ac23Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'test-results/acceptance/evidence/TD15-AC23-policy-audit-live.json');
 const ac30Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC30-mock-isolation-live.json', 'test-results/acceptance/evidence/TD15-AC30-mock-isolation-live.json');
 const ac31Evidence = await managedEvidence('docs/implementation/evidence/TDD-086/finance-generation-live.json', 'test-results/acceptance/evidence/TDD-086-finance-generation-live.json');
+const ac29aBudgetEvidence = await managedEvidence('docs/implementation/evidence/TD15-AC29a-budget-restart-live.json', 'test-results/acceptance/evidence/TD15-AC29a-budget-restart-live.json');
 const ac01Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC01-no-model.json', 'test-results/acceptance/evidence/TD15-AC01-no-model.json');
 const ac02Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC02-mode-switch.json', 'test-results/acceptance/evidence/TD15-AC02-mode-switch.json');
 const ac03Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC03-requirement-impact.json', 'test-results/acceptance/evidence/TD15-AC03-requirement-impact.json');
@@ -303,6 +319,10 @@ const results = [
     assertions: [{ name: 'repair_retests_same_case_and_rule_against_expected_value', passed: ac26.failedCaseId === ac26.repairedCaseId && ac26.failedRuleId === ac26.repairedRuleId && ac26.repairedTemperatureCelsius === ac26.expectedTemperatureCelsius }], evidence: ac26Evidence },
   { caseId: 'AC-26', branchId: 'failure-history-retained', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
     assertions: [{ name: 'original_failure_report_is_retained_after_successful_repair', passed: ac26.failureHistoryRetained && /^[a-f0-9]{64}$/.test(ac26.originalReportDigest) && ac26.firstValidationId !== ac26.repairValidationId }], evidence: ac26Evidence },
+  { caseId: 'AC-29a', branchId: 'budget', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'running_generated_task_exceeds_budget_and_stops_managed_child_without_bundle', passed: ac29aBudgetRestart.budgetResult.diagnostic === 'ENGINEERING_BUDGET_EXCEEDED' && ac29aBudgetRestart.budgetResult.runningRoleObserved && ac29aBudgetRestart.budgetResult.maxOpenCodeProcessesDuring > 0 && ac29aBudgetRestart.budgetResult.processCountAfter === 0 && !ac29aBudgetRestart.budgetResult.bundleExists }], evidence: ac29aBudgetEvidence },
+  { caseId: 'AC-29a', branchId: 'restart-no-replay', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'platform_restart_preserves_terminal_task_and_does_not_replay_child_or_events', passed: ac29aBudgetRestart.restart.appRunnerHealthy && ac29aBudgetRestart.restart.statusAfter.status === 'failed' && ac29aBudgetRestart.restart.statusAfter.diagnostic === 'ENGINEERING_BUDGET_EXCEEDED' && JSON.stringify(ac29aBudgetRestart.restart.eventSequencesBefore) === JSON.stringify(ac29aBudgetRestart.restart.eventSequencesAfterStabilityWindow) && ac29aBudgetRestart.restart.processCountAfter === 0 }], evidence: ac29aBudgetEvidence },
   { caseId: 'AC-23', branchId: 'directory', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
     assertions: [{ name: 'runner_mcp_rejects_traversal_path_and_audits_it', passed: ac23.results.find(item => item.name === 'directory')?.mcp?.text === 'FILE_OPERATION_NOT_ALLOWED' && ac23.results.find(item => item.name === 'directory')?.mcp?.rejectedEvent === true }], evidence: ac23Evidence },
   { caseId: 'AC-23', branchId: 'dependency', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,

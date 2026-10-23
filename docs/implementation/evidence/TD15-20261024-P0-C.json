@@ -3,7 +3,7 @@
   "binding": {
     "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
     "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-    "testSetDigest": "23660bd03b1e66d5e1311a9b42ffa93112c5e5b2126fe513ecb32cca98152047",
+    "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
     "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
   },
   "status": "unverified",
@@ -530,10 +530,8 @@
     {
       "caseId": "AC-29a",
       "branchId": "budget",
-      "status": "unverified",
-      "reasons": [
-        "RESULT_MISSING"
-      ]
+      "status": "passed",
+      "reasons": []
     },
     {
       "caseId": "AC-29a",
@@ -544,10 +542,8 @@
     {
       "caseId": "AC-29a",
       "branchId": "restart-no-replay",
-      "status": "unverified",
-      "reasons": [
-        "RESULT_MISSING"
-      ]
+      "status": "passed",
+      "reasons": []
     },
     {
       "caseId": "AC-29a",
