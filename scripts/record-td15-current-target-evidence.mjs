@@ -25,6 +25,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC03-requirement-impact.json','AC03'],
   ['docs/implementation/evidence/TD15-NF01-sse-reconnect.json','AC13-NF01'],
   ['docs/implementation/evidence/TD15-NF01-two-sessions.json','NF01-two-sessions'],
+  ['docs/implementation/evidence/TD15-NF02-live.json','NF02'],
   ['docs/implementation/evidence/TD15-AC04-invalid-assembly.json','AC04'],
   ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
   ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
@@ -45,6 +46,7 @@ const results=[];
 for(const [sourcePath,kind] of sources){
   const source=JSON.parse(await readFile(sourcePath,'utf8'));
   if(kind==='AC01')assert.equal(source.targetImageIds?.[0],appImageId,'AC01_APP_TARGET_MISMATCH');
+  else if(kind==='NF02')assert.equal(source.appImageId,appImageId,'NF02_APP_TARGET_MISMATCH');
   else assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
   if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='AC42a'||kind==='NF01-validation'){
     assert.ok(source.branches.length>0&&source.branches.every(branch=>branch.status==='passed'&&branch.assertions.every(item=>item.passed===true)),`${kind}_BRANCH_NOT_PASSED`);
@@ -63,6 +65,13 @@ for(const [sourcePath,kind] of sources){
       'run-blocked':source.model==='not_configured'&&source.canRun===false&&source.blockerCodes.includes('MODEL_NOT_CONFIGURED')&&source.runAttemptHttpStatus===409&&source.runAttemptCode==='ENVIRONMENT_BLOCKED'
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-01',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed},{name:'app_image_matches_current_target',passed:source.targetImageIds[0]===appImageId}],evidence});
+  }else if(kind==='NF02'){
+    const checks={
+      'sentinel-logs':source.checks.containerLogs&&source.checks.logChannelPresent&&source.scannedLogBytes>0,
+      'sentinel-errors':source.checks.errorResponse&&source.invalidCredentialField.status===400,
+      'sentinel-export':source.checks.export
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'NF-02',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed},{name:'app_image_matches_current_target',passed:source.appImageId===appImageId}],evidence});
   }else if(kind==='AC13-NF01'){
     const checks={
       'refresh':source.runFoundAfterRefresh&&source.snapshotDigestBefore===source.snapshotDigestAfter,
