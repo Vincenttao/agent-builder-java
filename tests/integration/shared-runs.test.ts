@@ -9,7 +9,7 @@ import { PostgresSnapshotRepository } from '../../apps/server/src/snapshots/adap
 import { RunService, type RunRuntime, type MockControl, type SharedRunSetup } from '../../apps/server/src/runs/run-service.js';
 import { ReleaseService, type ReleaseDriver, type ReleaseGate } from '../../apps/server/src/releases/release-service.js';
 import { runtimeModelProfile } from '../../apps/runner/src/runtime/model-profile.js';
-import { workOrderAssembly } from '../../packages/contracts/src/equipment-template.js';
+import { workOrderAssembly, wealthBalanceAssembly } from '../../packages/contracts/src/equipment-template.js';
 import type { ReleaseOperation } from '../../packages/contracts/src/releases.js';
 import type { ReleaseClaim } from '../../apps/server/src/shared/release-claim.js';
 import { draftInput } from '../support/fixtures.js';
@@ -69,6 +69,30 @@ it('the real release driver checks loaded manifests and independently asserts sm
   await h.runs.tick();await releases.tick();expect((await releases.get(good.id)).status).toBe('succeeded');const pointer=await releases.pointer(h.draft.id);
   badFacts=true;const badSmoke=await start(1);await releases.tick();await releases.tick();await h.runs.tick();await h.runs.tick();await releases.tick();
   expect((await releases.get(badSmoke.id)).diagnostic).toBe('SMOKE_FAILED');expect(await releases.pointer(h.draft.id)).toEqual(pointer);expect(retires).toBe(2);
+});
+it('publishes a finance candidate with a read-only balance release smoke',async()=>{
+  const h=await setup();
+  const financeDraft=await drafts.create({...draftInput,brief:{...draftInput.brief,goal:{value:'查询模拟账户余额',source:'user',confirmed:true},output:{value:'返回接口余额字段',source:'user',confirmed:true}}});
+  const snapshot=await snapshots.create(financeDraft.id,{expectedRevision:1,assembly:wealthBalanceAssembly('查询模拟账户余额')});
+  const baselines=new BaselineService(pool,clock,ids);const preview=await baselines.preview(financeDraft.id,'wealth-balance-read@1');
+  const baseline=await baselines.confirm(financeDraft.id,{expectedRevision:1,templateId:'wealth-balance-read@1',expectedDigest:preview.digest,confirmed:true});
+  const facts={accountId:'A1001',currency:'CNY',availableBalanceFen:1000000,asOf:'2026-10-21T08:00:00.000Z'};
+  const mock={...h.mock,inspect:async(id:string)=>({id,revision:1,config:{seed:'enterprise-default@1' as const,fault:'normal' as const,clock:'2026-10-21T08:00:00.000Z'},state:{}}),
+    calls:async(_env:string,runId:string)=>[{runId,operation:'getAccountBalance',status:200,input:{accountId:'A1001'},result:facts}]};
+  (h.mock as unknown as {calls:typeof mock.calls}).calls=mock.calls;
+  const financeRuntime=Object.assign(h.runtime,{deployment:async()=>({status:'ready',artifactDigest,specDigest:contentDigest(snapshot.content.runtimeSpec),modelProfile:profile}),
+    retire:async()=>({status:'stopped' as const})});
+  const driver=new ProjectReleaseDriver(pool,snapshots,baselines,{report:async()=>({baselineId:baseline.id})},h.runs,financeRuntime,mock,new PostgresActions(pool));
+  const gate:ReleaseGate={check:async(_snapshotId,validationId)=>({agentId:financeDraft.id,snapshotId:snapshot.id,validationId,runtimeSpec:snapshot.content.runtimeSpec,
+    binding:{snapshotDigest:snapshot.digest,artifactDigest,modelProfile:profile,mockDigest:'b'.repeat(64),baselineDigest:baseline.digest,
+      testSetDigest:contentDigest(baseline.content.cases),compatibilityKey:'e'.repeat(64)}})};
+  const releases=new ReleaseService(pool,gate,driver);const op=await releases.start(financeDraft.id,{snapshotId:snapshot.id,validationId:randomUUID(),clientRequestId:randomUUID(),expectedRevision:0});
+  await releases.tick();expect((await releases.get(op.id)).status).toBe('smoking');
+  await releases.tick();
+  h.runtime.execution=async(id)=>({id,status:'succeeded',events:[],result:{result:{content:JSON.stringify({kind:'account-balance',...facts})}}});
+  await h.runs.tick();await h.runs.tick();await releases.tick();
+  expect((await releases.get(op.id)).status).toBe('succeeded');
+  expect((await releases.pointer(financeDraft.id)).versionId).toBe(op.versionId);
 });
 it('completing or cancelling a published Run preserves its shared deployment and persistent environment',async()=>{
   const h=await setup();const op=await h.start();await h.releases.tick();await h.releases.tick();

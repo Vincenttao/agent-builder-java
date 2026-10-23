@@ -39,8 +39,10 @@ export class ProjectReleaseDriver implements ReleaseDriver {
   async smoke(operation:ReleaseOperation,claim:ReleaseClaim):ReturnType<ReleaseDriver['smoke']>{
     await this.own(operation,claim);const {snapshot,actual}=await this.loaded(operation);
     const report=await this.reports.report(operation.reference.validationId);const baseline=await this.baselines.assertTarget(report.baselineId,snapshot);
-    const item=baseline.content.cases.find(c=>c.scenario==='equipment-normal');
-    if(!item)throw new AppError('SMOKE_SCENARIO_UNAVAILABLE','该基线没有已实现的只读冒烟场景',409);
+    const smokeTarget=baseline.content.cases.map(item=>({item,operation:item.scenario==='equipment-normal'?'equipment-status':item.scenario==='balance-normal'?'getAccountBalance':undefined}))
+      .find(target=>target.operation);
+    if(!smokeTarget)throw new AppError('SMOKE_SCENARIO_UNAVAILABLE','该基线没有已实现的只读冒烟场景',409);
+    const {item,operation:expectedOperation}=smokeTarget;
     const run=await this.runs.createShared(snapshot.id,{clientRequestId:operation.smokeRunId,input:item.input},{runId:operation.smokeRunId,
       environmentId:operation.environmentId,deploymentId:operation.deploymentId,artifactDigest:operation.reference.binding.artifactDigest,
       modelDigest:operation.reference.binding.modelProfile.digest,runtimeSpec:operation.reference.runtimeSpec??snapshot.content.runtimeSpec,actorId:'U1001',target:{kind:'release-smoke',claim}});
@@ -54,7 +56,7 @@ export class ProjectReleaseDriver implements ReleaseDriver {
     const observation={run,calls:calls as Record<string,unknown>[],actions,attempts:[],events,businessState:environment.state,
       complete:environment.id===run.environmentId&&contentDigest(environment.config)===contentDigest(expectedConfig)};
     const result=evaluateProjectCase(item,observation);
-    const readOnly=calls.every(call=>(call as {operation?:string}).operation==='equipment-status')&&actions.length===0;
+    const readOnly=calls.length===1&&calls.every(call=>(call as {operation?:string}).operation===expectedOperation)&&actions.length===0;
     await this.own(operation,claim);
     return {status:result.status==='passed'&&readOnly?'passed':'failed',evidence:{case:result,readOnly,observation,loaded:actual}};
   }
