@@ -155,8 +155,9 @@ export class RunService {
     if(run.sharedTarget?.kind==='test')await requireTestTarget(this.pool,run.sharedTarget.testDeploymentId);
     if (run.status !== 'running' || run.cancelRequested) throw new AppError('RUN_NOT_ACTIVE', '运行已停止或尚未开始', 409);
     const snapshot = await this.snapshots.get(run.snapshotId);
+    const releaseSmokeReadOperations = new Set(['equipment-status', 'getAccountBalance', 'listWealthProducts']);
     const operations = (run.runtimeSpec??snapshot.content.runtimeSpec).tools.map(tool => tool.operationId)
-      .filter(id => run.sharedTarget?.kind !== 'release-smoke' || id === 'equipment-status');
+      .filter(id => run.sharedTarget?.kind !== 'release-smoke' || releaseSmokeReadOperations.has(id));
     return { runId: run.id, environmentId: run.environmentId, actorId: run.actorId, operations };
   }
   async events(id: string, after: number): Promise<RunEvent[]> {

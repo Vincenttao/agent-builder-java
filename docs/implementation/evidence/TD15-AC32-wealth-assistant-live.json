@@ -1,0 +1,646 @@
+{
+  "schemaVersion": 1,
+  "caseId": "AC-32",
+  "executionMode": "live-mock-resumed",
+  "sourceEvidence": "docs/implementation/evidence/TD15-AC32-wealth-assistant-live-release-revision-conflict.json",
+  "startedAt": "2026-10-23T20:08:20.615Z",
+  "base": "http://127.0.0.1:18083",
+  "composeProject": "agent-builder-td15-ac32",
+  "verdict": "passed",
+  "draftId": "324bf464-a8de-4ec3-9229-0de5fe88753c",
+  "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+  "baselineId": "31b06a3e-16bc-4428-b8cb-9209d4c1f004",
+  "candidate": {
+    "id": "ea45e4da-1e23-4c88-8548-710b218d082d",
+    "agentId": "324bf464-a8de-4ec3-9229-0de5fe88753c",
+    "createdAt": "2026-10-23T19:50:21.762Z",
+    "generated": {
+      "baselineId": "31b06a3e-16bc-4428-b8cb-9209d4c1f004",
+      "sourceDigest": "efa5bc4b9764c9ec1817dc03af060ecbec3b19fed03e346a1caab4a708931232",
+      "baselineDigest": "fdbdce4f8c4bb8692ff3eeac97ea8a2ee64013e94a47227e51c80a7bfdb7dcb1",
+      "runtimeArtifact": {
+        "kind": "generated-component",
+        "generated": {
+          "kind": "generated-tool-skill@2",
+          "classes": {
+            "generated/WealthQueryTool.class": "571149a7a356addbab3b97a5682d4511f8d00972fcaab4434a8d071a2825893b"
+          },
+          "toolName": "get_account_balance",
+          "skillName": "wealth-query",
+          "skillPath": "skills/wealth-query/SKILL.md",
+          "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+          "specDigest": "4428b37cc610ab30b185d39c80fa96dd0c3df9647223c871860b9e41b787c6b0",
+          "operationId": "getAccountBalance",
+          "skillDigest": "7cdc4355434e4d980c8fcda4024bfc9f316eb216dce89515fc5c833f1def1131",
+          "toolBindings": [
+            {
+              "toolName": "get_account_balance",
+              "operationId": "getAccountBalance",
+              "toolClassName": "generated.WealthQueryTool"
+            },
+            {
+              "toolName": "list_wealth_products",
+              "operationId": "listWealthProducts",
+              "toolClassName": "generated.WealthQueryTool"
+            }
+          ],
+          "toolClassName": "generated.WealthQueryTool",
+          "componentDigest": "43c7d64dbe6967652e5459dee451c8cf0a51cb83196af5776e645c2aba934fb2",
+          "sdkArtifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f",
+          "developmentBundleDigest": "0a0b5e68726157f9f0dee97127bd6f1b4b7edede777c17e038954e225f1d5c4a"
+        },
+        "artifactDigest": "ed748210536fd79af4526ff44114f3eb9848d2050ac2be672206627b5efc88d2",
+        "sdkArtifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f"
+      },
+      "developmentJobId": "49428d20-5526-4d98-aa46-e33a010aa477",
+      "developmentBundleDigest": "0a0b5e68726157f9f0dee97127bd6f1b4b7edede777c17e038954e225f1d5c4a"
+    },
+    "provenance": "generated-component",
+    "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+    "specDigest": "4428b37cc610ab30b185d39c80fa96dd0c3df9647223c871860b9e41b787c6b0",
+    "runtimeSpec": {
+      "agent": {
+        "id": "snapshot-43a6f67b-44f4-4ef4-959f-9079b113ba77",
+        "type": "DeepAgent",
+        "rails": [
+          "audit",
+          "tool-allowlist"
+        ],
+        "systemPrompt": "你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。余额成功时必须仅输出一个 JSON 对象，不加 Markdown 或自然语言，格式为 {\"kind\":\"account-balance\",\"accountId\":\"接口返回值\",\"currency\":\"接口返回值\",\"availableBalanceFen\":接口返回整数,\"asOf\":\"接口返回值\"}，所有值必须逐字来自工具结果。产品查询时必须仅输出一个 JSON 对象，格式为 {\"kind\":\"wealth-products\",\"version\":\"接口返回值\",\"items\":[{\"productId\":\"接口返回值\",\"name\":\"接口返回值\",\"status\":\"接口返回值\",\"minimumAmountFen\":接口返回整数,\"description\":\"接口返回值\"}]}，完整保留工具返回的每个产品。缺少账户编号时用一句话追问，不调用余额工具；工具错误或数据缺失时说明未知，不能输出推测值。只读，不申购、不转账。",
+        "maxIterations": 6
+      },
+      "tools": [
+        {
+          "name": "get_account_balance",
+          "protocol": "http",
+          "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+          "inputFields": {
+            "accountId": "string"
+          },
+          "operationId": "getAccountBalance",
+          "toolVersion": "account-balance-http@1",
+          "connectionRef": "enterprise-mock-http@1",
+          "responseFields": {
+            "asOf": "string",
+            "currency": "string",
+            "accountId": "string",
+            "availableBalanceFen": "integer"
+          }
+        },
+        {
+          "name": "list_wealth_products",
+          "protocol": "http",
+          "description": "查询 Mock 理财产品目录和状态；只展示接口返回的名称、状态、最低金额和说明。",
+          "inputFields": {},
+          "operationId": "listWealthProducts",
+          "toolVersion": "wealth-products-http@1",
+          "connectionRef": "enterprise-mock-http@1",
+          "responseFields": {
+            "items": "array",
+            "version": "string"
+          }
+        }
+      ]
+    },
+    "bundleDigest": "fb4f3c119b9d490ef518d423531856d0b764ae9c41b16ee744b0eb775254a761",
+    "artifactDigest": "ed748210536fd79af4526ff44114f3eb9848d2050ac2be672206627b5efc88d2",
+    "snapshotDigest": "1b6b47c8f5f4c16165171f8b75571f4895f3c6d7deabe3d3a311f04b3d0b6854"
+  },
+  "validationId": "ebb52d7f-eb10-4405-b8d8-e79ab4936896",
+  "validation": {
+    "cases": [
+      {
+        "caseId": "TC-BAL-001",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": "account-balance@1",
+            "ruleId": "balance-report-schema",
+            "status": "passed",
+            "expected": "account-balance@1"
+          },
+          {
+            "actual": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            },
+            "ruleId": "balance-facts",
+            "status": "passed",
+            "expected": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            }
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "158f6532-7e26-40c7-835e-2e1cf2076e55",
+        "evidenceDigest": "5d47c893a6ec3fb036fd6e5e1e5a7a3222dac1c772e8389cac3e5658b767f498"
+      },
+      {
+        "caseId": "TC-BAL-002",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "asks-for-account-id",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "all-business-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "4d3ab78e-eb1f-48d9-baab-299ce6862bca",
+        "evidenceDigest": "439b486581a0e52fde6eb60ece85a925bcca52ab8eb2e409625c7762bf9c6239"
+      },
+      {
+        "caseId": "TC-BAL-003",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "tool-error-evidence",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "failure-output-no-facts",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "4018e58e-45ea-48e3-bef5-caee8d2a3f7b",
+        "evidenceDigest": "1ead1133967da3654bb31537a46d3a300821ae29d1f093352914445287183e07"
+      }
+    ],
+    "binding": {
+      "candidate": {
+        "id": "ea45e4da-1e23-4c88-8548-710b218d082d",
+        "provenance": "generated-component",
+        "specDigest": "4428b37cc610ab30b185d39c80fa96dd0c3df9647223c871860b9e41b787c6b0",
+        "bundleDigest": "fb4f3c119b9d490ef518d423531856d0b764ae9c41b16ee744b0eb775254a761",
+        "testPlanDigest": "04a9344f632f6cc29e7dd7abd47ad8c149439aa60f2b1d3fd2d2b161b890e867",
+        "developmentJobId": "49428d20-5526-4d98-aa46-e33a010aa477"
+      },
+      "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+      "artifactDigest": "ed748210536fd79af4526ff44114f3eb9848d2050ac2be672206627b5efc88d2",
+      "baselineDigest": "fdbdce4f8c4bb8692ff3eeac97ea8a2ee64013e94a47227e51c80a7bfdb7dcb1",
+      "snapshotDigest": "1b6b47c8f5f4c16165171f8b75571f4895f3c6d7deabe3d3a311f04b3d0b6854",
+      "compatibilityKey": "b264b62ffb2690de14c8c8ce280d727ed3b4d550a1a9548accb16e67616ac02b"
+    },
+    "reasons": [],
+    "verdict": "passed",
+    "createdAt": "2026-10-23T19:51:39.227Z",
+    "baselineId": "31b06a3e-16bc-4428-b8cb-9209d4c1f004",
+    "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+    "executionId": "ebb52d7f-eb10-4405-b8d8-e79ab4936896"
+  },
+  "sourceTargetImageIds": [
+    "sha256:e9cc259e2cb7db97b141757034c8aab5fe0543ea0516c1c083fe5bc86720630f",
+    "sha256:43330a859255b4b9b2fbef8218e1088664c91b2c049e9431e979f865486e9c5b"
+  ],
+  "targetImageIds": [
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:43330a859255b4b9b2fbef8218e1088664c91b2c049e9431e979f865486e9c5b"
+  ],
+  "liveValidationCheckedAt": "2026-10-23T20:08:20.917Z",
+  "releasePointerBefore": {
+    "agentId": "324bf464-a8de-4ec3-9229-0de5fe88753c",
+    "revision": 0,
+    "environmentId": "2e0bc147-ffd9-4066-8fcd-521f3576e5d3"
+  },
+  "release": {
+    "id": "06b337de-5018-49ca-bf4f-3fbba2ebfe16",
+    "status": "succeeded",
+    "agentId": "324bf464-a8de-4ec3-9229-0de5fe88753c",
+    "request": {
+      "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+      "validationId": "ebb52d7f-eb10-4405-b8d8-e79ab4936896",
+      "clientRequestId": "5bbe1857-073c-4eeb-9dd8-5ff947fa5c2a",
+      "expectedRevision": 0
+    },
+    "createdAt": "2026-10-23T20:08:21.923Z",
+    "reference": {
+      "agentId": "324bf464-a8de-4ec3-9229-0de5fe88753c",
+      "binding": {
+        "candidate": {
+          "id": "ea45e4da-1e23-4c88-8548-710b218d082d",
+          "provenance": "generated-component",
+          "specDigest": "4428b37cc610ab30b185d39c80fa96dd0c3df9647223c871860b9e41b787c6b0",
+          "bundleDigest": "fb4f3c119b9d490ef518d423531856d0b764ae9c41b16ee744b0eb775254a761",
+          "testPlanDigest": "04a9344f632f6cc29e7dd7abd47ad8c149439aa60f2b1d3fd2d2b161b890e867",
+          "developmentJobId": "49428d20-5526-4d98-aa46-e33a010aa477"
+        },
+        "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "https://api.deepseek.com/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+          "executionMode": "live-mock"
+        },
+        "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+        "artifactDigest": "ed748210536fd79af4526ff44114f3eb9848d2050ac2be672206627b5efc88d2",
+        "baselineDigest": "fdbdce4f8c4bb8692ff3eeac97ea8a2ee64013e94a47227e51c80a7bfdb7dcb1",
+        "snapshotDigest": "1b6b47c8f5f4c16165171f8b75571f4895f3c6d7deabe3d3a311f04b3d0b6854",
+        "compatibilityKey": "b264b62ffb2690de14c8c8ce280d727ed3b4d550a1a9548accb16e67616ac02b"
+      },
+      "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+      "runtimeSpec": {
+        "agent": {
+          "id": "snapshot-43a6f67b-44f4-4ef4-959f-9079b113ba77",
+          "type": "DeepAgent",
+          "rails": [
+            "audit",
+            "tool-allowlist"
+          ],
+          "systemPrompt": "你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。余额成功时必须仅输出一个 JSON 对象，不加 Markdown 或自然语言，格式为 {\"kind\":\"account-balance\",\"accountId\":\"接口返回值\",\"currency\":\"接口返回值\",\"availableBalanceFen\":接口返回整数,\"asOf\":\"接口返回值\"}，所有值必须逐字来自工具结果。产品查询时必须仅输出一个 JSON 对象，格式为 {\"kind\":\"wealth-products\",\"version\":\"接口返回值\",\"items\":[{\"productId\":\"接口返回值\",\"name\":\"接口返回值\",\"status\":\"接口返回值\",\"minimumAmountFen\":接口返回整数,\"description\":\"接口返回值\"}]}，完整保留工具返回的每个产品。缺少账户编号时用一句话追问，不调用余额工具；工具错误或数据缺失时说明未知，不能输出推测值。只读，不申购、不转账。",
+          "maxIterations": 6
+        },
+        "tools": [
+          {
+            "name": "get_account_balance",
+            "protocol": "http",
+            "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+            "inputFields": {
+              "accountId": "string"
+            },
+            "operationId": "getAccountBalance",
+            "toolVersion": "account-balance-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "asOf": "string",
+              "currency": "string",
+              "accountId": "string",
+              "availableBalanceFen": "integer"
+            }
+          },
+          {
+            "name": "list_wealth_products",
+            "protocol": "http",
+            "description": "查询 Mock 理财产品目录和状态；只展示接口返回的名称、状态、最低金额和说明。",
+            "inputFields": {},
+            "operationId": "listWealthProducts",
+            "toolVersion": "wealth-products-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "items": "array",
+              "version": "string"
+            }
+          }
+        ]
+      },
+      "validationId": "ebb52d7f-eb10-4405-b8d8-e79ab4936896"
+    },
+    "updatedAt": "2026-10-23T20:08:42.068Z",
+    "versionId": "3a8bea0c-1114-4b99-a5ed-30990acd3738",
+    "smokeRunId": "c13a2e08-1c4d-4144-af0b-e6724d81d792",
+    "inputDigest": "1324c26958db0d2477fa2ec3b316fb160af41665d9e82960f568ef953a376b10",
+    "deploymentId": "daadbd65-df7e-4c6a-8655-9f4ae2dd8039",
+    "environmentId": "2e0bc147-ffd9-4066-8fcd-521f3576e5d3"
+  },
+  "agentVersion": "3a8bea0c-1114-4b99-a5ed-30990acd3738",
+  "actorId": "U1001",
+  "balanceRequest": {
+    "requestId": "9006da89-e036-4bca-a236-8dd9a0ced3a9",
+    "runId": "61cb0b7b-95d3-404b-8d64-a42ed51070a4",
+    "conversationId": "8772a916-1719-4378-902c-aa1685662310",
+    "agentVersion": "3a8bea0c-1114-4b99-a5ed-30990acd3738",
+    "request": {
+      "id": "9006da89-e036-4bca-a236-8dd9a0ced3a9",
+      "input": "查询账户 A1001 的可用余额、币种和更新时间。",
+      "runId": "61cb0b7b-95d3-404b-8d64-a42ed51070a4",
+      "status": "admitted",
+      "actorId": "U1001",
+      "agentId": "324bf464-a8de-4ec3-9229-0de5fe88753c",
+      "createdAt": "2026-10-23T20:08:42.109Z",
+      "updatedAt": "2026-10-23T20:08:43.152Z",
+      "inputDigest": "dcb11d77e6bc0da2f42924ae7700550d5714c5fe56fb89c349b60f9fa64e095f",
+      "agentVersion": "3a8bea0c-1114-4b99-a5ed-30990acd3738",
+      "environmentId": "2e0bc147-ffd9-4066-8fcd-521f3576e5d3",
+      "conversationId": "8772a916-1719-4378-902c-aa1685662310",
+      "clientRequestId": "e1ddd4e8-4898-4cc2-a8d7-cbc1064491d5"
+    },
+    "run": {
+      "id": "61cb0b7b-95d3-404b-8d64-a42ed51070a4",
+      "input": "查询账户 A1001 的可用余额、币种和更新时间。",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"account-balance\",\"accountId\":\"A1001\",\"currency\":\"CNY\",\"availableBalanceFen\":1000000,\"asOf\":\"2026-10-21T08:00:00.000Z\"}"
+        },
+        "conversation_id": "61cb0b7b-95d3-404b-8d64-a42ed51070a4"
+      },
+      "status": "succeeded",
+      "actorId": "U1001",
+      "started": true,
+      "createdAt": "2026-10-23T20:08:43.152Z",
+      "updatedAt": "2026-10-23T20:08:47.936Z",
+      "diagnostic": "",
+      "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+      "inputDigest": "fb83442fcc5a59ff181421183ae9d381ea11f32def54f047a1972f7e9ab06f98",
+      "runtimeSpec": {
+        "agent": {
+          "id": "snapshot-43a6f67b-44f4-4ef4-959f-9079b113ba77",
+          "type": "DeepAgent",
+          "rails": [
+            "audit",
+            "tool-allowlist"
+          ],
+          "systemPrompt": "你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。余额成功时必须仅输出一个 JSON 对象，不加 Markdown 或自然语言，格式为 {\"kind\":\"account-balance\",\"accountId\":\"接口返回值\",\"currency\":\"接口返回值\",\"availableBalanceFen\":接口返回整数,\"asOf\":\"接口返回值\"}，所有值必须逐字来自工具结果。产品查询时必须仅输出一个 JSON 对象，格式为 {\"kind\":\"wealth-products\",\"version\":\"接口返回值\",\"items\":[{\"productId\":\"接口返回值\",\"name\":\"接口返回值\",\"status\":\"接口返回值\",\"minimumAmountFen\":接口返回整数,\"description\":\"接口返回值\"}]}，完整保留工具返回的每个产品。缺少账户编号时用一句话追问，不调用余额工具；工具错误或数据缺失时说明未知，不能输出推测值。只读，不申购、不转账。",
+          "maxIterations": 6
+        },
+        "tools": [
+          {
+            "name": "get_account_balance",
+            "protocol": "http",
+            "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+            "inputFields": {
+              "accountId": "string"
+            },
+            "operationId": "getAccountBalance",
+            "toolVersion": "account-balance-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "asOf": "string",
+              "currency": "string",
+              "accountId": "string",
+              "availableBalanceFen": "integer"
+            }
+          },
+          {
+            "name": "list_wealth_products",
+            "protocol": "http",
+            "description": "查询 Mock 理财产品目录和状态；只展示接口返回的名称、状态、最低金额和说明。",
+            "inputFields": {},
+            "operationId": "listWealthProducts",
+            "toolVersion": "wealth-products-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "items": "array",
+              "version": "string"
+            }
+          }
+        ]
+      },
+      "deploymentId": "daadbd65-df7e-4c6a-8655-9f4ae2dd8039",
+      "invocationId": "9006da89-e036-4bca-a236-8dd9a0ced3a9",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "3a8bea0c-1114-4b99-a5ed-30990acd3738"
+      },
+      "environmentId": "2e0bc147-ffd9-4066-8fcd-521f3576e5d3",
+      "artifactDigest": "ed748210536fd79af4526ff44114f3eb9848d2050ac2be672206627b5efc88d2",
+      "conversationId": "8772a916-1719-4378-902c-aa1685662310",
+      "snapshotDigest": "1b6b47c8f5f4c16165171f8b75571f4895f3c6d7deabe3d3a311f04b3d0b6854",
+      "cancelRequested": false,
+      "clientRequestId": "61cb0b7b-95d3-404b-8d64-a42ed51070a4",
+      "externalEvidence": [
+        {
+          "seq": 9,
+          "input": {
+            "accountId": "A1001"
+          },
+          "runId": "61cb0b7b-95d3-404b-8d64-a42ed51070a4",
+          "result": {
+            "asOf": "2026-10-21T08:00:00.000Z",
+            "currency": "CNY",
+            "accountId": "A1001",
+            "availableBalanceFen": 1000000
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-23T20:08:46.117Z",
+          "operation": "getAccountBalance",
+          "stateRevision": 1
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": []
+  },
+  "productsRequest": {
+    "requestId": "d18430ec-ca51-40f2-a67f-e831f3aa6e07",
+    "runId": "e200a7bc-f37a-4528-b2eb-f11310e6dc57",
+    "conversationId": "8772a916-1719-4378-902c-aa1685662310",
+    "agentVersion": "3a8bea0c-1114-4b99-a5ed-30990acd3738",
+    "request": {
+      "id": "d18430ec-ca51-40f2-a67f-e831f3aa6e07",
+      "input": "请查询当前全部理财产品目录，列出产品编号、名称、状态和最低金额。",
+      "runId": "e200a7bc-f37a-4528-b2eb-f11310e6dc57",
+      "status": "admitted",
+      "actorId": "U1001",
+      "agentId": "324bf464-a8de-4ec3-9229-0de5fe88753c",
+      "createdAt": "2026-10-23T20:08:48.379Z",
+      "updatedAt": "2026-10-23T20:08:49.486Z",
+      "inputDigest": "64c6393dc993ca21bb1cf0662e312ef3971faa1db089b066cb560e1864220152",
+      "agentVersion": "3a8bea0c-1114-4b99-a5ed-30990acd3738",
+      "environmentId": "2e0bc147-ffd9-4066-8fcd-521f3576e5d3",
+      "conversationId": "8772a916-1719-4378-902c-aa1685662310",
+      "clientRequestId": "5bd0102a-a653-40a8-9fcc-6896c1fd6c04"
+    },
+    "run": {
+      "id": "e200a7bc-f37a-4528-b2eb-f11310e6dc57",
+      "input": "请查询当前全部理财产品目录，列出产品编号、名称、状态和最低金额。",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "{\"kind\":\"wealth-products\",\"version\":\"seed-finance-001@1\",\"items\":[{\"productId\":\"SIM-W001\",\"name\":\"示例理财产品 A\",\"status\":\"available\",\"minimumAmountFen\":10000,\"description\":\"纯模拟资料，不计算收益、净值或份额\"},{\"productId\":\"SIM-W002\",\"name\":\"示例理财产品 B\",\"status\":\"suspended\",\"minimumAmountFen\":10000,\"description\":\"纯模拟资料；暂停申购\"}]}"
+        },
+        "conversation_id": "e200a7bc-f37a-4528-b2eb-f11310e6dc57"
+      },
+      "status": "succeeded",
+      "actorId": "U1001",
+      "started": true,
+      "createdAt": "2026-10-23T20:08:49.486Z",
+      "updatedAt": "2026-10-23T20:08:55.462Z",
+      "diagnostic": "",
+      "snapshotId": "43a6f67b-44f4-4ef4-959f-9079b113ba77",
+      "inputDigest": "4a0875e6d4ca5b398be9ea3bd139516a936971e6398db93f1be22a7826692344",
+      "runtimeSpec": {
+        "agent": {
+          "id": "snapshot-43a6f67b-44f4-4ef4-959f-9079b113ba77",
+          "type": "DeepAgent",
+          "rails": [
+            "audit",
+            "tool-allowlist"
+          ],
+          "systemPrompt": "你是企业理财查询助手。先调用 skill_tool 读取 wealth-query/SKILL.md。查询余额时调用 get_account_balance 并只传 accountId；查询产品时调用 list_wealth_products 且参数为空。余额成功时必须仅输出一个 JSON 对象，不加 Markdown 或自然语言，格式为 {\"kind\":\"account-balance\",\"accountId\":\"接口返回值\",\"currency\":\"接口返回值\",\"availableBalanceFen\":接口返回整数,\"asOf\":\"接口返回值\"}，所有值必须逐字来自工具结果。产品查询时必须仅输出一个 JSON 对象，格式为 {\"kind\":\"wealth-products\",\"version\":\"接口返回值\",\"items\":[{\"productId\":\"接口返回值\",\"name\":\"接口返回值\",\"status\":\"接口返回值\",\"minimumAmountFen\":接口返回整数,\"description\":\"接口返回值\"}]}，完整保留工具返回的每个产品。缺少账户编号时用一句话追问，不调用余额工具；工具错误或数据缺失时说明未知，不能输出推测值。只读，不申购、不转账。",
+          "maxIterations": 6
+        },
+        "tools": [
+          {
+            "name": "get_account_balance",
+            "protocol": "http",
+            "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+            "inputFields": {
+              "accountId": "string"
+            },
+            "operationId": "getAccountBalance",
+            "toolVersion": "account-balance-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "asOf": "string",
+              "currency": "string",
+              "accountId": "string",
+              "availableBalanceFen": "integer"
+            }
+          },
+          {
+            "name": "list_wealth_products",
+            "protocol": "http",
+            "description": "查询 Mock 理财产品目录和状态；只展示接口返回的名称、状态、最低金额和说明。",
+            "inputFields": {},
+            "operationId": "listWealthProducts",
+            "toolVersion": "wealth-products-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "items": "array",
+              "version": "string"
+            }
+          }
+        ]
+      },
+      "deploymentId": "daadbd65-df7e-4c6a-8655-9f4ae2dd8039",
+      "invocationId": "d18430ec-ca51-40f2-a67f-e831f3aa6e07",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "3a8bea0c-1114-4b99-a5ed-30990acd3738"
+      },
+      "environmentId": "2e0bc147-ffd9-4066-8fcd-521f3576e5d3",
+      "artifactDigest": "ed748210536fd79af4526ff44114f3eb9848d2050ac2be672206627b5efc88d2",
+      "conversationId": "8772a916-1719-4378-902c-aa1685662310",
+      "snapshotDigest": "1b6b47c8f5f4c16165171f8b75571f4895f3c6d7deabe3d3a311f04b3d0b6854",
+      "cancelRequested": false,
+      "clientRequestId": "e200a7bc-f37a-4528-b2eb-f11310e6dc57",
+      "externalEvidence": [
+        {
+          "seq": 10,
+          "input": {},
+          "runId": "e200a7bc-f37a-4528-b2eb-f11310e6dc57",
+          "result": {
+            "items": [
+              {
+                "name": "示例理财产品 A",
+                "status": "available",
+                "version": "seed-finance-001@1",
+                "productId": "SIM-W001",
+                "description": "纯模拟资料，不计算收益、净值或份额",
+                "minimumAmountFen": 10000
+              },
+              {
+                "name": "示例理财产品 B",
+                "status": "suspended",
+                "version": "seed-finance-001@1",
+                "productId": "SIM-W002",
+                "description": "纯模拟资料；暂停申购",
+                "minimumAmountFen": 10000
+              }
+            ],
+            "version": "seed-finance-001@1"
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-23T20:08:53.229Z",
+          "operation": "listWealthProducts",
+          "stateRevision": 1
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": []
+  },
+  "branches": {
+    "release-pointer-revision": true,
+    "published-balance-query": true,
+    "published-product-directory": true,
+    "request-run-version": true
+  },
+  "finishedAt": "2026-10-23T20:08:55.568Z",
+  "finalTargetImageIds": [
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:43330a859255b4b9b2fbef8218e1088664c91b2c049e9431e979f865486e9c5b"
+  ]
+}

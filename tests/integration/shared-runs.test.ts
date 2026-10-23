@@ -17,6 +17,7 @@ import { BaselineService } from '../../apps/server/src/acceptance/application/ba
 import { PostgresActions } from '../../apps/server/src/actions/postgres-actions.js';
 import { ProjectReleaseDriver } from '../../apps/server/src/releases/project-release-driver.js';
 import { contentDigest } from '../../apps/server/src/snapshots/domain/assembly.js';
+import { wealthBalanceRuntimeTool } from '../../packages/contracts/src/generation-profile.js';
 const schema = `it_shared_runs_${randomUUID().replaceAll('-','')}`;
 const url = process.env.TEST_DATABASE_URL ?? 'postgres://builder_test:local-test-only@127.0.0.1:15432/builder_test';
 const admin = new Pool({connectionString:url}); const pool = new Pool({connectionString:url,options:`-c search_path=${schema}`});
@@ -74,21 +75,24 @@ it('publishes a finance candidate with a read-only balance release smoke',async(
   const h=await setup();
   const financeDraft=await drafts.create({...draftInput,brief:{...draftInput.brief,goal:{value:'查询模拟账户余额',source:'user',confirmed:true},output:{value:'返回接口余额字段',source:'user',confirmed:true}}});
   const snapshot=await snapshots.create(financeDraft.id,{expectedRevision:1,assembly:wealthBalanceAssembly('查询模拟账户余额')});
+  const runtimeSpec={...snapshot.content.runtimeSpec,tools:[wealthBalanceRuntimeTool]};
   const baselines=new BaselineService(pool,clock,ids);const preview=await baselines.preview(financeDraft.id,'wealth-balance-read@1');
   const baseline=await baselines.confirm(financeDraft.id,{expectedRevision:1,templateId:'wealth-balance-read@1',expectedDigest:preview.digest,confirmed:true});
   const facts={accountId:'A1001',currency:'CNY',availableBalanceFen:1000000,asOf:'2026-10-21T08:00:00.000Z'};
   const mock={...h.mock,inspect:async(id:string)=>({id,revision:1,config:{seed:'enterprise-default@1' as const,fault:'normal' as const,clock:'2026-10-21T08:00:00.000Z'},state:{}}),
     calls:async(_env:string,runId:string)=>[{runId,operation:'getAccountBalance',status:200,input:{accountId:'A1001'},result:facts}]};
   (h.mock as unknown as {calls:typeof mock.calls}).calls=mock.calls;
-  const financeRuntime=Object.assign(h.runtime,{deployment:async()=>({status:'ready',artifactDigest,specDigest:contentDigest(snapshot.content.runtimeSpec),modelProfile:profile}),
+  const financeRuntime=Object.assign(h.runtime,{deployment:async()=>({status:'ready',artifactDigest,specDigest:contentDigest(runtimeSpec),modelProfile:profile}),
     retire:async()=>({status:'stopped' as const})});
   const driver=new ProjectReleaseDriver(pool,snapshots,baselines,{report:async()=>({baselineId:baseline.id})},h.runs,financeRuntime,mock,new PostgresActions(pool));
-  const gate:ReleaseGate={check:async(_snapshotId,validationId)=>({agentId:financeDraft.id,snapshotId:snapshot.id,validationId,runtimeSpec:snapshot.content.runtimeSpec,
+  const gate:ReleaseGate={check:async(_snapshotId,validationId)=>({agentId:financeDraft.id,snapshotId:snapshot.id,validationId,runtimeSpec,
     binding:{snapshotDigest:snapshot.digest,artifactDigest,modelProfile:profile,mockDigest:'b'.repeat(64),baselineDigest:baseline.digest,
       testSetDigest:contentDigest(baseline.content.cases),compatibilityKey:'e'.repeat(64)}})};
   const releases=new ReleaseService(pool,gate,driver);const op=await releases.start(financeDraft.id,{snapshotId:snapshot.id,validationId:randomUUID(),clientRequestId:randomUUID(),expectedRevision:0});
   await releases.tick();expect((await releases.get(op.id)).status).toBe('smoking');
   await releases.tick();
+  await h.runs.tick();
+  expect((await h.runs.context(op.smokeRunId)).operations).toEqual(['getAccountBalance']);
   h.runtime.execution=async(id)=>({id,status:'succeeded',events:[],result:{result:{content:JSON.stringify({kind:'account-balance',...facts})}}});
   await h.runs.tick();await h.runs.tick();await releases.tick();
   expect((await releases.get(op.id)).status).toBe('succeeded');
