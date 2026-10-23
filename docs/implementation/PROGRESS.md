@@ -2,6 +2,8 @@
 
 目标：完成 TDD 计划至 TD-15，包括 P0-A/B/C 累积必测集及 NF-01～NF-06。状态：开发中，尚未完成阶段验收。
 
+TDD-083：修复 GitHub CI 中 manifest 摘要未同步及 Java Adapter 首次 `--no-checkout` 克隆被误判为源码改动的问题；Artifact 缺失不再覆盖主失败。摘要合同 1 项、单元／契约 130 项、类型检查通过；Core／Runtime 构建和 Bridge 23 项测试通过。Adapter 全套本地运行在并行负载下超时并已停止，等待修复提交后的 GitHub CI 验证。详见 [TDD-083](TDD-083.md)。
+
 TDD-082：将“固定代码候选构建一次、同一 App／Runner 镜像批量执行多项验收”的要求同步至 FR-019/020、测试基线及 TDD 阶段门禁；补充用例状态隔离、破坏性测试顺序、失败分类与重建触发条件。P0-A/B/C 必测集合未删减。TD-15 仍暂停，未执行 Docker 构建或测试。详见 [TDD-082](TDD-082.md)。
 
 TDD-081：移除 Docker 构建中重复的 Node 类型检查、单元／契约测试和 Java Bridge 测试；保留生产编译／打包、OpenCode 版本校验及 TD-15 真实运行验收。CI 仍负责执行完整质量检查。未执行 Docker 重建，首次后续镜像构建需验证新配置。详见 [TDD-081](TDD-081.md)。

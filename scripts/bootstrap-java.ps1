@@ -6,16 +6,22 @@ try {
     foreach ($name in @('core', 'runtime')) {
         $sdk = $sdkLock.$name
         $checkout = Join-Path $rootPath ".cache/upstream/agent-$name-java"
+        $createdCheckout = $false
         if (-not (Test-Path -LiteralPath (Join-Path $checkout '.git'))) {
             & git clone --no-checkout $sdk.repository $checkout
             if ($LASTEXITCODE -ne 0) { throw "Cannot clone $name" }
+            $createdCheckout = $true
         }
-        $trackedChanges = & git -C $checkout status --porcelain --untracked-files=no
-        if ($trackedChanges) { throw "Upstream checkout has local changes: $name" }
+        if (-not $createdCheckout) {
+            $trackedChanges = & git -C $checkout status --porcelain --untracked-files=no
+            if ($trackedChanges) { throw "Upstream checkout has local changes: $name" }
+        }
         & git -C $checkout fetch --depth 1 origin $sdk.commit
         if ($LASTEXITCODE -ne 0) { throw "Cannot fetch pinned $name" }
         & git -C $checkout checkout --detach $sdk.commit
         if ($LASTEXITCODE -ne 0) { throw "Cannot select pinned $name" }
+        $trackedChanges = & git -C $checkout status --porcelain --untracked-files=no
+        if ($trackedChanges) { throw "Pinned upstream checkout is not clean: $name" }
     }
     & mvn -B -f .cache/upstream/agent-core-java/core/pom.xml '-Dmaven.test.skip=true' install
     if ($LASTEXITCODE -ne 0) { throw 'Core dependency build failed' }
