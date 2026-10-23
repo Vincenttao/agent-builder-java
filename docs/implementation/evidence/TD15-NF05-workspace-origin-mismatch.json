@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-05 NFR-08 fresh workspace restore",
+  "executionMode": "isolated-live-docker",
+  "sourceBase": "http://127.0.0.1:18080",
+  "targetBase": "http://127.0.0.1:18081",
+  "composeProject": "agent-builder-td15-nf05",
+  "startedAt": "2026-10-23T20:13:34.783Z",
+  "verdict": "failed",
+  "failure": "AssertionError [ERR_ASSERTION]: LOGIN_FAILED:http://127.0.0.1:18080:403\n\n403 !== 200\n\n    at login (file:///D:/agent-builder-java/scripts/verify-td15-nf05-workspace.mjs:65:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async file:///D:/agent-builder-java/scripts/verify-td15-nf05-workspace.mjs:98:3",
+  "finishedAt": "2026-10-23T20:13:34.979Z"
+}

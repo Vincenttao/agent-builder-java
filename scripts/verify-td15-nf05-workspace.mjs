@@ -10,7 +10,7 @@ const canonicalJson = value => Array.isArray(value) ? `[${value.map(canonicalJso
 const contentDigest = value => createHash('sha256').update(canonicalJson(value)).digest('hex');
 
 const sourceBase = (process.env.NF05_SOURCE_URL ?? 'http://127.0.0.1:18080').replace(/\/$/, '');
-const sourceOrigin = process.env.NF05_SOURCE_ORIGIN ?? new URL(sourceBase).origin;
+const sourceOrigin = process.env.NF05_SOURCE_ORIGIN ?? 'http://127.0.0.1:8080';
 const targetPort = Number(process.env.NF05_TARGET_PORT ?? 18081);
 const targetBase = `http://127.0.0.1:${targetPort}`;
 const project = process.env.NF05_COMPOSE_PROJECT ?? 'agent-builder-td15-nf05';
@@ -34,6 +34,7 @@ let target = environment(targetBase, targetBase);
 let targetCreated = false;
 let deployment;
 let sourceRunnerPausedAt;
+let sourceRunnerStoppedByRun = false;
 let result = { schemaVersion: 1, requirement: 'TD-15/NF-05 NFR-08 fresh workspace restore', executionMode: 'isolated-live-docker', sourceBase, targetBase, composeProject: project, startedAt: new Date().toISOString() };
 
 function compose(args) {
@@ -126,9 +127,18 @@ try {
   result.credentialsAbsent = secretAbsent;
 
   result.projectPackageSha256 = createHash('sha256').update(JSON.stringify(archive)).digest('hex');
-  sourceRunnerPausedAt = Date.now();
-  sourceRunner('stop');
-  result.sourceRunnerPausedForTargetBuild = true;
+  const sourceRunnerStatus = execFileSync('docker', ['inspect', '--format', '{{.State.Status}}|{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}', 'agent-builder-td15-nf01-runner-1'], { encoding: 'utf8' }).trim();
+  result.sourceRunnerStatusBeforeTargetBuild = sourceRunnerStatus;
+  if (sourceRunnerStatus === 'running|healthy') {
+    sourceRunnerPausedAt = Date.now();
+    sourceRunner('stop');
+    sourceRunnerStoppedByRun = true;
+    result.sourceRunnerPausedForTargetBuild = true;
+  } else {
+    // Do not stop/start a source Runner that was already unhealthy before this run.
+    // The isolated target still exercises import, rebuild, deployment and business calls.
+    result.sourceRunnerPauseSkipped = true;
+  }
   targetCreated = true;
   compose(['up', '-d', '--no-build']);
   await waitReady();
@@ -244,7 +254,7 @@ try {
     try { compose(['down', '-v', '--remove-orphans']); result.targetStackRemoved = true; }
     catch (error) { result.targetStackRemoved = false; result.cleanupFailure = String(error); }
   }
-  if (sourceRunnerPausedAt) {
+  if (sourceRunnerPausedAt && sourceRunnerStoppedByRun) {
     try {
       sourceRunner('start');
       const recoveredAt = await waitSourceRunnerHealthy();
@@ -260,7 +270,9 @@ try {
   if (targetCreated && result.targetStackRemoved !== true) result.verdict = 'failed';
   result.finishedAt = new Date().toISOString();
   await mkdir('docs/implementation/evidence', { recursive: true });
-  await writeFile(reportPath, JSON.stringify(result, null, 2) + '\n');
+  const outputPath = result.verdict === 'passed' ? reportPath : reportPath.replace(/\.json$/, `-failed-${Date.now()}.json`);
+  result.evidencePath = outputPath;
+  await writeFile(outputPath, JSON.stringify(result, null, 2) + '\n');
   if (result.verdict === 'passed') {
     const manifestBytes = await readFile('tests/acceptance/manifest.json');
     const manifest = JSON.parse(manifestBytes.toString());
