@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "requirement": "TD-15/AC-01 Save and block Run without model connection",
   "executionMode": "isolated-live-docker",
-  "measuredAt": "2026-10-23T21:34:18.005Z",
+  "measuredAt": "2026-10-23T23:25:03.660Z",
   "composeProject": "agent-builder-td15-ac01",
   "model": "not_configured",
   "canSaveDraft": true,
@@ -10,9 +10,9 @@
   "blockerCodes": [
     "MODEL_NOT_CONFIGURED"
   ],
-  "draftId": "c8b6ebf7-4c79-41cd-a240-6f842a861463",
+  "draftId": "a259b0e0-0f6d-4e86-82d9-ff80bb09c969",
   "draftPersisted": true,
-  "snapshotId": "91a0bd88-d920-4ed0-b0b6-c74a64b3e5f6",
+  "snapshotId": "2785278c-f889-4e81-bb4d-3ecc80371b3e",
   "runAttemptHttpStatus": 409,
   "runAttemptCode": "ENVIRONMENT_BLOCKED",
   "targetImageIds": [
