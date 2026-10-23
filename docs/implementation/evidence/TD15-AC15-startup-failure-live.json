@@ -2,34 +2,34 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-15 failed v2 startup preserves the current v1 release",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T21:46:54.523Z",
+  "measuredAt": "2026-10-23T23:12:46.075Z",
   "composeProject": "agent-builder-td15-nf01",
   "baseUrl": "http://127.0.0.1:18080",
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
+    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
   ],
   "agentId": "580e0c1a-5819-439c-96f7-3af72ba5ac5d",
   "oldPointer": {
     "agentId": "580e0c1a-5819-439c-96f7-3af72ba5ac5d",
-    "revision": 4,
-    "versionId": "abf72737-aa95-482e-a99a-571eee51ee14",
-    "deploymentId": "3c396ad2-de9a-41cd-9625-c300c7fcda78",
+    "revision": 5,
+    "versionId": "8485de62-fbf3-4d4b-8936-97f0fcd71a1b",
+    "deploymentId": "9696fba9-6d24-4f67-9e1c-687b2d2055dd",
     "environmentId": "1d0397f0-4e7f-43f4-9548-7ee3b7f4e9e7"
   },
-  "validationId": "0d6d859e-0976-48c1-994f-3973e2257c18",
+  "validationId": "8d6f022e-423d-4d9e-85de-57fefad71a63",
   "failedOperation": {
-    "id": "28f49286-d338-4357-8a2c-f8ad89364f5b",
+    "id": "70d7956b-a6ff-443e-9913-6689d9a19848",
     "status": "failed",
     "diagnostic": "DEPENDENCY_UNAVAILABLE"
   },
   "runnerRecovered": true,
-  "runnerRecoveryDurationMs": 100711,
+  "runnerRecoveryDurationMs": 84687,
   "pointerUnchanged": true,
   "readOnlyRun": {
-    "id": "77944d9e-c2c4-415a-97c8-50d11d229eb1",
+    "id": "312c6c40-9a50-4d93-8196-abaac482c292",
     "status": "succeeded",
-    "snapshotId": "bee35eaf-22e4-49ac-8b15-3eaf6f4bffc2"
+    "snapshotId": "9bdd2c0d-e77b-4591-9385-ff2b9f16d79c"
   },
   "verdict": "passed"
 }
