@@ -20,6 +20,8 @@ Object.assign(binding,{artifactDigest,compatibilityKey});
 const targetPath='test-results/acceptance/td15-platform-target-current.json';
 await writeFile(targetPath,JSON.stringify({artifactPath,artifactDigest,compatibilityKey},null,2)+'\n');
 const sources=[
+  ['docs/implementation/evidence/TD15-AC02-mode-switch.json','AC02'],
+  ['docs/implementation/evidence/TD15-AC03-requirement-impact.json','AC03'],
   ['docs/implementation/evidence/TD15-AC04-invalid-assembly.json','AC04'],
   ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
   ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
@@ -29,6 +31,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC15-startup-failure-live.json','AC15'],
   ['docs/implementation/evidence/TD15-AC16-rollback-live.json','AC16'],
   ['docs/implementation/evidence/TD15-AC19-cancel-unknown-write-live.json','AC19'],
+  ['docs/implementation/evidence/TD15-AC42a-trusted-local-live.json','AC42a'],
   ['docs/implementation/evidence/TD15-NF01-validation-branches.json','NF01-validation'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
   ['docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json','AC25'],
@@ -39,7 +42,7 @@ const results=[];
 for(const [sourcePath,kind] of sources){
   const source=JSON.parse(await readFile(sourcePath,'utf8'));
   assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
-  if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='NF01-validation'){
+  if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='AC42a'||kind==='NF01-validation'){
     assert.ok(source.branches.length>0&&source.branches.every(branch=>branch.status==='passed'&&branch.assertions.every(item=>item.passed===true)),`${kind}_BRANCH_NOT_PASSED`);
   }else if(kind==='AC15'){
     assert.equal(source.verdict,'passed','AC15_NOT_PASSED');
@@ -57,6 +60,19 @@ for(const [sourcePath,kind] of sources){
       'invalid-change-not-applied':source.draftUnchanged&&source.snapshotCountAfterRejectedChanges===0
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-04',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC02'){
+    const checks={
+      'guided-to-form':source.assertions.guidedToFormPreservedValues&&source.assertions.guidedToFormPreservedConfirmation,
+      'form-to-guided':source.assertions.formToGuidedPreservedEdits&&source.assertions.editedFieldConfirmationReset&&source.assertions.savedDraftSurvivedReload
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-02',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC03'){
+    const checks={
+      'write-confirmation-added':source.assertions.confirmationRequirementShown&&source.assertions.hintSurvivedFormSwitch,
+      'resource-gap':source.assertions.missingWriteInterfaceShown,
+      'unrelated-fields-retained':source.assertions.audienceRetained&&source.assertions.outputRetained
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-03',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
   }else if(kind==='AC06'){
     const checks={
       'conflicting-rails':source.conflictingRailReasons.includes('CONFLICTING_RAILS'),
@@ -75,7 +91,7 @@ for(const [sourcePath,kind] of sources){
       'two-rails-triggered':source.auditBeforeTool&&source.allowlistAllowed&&source.mockCalls?.some(call=>call.operation==='equipment-status'&&call.status===200)
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-05',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
-  }else if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='NF01-validation'){
+  }else if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='AC42a'||kind==='NF01-validation'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else if(kind==='AC15'){
     const passed=source.pointerUnchanged===true&&source.failedOperation?.status==='failed'&&source.runnerRecovered===true&&source.readOnlyRun?.status==='succeeded';
