@@ -24,6 +24,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC02-mode-switch.json','AC02'],
   ['docs/implementation/evidence/TD15-AC03-requirement-impact.json','AC03'],
   ['docs/implementation/evidence/TD15-NF01-sse-reconnect.json','AC13-NF01'],
+  ['docs/implementation/evidence/TD15-NF01-two-sessions.json','NF01-two-sessions'],
   ['docs/implementation/evidence/TD15-AC04-invalid-assembly.json','AC04'],
   ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
   ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
@@ -71,6 +72,12 @@ for(const [sourcePath,kind] of sources){
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-13',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
     const nf01Passed=source.verdict==='passed'&&source.runFoundAfterRefresh&&source.cursorResumed&&source.noDuplicates&&source.noGaps;
     results.push({caseId:'NF-01',branchId:'refresh-reconnect',binding,executionMode:'live-mock',status:nf01Passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'run_and_event_stream_resume_without_gaps',passed:nf01Passed}],evidence});
+  }else if(kind==='NF01-two-sessions'){
+    const runs=source.interleavedRuns??[];
+    const passed=source.verdict==='passed'&&runs.length===4&&runs.every(item=>item.assertionPassed&&item.runStatus==='succeeded')
+      &&source.conversationsDistinct&&source.actorsBoundToSeparateConversations&&source.crossActorConversationRejected&&source.isolatedRailCounts;
+    results.push({caseId:'AC-17',branchId:'interleaved-sessions',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'actors_conversations_tools_and_rails_are_isolated',passed}],evidence});
+    results.push({caseId:'NF-01',branchId:'two-sessions',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'parallel_actor_state_isolation',passed}],evidence});
   }else if(kind==='AC04'){
     const checks={
       'unknown-tool':source.unknownToolRejected&&source.unknownToolReasons.includes('UNKNOWN_TOOL:unknown-business-tool@1'),
