@@ -2,30 +2,30 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-11 sequential and concurrent duplicate approval",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T09:49:33.493Z",
+  "measuredAt": "2026-10-23T20:48:17.179Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:43330a859255b4b9b2fbef8218e1088664c91b2c049e9431e979f865486e9c5b"
   ],
-  "validationId": "38bb3417-8125-472b-9c75-1c6609d9353d",
-  "candidateId": "5bfff1a4-c84b-47a1-b8af-7663ef52760b",
-  "artifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
-  "runId": "4319a455-7c94-435d-b208-0ae6c5d05675",
-  "actionId": "e0b9dd60-b628-4842-9885-bd2e49fc036e",
-  "approvalDecisionId": "4319a455-7c94-435d-b208-0ae6c5d05675",
-  "sequentialDuplicateDecisionId": "4319a455-7c94-435d-b208-0ae6c5d05675",
+  "validationId": "408cdd29-ec32-4387-af5c-4f201e377dfe",
+  "candidateId": "c3ddc4d5-5204-4023-9004-382c57c0ae05",
+  "artifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f",
+  "runId": "9d74d425-7219-43cc-9888-0df5584b2604",
+  "actionId": "aef5fe4a-1e2e-4d53-a7ec-74c7e0a20fe3",
+  "approvalDecisionId": "9d74d425-7219-43cc-9888-0df5584b2604",
+  "sequentialDuplicateDecisionId": "9d74d425-7219-43cc-9888-0df5584b2604",
   "concurrentDuplicateDecisionIds": [
-    "4319a455-7c94-435d-b208-0ae6c5d05675",
-    "4319a455-7c94-435d-b208-0ae6c5d05675",
-    "4319a455-7c94-435d-b208-0ae6c5d05675"
+    "9d74d425-7219-43cc-9888-0df5584b2604",
+    "9d74d425-7219-43cc-9888-0df5584b2604",
+    "9d74d425-7219-43cc-9888-0df5584b2604"
   ],
   "externalEffect": {
     "createWorkOrderCalls": 1,
     "workOrderCount": 1,
     "basis": "persisted Run external evidence for fixed-candidate validation case TC-004; action remained one succeeded action with the original decisionId"
   },
-  "expectedInterruptedRun": "15f8aea4-09a9-4c3c-87c1-a7b3b67871a1",
+  "expectedInterruptedRun": "519ababb-1876-4a56-ae9e-98013b5179e6",
   "overallValidationVerdict": "failed",
   "branches": [
     {

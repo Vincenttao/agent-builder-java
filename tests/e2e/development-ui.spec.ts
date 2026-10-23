@@ -27,7 +27,7 @@ test('development UI restores tasks, cancels, and displays source and command ev
   else if(path===`/api/drafts/${draft.id}/candidates`)body={items:registered?[registered]:[]};
   else if(path==='/api/candidates'&&route.request().method()==='POST'){
    const input=route.request().postDataJSON();expect(input.developmentJobId).toBe(job?.id);expect(input.snapshotId).toBe(snapshotId);
-   body={id:randomUUID(),agentId:draft.id,snapshotId,snapshotDigest:snapshot.digest,runtimeSpec:snapshot.content.runtimeSpec,specDigest:'a'.repeat(64),artifactDigest:'9'.repeat(64),bundleDigest:'8'.repeat(64),provenance:'generated-component',createdAt:now,generated:{developmentJobId:job!.id,baselineId:baseline.id}};registered=body as Candidate;
+   body={id:randomUUID(),agentId:draft.id,snapshotId,snapshotDigest:snapshot.digest,runtimeSpec:snapshot.content.runtimeSpec,specDigest:'a'.repeat(64),artifactDigest:'9'.repeat(64),bundleDigest:'8'.repeat(64),provenance:'generated-component',createdAt:now,generated:{developmentJobId:job!.id,developmentBundleDigest:job!.bundle!.digest,baselineId:baseline.id,baselineDigest:baseline.digest,sourceDigest:job!.bundle!.sourceDigest,runtimeArtifact:{kind:'generated-component',artifactDigest:'9'.repeat(64),sdkArtifactDigest:job!.bundle!.sdkArtifactDigest,generated:{kind:'generated-tool-skill@2',developmentBundleDigest:job!.bundle!.digest,sdkArtifactDigest:job!.bundle!.sdkArtifactDigest,snapshotId,specDigest:'a'.repeat(64),componentDigest:'9'.repeat(64),skillDigest:'8'.repeat(64),classes:{},operationId:'equipment-status'}}}};registered=body as Candidate;
   }
   else if(path===`/api/snapshots/${snapshotId}/validations`){
    if(route.request().method()==='POST'){

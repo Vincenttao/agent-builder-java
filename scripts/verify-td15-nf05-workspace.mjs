@@ -10,7 +10,7 @@ const canonicalJson = value => Array.isArray(value) ? `[${value.map(canonicalJso
 const contentDigest = value => createHash('sha256').update(canonicalJson(value)).digest('hex');
 
 const sourceBase = (process.env.NF05_SOURCE_URL ?? 'http://127.0.0.1:18080').replace(/\/$/, '');
-const sourceOrigin = process.env.NF05_SOURCE_ORIGIN ?? 'http://127.0.0.1:8080';
+const sourceOrigin = process.env.NF05_SOURCE_ORIGIN ?? new URL(sourceBase).origin;
 const targetPort = Number(process.env.NF05_TARGET_PORT ?? 18081);
 const targetBase = `http://127.0.0.1:${targetPort}`;
 const project = process.env.NF05_COMPOSE_PROJECT ?? 'agent-builder-td15-nf05';
