@@ -1085,7 +1085,7 @@
         "FR-018",
         "FR-023"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-finance-generation-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {

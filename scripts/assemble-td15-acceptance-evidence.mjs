@@ -23,6 +23,7 @@ const nf05 = JSON.parse(await readFile('docs/implementation/evidence/TD15-NF05-w
 const ac24 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC24-candidate-integrity-live.json', 'utf8'));
 const ac23 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'utf8'));
 const ac30 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC30-mock-isolation-live.json', 'utf8'));
+const ac31 = JSON.parse(await readFile('docs/implementation/evidence/TDD-086/finance-generation-live.json', 'utf8'));
 const ac01 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC01-no-model.json', 'utf8'));
 const ac02 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC02-mode-switch.json', 'utf8'));
 const ac03 = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC03-requirement-impact.json', 'utf8'));
@@ -152,6 +153,29 @@ const compatibilityKey = createHash('sha256').update(JSON.stringify({ appImageId
 const target = { artifactPath, artifactDigest, compatibilityKey };
 assert.equal(ac30.artifactDigest, artifactDigest, 'AC30_ARTIFACT_CHANGED');
 assert.equal(ac30.compatibilityKey, target.compatibilityKey, 'AC30_COMPATIBILITY_CHANGED');
+assert.equal(ac31.verdict, 'passed', 'AC31_FINANCE_GENERATION_NOT_PASSED');
+assert.deepEqual(ac31.targetImageIds, currentImages, 'AC31_GENERATION_TARGET_CHANGED');
+assert.deepEqual(ac31.finalTargetImageIds, currentImages, 'AC31_FINAL_TARGET_CHANGED');
+assert.equal(ac31.requestFixture?.assembly?.generationProfileVersion, 'wealth-balance-java@1', 'AC31_PROFILE_FIXTURE_MISSING');
+assert.deepEqual(ac31.requestFixture?.assembly?.generationScope, ['tool', 'skill'], 'AC31_SCOPE_FIXTURE_MISMATCH');
+assert.deepEqual(ac31.requestFixture?.assembly?.toolIds, [], 'AC31_MUST_GENERATE_TOOL_FROM_EMPTY_ASSEMBLY');
+assert.equal(ac31.development.status, 'built', 'AC31_GENERATION_NOT_BUILT');
+assert.ok(ac31.development.roles.length === 2 && ac31.development.roles.every(role => role.status === 'completed'), 'AC31_TWO_ROLES_NOT_COMPLETED');
+assert.equal(ac31.candidate.provenance, 'generated-component', 'AC31_CANDIDATE_NOT_GENERATED');
+assert.ok(ac31.generatedFiles.some(file => file.path === 'src/generated/AccountBalanceTool.java')
+  && ac31.generatedFiles.some(file => file.path === 'skills/balance-query/SKILL.md'), 'AC31_GENERATED_TOOL_SKILL_MISSING');
+assert.equal(ac31.commands.find(command => command.id === ac31.development.bundle.unitRedId)?.exitCode, 1, 'AC31_TEST_FIRST_RED_MISSING');
+assert.equal(ac31.commands.find(command => command.id === ac31.development.bundle.unitGreenId)?.exitCode, 0, 'AC31_UNIT_GREEN_MISSING');
+assert.equal(ac31.commands.find(command => command.id === ac31.development.bundle.contractCheckId)?.exitCode, 0, 'AC31_CONTRACT_CHECK_FAILED');
+assert.equal(ac31.commands.find(command => command.id === ac31.development.bundle.buildId)?.exitCode, 0, 'AC31_COMPONENT_BUILD_FAILED');
+assert.equal(ac31.report.verdict, 'passed', 'AC31_VALIDATION_FAILED');
+assert.ok(ac31.report.cases.length === 3 && ac31.report.cases.every(item => item.status === 'passed'), 'AC31_CASES_NOT_GREEN');
+assert.ok(ac31.validationEvidence[0].events.some(item => item.data?.event?.event === 'skill_loaded' && item.data.event.skill === 'balance-query')
+  && ac31.validationEvidence[0].events.some(item => item.data?.event?.event === 'generated_tool_invoked'), 'AC31_RUNTIME_TRACE_MISSING');
+assert.equal(ac31.validationEvidence[0].calls.length, 1, 'AC31_BALANCE_CALL_MISSING');
+assert.equal(ac31.validationEvidence[1].calls.length, 0, 'AC31_MISSING_ACCOUNT_MUST_NOT_CALL');
+assert.ok(ac31.validationEvidence[2].events.some(item => item.data?.event?.errorCode === 'TOOL_TIMEOUT')
+  && ac31.validationEvidence[2].run.result.result.content.includes('"code":"TOOL_TIMEOUT"'), 'AC31_TIMEOUT_NOT_VERIFIED');
 await writeFile('test-results/acceptance/td15-platform-target.json', JSON.stringify(target, null, 2) + '\n');
 const binding = { baselineDigest: manifest.baselineDigest, artifactDigest, testSetDigest: createHash('sha256').update(manifestBytes).digest('hex'), compatibilityKey };
 
@@ -177,6 +201,7 @@ const nf05Evidence = await managedEvidence('docs/implementation/evidence/TD15-NF
 const ac24Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC24-candidate-integrity-live.json', 'test-results/acceptance/evidence/TD15-AC24-candidate-integrity-live.json');
 const ac23Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'test-results/acceptance/evidence/TD15-AC23-policy-audit-live.json');
 const ac30Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC30-mock-isolation-live.json', 'test-results/acceptance/evidence/TD15-AC30-mock-isolation-live.json');
+const ac31Evidence = await managedEvidence('docs/implementation/evidence/TDD-086/finance-generation-live.json', 'test-results/acceptance/evidence/TDD-086-finance-generation-live.json');
 const ac01Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC01-no-model.json', 'test-results/acceptance/evidence/TD15-AC01-no-model.json');
 const ac02Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC02-mode-switch.json', 'test-results/acceptance/evidence/TD15-AC02-mode-switch.json');
 const ac03Evidence = await managedEvidence('docs/implementation/evidence/TD15-AC03-requirement-impact.json', 'test-results/acceptance/evidence/TD15-AC03-requirement-impact.json');
@@ -278,6 +303,10 @@ const results = [
     assertions: [{ name: 'reset_is_denied_and_timed_out_write_is_observed', passed: ac30.assertions.unknownWriteResetDenied && ac30.assertions.unknownWriteCommittedAndObserved }], evidence: ac30Evidence },
   { caseId: 'AC-30', branchId: 'history-after-reset', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
     assertions: [{ name: 'reset_restores_seed_without_removing_execution_history', passed: ac30.assertions.historyRetainedAfterReset && ac30.observations.firstRevisionAfterReset >= 2 && ac30.observations.firstCallCountAfterReset >= 2 }], evidence: ac30Evidence },
+  { caseId: 'AC-31', branchId: 'generate-empty-assets', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'two_roles_generate_tool_and_skill_from_empty_component_selection', passed: ac31.development.roles.length === 2 && ac31.development.roles.every(role => role.status === 'completed') && ac31.candidate.provenance === 'generated-component' && ac31.generatedFiles.length === 2 }], evidence: ac31Evidence },
+  { caseId: 'AC-31', branchId: 'load-and-query', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
+    assertions: [{ name: 'generated_skill_tool_query_clarification_and_timeout_are_checked', passed: ac31.report.cases.every(item => item.status === 'passed') && ac31.validationEvidence[0].calls.length === 1 && ac31.validationEvidence[1].calls.length === 0 && ac31.validationEvidence[2].events.some(item => item.data?.event?.errorCode === 'TOOL_TIMEOUT') }], evidence: ac31Evidence },
   { caseId: 'NF-01', branchId: 'no-replay-unknown-reconcile', binding, executionMode: 'live-mock', status: 'passed', artifactDigestAfter: artifactDigest,
     assertions: [{ name: 'unknown_run_remains_interrupted', passed: nf01.expectedInterruption && nf01.afterRestart.runStatus === 'interrupted' },
       { name: 'original_key_reconciled', passed: nf01.validationReport.tc008Assertions.some(item => item.ruleId === 'original-key-reconciliation' && item.status === 'passed') },

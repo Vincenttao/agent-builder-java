@@ -2,11 +2,12 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
+import { dirname } from 'node:path';
 
 const base = (process.env.TD15_FINANCE_BASE_URL ?? 'http://127.0.0.1:18080').replace(/\/$/, '');
 const origin = process.env.TD15_FINANCE_ORIGIN ?? base;
 const project = process.env.TD15_FINANCE_COMPOSE_PROJECT ?? 'agent-builder-td15-nf01';
-const evidencePath = 'docs/implementation/evidence/TDD-073/finance-generation-live.json';
+const evidencePath = process.env.TD15_FINANCE_EVIDENCE_PATH ?? 'docs/implementation/evidence/TDD-073/finance-generation-live.json';
 const resumeJobId = process.env.TD15_FINANCE_RESUME_JOB;
 const evidence = { startedAt: new Date().toISOString(), base, composeProject: project, verdict: 'running' };
 if (resumeJobId) Object.assign(evidence, JSON.parse(await readFile(evidencePath, 'utf8')));
@@ -71,6 +72,9 @@ try {
   const assembly = { agentType: 'DeepAgent', maxIterations: 4, railIds: ['audit@1', 'tool-allowlist@1'], toolIds: [],
     generationProfileVersion: 'wealth-balance-java@1',
     systemPrompt: '你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{"kind":"clarification","missingFields":["accountId"],"message":"请提供账户编号"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。' };
+  evidence.requestFixture = { source: 'verifier request definition (reconstructed; not a captured HTTP request)', assembly: { agentType: assembly.agentType,
+    railIds: assembly.railIds, toolIds: assembly.toolIds, generationProfileVersion: 'wealth-balance-java@1',
+    generationScope: ['tool', 'skill'], connectionProfile: 'mock-finance@1' } };
   snapshot = await api(`/api/drafts/${draft.id}/snapshots`, 'POST', { expectedRevision: draft.revision, assembly });
   evidence.snapshotId = snapshot.id;
   const preview = await api(`/api/drafts/${draft.id}/baseline-preview?templateId=wealth-balance-read%401`);
@@ -88,8 +92,6 @@ try {
   }
   const built = resumeJobId ? job : await poll(`/api/development/${job.id}`, ['built', 'failed', 'cancelled'], 15 * 60 * 1000, 'generation');
   evidence.development = built;
-  assert.equal(built.status, 'built', `GENERATION_${built.diagnostic ?? built.status}`);
-  assert.ok(built.bundle, 'GENERATED_BUNDLE_MISSING');
   const events = (await api(`/api/development/${job.id}/events`)).items;
   evidence.developmentEvents = events;
   const commands = [];
@@ -97,7 +99,12 @@ try {
     const id = event.data.id ?? event.data.commandId;
     if (id) commands.push(await api(`/api/development/${job.id}/commands/${id}`));
   }
-  evidence.commands = commands.map(({ id, commandId, executable, args, exitCode, status }) => ({ id, commandId, executable, args, exitCode, status }));
+  const redact = value => typeof value === 'string' ? value.slice(-4000)
+    .replace(/((?:api[_-]?key|token|password)\s*[:=]\s*|authorization\s*[:=]\s*(?:Bearer\s+)?)[^\s,"]+/gi, '$1[REDACTED]') : undefined;
+  evidence.commands = commands.map(({ id, commandId, executable, args, exitCode, status, output }) => ({ id, commandId, executable, args, exitCode, status,
+    outputTail: redact(output) }));
+  assert.equal(built.status, 'built', `GENERATION_${built.diagnostic ?? built.status}`);
+  assert.ok(built.bundle, 'GENERATED_BUNDLE_MISSING');
   const bundle = built.bundle;
   const relevant = ['src/generated/AccountBalanceTool.java', 'skills/balance-query/SKILL.md'];
   evidence.generatedFiles = [];
@@ -146,7 +153,7 @@ try {
   evidence.finishedAt = new Date().toISOString();
   evidence.finalTargetImageIds = (() => { try { return imageIds(); } catch { return null; } })();
   if (cookie && csrf) await fetch(`${base}/api/auth/session`, { method: 'DELETE', headers: { origin, cookie, 'x-csrf-token': csrf } }).catch(() => {});
-  await mkdir('docs/implementation/evidence/TDD-073', { recursive: true });
+  await mkdir(dirname(evidencePath), { recursive: true });
   await writeFile(evidencePath, JSON.stringify(evidence, null, 2) + '\n');
   console.log(JSON.stringify({ verdict: evidence.verdict, evidencePath, jobId: evidence.developmentJobId, validationId: evidence.validationId }));
 }

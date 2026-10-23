@@ -1,0 +1,61 @@
+{
+  "startedAt": "2026-10-23T17:55:13.767Z",
+  "base": "http://127.0.0.1:18080",
+  "composeProject": "agent-builder-td15-nf01",
+  "verdict": "failed",
+  "targetImageIds": [
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+  ],
+  "draftId": "182375d6-6d26-4aa4-9e6f-99d8e6ae9dfc",
+  "snapshotId": "161ecd1c-c5e0-44e4-94b8-1a5e56eb71b8",
+  "baselineId": "9ee4313b-befc-4342-a0d1-a68d834e2e07",
+  "baselineDigest": "91ed77a90f9b9a9140682a56a0a75614edc998f6ed6be95e1b813dcdb3ce7642",
+  "baselineCases": [
+    {
+      "id": "TC-BAL-001",
+      "scenario": "balance-normal",
+      "fault": "normal"
+    },
+    {
+      "id": "TC-BAL-002",
+      "scenario": "balance-missing-id",
+      "fault": "normal"
+    },
+    {
+      "id": "TC-BAL-003",
+      "scenario": "balance-tool-failure",
+      "fault": "read-timeout"
+    }
+  ],
+  "developmentJobId": "3e178fe0-6e32-4d91-879e-b71bf87bf27f",
+  "development": {
+    "id": "3e178fe0-6e32-4d91-879e-b71bf87bf27f",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "completed",
+        "sessionId": "ses_e96189a5dffeExd0OP7CXI71CN"
+      },
+      {
+        "role": "developer",
+        "status": "running"
+      }
+    ],
+    "status": "failed",
+    "agentId": "182375d6-6d26-4aa4-9e6f-99d8e6ae9dfc",
+    "createdAt": "2026-10-23T17:55:14.211Z",
+    "updatedAt": "2026-10-23T17:56:53.053Z",
+    "baselineId": "9ee4313b-befc-4342-a0d1-a68d834e2e07",
+    "diagnostic": "ENGINEERING_EXECUTION_FAILED",
+    "snapshotId": "161ecd1c-c5e0-44e4-94b8-1a5e56eb71b8",
+    "inputDigest": "5074cab559358f326ed500c36db04d13296832f82b0260a6b0d3f5d2cdfb9833",
+    "baselineDigest": "91ed77a90f9b9a9140682a56a0a75614edc998f6ed6be95e1b813dcdb3ce7642"
+  },
+  "error": "GENERATION_ENGINEERING_EXECUTION_FAILED\n\n'failed' !== 'built'\n",
+  "finishedAt": "2026-10-23T17:56:54.195Z",
+  "finalTargetImageIds": [
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+  ]
+}

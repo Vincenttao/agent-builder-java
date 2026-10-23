@@ -3,7 +3,7 @@
   "binding": {
     "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
     "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-    "testSetDigest": "4fd3c6cd83856e3d5ba2d441ef2b5ddb2520ee7f65a722e7efa9b20c65ad969d",
+    "testSetDigest": "f2d309a51abd1cac22fb08a6c81c693841f55cba926a4bc3a63953b96bf2a23b",
     "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
   },
   "status": "unverified",
@@ -526,20 +526,14 @@
     {
       "caseId": "AC-31",
       "branchId": "generate-empty-assets",
-      "status": "unverified",
-      "reasons": [
-        "TEST_NOT_IMPLEMENTED",
-        "RESULT_MISSING"
-      ]
+      "status": "passed",
+      "reasons": []
     },
     {
       "caseId": "AC-31",
       "branchId": "load-and-query",
-      "status": "unverified",
-      "reasons": [
-        "TEST_NOT_IMPLEMENTED",
-        "RESULT_MISSING"
-      ]
+      "status": "passed",
+      "reasons": []
     },
     {
       "caseId": "AC-32",
