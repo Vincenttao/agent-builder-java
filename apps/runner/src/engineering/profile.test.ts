@@ -43,6 +43,8 @@ describe('reviewed generation profile',()=>{
     expect(wealthQueryToolContract).toContain('compare their contents with equals()');
     expect(wealthQueryEngineeringSkills.developer).toContain('compare contents with equals()');
     expect(wealthQueryEngineeringSkills.developer).toContain('Do not emit debug output');
+    expect(wealthQueryToolContract).toContain('provide a valid balance input');
+    expect(wealthQueryEngineeringSkills.developer).toContain('call the Tool with a valid accountId');
   });
   it('rejects finance profile drift, extra scope, dependencies and production connections',()=>{
     const finance={...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]};

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "caseId": "AC-32",
+  "executionMode": "live-mock",
+  "startedAt": "2026-10-23T19:42:32.858Z",
+  "base": "http://127.0.0.1:18083",
+  "composeProject": "agent-builder-td15-ac32",
+  "verdict": "failed",
+  "targetImageIds": [
+    "sha256:e9cc259e2cb7db97b141757034c8aab5fe0543ea0516c1c083fe5bc86720630f",
+    "sha256:2814d5e3511668f66409fdb2d664f7d793dc8cf809573a9225c6841d6e8f1ed5"
+  ],
+  "draftId": "02742e98-8e00-41c0-85d7-5bc3f8239a39",
+  "snapshotId": "68f9c87a-0b7a-41a3-93ab-f698da453b9d",
+  "baselineId": "a24f88e3-6f20-413b-8aae-fdf823b828b5",
+  "baselineDigest": "11d3c5b04bb9d5942393dbe9b4412bcd9148cc7841283cf192325f5ff7432d29",
+  "developmentJobId": "b697648e-7198-4726-9920-ec601bc80646",
+  "development": {
+    "id": "b697648e-7198-4726-9920-ec601bc80646",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "completed",
+        "sessionId": "ses_e95b694acffe3s9eTYY6kbKYWA"
+      },
+      {
+        "role": "developer",
+        "status": "completed",
+        "sessionId": "ses_e95b65eceffebGgjH9B6XTMsFi"
+      }
+    ],
+    "status": "failed",
+    "agentId": "02742e98-8e00-41c0-85d7-5bc3f8239a39",
+    "createdAt": "2026-10-23T19:42:33.397Z",
+    "updatedAt": "2026-10-23T19:46:44.633Z",
+    "baselineId": "a24f88e3-6f20-413b-8aae-fdf823b828b5",
+    "diagnostic": "UNIT_GREEN_REQUIRED",
+    "snapshotId": "68f9c87a-0b7a-41a3-93ab-f698da453b9d",
+    "inputDigest": "c7e69eb9c97ede257347c7e586cee7ca9b1d63f11e65010118acdf937ed7660e",
+    "baselineDigest": "11d3c5b04bb9d5942393dbe9b4412bcd9148cc7841283cf192325f5ff7432d29"
+  },
+  "error": "AssertionError [ERR_ASSERTION]: DEVELOPMENT_UNIT_GREEN_REQUIRED\n\n'failed' !== 'built'\n\n    at file:///D:/agent-builder-java/scripts/verify-td15-ac32-wealth-assistant-live.mjs:38:135\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+  "finishedAt": "2026-10-23T19:46:45.551Z",
+  "finalTargetImageIds": [
+    "sha256:e9cc259e2cb7db97b141757034c8aab5fe0543ea0516c1c083fe5bc86720630f",
+    "sha256:2814d5e3511668f66409fdb2d664f7d793dc8cf809573a9225c6841d6e8f1ed5"
+  ]
+}
