@@ -12,6 +12,8 @@ const runtime = new JavaDeploymentManager({ root, artifactPath: resolve(process.
   modelKey: process.env.DEEPSEEK_API_KEY ?? '', proxyBase: process.env.TOOL_PROXY_BASE ?? 'http://127.0.0.1:8080/internal/tool-proxy', proxyToken: process.env.TOOL_PROXY_TOKEN ?? '' });
 await runtime.initialize();
 const journal = new ExecutionJournal(join(root, 'executions'), runtime); await journal.initialize();
+const recovered=await runtime.restoreAfterRestart(journal.restartUnsafeDeployments);
+if(recovered.restored||recovered.skipped||recovered.failed)console.log(JSON.stringify({event:'runner.deployments.reconciled',...recovered}));
 const engineBinary=process.env.OPENCODE_EXECUTABLE??resolveOpenCodeExecutable();
 const engineering=new EngineeringTaskManager(join(root,'engineering'),directory=>new OpenCodeTaskExecutor({root:directory,sdkJar:resolve(process.env.JAVA_BRIDGE_JAR??'java/runtime-bridge/target/runtime-bridge-0.1.0.jar'),executable:engineBinary,modelKey:process.env.DEEPSEEK_API_KEY??''}));await engineering.initialize();
 const app = createRunnerApp({ token, runtime, journal,engineering, modelConfigured: Boolean(process.env.DEEPSEEK_API_KEY) });

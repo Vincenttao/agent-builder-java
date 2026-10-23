@@ -5,13 +5,17 @@ export const runtimeSpecSchema = {
     agent: { type: 'object', additionalProperties: false, required: ['id', 'type', 'systemPrompt', 'maxIterations', 'rails'], properties: {
       id: { type: 'string', pattern: '^[a-zA-Z0-9_-]{1,80}$' }, type: { const: 'DeepAgent' },
       systemPrompt: { type: 'string', minLength: 1, maxLength: 8000 }, maxIterations: { type: 'integer', minimum: 1, maximum: 20 },
-      rails: { type: 'array', items: { enum: ['audit', 'tool-allowlist', 'write-confirm'] }, uniqueItems: true, maxItems: 3, contains: { const: 'tool-allowlist' } }
+      rails: { type: 'array', items: { anyOf: [ { enum: ['audit', 'tool-allowlist', 'write-confirm'] }, { type: 'string', pattern: '^tool-call-limit@1:(?:[1-9]|1[0-9]|20)$' } ] }, uniqueItems: true, maxItems: 4, contains: { const: 'tool-allowlist' } }
     } },
     tools: { type: 'array', maxItems: 20, items: { type: 'object', additionalProperties: false,
       required: ['name', 'description', 'operationId', 'inputFields', 'responseFields'], properties: {
         name: { type: 'string', pattern: '^[a-z][a-z0-9_]{0,63}$' }, description: { type: 'string', maxLength: 1000 },
-        operationId: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,63}$' }, inputFields: fields, responseFields: fields
-      } } }
+        operationId: { type: 'string', pattern: '^[a-z][a-zA-Z0-9-]{0,63}$' }, inputFields: fields, responseFields: fields,
+        protocol: { enum: ['http', 'mcp'] }, connectionRef: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,63}@[1-9][0-9]*$' },
+        remoteToolName: { type: 'string', pattern: '^[a-zA-Z0-9_.-]{1,128}$' }, toolVersion: { type: 'string', pattern: '^[a-zA-Z0-9_.-]{1,128}@[1-9][0-9]*$' }
+      }, allOf: [{ if: { properties: { protocol: { const: 'mcp' } }, required: ['protocol'] }, then: {
+        required: ['connectionRef', 'remoteToolName', 'toolVersion'], properties: { connectionRef: { const: 'enterprise-mock-mcp@1' } }
+      } }] } }
   }
 } as const;
 export const deploymentRequestSchema = { type: 'object', additionalProperties: false, required: ['artifactDigest', 'spec'], properties: {

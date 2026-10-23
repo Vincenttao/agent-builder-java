@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-04 expired terminal Run event cleanup with gap marker",
+  "executionMode": "isolated-live-docker",
+  "measuredAt": "2026-10-23T08:20:07.015Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "baseUrl": "http://127.0.0.1:18080",
+  "retentionDays": 90,
+  "cutoff": "2026-07-25T08:20:06.315Z",
+  "cleanupResult": {
+    "runCount": 1,
+    "eventCount": 1,
+    "cutoff": "2026-07-25T08:20:06.315Z"
+  },
+  "probeRunId": "9754cb84-80ad-40c8-8a22-a0d86b005a36",
+  "observed": {
+    "expiredSentinelCount": 0,
+    "markerCount": 1,
+    "markerData": {
+      "throughSeq": 196256,
+      "removedCount": 1,
+      "deletedBefore": "2026-07-25T08:20:06.315Z",
+      "retentionDays": 90
+    }
+  },
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "verdict": "passed"
+}

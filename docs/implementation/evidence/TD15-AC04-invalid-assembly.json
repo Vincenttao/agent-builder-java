@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/AC-04 reject unknown Tool and invalid Rail parameter without applying changes",
+  "executionMode": "isolated-live-docker",
+  "measuredAt": "2026-10-23T08:07:31.972Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "draftId": "b153fc55-0748-4dbf-8dde-be1ac14da448",
+  "unknownToolRejected": true,
+  "unknownToolReasons": [
+    "UNKNOWN_TOOL:unknown-business-tool@1"
+  ],
+  "invalidRailRejected": true,
+  "invalidRailId": "tool-call-limit@1:0",
+  "invalidRailReasons": [
+    "UNKNOWN_RAIL:tool-call-limit@1:0"
+  ],
+  "draftUnchanged": true,
+  "snapshotCountAfterRejectedChanges": 0,
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "verdict": "passed"
+}

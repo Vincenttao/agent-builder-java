@@ -38,5 +38,5 @@ export function equipmentBaseline(draft: Draft, templateId: BaselineTemplateId):
     });
   }
   return { schemaVersion: 1, templateId, draftId: draft.id, draftRevision: draft.revision, audience: draft.brief.audience.value,
-    requirements, cases, seed: 'enterprise-default@1', rulesVersion: templateId==='equipment-workorder@1'?'equipment-workorder-assertions@2':'equipment-assertions@1' };
+    requirements, cases, seed: 'enterprise-default@1', rulesVersion: templateId==='equipment-workorder@1'?'equipment-workorder-assertions@3':'equipment-assertions@2' };
 }

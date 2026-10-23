@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/AC-06 reject conflicting Rails and unsupported Agent types",
+  "executionMode": "isolated-live-docker",
+  "measuredAt": "2026-10-23T08:07:52.026Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "draftId": "dea160f8-649b-409d-a66c-68a3470e0661",
+  "conflictingRails": [
+    "audit@1",
+    "audit@1",
+    "tool-allowlist@1"
+  ],
+  "conflictingRailReasons": [
+    "CONFLICTING_RAILS"
+  ],
+  "unsupportedAgentType": "ReAct",
+  "unsupportedAgentReasons": [
+    "UNSUPPORTED_AGENT_TYPE"
+  ],
+  "draftUnchanged": true,
+  "snapshotCountAfterRejectedChanges": 0,
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "verdict": "passed"
+}

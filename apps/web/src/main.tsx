@@ -4,11 +4,13 @@ import type { ApiError, AssemblyInput, Blocker, Draft, DraftInput, EnvironmentSt
 import type { ValidationReport } from '../../../packages/contracts/src/validations.js';
 import './style.css';
 import { DebugRun } from './debug-run.js';
-import { equipmentAssembly, workOrderAssembly } from '../../../packages/contracts/src/equipment-template.js';
+import { equipmentAssembly, workOrderAssembly,wealthBalanceAssembly } from '../../../packages/contracts/src/equipment-template.js';
 import { BaselineReview, ProjectValidation } from './project-validation.js';
 import {DemoApp} from './demo-app.js';
 import { ComponentCatalog, AssemblySummary } from './assembly-editor.js';
 import { ProjectRelease } from './project-release.js';
+import type {ProjectPackage} from '../../../packages/contracts/src/project-package.js';
+import { requirementImpact } from './requirement-impact.js';
 
 const blank = (): DraftInput => ({ name: '', brief: {
   audience: { value: '', source: 'user', confirmed: false },
@@ -34,11 +36,13 @@ function App() {
   const [selectedSnapshotId, setSelectedSnapshotId] = useState('');
   const [reports, setReports] = useState<Record<string, ValidationReport>>({});
   const [published, setPublished] = useState<Record<string, boolean>>({});
+  const [recoveryPackage, setRecoveryPackage] = useState<ProjectPackage>();
   const [assembly, setAssembly] = useState<AssemblyInput>(equipmentAssembly);
   const [assemblyTouched, setAssemblyTouched] = useState(false);
   const [baselineRevision, setBaselineRevision] = useState(0);
   const hasUnsavedChanges = !current || JSON.stringify(input) !== JSON.stringify({ name: current.name, brief: current.brief });
   const canFreeze = current && !hasUnsavedChanges && Object.values(current.brief).every(f => f.confirmed && f.value.trim());
+  const requirementImpactHint = requirementImpact(input.brief.goal.value);
   const selectedSnapshot = snapshots.find(snapshot => snapshot.id === selectedSnapshotId);
   const showError = (e: unknown) => {
     if (e instanceof RequestError && e.body.code === 'UNAUTHENTICATED') setAuthenticated(false);
@@ -85,7 +89,7 @@ function App() {
     if (!force && current && (hasUnsavedChanges || assemblyTouched) && !window.confirm('当前项目有未保存的需求或装配修改。放弃修改并切换项目吗？')) return;
     setCurrent(draft); setInput(draft ? { name: draft.name, brief: structuredClone(draft.brief) } : blank());
     setActiveTab('requirements'); setSelectedSnapshotId('');
-    setError(''); setNotice(draft ? `已保存 · 修订 ${draft.revision}` : '尚未保存');
+    setError(''); setRecoveryPackage(undefined);setNotice(draft ? `已保存 · 修订 ${draft.revision}` : '尚未保存');
     setAssembly(equipmentAssembly(draft?.brief.goal.value)); setAssemblyTouched(false);
   }
   function field(key: keyof DraftInput['brief'], value: string) {
@@ -107,6 +111,19 @@ function App() {
       const snapshot = await api<Snapshot>(`/api/drafts/${current.id}/snapshots`, 'POST', { expectedRevision: current.revision, assembly });
       setSnapshots(previous => [snapshot, ...previous.filter(item => item.id !== snapshot.id)]); setSelectedSnapshotId(snapshot.id); setActiveTab('development'); setNotice('测试版本已固定，待运行验证');
     } catch (e) { showError(e); } finally { setBusy(false); }
+  }
+  async function exportProject(){
+    if(!current)return;setBusy(true);setError('');
+    try{const bundle=await api<ProjectPackage>(`/api/drafts/${current.id}/export`);const url=URL.createObjectURL(new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'}));
+      const link=document.createElement('a');link.href=url;link.download=`agent-builder-${current.name.replace(/[^\p{L}\p{N}-]+/gu,'-')}.json`;link.hidden=true;document.body.append(link);link.click();link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000);setNotice('项目包已导出；连接凭据不会随包导出');
+    }catch(e){showError(e);}finally{setBusy(false);}
+  }
+  async function importProject(file?:File){
+    if(!file)return;if(file.size>2*1024*1024){setError('项目包不能超过 2 MB');return;}setBusy(true);setError('');
+    try{const bundle=JSON.parse(await file.text()) as ProjectPackage;const restored=await api<{draft:Draft;snapshots:Snapshot[];needsRequirementConfirmation:boolean;baselinesToReview:{templateId:string}[];connectionsToRebind:string[]}>('/api/projects/import','POST',bundle);
+      const recovery=await api<ProjectPackage>(`/api/drafts/${restored.draft.id}/recovery-package`);await refresh();select(restored.draft,true);setSnapshots(restored.snapshots);setSelectedSnapshotId(restored.snapshots[0]?.id??'');setRecoveryPackage(recovery);
+      setNotice(`项目已导入；${restored.baselinesToReview.length} 个验收基线需重新确认，${restored.connectionsToRebind.length} 个连接需重绑`);
+    }catch(e){showError(e);}finally{setBusy(false);}
   }
   if (checking) return <main className="login"><p>正在连接本地工作区…</p></main>;
   if (!authenticated) return <main className="login"><section className="login-card">
@@ -133,8 +150,10 @@ function App() {
       </nav>
       <div className="editor-grid"><section className="panel draft-list"><div className="panel-head"><h2>Agent 草稿</h2><span>{drafts.length}</span></div>
         <button className="secondary full" disabled={busy} onClick={() => select()}>新建草稿</button>
+        <div className="actions"><button type="button" className="secondary" disabled={!current||busy} onClick={()=>void exportProject()}>导出项目</button><label className="secondary file-button">导入项目<input type="file" accept="application/json,.json" disabled={busy} onChange={e=>{void importProject(e.currentTarget.files?.[0]);e.currentTarget.value='';}}/></label>{current&&<button type="button" className="secondary" disabled={busy} onClick={()=>{void api<ProjectPackage>(`/api/drafts/${current.id}/recovery-package`).then(setRecoveryPackage).catch(showError);}}>加载恢复材料</button>}</div>
         <label>当前项目<select aria-label="选择项目" value={current?.id??''} disabled={busy} onChange={e=>select(drafts.find(d=>d.id===e.target.value))}><option value="">选择项目</option>{drafts.map(d=><option key={d.id} value={d.id}>{d.name} · r{d.revision}</option>)}</select></label>
         {current&&<div className="project-summary"><strong>{current.name}</strong><span>修订 r{current.revision}</span><span className={selectedSnapshotId?'badge good':'badge'}>{selectedSnapshotId?'已有固定版本':'尚未固定版本'}</span></div>}
+        {recoveryPackage&&<details className="project-summary" open><summary>导入来源恢复材料</summary><p>{recoveryPackage.automation.jobs.length} 个已构建任务，{recoveryPackage.automation.candidates.length} 个历史候选</p>{recoveryPackage.automation.jobs.map(job=><article key={job.id}><strong>开发任务 {job.id.slice(0,8)}</strong><ul>{job.files.map(file=><li key={file.path}>{file.path} · SHA-256 {file.digest.slice(0,12)}</li>)}</ul></article>)}<p>制品依赖：{recoveryPackage.automation.artifactDependencies.length} 项。导入记录保留原始源码和摘要；旧 JAR 与验收结果不直接继承。</p>{recoveryPackage.mockScene?<p>企业模拟场景 {recoveryPackage.mockScene.sceneVersion} · {recoveryPackage.mockScene.contracts.length} 个接口契约 · {recoveryPackage.mockScene.seeds.length} 组确定性数据种子</p>:<p>项目包未附带企业模拟场景。</p>}</details>}
         {!drafts.length&&<p className="empty">创建你的第一个 Agent 需求。</p>}
       </section>
       <section className="panel editor workflow-editor"><div className="workflow-project-heading"><div><p className="eyebrow">{current?.name??'新项目'}</p><h2>{['requirements','assembly','development','release'].indexOf(activeTab)+1} / {({requirements:'需求录入',assembly:'环境与装配',development:'开发与测试',release:'发布与验证'})[activeTab]}</h2></div>{current&&<span className={hasUnsavedChanges?'badge warning':'badge good'}>{hasUnsavedChanges?'有未保存修改':`需求 r${current.revision} · 已保存`}</span>}</div>
@@ -148,6 +167,7 @@ function App() {
               const confirmed = e.target.checked;
               setInput(previous => ({ ...previous, brief: { ...previous.brief, [key]: { ...previous.brief[key], confirmed } } })); setNotice('有未保存的修改');
             }}/>我已确认此字段</label></div>)}
+          {requirementImpactHint && <section className="workflow-empty" role="region" aria-label="需求影响提示"><strong>检测到写入目标，需要补充安全与资源要求</strong><p>{requirementImpactHint.confirmation}</p><p>{requirementImpactHint.resourceGap}</p><p className="hint">这是需求检查提示。平台不会自动覆盖其他字段，也不会把缺失接口当成已连接能力。</p></section>}
           <div className="actions"><button className="primary" disabled={busy}>保存草稿</button><button type="button" className="secondary" disabled={!current || busy} onClick={() => { setError(''); void api(`/api/drafts/${current!.id}/runs`, 'POST', {}).catch(showError); }}>检查运行条件</button><span className="save-state" role="status">{notice}</span></div>
         </form><div className="workflow-next"><span>{current?'保存需求后，进入下一阶段。':'新建需求并保存后继续。'}</span><button type="button" className="secondary" disabled={!current||hasUnsavedChanges} onClick={()=>setActiveTab('assembly')}>下一步：环境与装配 →</button></div></div>
         {current && <section className="snapshot-section" aria-label="测试版本">
@@ -155,14 +175,14 @@ function App() {
           <section className="environment workflow-environment" aria-label="环境诊断"><div><strong>环境诊断</strong><p>配置状态不代表模型调用已通过运行核验</p></div><div><span className={environment?.database==='ready'?'badge good':'badge warning'}>数据库 {environment?.database==='ready'?'就绪':'不可用'}</span><span className="badge">模型 {environment?.model==='configured_unverified'?'已配置，待核验':'未配置'}</span><span className={environment?.canRun?'badge good':'badge warning'}>运行依赖 {environment?.canRun?'就绪':'未就绪'}</span><button type="button" className="secondary" onClick={()=>{void refresh().catch(showError);}}>重新检测</button></div></section>
           <div className="panel-head"><div><p className="eyebrow">02 / 选择组件与装配</p><h2>装配业务 Agent</h2></div><span className="badge">受限模板装配</span></div>
           <p className="muted">先选择能力模板或下方组件，再审阅装配预览。固定版本保存已确认的需求与配置，后续编辑不会改变它。</p>
-          <label>能力模板<select value={assembly.toolIds.includes('work-order-create@1') ? 'equipment-workorder' : 'equipment-read'} onChange={e => { setAssemblyTouched(true); setAssembly(e.target.value === 'equipment-workorder' ? workOrderAssembly(current.brief.goal.value) : equipmentAssembly(current.brief.goal.value)); }}>
-            <option value="equipment-read">设备状态查询</option><option value="equipment-workorder">设备查询与工单审批</option>
+          <label>能力模板<select value={assembly.generationProfileVersion==='wealth-balance-java@1'?'wealth-balance':assembly.toolIds.includes('work-order-create@1') ? 'equipment-workorder' : 'equipment-read'} onChange={e => { setAssemblyTouched(true); setAssembly(e.target.value === 'equipment-workorder' ? workOrderAssembly(current.brief.goal.value) : e.target.value==='wealth-balance'?wealthBalanceAssembly(current.brief.goal.value):equipmentAssembly(current.brief.goal.value)); }}>
+            <option value="equipment-read">设备状态查询</option><option value="equipment-workorder">设备查询与工单审批</option><option value="wealth-balance">理财账户余额查询（生成 Tool / Skill）</option>
           </select></label>
-          <ComponentCatalog assembly={assembly} onChange={value=>{setAssemblyTouched(true);setAssembly(value);}} disabled={busy} goal={current.brief.goal.value}/>
+          {assembly.generationProfileVersion==='wealth-balance-java@1'?<div className="workflow-empty"><strong>余额能力由双角色生成</strong><p>该模板不预装业务 Tool。开发 Agent 将在确认的只读接口范围内生成余额 Tool、Skill 和测试，再由平台绑定到账户余额 Mock 接口。</p></div>:<ComponentCatalog assembly={assembly} onChange={value=>{setAssemblyTouched(true);setAssembly(value);}} disabled={busy} goal={current.brief.goal.value}/>}
           <label>Agent 指令<textarea rows={3} value={assembly.systemPrompt} onChange={e => {setAssemblyTouched(true);setAssembly({ ...assembly, systemPrompt: e.target.value });}}/></label>
           <label>最大模型轮次<input type="number" min={1} max={20} value={assembly.maxIterations} onChange={e => {setAssemblyTouched(true);setAssembly({ ...assembly, maxIterations: Number(e.target.value) });}}/></label>
           <AssemblySummary assembly={assembly}/>
-          <BaselineReview draft={current} templateId={assembly.toolIds.includes('work-order-create@1') ? 'equipment-workorder@1' : 'equipment-read@1'} enabled={Boolean(canFreeze)} api={api} onError={showError} onConfirmed={() => setBaselineRevision(value => value + 1)}/>
+          <BaselineReview draft={current} templateId={assembly.generationProfileVersion==='wealth-balance-java@1'?'wealth-balance-read@1':assembly.toolIds.includes('work-order-create@1') ? 'equipment-workorder@1' : 'equipment-read@1'} enabled={Boolean(canFreeze)} api={api} onError={showError} onConfirmed={() => setBaselineRevision(value => value + 1)}/>
           <button type="button" className="primary" disabled={busy || !canFreeze} onClick={() => { void freeze(); }}>固定为测试版本 →</button>
           {!canFreeze && <p className="hint">填写、确认全部需求字段并保存后，可以固定版本。</p>}
           <div className="workflow-next"><span>固定后进入开发与测试；可先查看候选能力。</span><button type="button" className="secondary" disabled={!selectedSnapshotId} onClick={()=>setActiveTab('development')}>下一步：开发与测试 →</button></div>
@@ -173,7 +193,7 @@ function App() {
             <strong>草稿修订 {snapshot.draftRevision} · {snapshot.id.slice(0, 8)}</strong><span className="badge">待验收</span>
             <p className="hint">摘要 {snapshot.digest.slice(0, 16)} · {new Date(snapshot.createdAt).toLocaleString('zh-CN')}</p>
             <details><summary>查看固定定义</summary><pre>{JSON.stringify(snapshot.content, null, 2)}</pre></details>
-            {environment?.runtime !== 'not_implemented' && <DebugRun snapshotId={snapshot.id} writeEnabled={snapshot.content.assembly.toolIds.includes('work-order-create@1')} canRun={Boolean(environment?.canRun)} api={api} onError={showError}/>}
+            {environment?.runtime !== 'not_implemented' && snapshot.content.connectionProfile!=='mock-finance@1' && <DebugRun snapshotId={snapshot.id} writeEnabled={snapshot.content.assembly.toolIds.includes('work-order-create@1')} canRun={Boolean(environment?.canRun)} api={api} onError={showError}/>}
             <ProjectValidation snapshot={snapshot} baselineRevision={baselineRevision} canRun={Boolean(environment?.canRun)} api={api} onError={showError} showRelease={false} onReport={report=>setReports(previous=>report?{...previous,[snapshot.id]:report}:previous)}/>
           </article>)}
           {!snapshots.length&&<div className="workflow-empty"><strong>还没有固定测试版本</strong><p>确认需求、检查组件并审阅基线后，再固定一个版本。</p><button type="button" className="secondary" onClick={()=>setActiveTab('assembly')}>去环境与装配</button></div>}

@@ -8,6 +8,7 @@ import { SnapshotService } from '../../apps/server/src/snapshots/application/sna
 import { PostgresSnapshotRepository } from '../../apps/server/src/snapshots/adapters/postgres-snapshots.js';
 import { ReleaseService, type ReleaseGate, type ReleaseDriver } from '../../apps/server/src/releases/release-service.js';
 import { equipmentAssembly } from '../../packages/contracts/src/equipment-template.js';
+import { DependencyError } from '../../apps/server/src/runs/http-ports.js';
 import { runtimeModelProfile } from '../../apps/runner/src/runtime/model-profile.js';
 import { draftInput } from '../support/fixtures.js';
 const schema = `it_releases_${randomUUID().replaceAll('-', '')}`;
@@ -37,7 +38,7 @@ async function setup() {
 describe('serialized publication, smoke gating and immutable history', () => {
   it('rejects a different candidate on the same snapshot when rolling back a historical version',async()=>{
     const h=await setup();const original=h.gate.check;let candidateId=randomUUID();let artifact='e'.repeat(64);
-    h.gate.check=async(...args)=>{const ref=await original(...args);return{...ref,binding:{...ref.binding,artifactDigest:artifact,candidate:{id:candidateId,bundleDigest:'f'.repeat(64),provenance:'generated-component'}}};};
+    h.gate.check=async(...args)=>{const ref=await original(...args);return{...ref,binding:{...ref.binding,artifactDigest:artifact,candidate:{id:candidateId,bundleDigest:'f'.repeat(64),specDigest:ref.binding.candidate?.specDigest??'0'.repeat(64),provenance:'generated-component'}}};};
     const first=await h.s.start(h.draft.id,h.input(h.first.id,0));await h.s.tick();await h.s.tick();const previous=candidateId;
     candidateId=randomUUID();await expect(h.s.start(h.draft.id,{...h.input(h.first.id,1),rollbackVersionId:first.versionId})).rejects.toMatchObject({code:'ROLLBACK_TARGET_MISMATCH'});
     candidateId=previous;artifact='a'.repeat(64);await expect(h.s.start(h.draft.id,{...h.input(h.first.id,1),rollbackVersionId:first.versionId})).rejects.toMatchObject({code:'ROLLBACK_TARGET_MISMATCH'});
@@ -88,10 +89,36 @@ describe('serialized publication, smoke gating and immutable history', () => {
     const versions = await h.s.versions(h.draft.id); expect(versions).toHaveLength(3); expect(versions.find(v => v.id === v1.versionId)?.snapshotId).toBe(h.first.id);
     await expect(pool.query("UPDATE release_versions SET record=record || '{\"snapshotId\":\"changed\"}'::jsonb WHERE id=$1",[v1.versionId])).rejects.toThrow('immutable');
   });
+  it('retains the classified Runner startup failure reason and current v1 pointer', async () => {
+    const h = await setup();
+    const v1 = await h.s.start(h.draft.id,h.input(h.first.id,0)); await h.s.tick(); await h.s.tick();
+    const pointer = await h.s.pointer(h.draft.id);
+    h.driver.prepare = async () => { throw new DependencyError(503,'DEPENDENCY_REQUEST_FAILED'); };
+    const v2 = await h.s.start(h.draft.id,h.input(h.second.id,pointer.revision)); await h.s.tick();
+    expect((await h.s.get(v2.id)).status).toBe('failed');
+    expect((await h.s.get(v2.id)).diagnostic).toBe('DEPENDENCY_REQUEST_FAILED');
+    expect(await h.s.pointer(h.draft.id)).toEqual(pointer);
+  });
+  it('persists the preparing phase before requesting a Runner deployment', async () => {
+    const h = await setup();
+    const operation = await h.s.start(h.draft.id,h.input(h.first.id,0));
+    let entered!: () => void; let release!: () => void;
+    const reached = new Promise<void>(resolve => { entered = resolve; });
+    const wait = new Promise<void>(resolve => { release = resolve; });
+    h.driver.prepare = async current => { entered(); await wait; return { ready: true, artifactDigest: current.reference.binding.artifactDigest, snapshotDigest: current.reference.binding.snapshotDigest }; };
+    const tick = h.s.tick(); await reached;
+    expect((await h.s.get(operation.id)).status).toBe('preparing');
+    release(); await tick;
+  });
   it('a failing smoke or changed validation binding cannot switch an existing pointer', async () => {
-    const h = await setup(); await h.s.start(h.draft.id,h.input(h.first.id,0)); await h.s.tick(); await h.s.tick(); const pointer = await h.s.pointer(h.draft.id);
-    h.smoke(false,true); const badSmoke = await h.s.start(h.draft.id,h.input(h.second.id,1)); await h.s.tick(); await h.s.tick(); expect((await h.s.get(badSmoke.id)).diagnostic).toBe('SMOKE_FAILED'); expect(await h.s.pointer(h.draft.id)).toEqual(pointer);
-    h.smoke(true); const changed = await h.s.start(h.draft.id,h.input(h.second.id,1)); await h.s.tick(); h.change(); await h.s.tick();
+    const h = await setup(); const first = await h.s.start(h.draft.id,h.input(h.first.id,0));
+    for(let i=0;i<4&&(await h.s.get(first.id)).status!=='succeeded';i++) await h.s.tick();
+    expect((await h.s.get(first.id)).status).toBe('succeeded'); const pointer = await h.s.pointer(h.draft.id);
+    h.smoke(false,true); const badSmoke = await h.s.start(h.draft.id,h.input(h.second.id,1));
+    for(let i=0;i<4&&(await h.s.get(badSmoke.id)).status!=='failed';i++) await h.s.tick();
+    expect((await h.s.get(badSmoke.id)).diagnostic).toBe('SMOKE_FAILED'); expect(await h.s.pointer(h.draft.id)).toEqual(pointer);
+    h.smoke(true); const changed = await h.s.start(h.draft.id,h.input(h.second.id,1)); await h.s.tick(); h.change();
+    for(let i=0;i<4&&(await h.s.get(changed.id)).status!=='failed';i++) await h.s.tick();
     expect((await h.s.get(changed.id)).diagnostic).toBe('VALIDATION_BINDING_CHANGED'); expect(await h.s.pointer(h.draft.id)).toEqual(pointer);
   });
 });

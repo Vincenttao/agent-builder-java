@@ -34,12 +34,15 @@ export class TestDeploymentService {
     if(existing){await this.tx(async client=>{await assertTestAuthority(client,existing,authority);});if(existing.inputDigest!==digest)throw new AppError('REQUEST_INPUT_CONFLICT','同一请求编号不能更改测试目标',409);return existing;}
     if(!Number.isInteger(input.ttlSeconds)||input.ttlSeconds<1||input.ttlSeconds>3600||!['test','preview'].includes(input.purpose))throw new AppError('INVALID_TEST_DEPLOYMENT','测试部署配置无效',422);
     const candidate=await this.candidates.get(input.candidateId);const snapshot=await this.snapshots.get(candidate.snapshotId);
+    const candidateRuntimeSpec=candidate.runtimeSpec??snapshot.content.runtimeSpec;
+    if(contentDigest(candidateRuntimeSpec)!==candidate.specDigest)throw new AppError('CANDIDATE_SPEC_MISMATCH','候选运行规格摘要不匹配',409);
     const baseline=await this.baselines.assertTarget(input.requirementBaselineId,snapshot);
     if(contentDigest(baseline.content.cases)!==input.suiteDigest)throw new AppError('TEST_SUITE_MISMATCH','测试集与确认的基线不匹配',409);
     const [runtime,mock]=await Promise.all([this.runtime.capabilities(),this.mock.identity()]);
     if(!runtime.modelProfile||!runtime.modelConfigured||runtime.executionMode!=='trusted-local'||!await runtimeArtifactMatches(this.runtime,candidate.artifactDigest,runtime.artifactDigest,candidate.specDigest,candidate.snapshotId,candidate.generated?.runtimeArtifact))throw new AppError('CANDIDATE_RUNTIME_CHANGED','候选制品或模型环境不可执行',409);
     if(candidate.generated&&(candidate.generated.baselineId!==baseline.id||candidate.generated.baselineDigest!==baseline.digest))throw new AppError('CANDIDATE_BASELINE_MISMATCH','生成候选必须使用构建时确认的验收基线',409);
     const binding=validationBinding(snapshot,baseline,{artifactDigest:candidate.artifactDigest,mockDigest:mock.implementationDigest,modelProfile:runtime.modelProfile});
+    binding.candidate=await this.candidates.validationReference(candidate.id);
     return this.tx(async client=>{
       const validation=authority?await assertValidationClaim(client,authority,authority.runId):undefined;
       const item=validation?baseline.content.cases.find(c=>c.id===validation.cases.find(p=>p.runId===authority!.runId)?.caseId):undefined;
@@ -53,7 +56,7 @@ export class TestDeploymentService {
       if(active>=4)throw new AppError('TEST_DEPLOYMENT_LIMIT','活动测试部署已达上限 4',429);
       const now=new Date().toISOString();
       const record:TestDeployment={id:randomUUID(),clientRequestId:input.clientRequestId,inputDigest:digest,agentId:candidate.agentId,candidateId:candidate.id,
-        snapshotId:candidate.snapshotId,deploymentId:randomUUID(),environmentId:randomUUID(),environmentConfig:{seed:baseline.content.seed,fault:item?.fault??'normal',clock:'2026-10-21T08:00:00.000Z'},
+        snapshotId:candidate.snapshotId,runtimeSpec:structuredClone(candidateRuntimeSpec),deploymentId:randomUUID(),environmentId:randomUUID(),environmentConfig:{seed:baseline.content.seed,fault:item?.fault??'normal',clock:'2026-10-21T08:00:00.000Z'},
         ...(validation&&item?{validation:{executionId:validation.id,caseId:item.id,runId:authority!.runId,input:item.input,actorId:'U1001' as const}}:{}),
         requirementBaselineId:baseline.id,purpose:input.purpose,binding:validation?.binding??binding,status:'preparing',failure:false,createdAt:now,updatedAt:now,expiresAt:new Date(Date.parse(now)+input.ttlSeconds*1000).toISOString()};
       await client.query('INSERT INTO test_deployments(id,candidate_id,baseline_id,client_request_id,record) VALUES($1,$2,$3,$4,$5)',[record.id,candidate.id,baseline.id,input.clientRequestId,record]);return record;
@@ -113,7 +116,9 @@ export class TestDeploymentService {
         if(!await runtimeArtifactMatches(this.runtime,candidate.artifactDigest,capabilities.artifactDigest,candidate.specDigest,candidate.snapshotId,candidate.generated?.runtimeArtifact)||capabilities.modelProfile?.digest!==target.binding.modelProfile.digest||mock.implementationDigest!==target.binding.mockDigest)
           throw new AppError('TEST_BINDING_CHANGED','测试依赖已变化',409);
         await this.mock.prepare(target.environmentId,target.id,target.environmentConfig);
-        const deployed=await this.runtime.deploy(target.deploymentId,candidate.artifactDigest,snapshot.content.runtimeSpec);
+        const runtimeSpec=target.runtimeSpec??snapshot.content.runtimeSpec;
+        if(contentDigest(runtimeSpec)!==candidate.specDigest||(target.binding.candidate?.specDigest??candidate.specDigest)!==candidate.specDigest)throw new AppError('TEST_RUNTIME_SPEC_MISMATCH','测试部署配置与固定候选不匹配',409);
+        const deployed=await this.runtime.deploy(target.deploymentId,candidate.artifactDigest,runtimeSpec);
         const loaded=await this.runtime.deployment(target.deploymentId);
         if(deployed.status!=='ready'||loaded.status!=='ready'||loaded.artifactDigest!==candidate.artifactDigest||loaded.specDigest!==candidate.specDigest||loaded.modelProfile?.digest!==target.binding.modelProfile.digest)
           throw new AppError('TEST_MANIFEST_MISMATCH','测试部署实际装载不匹配',409);
@@ -124,7 +129,7 @@ export class TestDeploymentService {
         if(active.rowCount)return;
         const stopped=await this.runtime.retire(target.deploymentId);if(stopped.status!=='stopped')throw new Error('STOP_UNCONFIRMED');
         await this.mock.release(target.environmentId,target.id);
-        await this.update(target.id,'stopping',{status:target.failure?'failed':'stopped'});
+        await this.update(target.id,'stopping',{status:target.failure?'failed':'stopped',...(target.failure?{}:{diagnostic:''})});
       }
     }catch(error){
       if(target?.status==='preparing')await this.update(target.id,'preparing',{status:'stopping',failure:true,diagnostic:error instanceof AppError?error.code:'TEST_PREPARATION_FAILED'});

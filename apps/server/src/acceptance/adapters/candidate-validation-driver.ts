@@ -73,12 +73,19 @@ export class CandidateValidationDriver implements ValidationDriver {
     for(let page=0;;page++){if(page===20)throw new Error('EVIDENCE_LIMIT_REACHED');const part=await this.runs.events(progress.runId,after);events.push(...part);if(part.length<500)break;after=part.at(-1)!.seq;}
     const attempts=(await Promise.all(actions.map(action=>this.actions.attempts(action.id)))).flat();
     const expected={seed:'enterprise-default@1',fault:item.fault,clock:'2026-10-21T08:00:00.000Z'};
-    const complete=terminal.has(view.run.status)&&deployment.status==='stopped'&&!deployment.failure&&loaded.status==='stopped'
-      &&loaded.artifactDigest===target.binding.artifactDigest&&loaded.specDigest===contentDigest(target.snapshot.content.runtimeSpec)&&loaded.modelProfile?.digest===target.binding.modelProfile.digest
-      &&environment.id===deployment.environmentId&&view.run.environmentId===environment.id&&Number.isInteger(environment.revision)&&environment.revision>=1&&contentDigest(environment.config)===contentDigest(expected)
-      &&view.run.validationId===target.claim.executionId&&view.run.artifactDigest===target.binding.artifactDigest;
+    const completionChecks={
+      runTerminal:terminal.has(view.run.status),deploymentStopped:deployment.status==='stopped',deploymentHealthy:!deployment.failure,loadedStopped:loaded.status==='stopped',
+      artifactMatches:loaded.artifactDigest===target.binding.artifactDigest,
+      specMatches:loaded.specDigest===(target.binding.candidate?.specDigest??contentDigest(target.snapshot.content.runtimeSpec)),
+      modelProfileMatches:loaded.modelProfile?.digest===target.binding.modelProfile.digest,
+      environmentIdMatches:environment.id===deployment.environmentId&&view.run.environmentId===environment.id,
+      environmentRevisionValid:Number.isInteger(environment.revision)&&environment.revision>=1,
+      environmentConfigMatches:contentDigest(environment.config)===contentDigest(expected),
+      validationMatches:view.run.validationId===target.claim.executionId,runArtifactMatches:view.run.artifactDigest===target.binding.artifactDigest
+    };
+    const complete=Object.values(completionChecks).every(Boolean);
     return{run:view.run,calls:calls as Record<string,unknown>[],actions,attempts,events,businessState:environment.state,complete,
-      candidateEvidence:{ingress:`/test-api/deployments/${deployment.id}`,requestId:view.requestId,candidate:target.binding.candidate!,testDeployment:deployment,loadedManifest:loaded},
+      candidateEvidence:{ingress:`/test-api/deployments/${deployment.id}`,requestId:view.requestId,candidate:target.binding.candidate!,testDeployment:deployment,loadedManifest:loaded,completionChecks},
       ...(progress.beforeApprovalCalls?{beforeApprovalCalls:progress.beforeApprovalCalls}:{})};
   }
   async cancel(runId:string,claim:ValidationClaim){

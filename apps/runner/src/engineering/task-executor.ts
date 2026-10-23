@@ -13,11 +13,11 @@ export class OpenCodeTaskExecutor implements TaskExecutor {
  constructor(private readonly options:{root:string;sdkJar:string;executable:string;modelKey:string}){}
  async run(input:EngineeringTaskInput,onEvent:(event:EngineeringEvent)=>Promise<void>,onRole:(role:EngineeringRole,status:string,sessionId?:string)=>Promise<void>){
   if(this.cancelled)throw new PolicyError('ENGINEERING_CANCELLED');if(!this.options.modelKey)throw new PolicyError('ENGINE_MODEL_NOT_CONFIGURED');
-  const workspace=this.workspace=new EngineeringWorkspace(this.options.root,this.options.sdkJar,input.context,onEvent);await workspace.initialize();
+  const workspace=this.workspace=new EngineeringWorkspace(this.options.root,this.options.sdkJar,input.context,onEvent,input.generation);await workspace.initialize();
   const tokens={developer:randomBytes(32).toString('hex'),tester:randomBytes(32).toString('hex')};const mcp=createEngineeringMcp(workspace,tokens);
   try{
    if(this.cancelled)throw new PolicyError('ENGINEERING_CANCELLED');const base=await mcp.listen({host:'127.0.0.1',port:0});
-   const engine=this.engine=new OpenCodeEngine({root:this.options.root,executable:this.options.executable,modelKey:this.options.modelKey,mcpBase:base,tokens,maxTaskMs:input.maxSeconds*1000});
+   const engine=this.engine=new OpenCodeEngine({root:this.options.root,executable:this.options.executable,modelKey:this.options.modelKey,mcpBase:base,tokens,maxTaskMs:input.maxSeconds*1000,profile:workspace.profile});
    if(this.cancelled)throw new PolicyError('ENGINEERING_CANCELLED');await engine.start();
    for(const role of ['tester','developer'] as const){
     if(role==='tester'&&input.context.repair){await onRole(role,'reused');await onEvent({sequence:0,occurredAt:new Date().toISOString(),subjectId:'',role,type:'test-plan.reused',data:{planDigest:workspace.inspect().planDigest,parentJobId:input.context.repair.reference.parentJobId}});continue;}
@@ -27,7 +27,7 @@ export class OpenCodeTaskExecutor implements TaskExecutor {
     if(result.status!=='completed')throw new PolicyError('ENGINE_ROLE_FAILED');
     if(role==='tester'&&!workspace.inspect().planDigest)throw new PolicyError('TEST_PLAN_MISSING');
    }
-   const bundle=workspace.inspect().bundle;if(!bundle)throw new PolicyError('GENERATED_BUNDLE_MISSING');return bundle;
+   const state=workspace.inspect();const bundle=state.bundle;if(!bundle)throw new PolicyError(state.diagnostic??'GENERATED_BUNDLE_MISSING');return bundle;
   }finally{
    const cleanup=await Promise.allSettled([workspace.cancel(),this.engine?.stop(),mcp.close()]);
    if(cleanup.some(result=>result.status==='rejected'))throw new PolicyError('ENGINEERING_STOP_UNCONFIRMED');

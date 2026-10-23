@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15 P0-A AC-16 v2 release then v1 rollback on current fixed Docker target",
+  "executionMode": "live-mock",
+  "measuredAt": "2026-10-23T09:51:37.466Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "targetImageIds": [
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+  ],
+  "appImageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+  "runnerImageId": "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9",
+  "agentId": "66466fd2-8b75-4d2d-93cd-58d651d7acb3",
+  "snapshotId": "c8271cc9-ccea-4cda-9aba-86165d78f777",
+  "baselineId": "6d5c674f-7657-44d3-94b5-d6e4194e1f77",
+  "candidateId": "fc969e9f-fcb2-40b3-805a-36e93b6066a5",
+  "validationId": "1b5206e3-e57d-4077-8c4a-9436a9a2540a",
+  "validationVerdict": "passed",
+  "validationCases": [
+    {
+      "caseId": "TC-001",
+      "status": "passed"
+    },
+    {
+      "caseId": "TC-002",
+      "status": "passed"
+    },
+    {
+      "caseId": "TC-003",
+      "status": "passed"
+    }
+  ],
+  "v1": {
+    "operationId": "9774d50a-28bc-4869-a37e-87ddd80b84a8",
+    "versionId": "ebf5f70d-1044-45ad-a278-af5b4dccd29c",
+    "candidateId": "fc969e9f-fcb2-40b3-805a-36e93b6066a5",
+    "artifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065"
+  },
+  "v2": {
+    "operationId": "b9d617d6-773a-4d45-b1ba-8aa499f01b58",
+    "versionId": "d9e23e85-0a34-49a4-ab6e-d755e9a8135a",
+    "candidateId": "fc969e9f-fcb2-40b3-805a-36e93b6066a5",
+    "artifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065"
+  },
+  "rollback": {
+    "operationId": "576fb5bb-3d3a-47f1-9968-07cf1ccb5f47",
+    "versionId": "5beb4373-2992-4031-982c-b3bac764bea7",
+    "pointerVersionId": "5beb4373-2992-4031-982c-b3bac764bea7",
+    "pointerRevision": 3
+  },
+  "newRequestId": "4db2a4fe-8cad-4204-af9b-ec37d385a92d",
+  "newRequestAgentVersion": "5beb4373-2992-4031-982c-b3bac764bea7",
+  "newRequestRunStatus": "succeeded",
+  "newRequestArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
+  "requestUsesV1Candidate": true,
+  "historyUnchanged": true,
+  "rollbackMatchesV1": true,
+  "branches": [
+    {
+      "caseId": "AC-16",
+      "branchId": "new-request-rolled-back",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "new_request_targets_v1_candidate_after_rollback",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-16",
+      "branchId": "history-unchanged",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "prior_v1_v2_versions_retain_identity_and_binding",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "verdict": "passed"
+}

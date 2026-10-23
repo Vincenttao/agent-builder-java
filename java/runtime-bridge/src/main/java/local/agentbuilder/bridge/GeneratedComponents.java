@@ -16,44 +16,64 @@ import java.util.function.Consumer;
 
 /** Components bound into the running JAR by the platform packager. Not an OS sandbox. */
 public final class GeneratedComponents {
-    private static final String SKILL = "skills/equipment-query/SKILL.md";
+    private static final String LEGACY_SKILL = "skills/equipment-query/SKILL.md";
     private final Map<String,Object> manifest;
     private final Class<? extends Tool> toolClass;
     private final Path skill;
-    private GeneratedComponents(Map<String,Object> manifest, Class<? extends Tool> toolClass, Path skill) {
+    private final String toolName;
+    private final String operationId;
+    private final String skillName;
+    private final String skillPath;
+    private GeneratedComponents(Map<String,Object> manifest, Class<? extends Tool> toolClass, Path skill, String toolName, String operationId, String skillName, String skillPath) {
         this.manifest = Map.copyOf(manifest); this.toolClass = toolClass; this.skill = skill;
+        this.toolName = toolName; this.operationId = operationId; this.skillName = skillName; this.skillPath = skillPath;
     }
-    public static GeneratedComponents none() { return new GeneratedComponents(Map.of(), null, null); }
+    public static GeneratedComponents none() { return new GeneratedComponents(Map.of(), null, null, null, null, null, null); }
     public static GeneratedComponents load(ClassLoader loader, Path workspace, String specDigest) throws Exception {
         byte[] bytes = resource(loader, "generated/agent-builder-component.json", true);
         if (bytes == null) return none();
         Map<String,Object> data = new ObjectMapper().readValue(bytes, new TypeReference<Map<String,Object>>() {});
-        if (!data.keySet().equals(Set.of("kind", "developmentBundleDigest", "sdkArtifactDigest", "snapshotId", "specDigest", "componentDigest", "skillDigest", "classes"))
-                || !"equipment-tool-skill@1".equals(data.get("kind"))) throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
+        boolean legacy = "equipment-tool-skill@1".equals(data.get("kind"));
+        Set<String> legacyKeys=Set.of("kind", "developmentBundleDigest", "sdkArtifactDigest", "snapshotId", "specDigest", "componentDigest", "skillDigest", "classes");
+        Set<String> generatedKeys=Set.of("kind", "developmentBundleDigest", "sdkArtifactDigest", "snapshotId", "specDigest", "componentDigest", "skillDigest", "classes", "toolClassName", "toolName", "operationId", "skillName", "skillPath");
+        if (!(legacy && data.keySet().equals(legacyKeys) || "generated-tool-skill@1".equals(data.get("kind")) && data.keySet().equals(generatedKeys)))
+            throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
         for (String field : List.of("developmentBundleDigest", "sdkArtifactDigest", "specDigest", "componentDigest", "skillDigest"))
             if (!(data.get(field) instanceof String value) || !value.matches("[a-f0-9]{64}")) throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
         if (!(data.get("snapshotId") instanceof String id) || !id.matches("[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}")) throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
         if (!specDigest.equals(data.get("specDigest"))) throw new IllegalStateException("GENERATED_SPEC_MISMATCH");
-        byte[] markdown = resource(loader, SKILL, false);
+        String toolClassName=legacy?"generated.EquipmentTool":string(data,"toolClassName");
+        String toolName=legacy?"get_equipment":string(data,"toolName");
+        String operationId=legacy?"equipment-status":string(data,"operationId");
+        String skillName=legacy?"equipment-query":string(data,"skillName");
+        String skillPath=legacy?LEGACY_SKILL:string(data,"skillPath");
+        if(!toolClassName.matches("generated\\.[A-Z][A-Za-z0-9]*Tool")||!toolName.matches("[a-z][a-z0-9_]{0,63}")
+                ||!operationId.matches("[a-z][a-zA-Z0-9-]{0,63}")||!skillName.matches("[a-z][a-z0-9-]{0,63}")
+                ||!skillPath.matches("skills/[a-z][a-z0-9-]{0,63}/SKILL\\.md")||!skillPath.equals("skills/"+skillName+"/SKILL.md"))
+            throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
+        String classPath=toolClassName.replace('.','/')+".class";
+        byte[] markdown = resource(loader, skillPath, false);
         if (!hash(markdown).equals(data.get("skillDigest"))) throw new IllegalStateException("GENERATED_SKILL_MISMATCH");
-        if (!(data.get("classes") instanceof Map<?,?> classes) || classes.isEmpty() || classes.size() > 32 || !classes.containsKey("generated/EquipmentTool.class")) throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
+        if (!(data.get("classes") instanceof Map<?,?> classes) || classes.isEmpty() || classes.size() > 32 || !classes.containsKey(classPath)) throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
+        String classPattern=java.util.regex.Pattern.quote(classPath.substring(0,classPath.length()-6))+"(\\$[A-Za-z0-9_$]+)?\\.class";
         for (var item : classes.entrySet()) {
-            if (!(item.getKey() instanceof String path) || !path.matches("generated/EquipmentTool(\\$[A-Za-z0-9_$]+)?\\.class")
+            if (!(item.getKey() instanceof String path) || !path.matches(classPattern)
                     || !(item.getValue() instanceof String digest) || !digest.matches("[a-f0-9]{64}")) throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
             if (!hash(resource(loader, path, false)).equals(digest)) throw new IllegalStateException("GENERATED_CLASS_MISMATCH");
         }
-        Class<? extends Tool> type = Class.forName("generated.EquipmentTool", false, loader).asSubclass(Tool.class);
+        Class<? extends Tool> type = Class.forName(toolClassName, false, loader).asSubclass(Tool.class);
         if (type.getSuperclass() != Tool.class) throw new IllegalStateException("GENERATED_TOOL_CONTRACT_INVALID");
         for (var method : type.getDeclaredMethods())
             if (Set.of("invoke", "stream", "streamInternal").contains(method.getName())) throw new IllegalStateException("GENERATED_TOOL_CONTRACT_INVALID");
         type.getConstructor(Tool.class);
-        Path target = workspace.toAbsolutePath().normalize().resolve(SKILL);
+        Path target = workspace.toAbsolutePath().normalize().resolve(skillPath);
         Path current = workspace.toAbsolutePath().normalize();
         if (Files.isSymbolicLink(current)) throw new IllegalStateException("GENERATED_SKILL_PATH_INVALID");
-        for (Path part : Path.of(SKILL)) { current = current.resolve(part); if (Files.isSymbolicLink(current)) throw new IllegalStateException("GENERATED_SKILL_PATH_INVALID"); }
+        for (Path part : Path.of(skillPath)) { current = current.resolve(part); if (Files.isSymbolicLink(current)) throw new IllegalStateException("GENERATED_SKILL_PATH_INVALID"); }
         Files.createDirectories(target.getParent()); Files.write(target, markdown);
-        return new GeneratedComponents(data, type, target);
+        return new GeneratedComponents(data, type, target, toolName, operationId, skillName, skillPath);
     }
+    private static String string(Map<String,Object> data,String key){if(!(data.get(key) instanceof String value))throw new IllegalStateException("GENERATED_MANIFEST_INVALID");return value;}
     private static byte[] resource(ClassLoader loader, String path, boolean optional) throws Exception {
         try (var stream = loader.getResourceAsStream(path)) {
             if (stream == null) { if (optional) return null; throw new IllegalStateException("GENERATED_RESOURCE_MISSING"); }
@@ -65,6 +85,10 @@ public final class GeneratedComponents {
     static String hash(byte[] bytes) throws Exception { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes)); }
     public boolean enabled() { return toolClass != null; }
     public Map<String,Object> manifest() { return manifest; }
+    public String toolName(){return toolName;}
+    public String operationId(){return operationId;}
+    public String skillName(){return skillName;}
+    public boolean binds(String tool,String operation){return enabled()&&toolName.equals(tool)&&operationId.equals(operation);}
     Path skillRoot() { return skill.getParent().getParent(); }
     void verifySkill() {
         try {
@@ -74,7 +98,7 @@ public final class GeneratedComponents {
     }
     static String sessionId(Map<String,Object> kwargs) { return kwargs.get("session") instanceof AgentSessionApi session ? session.getSessionId() : ""; }
     public Tool wrap(Tool transport, Consumer<Map<String,Object>> events) throws Exception {
-        if (!enabled() || !"get_equipment".equals(transport.getCard().getName())) throw new IllegalStateException("GENERATED_TOOL_BINDING_INVALID");
+        if (!enabled() || !toolName.equals(transport.getCard().getName())) throw new IllegalStateException("GENERATED_TOOL_BINDING_INVALID");
         Tool generated = toolClass.getConstructor(Tool.class).newInstance(transport);
         if (generated.getCard() != transport.getCard()) throw new IllegalStateException("GENERATED_TOOL_CONTRACT_INVALID");
         return new Tool(transport.getCard()) {

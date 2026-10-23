@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {randomUUID} from 'node:crypto';
+import {wealthBalanceGenerationRequest} from '../packages/contracts/src/generation-profile.ts';
+
+const base=(process.env.TD15_PROFILE_BASE_URL??'http://127.0.0.1:8080').replace(/\/$/,'');
+const project=process.env.TD15_PROFILE_COMPOSE_PROJECT??'agent-builder-platform';
+const snapshotId=process.env.TD15_PROFILE_SNAPSHOT_ID??'f4d0d13d-5e09-4fd6-834e-6888e07c211f';
+const baselineId=process.env.TD15_PROFILE_BASELINE_ID??'dcece5f2-3700-4a11-8cbe-7e9b79e2cbba';
+const containerIds=execFileSync('docker',['compose','--env-file','.env.local','-p',project,'ps','-q','app','runner'],{encoding:'utf8'}).trim().split(/\r?\n/).filter(Boolean);
+assert.equal(containerIds.length,2,'FIXED_APP_RUNNER_TARGET_REQUIRED');
+const targetImageIds=execFileSync('docker',['inspect','--format','{{.Name}} {{.Image}}',...containerIds],{encoding:'utf8'}).trim().split(/\r?\n/);
+const env=Object.fromEntries((await readFile('.env.local','utf8')).split(/\r?\n/).filter(line=>line.includes('=')).map(line=>{const i=line.indexOf('=');return[line.slice(0,i),line.slice(i+1).replace(/^['"]|['"]$/g,'')]}));
+const origin=process.env.TD15_PROFILE_ORIGIN??env.APP_ORIGIN??base;
+assert.ok(env.LOCAL_BOOTSTRAP_TOKEN,'LOCAL_BOOTSTRAP_TOKEN_REQUIRED');
+const login=await fetch(`${base}/api/auth/session`,{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify({token:env.LOCAL_BOOTSTRAP_TOKEN})});
+assert.equal(login.status,200,'LOGIN_FAILED');
+const cookie=login.headers.get('set-cookie')?.match(/builder_session=[^;]+/)?.[0],csrf=(await login.json()).csrfToken;
+assert.ok(cookie&&csrf,'LOGIN_RESPONSE_INVALID');
+const headers={origin,cookie,'x-csrf-token':csrf,'content-type':'application/json'};
+const response=await fetch(`${base}/api/snapshots/${snapshotId}/development`,{method:'POST',headers,body:JSON.stringify({clientRequestId:randomUUID(),baselineId,generation:wealthBalanceGenerationRequest,maxSeconds:60})});
+assert.equal(response.status,202,`SUBMIT_HTTP_${response.status}`);const job=await response.json();
+assert.equal(job.status,'failed');assert.equal(job.diagnostic,'GENERATION_PROFILE_NOT_IMPLEMENTED');
+assert.deepEqual(job.roles.map(item=>item.status),['skipped','skipped']);
+const eventResponse=await fetch(`${base}/api/development/${job.id}/events`,{headers});assert.equal(eventResponse.status,200);const events=(await eventResponse.json()).items;
+assert.equal(events.length,1);assert.equal(events[0].type,'policy.rejected');assert.equal(events[0].data.code,'GENERATION_PROFILE_NOT_IMPLEMENTED');
+const evidence={schemaVersion:1,measuredAt:new Date().toISOString(),composeProject:project,baseUrl:base,targetImageIds,snapshotId,baselineId,
+  generationProfile:wealthBalanceGenerationRequest,job:{id:job.id,status:job.status,diagnostic:job.diagnostic,roles:job.roles},events,runnerSubmitted:false,verdict:'passed'};
+const path='docs/implementation/evidence/TDD-069/finance-profile-gate-live.json';await mkdir('docs/implementation/evidence/TDD-069',{recursive:true});await writeFile(path,JSON.stringify(evidence,null,2)+'\n');
+await fetch(`${base}/api/auth/session`,{method:'DELETE',headers:{origin,cookie,'x-csrf-token':csrf}}).catch(()=>{});
+console.log(JSON.stringify({verdict:evidence.verdict,project,targetImageIds,jobId:job.id,diagnostic:job.diagnostic,evidence:path}));

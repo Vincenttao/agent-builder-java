@@ -48,8 +48,8 @@ describe('durable project validation and immutable reports', () => {
     finally{release();driver.advance=original;}
   });
   it('requires a candidate-aware executor and pins candidate identity instead of silently validating the template',async()=>{
-    const {baseline,snapshot}=await target();const candidate={id:randomUUID(),agentId:snapshot.draftId,snapshotId:snapshot.id,snapshotDigest:snapshot.digest,specDigest:'e'.repeat(64),artifactDigest:'9'.repeat(64),bundleDigest:'c'.repeat(64),provenance:'assembled-template' as const,createdAt:clock.now()};
-    const reference={id:candidate.id,bundleDigest:candidate.bundleDigest,provenance:candidate.provenance};
+    const {baseline,snapshot}=await target();const candidate={id:randomUUID(),agentId:snapshot.draftId,snapshotId:snapshot.id,snapshotDigest:snapshot.digest,runtimeSpec:snapshot.content.runtimeSpec,specDigest:'e'.repeat(64),artifactDigest:'9'.repeat(64),bundleDigest:'c'.repeat(64),provenance:'assembled-template' as const,createdAt:clock.now()};
+    const reference={id:candidate.id,bundleDigest:candidate.bundleDigest,specDigest:candidate.specDigest,provenance:candidate.provenance};
     const candidates={get:async()=>candidate,validationReference:async()=>reference};
     const input={clientRequestId:randomUUID(),baselineId:baseline.id,allowMockWrites:false,candidateId:candidate.id};
     await expect(new ValidationService(pool,baselines,snapshots,driver,clock,candidates).start(snapshot.id,input)).rejects.toMatchObject({code:'CANDIDATE_VALIDATION_UNAVAILABLE'});

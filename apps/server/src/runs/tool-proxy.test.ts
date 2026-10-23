@@ -5,6 +5,36 @@ import { registerToolProxy } from './tool-proxy.js';
 const apps: ReturnType<typeof Fastify>[] = [];
 afterEach(async () => { await Promise.all(apps.map(app => app.close())); apps.length = 0; });
 describe('business proxy uses trusted runtime context', () => {
+  it('invokes only the pinned finance balance read with trusted context', async () => {
+    const app = Fastify({ ajv: { customOptions: { removeAdditional: false, coerceTypes: false } } }); apps.push(app);
+    const runId = randomUUID(); let bound = true; let seen: unknown;
+    registerToolProxy(app, { token: 'proxy-012345678901234567890123456789',
+      context: async id => ({ runId: id, environmentId: 'finance-env', actorId: 'U1001', operations: bound ? ['getAccountBalance'] : [] }),
+      invoke: async (context, operation, input) => { seen = { context, operation, input }; return { status: 200, result: { accountId: 'A1001', currency: 'CNY', availableBalanceFen: 1000000, asOf: '2026-10-21T08:00:00.000Z' } }; }
+    });
+    const headers = { authorization: 'Bearer proxy-012345678901234567890123456789', 'x-builder-session-id': runId };
+    const url = '/internal/tool-proxy/operations/getAccountBalance';
+    const response = await app.inject({ method: 'POST', url, headers, payload: { accountId: 'A1001' } });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ accountId: 'A1001', currency: 'CNY', availableBalanceFen: 1000000, asOf: '2026-10-21T08:00:00.000Z' });
+    expect(seen).toEqual({ context: { runId, environmentId: 'finance-env', actorId: 'U1001', operations: ['getAccountBalance'] }, operation: 'getAccountBalance', input: { accountId: 'A1001' } });
+    bound = false;
+    expect((await app.inject({ method: 'POST', url, headers, payload: { accountId: 'A1001' } })).statusCode).toBe(403);
+    expect((await app.inject({ method: 'POST', url, headers, payload: { accountId: 'A1001', actorId: 'U1002' } })).statusCode).toBe(400);
+  });
+  it('only invokes the pinned maintenance search with trusted run context', async () => {
+    const app = Fastify({ ajv: { customOptions: { removeAdditional: false, coerceTypes: false } } }); apps.push(app);
+    const runId = randomUUID(); let bound = true; let seen: unknown;
+    registerToolProxy(app, { token: 'proxy-012345678901234567890123456789', context: async id => ({ runId: id, environmentId: 'env', actorId: 'U1001', operations: bound ? ['maintenance-search'] : [] }),
+      invoke: async (context, operation, input) => { seen = { context, operation, input }; return { status: 200, result: { equipmentId: 'PUMP-001', found: false, resultCount: 0 } }; } });
+    const headers = { authorization: 'Bearer proxy-012345678901234567890123456789', 'x-builder-session-id': runId };
+    const url = '/internal/tool-proxy/operations/maintenance-search';
+    const response = await app.inject({ method: 'POST', url, headers, payload: { equipmentId: 'PUMP-001' } });
+    expect(response.statusCode).toBe(200); expect(response.json()).toEqual({ equipmentId: 'PUMP-001', found: false, resultCount: 0 });
+    expect(seen).toEqual({ context: { runId, environmentId: 'env', actorId: 'U1001', operations: ['maintenance-search'] }, operation: 'maintenance-search', input: { equipmentId: 'PUMP-001' } });
+    bound = false;
+    expect((await app.inject({ method: 'POST', url, headers, payload: { equipmentId: 'PUMP-001' } })).statusCode).toBe(403);
+  });
   it('write proxy requires native call context and rejects model-supplied identity, approval and idempotency overrides', async () => {
     const app = Fastify({ ajv: { customOptions: { removeAdditional: false, coerceTypes: false } } }); apps.push(app);
     const runId = randomUUID(); let writes = 0; let bound = true;
@@ -40,5 +70,28 @@ describe('business proxy uses trusted runtime context', () => {
     registerToolProxy(app, { token: 'proxy-012345678901234567890123456789', context: async id => ({ runId: id, environmentId: 'env', actorId: 'U1001', operations: [] }), invoke: async () => { calls++; return { status: 200, result: {} }; } });
     const response = await app.inject({ method: 'POST', url: '/internal/tool-proxy/operations/equipment-status', headers: { authorization: 'Bearer proxy-012345678901234567890123456789', 'x-builder-session-id': randomUUID() }, payload: { equipmentId: 'PUMP-001' } });
     expect(response.statusCode).toBe(403); expect(calls).toBe(0);
+  });
+  it('forwards only the registered MCP read tool and enriches it with the trusted Run context', async () => {
+    const app = Fastify({ ajv: { customOptions: { removeAdditional: false, coerceTypes: false } } }); apps.push(app);
+    const runId = randomUUID(); let bound = true; let forwarded: unknown; let resolved: unknown;
+    registerToolProxy(app, { token: 'proxy-012345678901234567890123456789',
+      context: async id => ({ runId: id, environmentId: 'environment-1', actorId: 'U1002', operations: bound ? ['equipment-status'] : [] }),
+      invoke: async () => ({ status: 200, result: {} }),
+      mcp: async (context, request) => { resolved = context; forwarded = request; return (request as {method?:string}).method?.startsWith('notifications/')
+        ? { status: 202, result: null } : { status: 200, result: { jsonrpc: '2.0', id: 3, result: { isError: false, structuredContent: { status: 'warning' } } } }; }
+    });
+    const headers = { authorization: 'Bearer proxy-012345678901234567890123456789', 'x-builder-session-id': runId };
+    expect((await app.inject({ method: 'GET', url: '/internal/tool-proxy/mcp', headers: { accept: 'text/event-stream' } })).statusCode).toBe(405);
+    const list = await app.inject({ method: 'POST', url: '/internal/tool-proxy/mcp', headers, payload: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} } });
+    expect(list.statusCode).toBe(200); expect(resolved).toBeUndefined();
+    const notification = await app.inject({ method: 'POST', url: '/internal/tool-proxy/mcp', headers, payload: { jsonrpc: '2.0', method: 'notifications/initialized' } });
+    expect(notification.statusCode).toBe(202); expect(notification.body).toBe('');
+    const payload = { jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'equipment_status', arguments: { equipmentId: 'PUMP-001' } } };
+    const called = await app.inject({ method: 'POST', url: '/internal/tool-proxy/mcp', headers, payload });
+    expect(called.statusCode).toBe(200);
+    expect(resolved).toMatchObject({ runId, environmentId: 'environment-1', actorId: 'U1002' }); expect(forwarded).toEqual(payload);
+    bound = false;
+    expect((await app.inject({ method: 'POST', url: '/internal/tool-proxy/mcp', headers, payload })).statusCode).toBe(403);
+    expect((await app.inject({ method: 'POST', url: '/internal/tool-proxy/mcp', headers, payload: { ...payload, params: { name: 'admin', arguments: {} } } })).statusCode).toBe(400);
   });
 });

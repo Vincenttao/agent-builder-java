@@ -1,0 +1,2639 @@
+{
+  "startedAt": "2026-10-23T07:18:48.519Z",
+  "base": "http://127.0.0.1:18080",
+  "composeProject": "agent-builder-td15-nf01",
+  "verdict": "passed",
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "draftId": "6aedea01-28f2-4423-9ab0-d8b01f10a9ae",
+  "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+  "baselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1",
+  "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+  "baselineCases": [
+    {
+      "id": "TC-BAL-001",
+      "scenario": "balance-normal",
+      "fault": "normal"
+    },
+    {
+      "id": "TC-BAL-002",
+      "scenario": "balance-missing-id",
+      "fault": "normal"
+    },
+    {
+      "id": "TC-BAL-003",
+      "scenario": "balance-tool-failure",
+      "fault": "read-timeout"
+    }
+  ],
+  "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+  "development": {
+    "id": "91d269d3-b418-4932-8300-0c970b00f1d7",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "completed",
+        "sessionId": "ses_e985f49fbffesatJrIiD53tEBF"
+      },
+      {
+        "role": "developer",
+        "status": "completed",
+        "sessionId": "ses_e985f10b9ffevpwmMT0rTrfMVa"
+      }
+    ],
+    "bundle": {
+      "files": [
+        {
+          "path": "src/generated/AccountBalanceTool.java",
+          "size": 2277,
+          "digest": "810d9c01d507e986bedfc8ad779229061fda9015bb8c2e020bfacbcfa16fee55"
+        },
+        {
+          "path": "test/generated/AccountBalanceToolTest.java",
+          "size": 6960,
+          "digest": "5559e7526523deae79b5d2b37b192403fa0616bf8969d3cbcdaf6d948723cb94"
+        },
+        {
+          "path": "skills/balance-query/SKILL.md",
+          "size": 1247,
+          "digest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f"
+        },
+        {
+          "path": "rails/definition.json",
+          "size": 2,
+          "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        {
+          "path": "test-plan.json",
+          "size": 3593,
+          "digest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13"
+        },
+        {
+          "path": "component.jar",
+          "size": 2654,
+          "digest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712"
+        }
+      ],
+      "digest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d",
+      "buildId": "ba68d1ce-109e-4fe6-a13b-8f50bab989d4",
+      "unitRedId": "651b5018-9619-47dd-b9ae-a81c72b043ce",
+      "baselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1",
+      "planDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+      "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+      "runtimeSpec": {
+        "agent": {
+          "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+          "type": "DeepAgent",
+          "rails": [
+            "audit",
+            "tool-allowlist"
+          ],
+          "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+          "maxIterations": 4
+        },
+        "tools": [
+          {
+            "name": "get_account_balance",
+            "protocol": "http",
+            "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+            "inputFields": {
+              "accountId": "string"
+            },
+            "operationId": "getAccountBalance",
+            "toolVersion": "account-balance-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "asOf": "string",
+              "currency": "string",
+              "accountId": "string",
+              "availableBalanceFen": "integer"
+            }
+          }
+        ]
+      },
+      "unitGreenId": "3de0ca59-c1b8-4148-acdc-cc50ee9971c7",
+      "sourceDigest": "d6da870862ee4579e2438d1403eca169d52216773c7f3252f6deaa2ca3fd9b63",
+      "profileDigest": "7c3a864fbc31f54bfe9c649f76759123f7c05b312f708e91fc7c94bb93a0e3d4",
+      "artifactDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712",
+      "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+      "profileVersion": "wealth-balance-java@1",
+      "railDefinition": {
+        "rails": [],
+        "schemaVersion": 1
+      },
+      "contractCheckId": "73a3ddf4-eeca-45c2-9ecb-d70a9b69106b",
+      "sdkArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065"
+    },
+    "status": "built",
+    "agentId": "6aedea01-28f2-4423-9ab0-d8b01f10a9ae",
+    "createdAt": "2026-10-23T07:18:48.862Z",
+    "updatedAt": "2026-10-23T07:20:26.298Z",
+    "baselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1",
+    "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+    "inputDigest": "f5ae122adc3de340a9407134748aaf4ba2043ea4e202ad18164ff6352b2961f2",
+    "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec"
+  },
+  "developmentEvents": [
+    {
+      "data": {
+        "path": "tests/plan.json",
+        "bytes": 3593,
+        "digest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13"
+      },
+      "role": "tester",
+      "type": "file.written",
+      "sequence": 1,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:19:18.585Z"
+    },
+    {
+      "data": {
+        "path": "test/generated/AccountBalanceToolTest.java",
+        "bytes": 6960,
+        "digest": "5559e7526523deae79b5d2b37b192403fa0616bf8969d3cbcdaf6d948723cb94"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 2,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:19:51.025Z"
+    },
+    {
+      "data": {
+        "id": "2dc1a88b-43cf-473f-a2f6-47e4b97bb4ef",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "prepare-sdk",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 3,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:19:53.378Z"
+    },
+    {
+      "data": {
+        "id": "8c166fa6-9921-40aa-ad2c-0cbe22aee5cc",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "compile-unit",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 4,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:19:56.519Z"
+    },
+    {
+      "data": {
+        "id": "651b5018-9619-47dd-b9ae-a81c72b043ce",
+        "status": "failed",
+        "exitCode": 1,
+        "commandId": "unit-test",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 5,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:19:56.719Z"
+    },
+    {
+      "data": {
+        "path": "src/generated/AccountBalanceTool.java",
+        "bytes": 2277,
+        "digest": "810d9c01d507e986bedfc8ad779229061fda9015bb8c2e020bfacbcfa16fee55"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 6,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:04.570Z"
+    },
+    {
+      "data": {
+        "path": "skills/balance-query/SKILL.md",
+        "bytes": 1247,
+        "digest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 7,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:06.152Z"
+    },
+    {
+      "data": {
+        "path": "rails/definition.json",
+        "bytes": 0,
+        "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 8,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:06.247Z"
+    },
+    {
+      "data": {
+        "id": "4a50fb79-c434-40ea-992a-b76aadc257df",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "compile-unit",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 9,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:10.307Z"
+    },
+    {
+      "data": {
+        "id": "3de0ca59-c1b8-4148-acdc-cc50ee9971c7",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "unit-test",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 10,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:10.455Z"
+    },
+    {
+      "data": {
+        "id": "0ee1d30b-db0f-463b-b16a-5bf840b826c7",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "compile-contract",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 11,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:14.787Z"
+    },
+    {
+      "data": {
+        "id": "159dfbfb-2c66-4b9c-91cb-bfb5f15d8460",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "platform-contract",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 12,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:14.940Z"
+    },
+    {
+      "data": {
+        "id": "94843e9e-ea0f-480e-823e-7ab0fb6ef66b",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "package-component",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 13,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:15.156Z"
+    },
+    {
+      "data": {
+        "path": "rails/definition.json",
+        "bytes": 2,
+        "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      "role": "developer",
+      "type": "file.written",
+      "sequence": 14,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:16.806Z"
+    },
+    {
+      "data": {
+        "id": "f2c31c06-fcdd-41eb-963e-bee5bb6713f6",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "compile-contract",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 15,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:21.274Z"
+    },
+    {
+      "data": {
+        "id": "73a3ddf4-eeca-45c2-9ecb-d70a9b69106b",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "platform-contract",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 16,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:21.477Z"
+    },
+    {
+      "data": {
+        "id": "ba68d1ce-109e-4fe6-a13b-8f50bab989d4",
+        "status": "passed",
+        "exitCode": 0,
+        "commandId": "package-component",
+        "truncated": false
+      },
+      "role": null,
+      "type": "command.completed",
+      "sequence": 17,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:21.653Z"
+    },
+    {
+      "data": {
+        "path": "rails/definition.json",
+        "digest": "9d6d0d73242e79be0f2d005cc09a000ec4f279d676443b6e8dcd57b35116b01f",
+        "reason": "rail-scope-excluded"
+      },
+      "role": null,
+      "type": "file.materialized",
+      "sequence": 18,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:21.658Z"
+    },
+    {
+      "data": {
+        "digest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d",
+        "artifactDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712"
+      },
+      "role": "developer",
+      "type": "bundle.created",
+      "sequence": 19,
+      "subjectId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "occurredAt": "2026-10-23T07:20:22.031Z"
+    }
+  ],
+  "commands": [
+    {
+      "id": "2dc1a88b-43cf-473f-a2f6-47e4b97bb4ef",
+      "commandId": "prepare-sdk",
+      "executable": "jar",
+      "args": [
+        "--extract",
+        "--file",
+        "/opt/builder/runtime-bridge.jar",
+        "BOOT-INF/classes",
+        "BOOT-INF/lib"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "8c166fa6-9921-40aa-ad2c-0cbe22aee5cc",
+      "commandId": "compile-unit",
+      "executable": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        "--release",
+        "21",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "-d",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/7060f16c-5dce-44b8-b1ee-749195d4e84b",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer/src/generated/AccountBalanceTool.java",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer/test/generated/AccountBalanceToolTest.java"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "651b5018-9619-47dd-b9ae-a81c72b043ce",
+      "commandId": "unit-test",
+      "executable": "java",
+      "args": [
+        "-ea",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/7060f16c-5dce-44b8-b1ee-749195d4e84b:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "generated.AccountBalanceToolTest"
+      ],
+      "exitCode": 1,
+      "status": "failed"
+    },
+    {
+      "id": "4a50fb79-c434-40ea-992a-b76aadc257df",
+      "commandId": "compile-unit",
+      "executable": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        "--release",
+        "21",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "-d",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/22e63269-38c9-4c94-bb3d-862601ea7c04",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer/src/generated/AccountBalanceTool.java",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer/test/generated/AccountBalanceToolTest.java"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "3de0ca59-c1b8-4148-acdc-cc50ee9971c7",
+      "commandId": "unit-test",
+      "executable": "java",
+      "args": [
+        "-ea",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/22e63269-38c9-4c94-bb3d-862601ea7c04:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "generated.AccountBalanceToolTest"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "0ee1d30b-db0f-463b-b16a-5bf840b826c7",
+      "commandId": "compile-contract",
+      "executable": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        "--release",
+        "21",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "-d",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/c2e4cac0-dc28-4bdb-bf2f-ccb81871a619",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer/src/generated/AccountBalanceTool.java",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/checks/verification/BalanceContract.java"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "159dfbfb-2c66-4b9c-91cb-bfb5f15d8460",
+      "commandId": "platform-contract",
+      "executable": "java",
+      "args": [
+        "-ea",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/c2e4cac0-dc28-4bdb-bf2f-ccb81871a619:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "verification.BalanceContract"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "94843e9e-ea0f-480e-823e-7ab0fb6ef66b",
+      "commandId": "package-component",
+      "executable": "jar",
+      "args": [
+        "--create",
+        "--file",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/c2e4cac0-dc28-4bdb-bf2f-ccb81871a619/component.jar",
+        "-C",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/c2e4cac0-dc28-4bdb-bf2f-ccb81871a619",
+        "generated",
+        "-C",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer",
+        "skills"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "f2c31c06-fcdd-41eb-963e-bee5bb6713f6",
+      "commandId": "compile-contract",
+      "executable": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        "--release",
+        "21",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "-d",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/e6f48768-6ce9-460f-bebb-5fe589d4a0a1",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer/src/generated/AccountBalanceTool.java",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/checks/verification/BalanceContract.java"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "73a3ddf4-eeca-45c2-9ecb-d70a9b69106b",
+      "commandId": "platform-contract",
+      "executable": "java",
+      "args": [
+        "-ea",
+        "-cp",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/e6f48768-6ce9-460f-bebb-5fe589d4a0a1:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/sdk/BOOT-INF/lib/*",
+        "verification.BalanceContract"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "id": "ba68d1ce-109e-4fe6-a13b-8f50bab989d4",
+      "commandId": "package-component",
+      "executable": "jar",
+      "args": [
+        "--create",
+        "--file",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/e6f48768-6ce9-460f-bebb-5fe589d4a0a1/component.jar",
+        "-C",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/control/commands/e6f48768-6ce9-460f-bebb-5fe589d4a0a1",
+        "generated",
+        "-C",
+        "/data/engineering/tasks/91d269d3-b418-4932-8300-0c970b00f1d7/workspace/developer",
+        "skills"
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    }
+  ],
+  "generatedFiles": [
+    {
+      "path": "src/generated/AccountBalanceTool.java",
+      "digest": "810d9c01d507e986bedfc8ad779229061fda9015bb8c2e020bfacbcfa16fee55",
+      "content": "package generated;\n\nimport com.openjiuwen.core.foundation.tool.Tool;\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\npublic final class AccountBalanceTool extends Tool {\n    private static final String INPUT_ERROR = \"TOOL_INPUT_CONTRACT_INVALID\";\n    private static final String RESPONSE_ERROR = \"TOOL_RESPONSE_CONTRACT_INVALID\";\n\n    private final Tool transport;\n\n    public AccountBalanceTool(Tool transport) {\n        super(transport.getCard());\n        this.transport = transport;\n    }\n\n    @Override\n    protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs) throws Exception {\n        validateInputs(inputs);\n        Object response = transport.invoke(inputs, kwargs);\n        return validateResponse(response);\n    }\n\n    private static void validateInputs(Map<String, Object> inputs) {\n        if (inputs == null || inputs.size() != 1) {\n            throw new IllegalArgumentException(INPUT_ERROR);\n        }\n        Object accountId = inputs.get(\"accountId\");\n        if (!(accountId instanceof String)) {\n            throw new IllegalArgumentException(INPUT_ERROR);\n        }\n        if (((String) accountId).isBlank()) {\n            throw new IllegalArgumentException(INPUT_ERROR);\n        }\n    }\n\n    private static Object validateResponse(Object response) {\n        if (!(response instanceof Map)) {\n            throw new IllegalStateException(RESPONSE_ERROR);\n        }\n        Map<?, ?> source = (Map<?, ?>) response;\n        Object accountId = source.get(\"accountId\");\n        Object currency = source.get(\"currency\");\n        Object availableBalanceFen = source.get(\"availableBalanceFen\");\n        Object asOf = source.get(\"asOf\");\n        if (!(accountId instanceof String)\n                || !(currency instanceof String)\n                || !(asOf instanceof String)\n                || (!(availableBalanceFen instanceof Integer) && !(availableBalanceFen instanceof Long))) {\n            throw new IllegalStateException(RESPONSE_ERROR);\n        }\n        Map<String, Object> facts = new LinkedHashMap<>();\n        facts.put(\"accountId\", accountId);\n        facts.put(\"currency\", currency);\n        facts.put(\"availableBalanceFen\", availableBalanceFen);\n        facts.put(\"asOf\", asOf);\n        return facts;\n    }\n}\n"
+    },
+    {
+      "path": "skills/balance-query/SKILL.md",
+      "digest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f",
+      "content": "---\nname: balance-query\ndescription: Query a mock account's available balance with get_account_balance; accountId is required.\n---\n\n# Balance Query\n\nUse the `get_account_balance` tool to read the current mock account balance.\n\n## Input\n\n- `accountId` (string, required): the account identifier. Ask the user for it when it is missing or blank. Do not call the tool without it.\n- Accept no other tool arguments. Never supply actor identity, endpoint, credentials or approval; those come only from trusted runtime context.\n\n## Output fields\n\n- `accountId`: the account the balance belongs to.\n- `currency`: the currency reported by the tool.\n- `availableBalanceFen`: an integer amount in fen (1 CNY = 100 fen). Report it as the returned integer; do not convert, round or estimate it.\n- `asOf`: the Mock clock timestamp reported by the tool.\n\n## Reporting rules\n\n- Report only the facts returned by `get_account_balance`; copy the values exactly.\n- If the account id is missing, ask for it before any lookup.\n- If the result is missing, malformed or unavailable, or the tool fails, say the balance is unknown. Never infer, estimate or fabricate a balance, currency or timestamp.\n- This skill is read-only; do not perform or suggest write operations.\n"
+    }
+  ],
+  "candidate": {
+    "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+    "agentId": "6aedea01-28f2-4423-9ab0-d8b01f10a9ae",
+    "createdAt": "2026-10-23T07:20:30.704Z",
+    "generated": {
+      "baselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1",
+      "sourceDigest": "d6da870862ee4579e2438d1403eca169d52216773c7f3252f6deaa2ca3fd9b63",
+      "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+      "runtimeArtifact": {
+        "kind": "generated-component",
+        "generated": {
+          "kind": "generated-tool-skill@1",
+          "classes": {
+            "generated/AccountBalanceTool.class": "bfe189ce4ce9c332e9be47e3ee88c5a1d2585b268cf396bca85d28484034b369"
+          },
+          "toolName": "get_account_balance",
+          "skillName": "balance-query",
+          "skillPath": "skills/balance-query/SKILL.md",
+          "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+          "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+          "operationId": "getAccountBalance",
+          "skillDigest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f",
+          "toolClassName": "generated.AccountBalanceTool",
+          "componentDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712",
+          "sdkArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
+          "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+        },
+        "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+        "sdkArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065"
+      },
+      "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7",
+      "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+    },
+    "provenance": "generated-component",
+    "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+    "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+    "runtimeSpec": {
+      "agent": {
+        "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+        "type": "DeepAgent",
+        "rails": [
+          "audit",
+          "tool-allowlist"
+        ],
+        "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+        "maxIterations": 4
+      },
+      "tools": [
+        {
+          "name": "get_account_balance",
+          "protocol": "http",
+          "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+          "inputFields": {
+            "accountId": "string"
+          },
+          "operationId": "getAccountBalance",
+          "toolVersion": "account-balance-http@1",
+          "connectionRef": "enterprise-mock-http@1",
+          "responseFields": {
+            "asOf": "string",
+            "currency": "string",
+            "accountId": "string",
+            "availableBalanceFen": "integer"
+          }
+        }
+      ]
+    },
+    "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+    "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+    "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542"
+  },
+  "validationId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6",
+  "validation": {
+    "id": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6",
+    "cases": [
+      {
+        "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+        "state": "completed",
+        "caseId": "TC-BAL-001",
+        "requestId": "3b74e3ad-7fa8-412a-80ec-b2bf8865418b",
+        "startedAt": "2026-10-23T07:20:32.294Z",
+        "testDeploymentId": "99ce6e0d-fbcd-4265-bb20-8b573fee7f37"
+      },
+      {
+        "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+        "state": "completed",
+        "caseId": "TC-BAL-002",
+        "requestId": "eaa73f63-ad54-41a2-9f34-0081fe9747de",
+        "startedAt": "2026-10-23T07:20:56.490Z",
+        "testDeploymentId": "d80c73dd-ec66-4d60-b342-3503d3797d6b"
+      },
+      {
+        "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+        "state": "completed",
+        "caseId": "TC-BAL-003",
+        "requestId": "c212bcaa-9114-408c-9c12-5976fa5941fc",
+        "startedAt": "2026-10-23T07:21:19.649Z",
+        "testDeploymentId": "6eff6f6d-ca46-42df-9212-b5a8efe6e01b"
+      }
+    ],
+    "status": "completed",
+    "binding": {
+      "candidate": {
+        "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+        "provenance": "generated-component",
+        "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+        "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+        "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+        "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+      },
+      "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+      "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+      "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+      "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+      "compatibilityKey": "574e95cd35d2999a8d16a6a4fd3b590a91c53be9f63b954f493781c5685821e7"
+    },
+    "results": [
+      {
+        "caseId": "TC-BAL-001",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": "account-balance@1",
+            "ruleId": "balance-report-schema",
+            "status": "passed",
+            "expected": "account-balance@1"
+          },
+          {
+            "actual": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            },
+            "ruleId": "balance-facts",
+            "status": "passed",
+            "expected": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            }
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "0cf11c73-c90a-4d05-a152-6f5a1d029b85",
+        "evidenceDigest": "f13e12fa843b371cdf53074e3dea00056754b72fc62b9d37fbd0e42103236b70"
+      },
+      {
+        "caseId": "TC-BAL-002",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "asks-for-account-id",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "all-business-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "0d8131c9-0762-41be-a2c7-c6cf7440a305",
+        "evidenceDigest": "ad33c3557960a1d57168277d4b9d3e8b45aef1e11bf5ca08460009b0ebd1a7fd"
+      },
+      {
+        "caseId": "TC-BAL-003",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "tool-error-evidence",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "failure-output-no-facts",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "bc683564-3c11-4461-a2d9-d60da388e688",
+        "evidenceDigest": "f217bc15af12e66e700f4b7a49b214cf7a89eb31764bd14f9dcca3de67143ee1"
+      }
+    ],
+    "verdict": "passed",
+    "createdAt": "2026-10-23T07:20:31.725Z",
+    "updatedAt": "2026-10-23T07:21:49.554Z",
+    "baselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1",
+    "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+    "inputDigest": "590ff71ed2b5a4806172b14679d5b007eff3e6739b3acb7b258491f085f94ec3",
+    "allowMockWrites": false,
+    "clientRequestId": "324cc8dd-74a2-4d13-854e-d6f9d4a1d6fd"
+  },
+  "report": {
+    "cases": [
+      {
+        "caseId": "TC-BAL-001",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": "account-balance@1",
+            "ruleId": "balance-report-schema",
+            "status": "passed",
+            "expected": "account-balance@1"
+          },
+          {
+            "actual": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            },
+            "ruleId": "balance-facts",
+            "status": "passed",
+            "expected": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            }
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "0cf11c73-c90a-4d05-a152-6f5a1d029b85",
+        "evidenceDigest": "f13e12fa843b371cdf53074e3dea00056754b72fc62b9d37fbd0e42103236b70"
+      },
+      {
+        "caseId": "TC-BAL-002",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "asks-for-account-id",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "all-business-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "0d8131c9-0762-41be-a2c7-c6cf7440a305",
+        "evidenceDigest": "ad33c3557960a1d57168277d4b9d3e8b45aef1e11bf5ca08460009b0ebd1a7fd"
+      },
+      {
+        "caseId": "TC-BAL-003",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "tool-error-evidence",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "failure-output-no-facts",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "bc683564-3c11-4461-a2d9-d60da388e688",
+        "evidenceDigest": "f217bc15af12e66e700f4b7a49b214cf7a89eb31764bd14f9dcca3de67143ee1"
+      }
+    ],
+    "binding": {
+      "candidate": {
+        "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+        "provenance": "generated-component",
+        "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+        "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+        "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+        "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+      },
+      "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+      "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+      "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+      "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+      "compatibilityKey": "574e95cd35d2999a8d16a6a4fd3b590a91c53be9f63b954f493781c5685821e7"
+    },
+    "reasons": [],
+    "verdict": "passed",
+    "createdAt": "2026-10-23T07:21:49.549Z",
+    "baselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1",
+    "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+    "executionId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6"
+  },
+  "validationEvidence": [
+    {
+      "run": {
+        "id": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+        "input": "查询账户 A1001 的可用余额、币种和更新时间。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"kind\":\"account-balance\",\"accountId\":\"A1001\",\"currency\":\"CNY\",\"asOf\":\"2026-10-21T08:00:00.000Z\",\"availableBalanceFen\":1000000}"
+          },
+          "conversation_id": "cae2ce09-5250-42cc-b160-ea92ef52ab3a"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-23T07:20:46.887Z",
+        "updatedAt": "2026-10-23T07:20:54.421Z",
+        "diagnostic": "",
+        "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+        "inputDigest": "284cd456ff3d5efc67a123d6af42ba8b31369999d517756e93a93ec05e738fa4",
+        "runtimeSpec": {
+          "agent": {
+            "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "type": "DeepAgent",
+            "rails": [
+              "audit",
+              "tool-allowlist"
+            ],
+            "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+            "maxIterations": 4
+          },
+          "tools": [
+            {
+              "name": "get_account_balance",
+              "protocol": "http",
+              "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+              "inputFields": {
+                "accountId": "string"
+              },
+              "operationId": "getAccountBalance",
+              "toolVersion": "account-balance-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "responseFields": {
+                "asOf": "string",
+                "currency": "string",
+                "accountId": "string",
+                "availableBalanceFen": "integer"
+              }
+            }
+          ]
+        },
+        "deploymentId": "58c99ce4-8dcf-4746-bc1e-93e18f4a12f8",
+        "invocationId": "3b74e3ad-7fa8-412a-80ec-b2bf8865418b",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "https://api.deepseek.com/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+          "executionMode": "live-mock"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "testDeploymentId": "99ce6e0d-fbcd-4265-bb20-8b573fee7f37"
+        },
+        "validationId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6",
+        "environmentId": "71ab3e4d-be5d-4e6e-aba5-72c591cadf68",
+        "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+        "conversationId": "74cb6683-98cd-44b9-8f17-edbe878cc615",
+        "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+        "cancelRequested": false,
+        "clientRequestId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+        "externalEvidence": [
+          {
+            "seq": 381,
+            "input": {
+              "accountId": "A1001"
+            },
+            "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+            "result": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-23T07:20:52.365Z",
+            "operation": "getAccountBalance",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 381,
+          "input": {
+            "accountId": "A1001"
+          },
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "result": {
+            "asOf": "2026-10-21T08:00:00.000Z",
+            "currency": "CNY",
+            "accountId": "A1001",
+            "availableBalanceFen": 1000000
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-23T07:20:52.365Z",
+          "operation": "getAccountBalance",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-23T07:20:46.889Z",
+          "seq": 165979,
+          "data": {
+            "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+            "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542"
+          },
+          "type": "run.queued",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-23T07:20:48.747Z",
+          "seq": 165980,
+          "data": {
+            "deploymentId": "58c99ce4-8dcf-4746-bc1e-93e18f4a12f8"
+          },
+          "type": "run.running",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-23T07:20:50.601Z",
+          "seq": 165981,
+          "data": {
+            "time": "2026-10-23T07:20:49.966031930Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:50.608Z",
+          "seq": 165982,
+          "data": {
+            "time": "2026-10-23T07:20:50.036086732Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:51.321Z",
+          "seq": 165985,
+          "data": {
+            "time": "2026-10-23T07:20:51.257117398Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:51.324Z",
+          "seq": 165986,
+          "data": {
+            "time": "2026-10-23T07:20:51.261917386Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:51.326Z",
+          "seq": 165987,
+          "data": {
+            "time": "2026-10-23T07:20:51.262689203Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:51.328Z",
+          "seq": 165988,
+          "data": {
+            "time": "2026-10-23T07:20:51.266489394Z",
+            "event": {
+              "event": "skill_loaded",
+              "skill": "balance-query",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "skillDigest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f",
+              "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:51.330Z",
+          "seq": 165989,
+          "data": {
+            "time": "2026-10-23T07:20:51.270955369Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "after_tool_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:51.332Z",
+          "seq": 165990,
+          "data": {
+            "time": "2026-10-23T07:20:51.276420328Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:52.855Z",
+          "seq": 166007,
+          "data": {
+            "time": "2026-10-23T07:20:52.341786031Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:52.858Z",
+          "seq": 166008,
+          "data": {
+            "time": "2026-10-23T07:20:52.343972065Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_account_balance",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:52.861Z",
+          "seq": 166009,
+          "data": {
+            "time": "2026-10-23T07:20:52.345057498Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_account_balance",
+              "event": "before_tool_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:52.864Z",
+          "seq": 166010,
+          "data": {
+            "time": "2026-10-23T07:20:52.346227167Z",
+            "event": {
+              "event": "generated_tool_invoked",
+              "className": "generated.AccountBalanceTool",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "componentDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712",
+              "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:52.867Z",
+          "seq": 166011,
+          "data": {
+            "time": "2026-10-23T07:20:52.375763116Z",
+            "event": {
+              "tool": "get_account_balance",
+              "event": "tool_call",
+              "status": "succeeded",
+              "protocol": "http",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "durationMs": 28,
+              "toolVersion": "account-balance-http@1",
+              "resultDigest": "f6c458850406357469a02f8868252989051cd70064cb7c5cd7356b0303b01238",
+              "connectionRef": "enterprise-mock-http@1",
+              "parameterDigest": "251359f17f9573fae47a56e72ace10ec4ca4b3518685a1adb8a43a71266353ad"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:52.870Z",
+          "seq": 166012,
+          "data": {
+            "time": "2026-10-23T07:20:52.376851126Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_account_balance",
+              "event": "after_tool_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:52.873Z",
+          "seq": 166013,
+          "data": {
+            "time": "2026-10-23T07:20:52.379168814Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:53.644Z",
+          "seq": 166029,
+          "data": {
+            "time": "2026-10-23T07:20:53.069696367Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:53.647Z",
+          "seq": 166030,
+          "data": {
+            "time": "2026-10-23T07:20:53.070715832Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"kind\":\"account-balance\",\"accountId\":\"A1001\",\"currency\":\"CNY\",\"asOf\":\"2026-10-21T08:00:00.000Z\",\"availableBalanceFen\":1000000}",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:53.650Z",
+          "seq": 166031,
+          "data": {
+            "time": "2026-10-23T07:20:53.076854867Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:20:54.417Z",
+          "seq": 166050,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.succeeded",
+          "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/99ce6e0d-fbcd-4265-bb20-8b573fee7f37",
+        "candidate": {
+          "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "provenance": "generated-component",
+          "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+          "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+          "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+          "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+        },
+        "requestId": "3b74e3ad-7fa8-412a-80ec-b2bf8865418b",
+        "loadedManifest": {
+          "id": "58c99ce4-8dcf-4746-bc1e-93e18f4a12f8",
+          "port": 46705,
+          "bootId": "868a7eea-648b-40e8-847c-49ebfbfa7b05",
+          "status": "stopped",
+          "createdAt": "2026-10-23T07:20:36.111Z",
+          "generated": {
+            "kind": "generated-tool-skill@1",
+            "classes": {
+              "generated/AccountBalanceTool.class": "bfe189ce4ce9c332e9be47e3ee88c5a1d2585b268cf396bca85d28484034b369"
+            },
+            "toolName": "get_account_balance",
+            "skillName": "balance-query",
+            "skillPath": "skills/balance-query/SKILL.md",
+            "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+            "operationId": "getAccountBalance",
+            "skillDigest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f",
+            "toolClassName": "generated.AccountBalanceTool",
+            "componentDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712",
+            "sdkArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
+            "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+          },
+          "processId": 5001,
+          "updatedAt": "2026-10-23T07:20:55.523Z",
+          "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "https://api.deepseek.com/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+            "executionMode": "live-mock"
+          },
+          "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87"
+        },
+        "testDeployment": {
+          "id": "99ce6e0d-fbcd-4265-bb20-8b573fee7f37",
+          "status": "stopped",
+          "agentId": "6aedea01-28f2-4423-9ab0-d8b01f10a9ae",
+          "binding": {
+            "candidate": {
+              "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+              "provenance": "generated-component",
+              "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+              "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+              "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+              "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+            "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+            "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+            "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+            "compatibilityKey": "574e95cd35d2999a8d16a6a4fd3b590a91c53be9f63b954f493781c5685821e7"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-23T07:20:33.982Z",
+          "expiresAt": "2026-10-23T07:35:33.982Z",
+          "updatedAt": "2026-10-23T07:20:55.538Z",
+          "diagnostic": "",
+          "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+          "validation": {
+            "input": "查询账户 A1001 的可用余额、币种和更新时间。",
+            "runId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+            "caseId": "TC-BAL-001",
+            "actorId": "U1001",
+            "executionId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6"
+          },
+          "candidateId": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "inputDigest": "8ac9bb25805cf0b3f389e52fdd68cdb39ea163fa5e488996a25127f4925037ad",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist"
+              ],
+              "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+              "maxIterations": 4
+            },
+            "tools": [
+              {
+                "name": "get_account_balance",
+                "protocol": "http",
+                "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+                "inputFields": {
+                  "accountId": "string"
+                },
+                "operationId": "getAccountBalance",
+                "toolVersion": "account-balance-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "asOf": "string",
+                  "currency": "string",
+                  "accountId": "string",
+                  "availableBalanceFen": "integer"
+                }
+              }
+            ]
+          },
+          "deploymentId": "58c99ce4-8dcf-4746-bc1e-93e18f4a12f8",
+          "environmentId": "71ab3e4d-be5d-4e6e-aba5-72c591cadf68",
+          "clientRequestId": "cae2ce09-5250-42cc-b160-ea92ef52ab3a",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1"
+        },
+        "completionChecks": {
+          "runTerminal": true,
+          "specMatches": true,
+          "loadedStopped": true,
+          "artifactMatches": true,
+          "deploymentHealthy": true,
+          "deploymentStopped": true,
+          "validationMatches": true,
+          "runArtifactMatches": true,
+          "modelProfileMatches": true,
+          "environmentIdMatches": true,
+          "environmentConfigMatches": true,
+          "environmentRevisionValid": true
+        }
+      }
+    },
+    {
+      "run": {
+        "id": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+        "input": "查询我的可用余额。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}"
+          },
+          "conversation_id": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-23T07:21:11.098Z",
+        "updatedAt": "2026-10-23T07:21:17.639Z",
+        "diagnostic": "",
+        "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+        "inputDigest": "d02fd6c7953592905471ae4e9b946a36b5c97e9414d09a3c5664e4ac3a53d1bf",
+        "runtimeSpec": {
+          "agent": {
+            "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "type": "DeepAgent",
+            "rails": [
+              "audit",
+              "tool-allowlist"
+            ],
+            "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+            "maxIterations": 4
+          },
+          "tools": [
+            {
+              "name": "get_account_balance",
+              "protocol": "http",
+              "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+              "inputFields": {
+                "accountId": "string"
+              },
+              "operationId": "getAccountBalance",
+              "toolVersion": "account-balance-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "responseFields": {
+                "asOf": "string",
+                "currency": "string",
+                "accountId": "string",
+                "availableBalanceFen": "integer"
+              }
+            }
+          ]
+        },
+        "deploymentId": "39dd27b1-a0d7-47c6-8e37-7f2785a5cf89",
+        "invocationId": "eaa73f63-ad54-41a2-9f34-0081fe9747de",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "https://api.deepseek.com/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+          "executionMode": "live-mock"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "testDeploymentId": "d80c73dd-ec66-4d60-b342-3503d3797d6b"
+        },
+        "validationId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6",
+        "environmentId": "2aedbb0e-d3c2-4649-91e7-2cff046c54da",
+        "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+        "conversationId": "a77f6e65-c0f0-4580-9c8e-284c7d938735",
+        "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+        "cancelRequested": false,
+        "clientRequestId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+        "externalEvidence": [],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [],
+      "events": [
+        {
+          "at": "2026-10-23T07:21:11.099Z",
+          "seq": 166051,
+          "data": {
+            "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+            "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542"
+          },
+          "type": "run.queued",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-23T07:21:13.272Z",
+          "seq": 166052,
+          "data": {
+            "deploymentId": "39dd27b1-a0d7-47c6-8e37-7f2785a5cf89"
+          },
+          "type": "run.running",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-23T07:21:15.401Z",
+          "seq": 166053,
+          "data": {
+            "time": "2026-10-23T07:21:15.016660974Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:15.406Z",
+          "seq": 166054,
+          "data": {
+            "time": "2026-10-23T07:21:15.066253111Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:16.105Z",
+          "seq": 166057,
+          "data": {
+            "time": "2026-10-23T07:21:15.967732795Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:16.108Z",
+          "seq": 166058,
+          "data": {
+            "time": "2026-10-23T07:21:15.968648605Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}",
+              "sessionId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:16.112Z",
+          "seq": 166059,
+          "data": {
+            "time": "2026-10-23T07:21:15.970827683Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:17.638Z",
+          "seq": 166070,
+          "data": {
+            "externalCallCount": 0
+          },
+          "type": "run.succeeded",
+          "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/d80c73dd-ec66-4d60-b342-3503d3797d6b",
+        "candidate": {
+          "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "provenance": "generated-component",
+          "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+          "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+          "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+          "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+        },
+        "requestId": "eaa73f63-ad54-41a2-9f34-0081fe9747de",
+        "loadedManifest": {
+          "id": "39dd27b1-a0d7-47c6-8e37-7f2785a5cf89",
+          "port": 33677,
+          "bootId": "868a7eea-648b-40e8-847c-49ebfbfa7b05",
+          "status": "stopped",
+          "createdAt": "2026-10-23T07:21:00.660Z",
+          "generated": {
+            "kind": "generated-tool-skill@1",
+            "classes": {
+              "generated/AccountBalanceTool.class": "bfe189ce4ce9c332e9be47e3ee88c5a1d2585b268cf396bca85d28484034b369"
+            },
+            "toolName": "get_account_balance",
+            "skillName": "balance-query",
+            "skillPath": "skills/balance-query/SKILL.md",
+            "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+            "operationId": "getAccountBalance",
+            "skillDigest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f",
+            "toolClassName": "generated.AccountBalanceTool",
+            "componentDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712",
+            "sdkArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
+            "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+          },
+          "processId": 5126,
+          "updatedAt": "2026-10-23T07:21:18.695Z",
+          "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "https://api.deepseek.com/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+            "executionMode": "live-mock"
+          },
+          "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87"
+        },
+        "testDeployment": {
+          "id": "d80c73dd-ec66-4d60-b342-3503d3797d6b",
+          "status": "stopped",
+          "agentId": "6aedea01-28f2-4423-9ab0-d8b01f10a9ae",
+          "binding": {
+            "candidate": {
+              "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+              "provenance": "generated-component",
+              "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+              "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+              "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+              "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+            "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+            "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+            "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+            "compatibilityKey": "574e95cd35d2999a8d16a6a4fd3b590a91c53be9f63b954f493781c5685821e7"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-23T07:20:57.707Z",
+          "expiresAt": "2026-10-23T07:35:57.707Z",
+          "updatedAt": "2026-10-23T07:21:18.711Z",
+          "diagnostic": "",
+          "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+          "validation": {
+            "input": "查询我的可用余额。",
+            "runId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+            "caseId": "TC-BAL-002",
+            "actorId": "U1001",
+            "executionId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6"
+          },
+          "candidateId": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "inputDigest": "a783d3a6340a5d2d03e32a6c26f74908032ba34392932bd1ed39986e02bfab26",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist"
+              ],
+              "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+              "maxIterations": 4
+            },
+            "tools": [
+              {
+                "name": "get_account_balance",
+                "protocol": "http",
+                "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+                "inputFields": {
+                  "accountId": "string"
+                },
+                "operationId": "getAccountBalance",
+                "toolVersion": "account-balance-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "asOf": "string",
+                  "currency": "string",
+                  "accountId": "string",
+                  "availableBalanceFen": "integer"
+                }
+              }
+            ]
+          },
+          "deploymentId": "39dd27b1-a0d7-47c6-8e37-7f2785a5cf89",
+          "environmentId": "2aedbb0e-d3c2-4649-91e7-2cff046c54da",
+          "clientRequestId": "1e5bdc05-9b4a-46b3-882a-8c3e175e0c74",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1"
+        },
+        "completionChecks": {
+          "runTerminal": true,
+          "specMatches": true,
+          "loadedStopped": true,
+          "artifactMatches": true,
+          "deploymentHealthy": true,
+          "deploymentStopped": true,
+          "validationMatches": true,
+          "runArtifactMatches": true,
+          "modelProfileMatches": true,
+          "environmentIdMatches": true,
+          "environmentConfigMatches": true,
+          "environmentRevisionValid": true
+        }
+      }
+    },
+    {
+      "run": {
+        "id": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+        "input": "查询账户 A1001 的余额。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "{\"kind\":\"tool-error\",\"code\":\"TOOL_TIMEOUT\",\"message\":\"查询超时，账户 A1001 的余额未知，请稍后重试\"}"
+          },
+          "conversation_id": "514a335f-66ae-4f42-b1ac-2ceaf01685d9"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-23T07:21:35.311Z",
+        "updatedAt": "2026-10-23T07:21:47.858Z",
+        "diagnostic": "",
+        "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+        "inputDigest": "662f206eee9726268c1530cb4bfaf196c124d9db49c2f85abf7b6ef5057524e0",
+        "runtimeSpec": {
+          "agent": {
+            "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "type": "DeepAgent",
+            "rails": [
+              "audit",
+              "tool-allowlist"
+            ],
+            "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+            "maxIterations": 4
+          },
+          "tools": [
+            {
+              "name": "get_account_balance",
+              "protocol": "http",
+              "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+              "inputFields": {
+                "accountId": "string"
+              },
+              "operationId": "getAccountBalance",
+              "toolVersion": "account-balance-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "responseFields": {
+                "asOf": "string",
+                "currency": "string",
+                "accountId": "string",
+                "availableBalanceFen": "integer"
+              }
+            }
+          ]
+        },
+        "deploymentId": "94bdc058-52cf-4954-a9ad-e7ba32493d22",
+        "invocationId": "c212bcaa-9114-408c-9c12-5976fa5941fc",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "https://api.deepseek.com/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+          "executionMode": "live-mock"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "testDeploymentId": "6eff6f6d-ca46-42df-9212-b5a8efe6e01b"
+        },
+        "validationId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6",
+        "environmentId": "d87a7970-4ddf-44b2-98fd-1cb3e7998a5f",
+        "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+        "conversationId": "d5b579bf-232a-48f5-b125-88b6a6fdf000",
+        "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+        "cancelRequested": false,
+        "clientRequestId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+        "externalEvidence": [
+          {
+            "seq": 382,
+            "input": {
+              "accountId": "A1001"
+            },
+            "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+            "result": {
+              "asOf": "2026-10-21T08:00:00.000Z",
+              "currency": "CNY",
+              "accountId": "A1001",
+              "availableBalanceFen": 1000000
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-23T07:21:40.036Z",
+            "operation": "getAccountBalance",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "read-timeout"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 382,
+          "input": {
+            "accountId": "A1001"
+          },
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "result": {
+            "asOf": "2026-10-21T08:00:00.000Z",
+            "currency": "CNY",
+            "accountId": "A1001",
+            "availableBalanceFen": 1000000
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-23T07:21:40.036Z",
+          "operation": "getAccountBalance",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-23T07:21:35.311Z",
+          "seq": 166071,
+          "data": {
+            "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+            "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542"
+          },
+          "type": "run.queued",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-23T07:21:36.614Z",
+          "seq": 166072,
+          "data": {
+            "deploymentId": "94bdc058-52cf-4954-a9ad-e7ba32493d22"
+          },
+          "type": "run.running",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-23T07:21:38.768Z",
+          "seq": 166073,
+          "data": {
+            "time": "2026-10-23T07:21:38.310363280Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:38.772Z",
+          "seq": 166074,
+          "data": {
+            "time": "2026-10-23T07:21:38.356865615Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:39.546Z",
+          "seq": 166077,
+          "data": {
+            "time": "2026-10-23T07:21:39.259900234Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:39.551Z",
+          "seq": 166078,
+          "data": {
+            "time": "2026-10-23T07:21:39.306616671Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:39.555Z",
+          "seq": 166079,
+          "data": {
+            "time": "2026-10-23T07:21:39.308370326Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:39.559Z",
+          "seq": 166080,
+          "data": {
+            "time": "2026-10-23T07:21:39.317816257Z",
+            "event": {
+              "event": "skill_loaded",
+              "skill": "balance-query",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "skillDigest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f",
+              "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:39.563Z",
+          "seq": 166081,
+          "data": {
+            "time": "2026-10-23T07:21:39.327074945Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "after_tool_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:39.568Z",
+          "seq": 166082,
+          "data": {
+            "time": "2026-10-23T07:21:39.335725425Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:40.287Z",
+          "seq": 166091,
+          "data": {
+            "time": "2026-10-23T07:21:40.007033346Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:40.291Z",
+          "seq": 166092,
+          "data": {
+            "time": "2026-10-23T07:21:40.009588821Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_account_balance",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:40.294Z",
+          "seq": 166093,
+          "data": {
+            "time": "2026-10-23T07:21:40.010983979Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_account_balance",
+              "event": "before_tool_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:40.297Z",
+          "seq": 166094,
+          "data": {
+            "time": "2026-10-23T07:21:40.012210443Z",
+            "event": {
+              "event": "generated_tool_invoked",
+              "className": "generated.AccountBalanceTool",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "componentDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712",
+              "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:45.576Z",
+          "seq": 166179,
+          "data": {
+            "time": "2026-10-23T07:21:45.022866058Z",
+            "event": {
+              "tool": "get_account_balance",
+              "event": "tool_call",
+              "status": "failed",
+              "protocol": "http",
+              "errorCode": "TOOL_TIMEOUT",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "durationMs": 5009,
+              "toolVersion": "account-balance-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "parameterDigest": "251359f17f9573fae47a56e72ace10ec4ca4b3518685a1adb8a43a71266353ad"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:45.579Z",
+          "seq": 166180,
+          "data": {
+            "time": "2026-10-23T07:21:45.025732095Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_account_balance",
+              "event": "tool_error",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:45.582Z",
+          "seq": 166181,
+          "data": {
+            "time": "2026-10-23T07:21:45.026488125Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_account_balance",
+              "event": "after_tool_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:45.585Z",
+          "seq": 166182,
+          "data": {
+            "time": "2026-10-23T07:21:45.039591061Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:46.365Z",
+          "seq": 166199,
+          "data": {
+            "time": "2026-10-23T07:21:45.839353917Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:46.370Z",
+          "seq": 166200,
+          "data": {
+            "time": "2026-10-23T07:21:45.842635244Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "{\"kind\":\"tool-error\",\"code\":\"TOOL_TIMEOUT\",\"message\":\"查询超时，账户 A1001 的余额未知，请稍后重试\"}",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:46.374Z",
+          "seq": 166201,
+          "data": {
+            "time": "2026-10-23T07:21:45.845596363Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-23T07:21:47.858Z",
+          "seq": 166240,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.succeeded",
+          "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/6eff6f6d-ca46-42df-9212-b5a8efe6e01b",
+        "candidate": {
+          "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "provenance": "generated-component",
+          "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+          "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+          "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+          "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+        },
+        "requestId": "c212bcaa-9114-408c-9c12-5976fa5941fc",
+        "loadedManifest": {
+          "id": "94bdc058-52cf-4954-a9ad-e7ba32493d22",
+          "port": 38871,
+          "bootId": "868a7eea-648b-40e8-847c-49ebfbfa7b05",
+          "status": "stopped",
+          "createdAt": "2026-10-23T07:21:23.799Z",
+          "generated": {
+            "kind": "generated-tool-skill@1",
+            "classes": {
+              "generated/AccountBalanceTool.class": "bfe189ce4ce9c332e9be47e3ee88c5a1d2585b268cf396bca85d28484034b369"
+            },
+            "toolName": "get_account_balance",
+            "skillName": "balance-query",
+            "skillPath": "skills/balance-query/SKILL.md",
+            "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+            "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+            "operationId": "getAccountBalance",
+            "skillDigest": "42e7d1f427cfc9081dae585d129a11ce3ab2dcb25f3af4f7bf8d9f7daaf03e6f",
+            "toolClassName": "generated.AccountBalanceTool",
+            "componentDigest": "9372951f776ff095cf4d5a4ccedffa42390381c139d241dc54091abe1949e712",
+            "sdkArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
+            "developmentBundleDigest": "4dba47b09538754ed150f2dab3ed3ef5522da1f40d22c5ad2288b7d0447ee34d"
+          },
+          "processId": 5235,
+          "updatedAt": "2026-10-23T07:21:48.729Z",
+          "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "https://api.deepseek.com/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+            "executionMode": "live-mock"
+          },
+          "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87"
+        },
+        "testDeployment": {
+          "id": "6eff6f6d-ca46-42df-9212-b5a8efe6e01b",
+          "status": "stopped",
+          "agentId": "6aedea01-28f2-4423-9ab0-d8b01f10a9ae",
+          "binding": {
+            "candidate": {
+              "id": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+              "provenance": "generated-component",
+              "specDigest": "edbfcf1a325fffcbff57a4e4a8fb4bc3a3b71ebf798d99e60a041d4a2c4887dc",
+              "bundleDigest": "8adefa932a189ff47420112b25b62f1287cf0608e6162e6b3eed717ce104dea6",
+              "testPlanDigest": "c6857acf39171024877cde3acd900479d51f6bb5ae5a9fd61c5d3f943facfb13",
+              "developmentJobId": "91d269d3-b418-4932-8300-0c970b00f1d7"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "4f69428de2ec65d4637ac47a7b4d0596c55c8abcf2453c6381effae3c7e76244",
+            "artifactDigest": "3fab9be6ae628f743142e75847b97dc73a5bfd87cd9c98a6c2adff678db0ae87",
+            "baselineDigest": "80713f012c39187d47ae2cbc194f0f09ad618092c12b9074e6967259dcf321ec",
+            "snapshotDigest": "55047fe8ae60a4bcdb3376d8be268a96cdd7a3f898bad10049f794ee6a394542",
+            "compatibilityKey": "574e95cd35d2999a8d16a6a4fd3b590a91c53be9f63b954f493781c5685821e7"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-23T07:21:21.381Z",
+          "expiresAt": "2026-10-23T07:36:21.381Z",
+          "updatedAt": "2026-10-23T07:21:48.745Z",
+          "diagnostic": "",
+          "snapshotId": "d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+          "validation": {
+            "input": "查询账户 A1001 的余额。",
+            "runId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+            "caseId": "TC-BAL-003",
+            "actorId": "U1001",
+            "executionId": "729ad4b8-807d-4f9f-be6e-c88daf5ec8d6"
+          },
+          "candidateId": "c9579080-d4d5-4035-994e-0eba5d4d9c57",
+          "inputDigest": "c9a1daecd06810f3325a5f9a91a5419779c74f69098f6853c64c134966792866",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-d8e50a1f-67ff-4925-92c7-b21c3e8bfa40",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist"
+              ],
+              "systemPrompt": "你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"accountId\"],\"message\":\"请提供账户编号\"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。",
+              "maxIterations": 4
+            },
+            "tools": [
+              {
+                "name": "get_account_balance",
+                "protocol": "http",
+                "description": "查询模拟账户可用余额；accountId 必填。只报告接口返回值，不推断余额或收益。",
+                "inputFields": {
+                  "accountId": "string"
+                },
+                "operationId": "getAccountBalance",
+                "toolVersion": "account-balance-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "asOf": "string",
+                  "currency": "string",
+                  "accountId": "string",
+                  "availableBalanceFen": "integer"
+                }
+              }
+            ]
+          },
+          "deploymentId": "94bdc058-52cf-4954-a9ad-e7ba32493d22",
+          "environmentId": "d87a7970-4ddf-44b2-98fd-1cb3e7998a5f",
+          "clientRequestId": "514a335f-66ae-4f42-b1ac-2ceaf01685d9",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "read-timeout"
+          },
+          "requirementBaselineId": "580632fb-d812-46d1-bab4-f3b11f996ce1"
+        },
+        "completionChecks": {
+          "runTerminal": true,
+          "specMatches": true,
+          "loadedStopped": true,
+          "artifactMatches": true,
+          "deploymentHealthy": true,
+          "deploymentStopped": true,
+          "validationMatches": true,
+          "runArtifactMatches": true,
+          "modelProfileMatches": true,
+          "environmentIdMatches": true,
+          "environmentConfigMatches": true,
+          "environmentRevisionValid": true
+        }
+      }
+    }
+  ],
+  "finishedAt": "2026-10-23T07:21:50.251Z",
+  "finalTargetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ]
+}

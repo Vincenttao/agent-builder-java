@@ -16,7 +16,7 @@ export class RunnerError extends Error {
   constructor(public readonly code: string, public readonly status = 409) { super(code); }
 }
 export interface DeploymentRecord {
-  id: string; bootId: string; status: 'starting' | 'ready' | 'stopping' | 'stopped' | 'failed' | 'interrupted';
+  id: string; bootId: string; status: 'starting' | 'ready' | 'stopping' | 'stopped' | 'failed' | 'interrupted'; processId?: number;
   artifactDigest: string; specDigest: string; createdAt: string; updatedAt: string; port?: number; error?: string;
   modelProfile?: RuntimeModelProfile;
   generated?: GeneratedComponentManifest;
@@ -49,6 +49,7 @@ export class JavaDeploymentManager {
   readonly artifacts: RuntimeArtifactRegistry;
   private entries = new Map<string, Entry>();
   private retired = new Set<string>();
+  private restartCandidates = new Set<string>();
   constructor(readonly options: DeploymentOptions) { this.modelProfile = runtimeModelProfile(options.modelBase); this.artifacts=new RuntimeArtifactRegistry(options.root,options.artifactPath); }
   async initialize() {
     await mkdir(join(this.options.root, 'deployments'), { recursive: true });
@@ -68,10 +69,17 @@ export class JavaDeploymentManager {
       try { record = JSON.parse(await readFile(path, 'utf8')) as DeploymentRecord; }
       catch { throw new RunnerError('DEPLOYMENT_STATE_CORRUPT', 503); }
       if (record.id !== name) throw new RunnerError('DEPLOYMENT_STATE_CORRUPT', 503);
-      const interrupted = ['starting', 'ready', 'stopping'].includes(record.status);
+      const desiredPath=join(this.options.root,'deployments',name,'desired.json');
+      let desired:'running'|'stopped';
+      let hasDesiredRecord=true;
+      try{desired=(JSON.parse(await readFile(desiredPath,'utf8')) as {state:'running'|'stopped'}).state;}
+      catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw new RunnerError('DEPLOYMENT_STATE_CORRUPT',503);hasDesiredRecord=false;desired=this.retired.has(name)||record.status!=='ready'?'stopped':'running';}
+      if(!['running','stopped'].includes(desired))throw new RunnerError('DEPLOYMENT_STATE_CORRUPT',503);
+      const interrupted = ['starting', 'ready', 'stopping'].includes(record.status)||(record.status==='stopped'&&desired==='running');
       if (interrupted) {
         record.status = 'interrupted'; record.error = 'RUNNER_RESTART_REQUIRES_RECONCILIATION';
       }
+      if(desired==='running'&&!this.retired.has(name)&&(['starting','ready','stopping','interrupted'].includes(record.status)||(hasDesiredRecord&&record.status==='stopped')))this.restartCandidates.add(name);
       const entry: Entry = { record, token: '', stopRequested: false, querying: false, cancelledSessions: new Set(), saving: Promise.resolve(), logging: Promise.resolve() };
       this.entries.set(name, entry); if (interrupted) await this.persist(entry);
     }
@@ -86,7 +94,12 @@ export class JavaDeploymentManager {
     if (old) {
       if (old.record.specDigest !== specDigest || old.record.artifactDigest !== expectedArtifactDigest) throw new RunnerError('DEPLOYMENT_INPUT_CONFLICT');
       if (old.starting) await old.starting;
-      return structuredClone(old.record);
+      if(old.record.status==='ready')return structuredClone(old.record);
+      const recoverable=old.record.status==='stopped'||old.record.status==='interrupted'||old.record.status==='failed'&&old.record.error==='DEPLOYMENT_RESTORE_FAILED';
+      if(!recoverable)return structuredClone(old.record);
+      old.record.status='starting';old.record.bootId=this.bootId;delete old.record.port;delete old.record.error;
+      old.token=randomBytes(32).toString('hex');old.stopRequested=false;old.querying=false;old.cancelledSessions.clear();old.saving=Promise.resolve();
+      await this.writeDesired(id,'running');old.starting=this.launch(old,serialized,true);return old.starting;
     }
     const now = new Date().toISOString();
     const entry: Entry = { record: { id, bootId: this.bootId, status: 'starting', artifactDigest: expectedArtifactDigest, specDigest, modelProfile: this.modelProfile,...(artifact.kind==='generated-component'?{generated:artifact.generated}:{}), createdAt: now, updatedAt: now },
@@ -105,12 +118,22 @@ export class JavaDeploymentManager {
     });
     return entry.saving;
   }
-  private async launch(entry: Entry, serialized: string): Promise<DeploymentRecord> {
+  private async writeDesired(id:string,state:'running'|'stopped'){
+    const directory=join(this.options.root,'deployments',id);await mkdir(directory,{recursive:true});
+    const path=join(directory,'desired.json'),temporary=`${path}.${randomUUID()}.tmp`;
+    await writeFile(temporary,JSON.stringify({state}));await rename(temporary,path);
+  }
+  private async launch(entry: Entry, serialized: string, reuseFiles=false): Promise<DeploymentRecord> {
     const directory = this.directory(entry);
     try {
       await mkdir(directory, { recursive: true }); await mkdir(join(directory, 'workspace'), { recursive: true });
-      await writeFile(join(directory, 'spec.json'), serialized, { flag: 'wx' });
-      await writeFile(join(directory, 'events.jsonl'), '', { flag: 'wx' }); await this.persist(entry);
+      const specPath=join(directory,'spec.json');
+      if(reuseFiles){if(await readFile(specPath,'utf8')!==serialized)throw new RunnerError('ARTIFACT_MISMATCH');}
+      else await writeFile(specPath, serialized, { flag: 'wx' });
+      if(!reuseFiles)await writeFile(join(directory, 'events.jsonl'), '', { flag: 'wx' });
+      else try{await readFile(join(directory,'events.jsonl'));}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;await writeFile(join(directory,'events.jsonl'),'');}
+      await this.persist(entry);
+      if(!reuseFiles)await this.writeDesired(entry.record.id,'running');
       await this.verifyBytes(entry);
       if (!entry.stopRequested) {
         entry.record.port = await freePort();
@@ -122,6 +145,8 @@ export class JavaDeploymentManager {
           secrets: [this.options.modelKey, entry.token, this.options.proxyToken], onLine: (line, stream) => {
             entry.logging = entry.logging.then(() => appendFile(join(directory, 'process.jsonl'), JSON.stringify({ at: new Date().toISOString(), stream, line }) + '\n'));
           } });
+        if (entry.process.pid !== undefined) entry.record.processId = entry.process.pid;
+        await this.persist(entry);
         void entry.process.exited.then(async () => {
           if (entry.record.status === 'ready') { entry.record.status = 'failed'; entry.record.error = 'JVM_EXITED'; await this.persist(entry); }
         }).catch(() => { entry.record.status = 'failed'; entry.record.error = 'STATE_WRITE_FAILED'; });
@@ -144,6 +169,7 @@ export class JavaDeploymentManager {
           entry.record.status = 'ready';
         }
       }
+      if (entry.process?.pid !== undefined) entry.record.processId = entry.process.pid;
       if (entry.stopRequested) { await entry.process?.stop(); entry.record.status = 'stopped'; }
       await this.persist(entry); return structuredClone(entry.record);
     } catch (error) {
@@ -210,8 +236,26 @@ export class JavaDeploymentManager {
     } finally { entry.querying = false; }
   }
   async get(id: string) { return structuredClone(this.require(id).record); }
+  async restoreAfterRestart(unsafeDeployments:ReadonlySet<string>):Promise<{restored:number;skipped:number;failed:number}>{
+    let restored=0,skipped=0,failed=0;
+    for(const id of this.restartCandidates){
+      const entry=this.entries.get(id)!;
+      if(unsafeDeployments.has(id)||this.retired.has(id)){skipped++;continue;}
+      try{
+        const serialized=await readFile(join(this.directory(entry),'spec.json'),'utf8');
+        if(bytesDigest(serialized)!==entry.record.specDigest)throw new RunnerError('ARTIFACT_MISMATCH');
+        entry.record.status='starting';entry.record.bootId=this.bootId;delete entry.record.port;delete entry.record.error;
+        entry.token=randomBytes(32).toString('hex');entry.stopRequested=false;entry.querying=false;entry.cancelledSessions.clear();entry.saving=Promise.resolve();
+        entry.starting=this.launch(entry,serialized,true);
+        const result=await entry.starting;
+        if(result.status==='ready')restored++;else failed++;
+      }catch(error){entry.record.status='failed';entry.record.error=error instanceof RunnerError?error.code:'DEPLOYMENT_RESTORE_FAILED';await this.persist(entry).catch(()=>{});failed++;}
+    }
+    this.restartCandidates.clear();return{restored,skipped,failed};
+  }
   async retire(id: string): Promise<{ status: 'stopped' }> {
     if (!uuid.test(id)) throw new RunnerError('INVALID_DEPLOYMENT_ID', 422);
+    if(this.entries.has(id))await this.writeDesired(id,'stopped');
     this.retired.add(id);
     const path = join(this.options.root,'retired',`${id}.json`); const temporary = `${path}.${randomUUID()}.tmp`;
     await writeFile(temporary,JSON.stringify({id})); await rename(temporary,path);
@@ -222,9 +266,23 @@ export class JavaDeploymentManager {
     return {status:'stopped'};
   }
   async stop(id: string) {
+    await this.writeDesired(id,'stopped');
     const entry = this.require(id);
     if (entry.record.status === 'stopped' || entry.record.status === 'failed' && (!entry.process || ['failed','exited','stopped'].includes(entry.process.state()))) return structuredClone(entry.record);
-    if (entry.record.status === 'interrupted') throw new RunnerError('STOP_UNCONFIRMED');
+    if (entry.record.status === 'interrupted') {
+      const pid = entry.record.processId;
+      if (!Number.isInteger(pid) || pid! <= 0) throw new RunnerError('STOP_UNCONFIRMED');
+      try { process.kill(pid!, 0); throw new RunnerError('STOP_UNCONFIRMED'); }
+      catch (error) {
+        if (error instanceof RunnerError) throw error;
+        if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw new RunnerError('STOP_UNCONFIRMED');
+      }
+      // The deployment's persisted child PID is confirmed absent. Do not claim
+      // successful retirement when older records have no process identity or
+      // when the PID still exists (including an inaccessible process).
+      entry.record.status = 'stopped'; delete entry.record.error; await this.persist(entry);
+      return structuredClone(entry.record);
+    }
     entry.stopRequested = true; entry.record.status = 'stopping';
     if (entry.process) await entry.process.stop();
     if (entry.starting) await entry.starting.catch(() => {});
@@ -237,7 +295,14 @@ export class JavaDeploymentManager {
     return text.slice(0, text.lastIndexOf('\n') + 1).split('\n').filter(Boolean).map(line => JSON.parse(line) as unknown);
   }
   async shutdown() {
-    const results = await Promise.allSettled([...this.entries.values()].filter(e => ['starting', 'ready', 'stopping'].includes(e.record.status) || e.process && ['starting','running','stopping'].includes(e.process.state())).map(e => this.stop(e.record.id)));
+    const active=[...this.entries.values()].filter(e => ['starting', 'ready', 'stopping'].includes(e.record.status) || e.process && ['starting','running','stopping'].includes(e.process.state()));
+    await Promise.all(active.filter(e=>!this.retired.has(e.record.id)).map(e=>this.writeDesired(e.record.id,'running')));
+    const results = await Promise.allSettled(active.map(e => this.stopForShutdown(e)));
     if (results.some(r => r.status === 'rejected')) throw new RunnerError('STOP_UNCONFIRMED');
+  }
+  private async stopForShutdown(entry:Entry){
+    if(entry.record.status==='interrupted')throw new RunnerError('STOP_UNCONFIRMED');
+    entry.stopRequested=true;entry.record.status='stopping';if(entry.process)await entry.process.stop();if(entry.starting)await entry.starting.catch(()=>{});
+    entry.record.status='stopped';await this.persist(entry);await entry.logging;return structuredClone(entry.record);
   }
 }

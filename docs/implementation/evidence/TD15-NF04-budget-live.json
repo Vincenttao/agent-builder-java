@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-04 bounded engineering task timeout",
+  "executionMode": "isolated-live-docker",
+  "baseUrl": "http://127.0.0.1:18080",
+  "composeProject": "agent-builder-td15-nf01",
+  "measuredAt": "2026-10-23T04:54:34.293Z",
+  "draftId": "c793ac7a-a7f9-46d2-b94d-8fb07d6c8782",
+  "snapshotId": "a3a959ad-cc30-47e5-9e5b-e0ddf84d392d",
+  "developmentJobId": "7bd4dce6-3c75-493f-94ad-86d1f8969fd5",
+  "budgetSeconds": 20,
+  "finalStatus": "failed",
+  "diagnostic": "ENGINEERING_BUDGET_EXCEEDED",
+  "roles": [
+    {
+      "role": "tester",
+      "status": "cancelled"
+    },
+    {
+      "role": "developer",
+      "status": "skipped"
+    }
+  ],
+  "eventCount": 0,
+  "eventTypes": [],
+  "workerStarted": true,
+  "timeoutDetected": true,
+  "workerStopped": true,
+  "verdict": "passed"
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15 P0-B AC-24 immutable candidate, tester write denial and digest change detection",
+  "executionMode": "live-mock",
+  "measuredAt": "2026-10-23T08:31:04.439Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "base": "http://127.0.0.1:18080",
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "jobId": "20cfe75f-5911-4cd0-bf93-a5526f075b61",
+  "candidateId": "43d521c8-513c-4c3f-8128-92efb4341165",
+  "candidateArtifactDigestBefore": "7e2e033da91b1aeac2b80b4bf90ba19409032c309f7b4d8cf50c419f4f98d016",
+  "candidateBundleDigestBefore": "3ae2cd50f5cec444c4a468232dec4ad355716df2149151e4daf94c8c0043db45",
+  "baselineId": "c3c83d55-f85f-41ef-9ec5-9b8d9c708315",
+  "workingCopyMutation": {
+    "beforeDigest": "81d328a1b6a3c5aa684203eedfd46e83aa3473d99d83a2be886479e928ae920f",
+    "afterDigest": "60fd5eb13f2333f3fffdfc596df793fc2ec80ddf73ffcddbc773f824f0fd2074",
+    "changed": true
+  },
+  "fixedBundleDigestBefore": "81d328a1b6a3c5aa684203eedfd46e83aa3473d99d83a2be886479e928ae920f",
+  "fixedBundleDigestAfter": "81d328a1b6a3c5aa684203eedfd46e83aa3473d99d83a2be886479e928ae920f",
+  "candidateArtifactDigestAfterMutation": "7e2e033da91b1aeac2b80b4bf90ba19409032c309f7b4d8cf50c419f4f98d016",
+  "candidateBundleDigestAfterMutation": "3ae2cd50f5cec444c4a468232dec4ad355716df2149151e4daf94c8c0043db45",
+  "testerWriteProbe": {
+    "httpStatus": 200,
+    "toolError": "FILE_OPERATION_NOT_ALLOWED",
+    "policyEvent": "policy.rejected",
+    "policyCode": "FILE_OPERATION_NOT_ALLOWED",
+    "sourceDigest": "72598841b7d919e7aae955bb2d1bffae68308b7008f20b004ecfb0334e04b39a"
+  },
+  "candidateTamperProbe": {
+    "candidateDigestBefore": "7e2e033da91b1aeac2b80b4bf90ba19409032c309f7b4d8cf50c419f4f98d016",
+    "candidateDigestAfterTamper": "c1435e40af981dae2a912e9b3da972aff2f524b5f0584b3519cb7f4e1f46d44b",
+    "tamperRejected": true,
+    "candidateReadableAfterRestore": true
+  },
+  "runId": "f4e9f2d6-02d7-4b48-bca1-4688c3c40af8",
+  "runStatus": "succeeded",
+  "runArtifactDigest": "7e2e033da91b1aeac2b80b4bf90ba19409032c309f7b4d8cf50c419f4f98d016",
+  "mockCalls": [
+    {
+      "operation": "equipment-status",
+      "status": 200,
+      "inputDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e",
+      "resultDigest": "7e8e588d642dfd68c01368db9a108be4ddc6aa97a99f686491d31d0720c07fba"
+    }
+  ],
+  "candidateArtifactDigestAfterRun": "7e2e033da91b1aeac2b80b4bf90ba19409032c309f7b4d8cf50c419f4f98d016",
+  "assertions": {
+    "developmentCopyChanged": true,
+    "fixedBundleUnaffected": true,
+    "candidateDigestStable": true,
+    "testerWriteRejected": true,
+    "tamperedCandidateDigestRejected": true,
+    "mutatedCopyCandidateStillRuns": true
+  },
+  "verdict": "passed",
+  "workingCopyRestored": true,
+  "deploymentCleanupStatus": "stopped"
+}

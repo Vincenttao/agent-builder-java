@@ -1,7 +1,7 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { resolve } from 'node:path';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { Pool } from '../../apps/server/src/db/pool.js';
 import { migrate } from '../../apps/server/src/db/migrations.js';
@@ -190,7 +190,18 @@ it.skipIf(live)('a replacement worker fences a delayed HTTP start before confirm
     await expect(runnerPort.begin(run.id,{deploymentId:run.deploymentId,sessionId:run.id,message:run.input},'1')).rejects.toMatchObject({code:'EXECUTION_CLAIM_LOST'});
     await runnerPort.claim(run.id,'3');await expect(runnerPort.begin(run.id,{deploymentId:run.deploymentId,sessionId:run.id,message:run.input},'3')).rejects.toMatchObject({code:'EXECUTION_RETIRED'});
     await expect(mock.prepare(run.environmentId,run.id)).rejects.toMatchObject({code:'RUN_RESERVATION_RETIRED'});
-    await writeFile(resolve(root,'native-lease-evidence.json'),JSON.stringify({modelMode:'deterministic-fixture',run:cancelled,events:await replacement.events(run.id,0),deployment:await runtime.get(run.deploymentId),modelCalls:totalModelCalls-beforeCalls,externalCalls:await mock.calls(run.environmentId,run.id),staleWorkerChangedTerminal:false},null,2));
+    const nativeLeaseEvidence={modelMode:'deterministic-fixture',run:cancelled,events:await replacement.events(run.id,0),deployment:await runtime.get(run.deploymentId),modelCalls:totalModelCalls-beforeCalls,externalCalls:await mock.calls(run.environmentId,run.id),staleWorkerChangedTerminal:false};
+    await writeFile(resolve(root,'native-lease-evidence.json'),JSON.stringify(nativeLeaseEvidence,null,2));
+    const adapterJar=await readFile(resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'));
+    await mkdir(resolve('docs/implementation/evidence'),{recursive:true});
+    await writeFile(resolve('docs/implementation/evidence/TD15-NF06-managed-cancel-adapter.json'),JSON.stringify({
+      schemaVersion:1,requirement:'TD-15/NF-06 AC-29a managed execution cancellation and stale-worker fencing',
+      executionMode:'deterministic-fixture-adapter',scope:'subcriterion only; not full NF-06 or live Docker acceptance',measuredAt:new Date().toISOString(),
+      adapterJarSha256:createHash('sha256').update(adapterJar).digest('hex'),testEvidence:nativeLeaseEvidence,
+      assertions:{cancelledAfterReplacementWorker:true,noModelCallAfterCancel:totalModelCalls===beforeCalls,noExternalCalls:nativeLeaseEvidence.externalCalls.length===0,
+        deploymentStopped:nativeLeaseEvidence.deployment.status==='stopped',staleWorkerDidNotChangeTerminal:!nativeLeaseEvidence.staleWorkerChangedTerminal,
+        retiredRunRejected:true,retiredMockReservationRejected:true},verdict:'passed'
+    },null,2)+'\n');
   }finally{release();await delayed;}
 });
 it('real platform HTTP → durable Run → Runner HTTP → Java Core/Runtime → trusted proxy → PostgreSQL Mock evidence', async () => {

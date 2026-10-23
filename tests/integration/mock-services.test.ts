@@ -4,6 +4,7 @@ import { Pool } from '../../apps/server/src/db/pool.js';
 import { migrate } from '../../apps/server/src/db/migrations.js';
 import { MockRepository } from '../../apps/mock-services/src/repository.js';
 import { createMockApp } from '../../apps/mock-services/src/app.js';
+import { HttpMock } from '../../apps/server/src/runs/http-ports.js';
 
 const url = process.env.TEST_DATABASE_URL ?? 'postgres://builder_test:local-test-only@127.0.0.1:15432/builder_test';
 const schema = `it_mock_${randomUUID().replaceAll('-', '')}`;
@@ -12,6 +13,7 @@ const pool = new Pool({ connectionString: url, options: `-c search_path=${schema
 const controlToken = 'mock-admin-only-01234567890123456789';
 const businessToken = 'mock-business-only-0123456789012345';
 const repository = new MockRepository(pool);
+let businessBase: string;
 it('a release before a delayed environment setup permanently prevents that Run reservation from becoming active',async()=>{
   const id=randomUUID();const runId=randomUUID();await repository.release(id,runId);
   await repository.create(id,{seed:'enterprise-default@1',fault:'normal',clock:'2026-10-21T08:00:00.000Z'});
@@ -28,11 +30,26 @@ const create = async (patch = {}) => {
   expect(response.statusCode, response.body).toBe(201); return id;
 };
 const headers = (id: string, actor = 'U1001', runId = randomUUID()) => ({ authorization: `Bearer ${businessToken}`, 'x-environment-id': id, 'x-actor-id': actor, 'x-run-id': runId });
-const calls = async (id: string) => (await app.inject({ url: `/control/environments/${id}/calls`, headers: auth })).json().items as Array<{ operation: string; status: number; runId: string; result: Record<string, unknown> }>;
-beforeAll(async () => { await admin.query(`CREATE SCHEMA "${schema}"`); await migrate(pool, 'db/mock-migrations'); });
+const calls = async (id: string) => (await app.inject({ url: `/control/environments/${id}/calls`, headers: auth })).json().items as Array<{ operation: string; status: number; actorId: string; runId: string; result: Record<string, unknown> }>;
+beforeAll(async () => { await admin.query(`CREATE SCHEMA "${schema}"`); await migrate(pool, 'db/mock-migrations'); businessBase=await app.listen({host:'127.0.0.1',port:0}); }, 30000);
 afterAll(async () => { await app.close(); await pool.end(); await admin.query(`DROP SCHEMA "${schema}" CASCADE`); await admin.end(); });
 
 describe('persistent enterprise Mock / external state evidence', () => {
+  it('routes registered finance reads through HttpMock with trusted actor, Run and environment context',async()=>{
+    const id=await create();const runId=randomUUID();await repository.reserve(id,runId);
+    const mock=new HttpMock(businessBase,controlToken,businessToken);
+    const baseContext={runId,environmentId:id,actorId:'U1001'};
+    try{
+      const balance=await mock.invoke({...baseContext,operations:['getAccountBalance']},'getAccountBalance',{accountId:'A1001'});
+      expect(balance).toEqual({status:200,result:{accountId:'A1001',currency:'CNY',availableBalanceFen:1000000,asOf:input.clock}});
+      const products=await mock.invoke({...baseContext,operations:['listWealthProducts']},'listWealthProducts',{});
+      expect(products.status).toBe(200);expect((products.result as {items:Array<{productId:string}>}).items.map(item=>item.productId)).toEqual(['SIM-W001','SIM-W002']);
+      await expect(mock.invoke({...baseContext,operations:[]},'getAccountBalance',{accountId:'A1001'})).rejects.toThrow('OPERATION_NOT_BOUND');
+      const recorded=await calls(id);expect(recorded.map(item=>({operation:item.operation,actorId:item.actorId,runId:item.runId,status:item.status}))).toEqual([
+        {operation:'getAccountBalance',actorId:'U1001',runId,status:200},{operation:'listWealthProducts',actorId:'U1001',runId,status:200}
+      ]);
+    }finally{await repository.release(id,runId);}
+  });
   it('deduplicates work orders, binds their owner and reconciles committed writes after timeout', async () => {
     const id = await create({ fault: 'write-after-timeout' }); const key = randomUUID(); const context = { ...headers(id), 'idempotency-key': key };
     const request = { method: 'POST' as const, url: '/mock-business/v1/work-orders', headers: context, payload: { equipmentId: 'PUMP-001', description: '检查温度告警', priority: 'normal' } };
@@ -64,6 +81,13 @@ describe('persistent enterprise Mock / external state evidence', () => {
     await expect(pool.query('DELETE FROM mock_calls WHERE environment_id=$1', [id])).rejects.toThrow('immutable');
     const restored = new MockRepository(pool); expect((await restored.get(id)).revision).toBe(1);
     expect((await restored.calls(id)).length).toBe(2);
+  });
+  it('returns explicit empty maintenance search results and records the real request', async () => {
+    const id = await create(); const context = headers(id);
+    const response = await app.inject({ url: '/mock-business/v1/maintenance/manuals/PUMP-001', headers: context });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ equipmentId: 'PUMP-001', found: false, resultCount: 0 });
+    expect(await calls(id)).toMatchObject([{ operation: 'maintenance-search', status: 200, input: { equipmentId: 'PUMP-001' }, result: { found: false, resultCount: 0 } }]);
   });
   it('atomically deduplicates writes, rejects changed parameters, and isolates environments', async () => {
     const id = await create(); const other = await create(); const context = { ...headers(id), 'idempotency-key': randomUUID() };
@@ -105,7 +129,7 @@ describe('persistent enterprise Mock / external state evidence', () => {
     expect(collision.statusCode).toBe(409);
   });
   it('preserves a committed order after the real HTTP caller times out and retries the same key', async () => {
-    const base = await app.listen({ host: '127.0.0.1', port: 0 });
+    const base = businessBase;
     const id = await create({ fault: 'write-after-timeout' }); const key = randomUUID();
     const context = { ...headers(id), 'idempotency-key': key, 'content-type': 'application/json' };
     // Abort at the observed commit boundary; a fixed 50 ms timer could fire before admission under load.

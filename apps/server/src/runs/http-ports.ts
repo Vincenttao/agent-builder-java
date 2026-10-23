@@ -4,6 +4,8 @@ import type { ToolContext } from './tool-proxy.js';
 import type { WriteContext, WritePort } from '../actions/action-service.js';
 import type { RunEnvironment } from '../../../../packages/contracts/src/runs.js';
 import type { RuntimeModelProfile } from '../../../../packages/contracts/src/model-profile.js';
+import type {MockScenePackage} from '../../../../packages/contracts/src/mock-scene.js';
+import {mockBusinessPath,mockBusinessReadRoutes} from '../../../mock-services/src/scene.js';
 export class DependencyError extends Error { constructor(public status: number, public code: string) { super(code); } }
 const dependencyCodes=new Set(['EXECUTION_CLAIM_LOST','EXECUTION_RETIRED','RUN_RESERVATION_RETIRED','DEPLOYMENT_RETIRED','DEPLOYMENT_HAS_ACTIVE_EXECUTIONS','EXECUTION_REQUIRES_RECONCILIATION','JVM_START_FAILED','MODEL_NOT_CONFIGURED','ARTIFACT_MISMATCH']);
 export class HttpPort {
@@ -12,8 +14,13 @@ export class HttpPort {
     if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || token.length < 24) throw new Error('Invalid service connection');
   }
   async request<T>(path: string, method = 'GET', body?: unknown, headers: Record<string, string> = {}, timeoutMs = this.timeoutMs): Promise<T> {
-    const response = await fetch(this.base.replace(/\/$/, '') + path, { method, redirect: 'error', signal: AbortSignal.timeout(timeoutMs),
-      headers: { authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json', ...headers }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+    let response: Response;
+    try {
+      response = await fetch(this.base.replace(/\/$/, '') + path, { method, redirect: 'error', signal: AbortSignal.timeout(timeoutMs),
+        headers: { authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json', ...headers }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+    } catch (error) {
+      throw new DependencyError(503, error instanceof Error && error.name === 'TimeoutError' ? 'DEPENDENCY_TIMEOUT' : 'DEPENDENCY_UNAVAILABLE');
+    }
     if (!response.ok) {const error=await response.json().catch(()=>null) as {code?:unknown}|null;throw new DependencyError(response.status,typeof error?.code==='string'&&(dependencyCodes.has(error.code)||this.extraCodes.includes(error.code))?error.code:'DEPENDENCY_REQUEST_FAILED');}
     return await response.json() as T;
   }
@@ -41,6 +48,7 @@ export class HttpMock implements MockControl, WritePort {
   constructor(private readonly base: string, controlToken: string, businessToken: string) { this.control = new HttpPort(base, controlToken); this.businessToken = businessToken; }
   async ready() { return (await this.control.request<{ status: string }>('/health/ready')).status === 'ready'; }
   async identity() { return this.control.request<{ implementationDigest: string }>('/control/manifest'); }
+  async scene():Promise<MockScenePackage>{return this.control.request('/control/project-scene');}
   async inspect(environmentId: string) { return this.control.request<{ id: string; revision: number; config: RunEnvironment; state: Record<string, unknown> }>(`/control/environments/${encodeURIComponent(environmentId)}`); }
   async prepare(environmentId: string, runId: string, config: RunEnvironment = { seed: 'enterprise-default@1', fault: 'normal', clock: '2026-10-21T08:00:00.000Z' }) {
     const path = `/control/environments/${encodeURIComponent(environmentId)}`;
@@ -56,9 +64,23 @@ export class HttpMock implements MockControl, WritePort {
     }
     throw new Error('EVIDENCE_LIMIT_REACHED');
   }
+  async mcp(context: ToolContext | undefined, request: Record<string, unknown>) {
+    const response = await fetch(`${this.base.replace(/\/$/, '')}/mcp`, { method: 'POST', redirect: 'error', signal: AbortSignal.timeout(10000), headers: {
+      authorization: `Bearer ${this.businessToken}`, 'content-type': 'application/json',
+      ...(context ? { 'x-environment-id': context.environmentId, 'x-run-id': context.runId, 'x-actor-id': context.actorId } : {})
+    }, body: JSON.stringify(request) });
+    if (response.status === 202) return { status: 202, result: null };
+    const result = await response.json().catch(() => null);
+    return { status: response.status, result };
+  }
   async invoke(context: ToolContext, operation: string, input: Record<string, unknown>) {
-    if (operation !== 'equipment-status' || typeof input.equipmentId !== 'string') throw new Error('OPERATION_NOT_ALLOWED');
-    const response = await fetch(`${this.base.replace(/\/$/, '')}/mock-business/v1/equipment/${encodeURIComponent(input.equipmentId)}`, { redirect: 'error', signal: AbortSignal.timeout(5000), headers: {
+    const contract=mockBusinessReadRoutes.find(route=>route.operationId===operation);
+    if(!contract)throw new Error('OPERATION_NOT_ALLOWED');
+    if(!context.operations.includes(operation))throw new Error('OPERATION_NOT_BOUND');
+    if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).sort().join(',')!==[...contract.requestFields].sort().join(','))throw new Error('INVALID_TOOL_ARGUMENTS');
+    for(const field of contract.requestFields){const value=input[field];if(typeof value!=='string'||!value.trim()||value.length>200)throw new Error('INVALID_TOOL_ARGUMENTS');}
+    const path = contract.path.replace(/:([A-Za-z][A-Za-z0-9_]*)/g,(_match,field:string)=>encodeURIComponent(input[field] as string));
+    const response = await fetch(`${this.base.replace(/\/$/, '')}${path}`, { redirect: 'error', signal: AbortSignal.timeout(5000), headers: {
       authorization: `Bearer ${this.businessToken}`, 'x-environment-id': context.environmentId, 'x-run-id': context.runId, 'x-actor-id': context.actorId
     } });
     return { status: response.status, result: await response.json() as unknown };

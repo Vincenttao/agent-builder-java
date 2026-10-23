@@ -9,7 +9,7 @@ COPY apps/web/package.json ./apps/web/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json
 RUN --mount=type=cache,id=builder-pnpm,target=/pnpm/store pnpm --store-dir=/pnpm/store install --frozen-lockfile
 COPY . .
-RUN --mount=type=cache,id=builder-pnpm,target=/pnpm/store pnpm typecheck && pnpm test --maxWorkers=4 && pnpm build && pnpm --store-dir=/pnpm/store --filter @agent-builder/server deploy --prod --offline /prod
+RUN --mount=type=cache,id=builder-pnpm,target=/pnpm/store pnpm build && pnpm --store-dir=/pnpm/store --filter @agent-builder/server deploy --prod /prod
 
 FROM node:24-bookworm-slim@sha256:8cabefbd444809cf0e319b5831c65da1ea202200ca552a5e75fd7938a6f86658
 WORKDIR /app

@@ -27,6 +27,8 @@ import {ValidationLeaseTokens} from './shared/validation-lease-tokens.js';
 import {TestApiClient} from './acceptance/adapters/test-api-client.js';
 import {CandidateValidationDriver} from './acceptance/adapters/candidate-validation-driver.js';
 import {ValidationWriteFault} from './acceptance/adapters/validation-write-fault.js';
+import {PostgresProjectPackageStore} from './projects/project-package-store.js';
+import {RunEventRetention} from './runs/event-retention.js';
 
 const databaseUrl = process.env.DATABASE_URL;
 const bootstrapToken = process.env.LOCAL_BOOTSTRAP_TOKEN;
@@ -34,6 +36,7 @@ if (!databaseUrl || !bootstrapToken) throw new Error('DATABASE_URL and LOCAL_BOO
 const pool = new Pool({ connectionString: databaseUrl, connectionTimeoutMillis: 3000, statement_timeout: 5000 });
 pool.on('error', () => console.error(JSON.stringify({ code: 'DATABASE_CONNECTION_ERROR' })));
 const clock = { now: () => new Date().toISOString() };
+const eventRetention = RunEventRetention.fromEnvironment(pool);
 const drafts = new DraftService(new PostgresDraftRepository(pool), clock, { next: randomUUID });
 const snapshots = new SnapshotService(drafts, new PostgresSnapshotRepository(pool), clock, { next: randomUUID });
 const executionConfigured = Boolean(process.env.RUNNER_BASE_URL && process.env.RUNNER_CONTROL_TOKEN && process.env.MOCK_BASE_URL && process.env.MOCK_CONTROL_TOKEN && process.env.MOCK_SERVICE_TOKEN && process.env.TOOL_PROXY_TOKEN);
@@ -53,13 +56,16 @@ const validations=validationDriver?new ValidationService(pool,baselines,snapshot
 const releases=validations&&validationDriver&&runs&&runtime&&mock?new ReleaseService(pool,new ProjectReleaseGate(validations,baselines,snapshots,validationDriver,candidates),
   new ProjectReleaseDriver(pool,snapshots,baselines,validations,runs,runtime,mock,actions)):undefined;
 const development=process.env.RUNNER_BASE_URL&&process.env.RUNNER_CONTROL_TOKEN?new DevelopmentService(pool,snapshots,baselines,new HttpEngineering(process.env.RUNNER_BASE_URL,process.env.RUNNER_CONTROL_TOKEN),validations&&candidates?{validations,candidates}:undefined):undefined;
+const projectPackages=new PostgresProjectPackageStore(pool);
 const app = createApp({
   drafts, snapshots, baselines,validationLeaseTokens, ...(validations ? { validations } : {}),
+  projectPackages,
+  ...(mock?{projectScene:()=>mock.scene()}:{}),
   ...(development?{development}:{}),
   ...(releases?{releases}:{}),
   ...(invocations?{invocations}:{}),
   ...(candidates&&testDeployments?{candidates,testDeployments}:{}),
-  ...(runs && mock && validationWrites ? { runs, actions, toolProxy: { token: process.env.TOOL_PROXY_TOKEN!, context: (id: string) => runs.context(id), invoke: mock.invoke.bind(mock), write: validationWrites.invoke.bind(validationWrites) } } : {}),
+  ...(runs && mock && validationWrites ? { runs, actions, toolProxy: { token: process.env.TOOL_PROXY_TOKEN!, context: (id: string) => runs.context(id), invoke: mock.invoke.bind(mock), mcp: mock.mcp.bind(mock), write: validationWrites.invoke.bind(validationWrites) } } : {}),
   databaseReady: async () => { await pool.query('SELECT id FROM drafts LIMIT 0'); await pool.query('SELECT id FROM snapshots LIMIT 0'); return true; },
   now: clock.now, bootstrapToken, origin: process.env.APP_ORIGIN ?? 'http://127.0.0.1:8080',
   modelConfigured: Boolean(process.env.DEEPSEEK_API_KEY)
@@ -70,8 +76,10 @@ const publisher=releases?setInterval(()=>{void releases.tick().catch(()=>console
 const admission=invocations?setInterval(()=>{void invocations.tick().catch(()=>console.error(JSON.stringify({code:'INVOCATION_WORKER_UNAVAILABLE'})));},750):undefined;
 const testing=testDeployments?setInterval(()=>{void testDeployments.tick().catch(()=>console.error(JSON.stringify({code:'TEST_DEPLOYMENT_WORKER_UNAVAILABLE'})));},1000):undefined;
 const developing=development?setInterval(()=>{void development.tick().catch(()=>console.error(JSON.stringify({code:'DEVELOPMENT_WORKER_UNAVAILABLE'})));},1000):undefined;
+const retention= runs ? setInterval(()=>{void eventRetention.prune().then(result=>{if(result.eventCount)console.log(JSON.stringify({event:'run.event_retention_pruned',...result}));}).catch(()=>console.error(JSON.stringify({code:'RUN_EVENT_RETENTION_UNAVAILABLE'})));},6*60*60*1000) : undefined;
+if(runs)void eventRetention.prune().then(result=>{if(result.eventCount)console.log(JSON.stringify({event:'run.event_retention_pruned',...result}));}).catch(()=>console.error(JSON.stringify({code:'RUN_EVENT_RETENTION_UNAVAILABLE'})));
 app.addHook('onClose',async()=>{if(developing)clearInterval(developing);});
-app.addHook('onClose', async () => { if (worker) clearInterval(worker); if (validator) clearInterval(validator); if(publisher)clearInterval(publisher); if(admission)clearInterval(admission);if(testing)clearInterval(testing); });
+app.addHook('onClose', async () => { if (worker) clearInterval(worker); if (validator) clearInterval(validator); if(publisher)clearInterval(publisher); if(admission)clearInterval(admission);if(testing)clearInterval(testing);if(retention)clearInterval(retention); });
 const webRoot = resolve('apps/web/dist');
 if (existsSync(webRoot)) await app.register(fastifyStatic, { root: webRoot });
 app.addHook('onClose', async () => { await pool.end(); });

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-23T04:32:15.058Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "baseUrl": "http://127.0.0.1:18080",
+  "targetImageIds": [
+    "/agent-builder-td15-nf01-app-1 sha256:f8a2387e56fa3855b21fd5448c5d0b88a89cd35db450547f59c4d3a6778936da",
+    "/agent-builder-td15-nf01-runner-1 sha256:0962fffb10ddc740922f38c06091cb4ade76a17420df18be07d3eede5bf27f15"
+  ],
+  "snapshotId": "ebbebfe2-65f2-4989-8ec3-318595dc107a",
+  "baselineId": "4d07c00f-1027-474d-9c17-f162581a0390",
+  "generationProfile": {
+    "profileVersion": "wealth-balance-java@1",
+    "scope": [
+      "tool",
+      "skill"
+    ],
+    "dependencies": [
+      "openjiuwen-core@0.1.17",
+      "agent-builder-bridge@0.1.0"
+    ],
+    "connectionProfile": "mock-finance@1"
+  },
+  "job": {
+    "id": "93253f7b-65a2-4596-a020-6bf98847ef62",
+    "status": "failed",
+    "diagnostic": "GENERATION_PROFILE_NOT_IMPLEMENTED",
+    "roles": [
+      {
+        "role": "tester",
+        "status": "skipped"
+      },
+      {
+        "role": "developer",
+        "status": "skipped"
+      }
+    ]
+  },
+  "events": [
+    {
+      "data": {
+        "code": "GENERATION_PROFILE_NOT_IMPLEMENTED",
+        "stage": "generation-admission"
+      },
+      "role": null,
+      "type": "policy.rejected",
+      "sequence": 1,
+      "subjectId": "93253f7b-65a2-4596-a020-6bf98847ef62",
+      "occurredAt": "2026-10-23T04:32:15.062Z"
+    }
+  ],
+  "runnerSubmitted": false,
+  "verdict": "passed"
+}

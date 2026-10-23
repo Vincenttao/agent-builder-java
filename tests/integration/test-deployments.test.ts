@@ -35,16 +35,16 @@ async function setup(generated=false){
   const preview=await baselines.preview(draft.id,'equipment-read@1');
   const baseline=await baselines.confirm(draft.id,{expectedRevision:1,templateId:'equipment-read@1',expectedDigest:preview.digest,confirmed:true});
   const build=generated?await builtDevelopmentFixture(pool,snapshot,baseline,'a'.repeat(64)):undefined;
-  const deployments=new Map<string,string>();const executions=new Map<string,string>();let deployHook=async()=>{};let loadHook=async()=>{};let loadedDigest=build?.artifact.artifactDigest??'a'.repeat(64);let artifactAvailable=true;
+  const deployments=new Map<string,string>();const executions=new Map<string,string>();const deployedSpecs:unknown[]=[];let deployHook=async()=>{};let loadHook=async()=>{};let loadedDigest=build?.artifact.artifactDigest??'a'.repeat(64);let artifactAvailable=true;let failRetire=false;
   const runtime:RunRuntime&{deployment:()=>Promise<{status:string;artifactDigest:string;specDigest:string;modelProfile:typeof profile}>}={
     capabilities:async()=>({artifactDigest:'a'.repeat(64),modelConfigured:true,executionMode:'trusted-local',bootId:'fixture',modelProfile:profile}),
     artifact:async()=>{if(!artifactAvailable||!build)throw new Error('missing');return build.artifact;},packageGenerated:async()=>build!.artifact,
-    deploy:async id=>{await deployHook();if(deployments.get(id)!=='stopped')deployments.set(id,'ready');return{status:deployments.get(id)!};},
+    deploy:async(id,_artifact,spec)=>{deployedSpecs.push(structuredClone(spec));await deployHook();if(deployments.get(id)!=='stopped')deployments.set(id,'ready');return{status:deployments.get(id)!};},
     deployment:async()=>{await loadHook();return{status:'ready',artifactDigest:loadedDigest,specDigest:contentDigest(snapshot.content.runtimeSpec),modelProfile:profile};},
     claim:async()=>{},begin:async id=>{executions.set(id,'running');return{id,status:'running',events:[]};},
     execution:async id=>executions.has(id)?{id,status:executions.get(id)!,events:[]}:null,
     cancel:async id=>{executions.set(id,'cancelled');return{id,status:'cancelled',events:[]};},events:async()=>[],
-    stop:async()=>({status:'stopped'}),retire:async id=>{deployments.set(id,'stopped');return{status:'stopped'};}
+    stop:async()=>({status:'stopped'}),retire:async id=>{if(failRetire)throw new Error('STOP_UNCONFIRMED');deployments.set(id,'stopped');return{status:'stopped'};}
   };
   const mock={ready:async()=>true,identity:async()=>({implementationDigest:'b'.repeat(64)}),prepare:async()=>{},release:async()=>{},calls:async()=>[]};
   const actions=new PostgresActions(pool);const runs=new RunService(pool,snapshots,runtime,mock,actions);
@@ -52,7 +52,7 @@ async function setup(generated=false){
   const makeService=()=>new TestDeploymentService(pool,candidates,baselines,snapshots,runs,runtime,mock);
   const service=makeService();const entry=new InvocationService(pool,snapshots,runs,runtime,actions,mock);
   const input={clientRequestId:randomUUID(),candidateId:candidate.id,requirementBaselineId:baseline.id,suiteDigest:contentDigest(baseline.content.cases),purpose:'test' as const,ttlSeconds:3600};
-  return{draft,snapshot,baseline,candidate,candidates,service,makeService,input,entry,runs,actions,deployments,setArtifactAvailable:(value:boolean)=>{artifactAvailable=value;},setDigest:(value:string)=>{loadedDigest=value;},setDeployHook:(hook:()=>Promise<void>)=>{deployHook=hook;},setLoadHook:(hook:()=>Promise<void>)=>{loadHook=hook;}};
+  return{draft,snapshot,baseline,candidate,candidates,service,makeService,input,entry,runs,actions,deployments,deployedSpecs,setArtifactAvailable:(value:boolean)=>{artifactAvailable=value;},setDigest:(value:string)=>{loadedDigest=value;},setDeployHook:(hook:()=>Promise<void>)=>{deployHook=hook;},setLoadHook:(hook:()=>Promise<void>)=>{loadHook=hook;},setRetireFailure:(value:boolean)=>{failRetire=value;}};
 }
 const message=()=>({clientRequestId:randomUUID(),input:'查询 PUMP-001'});
 async function validationCase(h:Awaited<ReturnType<typeof setup>>,index=2){
@@ -83,6 +83,13 @@ it('cancellation fences a delayed automatic test creation and stops request admi
   await pool.query("UPDATE validation_executions SET record=record || '{\"status\":\"cancelling\"}'::jsonb WHERE id=$1",[v.record.id]);
   await expect(h.service.create(v.input,v.authority)).rejects.toMatchObject({code:'VALIDATION_CLAIM_LOST'});
   expect(await h.service.list(h.candidate.id)).toEqual([]);
+});
+it('clears a transient stop diagnostic after an interrupted deployment is safely retired',async()=>{
+  const h=await setup();const target=await h.service.create(h.input);await h.service.tick();
+  h.setRetireFailure(true);await h.service.stop(target.id);await h.service.tick();
+  expect(await h.service.get(target.id)).toMatchObject({status:'stopping',diagnostic:'TEST_STOP_UNCONFIRMED'});
+  h.setRetireFailure(false);await h.service.tick();
+  expect(await h.service.get(target.id)).toMatchObject({status:'stopped',diagnostic:''});
 });
 it('the public test API rejects forged, manual and stale validation grants, while lease takeover reuses one request',async()=>{
   const h=await setup();const v=await validationCase(h,0);const tokens=new ValidationLeaseTokens();const origin='http://127.0.0.1:8080';
@@ -120,11 +127,13 @@ it('runs a registered generated artifact through the first-candidate ingress and
 it('tests the first candidate without a release, scopes idempotency and conversations to the fixed deployment, and retains history after stop',async()=>{
   const h=await setup();const target=await h.service.create(h.input);await h.service.tick();
   expect((await h.service.get(target.id)).status).toBe('ready');
+  expect(target.runtimeSpec).toEqual(h.candidate.runtimeSpec);expect(h.deployedSpecs[0]).toEqual(h.candidate.runtimeSpec);
   expect((await pool.query('SELECT * FROM release_pointers WHERE agent_id=$1',[h.draft.id])).rowCount).toBe(0);
   const identity={agentId:h.draft.id,actorId:'U1002' as const,environmentId:target.environmentId,testDeploymentId:target.id};
   const body=message();const first=await h.entry.send(identity,body);await h.entry.tick();
   const view=await h.entry.get(identity,first.requestId);
-  expect(view).toMatchObject({agentVersion:null,testDeploymentId:target.id,candidateId:h.candidate.id,artifactDigest:'a'.repeat(64),run:{deploymentId:target.deploymentId,actorId:'U1002',sharedTarget:{kind:'test',testDeploymentId:target.id,candidateId:h.candidate.id}}});
+  expect(view).toMatchObject({agentVersion:null,testDeploymentId:target.id,candidateId:h.candidate.id,artifactDigest:'a'.repeat(64),run:{deploymentId:target.deploymentId,actorId:'U1002',runtimeSpec:h.candidate.runtimeSpec,sharedTarget:{kind:'test',testDeploymentId:target.id,candidateId:h.candidate.id}}});
+  await h.runs.tick();expect(h.deployedSpecs.every(spec=>contentDigest(spec)===h.candidate.specDigest)).toBe(true);
   await expect(h.entry.get({...identity,actorId:'U1001'},first.requestId)).rejects.toMatchObject({code:'REQUEST_NOT_FOUND'});
   expect((await h.entry.send(identity,body)).requestId).toBe(first.requestId);
   await expect(h.entry.send(identity,{...body,input:'换问题'})).rejects.toMatchObject({code:'REQUEST_INPUT_CONFLICT'});

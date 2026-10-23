@@ -16,11 +16,14 @@ if (input && !target) throw new Error('--report requires an independent --target
 if (target && createHash('sha256').update(await readFile(target.artifactPath)).digest('hex') !== target.artifactDigest) throw new Error('Target artifact has changed');
 const binding: Binding = { baselineDigest: manifest.baselineDigest, artifactDigest: target?.artifactDigest ?? '',
   testSetDigest: createHash('sha256').update(manifestBytes).digest('hex'), compatibilityKey: target?.compatibilityKey ?? '' };
+const phaseCases = manifest.cases.filter(c => c.phase <= phase!);
+const phaseCaseIds = new Set(phaseCases.map(item => item.caseId));
+const phaseResults = input?.results.filter(item => phaseCaseIds.has(item.caseId)) ?? [];
 for (const item of manifest.cases) {
   if (item.testFile) await access(item.testFile).catch(() => { item.testFile = null; });
 }
 const evidenceRoot = await realpath('test-results');
-const report = await evaluateAcceptance(manifest.cases.filter(c => c.phase <= phase!), input?.results ?? [], binding, async path => {
+const report = await evaluateAcceptance(phaseCases, phaseResults, binding, async path => {
   const file = await realpath(resolve(evidenceRoot, path));
   const rel = relative(evidenceRoot, file);
   if (rel.startsWith('..') || isAbsolute(rel)) throw new Error('Evidence outside managed storage');

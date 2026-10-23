@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15 P0-B AC-21/22 generated Tool and Skill with shared Rail-aware build and live Mock execution",
+  "executionMode": "live-mock",
+  "measuredAt": "2026-10-23T09:48:22.688Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "targetImageIds": [
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+  ],
+  "generationEvidence": "docs/implementation/evidence/TDD-023-live-rail-generation-2a266f69-4915-4597-9997-572934b9a045.json",
+  "jobId": "2a266f69-4915-4597-9997-572934b9a045",
+  "draftId": "5832ed72-edf8-4668-a2d6-eab85b7e46f1",
+  "snapshotId": "893b7879-2017-49df-a976-6f24fa4f69df",
+  "baselineId": "e3a3c280-d832-4a02-8fb3-81348ee793bf",
+  "baselineDigest": "5036debeceab1475987e00cb333cf70280923ffb98510cf5d4c981f6df4f335f",
+  "candidateId": "dda5ba4a-df48-4b0d-b4af-9b94a76f38a3",
+  "artifactDigest": "6b4764ae68bc046780c32c501777e891c4d5c1d054b20685056d8f0fedae73ab",
+  "developmentEvents": [
+    {
+      "sequence": 1,
+      "type": "file.written",
+      "role": "tester",
+      "commandId": null,
+      "status": null,
+      "path": "tests/plan.json"
+    },
+    {
+      "sequence": 2,
+      "type": "file.written",
+      "role": "developer",
+      "commandId": null,
+      "status": null,
+      "path": "test/generated/EquipmentToolTest.java"
+    },
+    {
+      "sequence": 3,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "prepare-sdk",
+      "status": "passed",
+      "path": null
+    },
+    {
+      "sequence": 4,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "compile-unit",
+      "status": "passed",
+      "path": null
+    },
+    {
+      "sequence": 5,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "unit-test",
+      "status": "failed",
+      "path": null
+    },
+    {
+      "sequence": 6,
+      "type": "file.written",
+      "role": "developer",
+      "commandId": null,
+      "status": null,
+      "path": "src/generated/EquipmentTool.java"
+    },
+    {
+      "sequence": 7,
+      "type": "file.written",
+      "role": "developer",
+      "commandId": null,
+      "status": null,
+      "path": "skills/equipment-query/SKILL.md"
+    },
+    {
+      "sequence": 8,
+      "type": "file.written",
+      "role": "developer",
+      "commandId": null,
+      "status": null,
+      "path": "rails/definition.json"
+    },
+    {
+      "sequence": 9,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "compile-unit",
+      "status": "passed",
+      "path": null
+    },
+    {
+      "sequence": 10,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "unit-test",
+      "status": "passed",
+      "path": null
+    },
+    {
+      "sequence": 11,
+      "type": "file.written",
+      "role": "developer",
+      "commandId": null,
+      "status": null,
+      "path": "skills/equipment-query/SKILL.md"
+    },
+    {
+      "sequence": 12,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "compile-contract",
+      "status": "passed",
+      "path": null
+    },
+    {
+      "sequence": 13,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "platform-contract",
+      "status": "passed",
+      "path": null
+    },
+    {
+      "sequence": 14,
+      "type": "command.completed",
+      "role": null,
+      "commandId": "package-component",
+      "status": "passed",
+      "path": null
+    },
+    {
+      "sequence": 15,
+      "type": "bundle.created",
+      "role": "developer",
+      "commandId": null,
+      "status": null,
+      "path": null
+    }
+  ],
+  "roles": [
+    {
+      "role": "tester",
+      "status": "completed",
+      "sessionId": "ses_e97d8505affedV607V1L5ErqyF"
+    },
+    {
+      "role": "developer",
+      "status": "completed",
+      "sessionId": "ses_e97d81219ffePghPaUjDoN0y0y"
+    }
+  ],
+  "toolBinding": {
+    "name": "get_equipment",
+    "protocol": "http",
+    "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+    "inputFields": {
+      "equipmentId": "string"
+    },
+    "operationId": "equipment-status",
+    "toolVersion": "equipment-status-http@1",
+    "connectionRef": "enterprise-mock-http@1",
+    "responseFields": {
+      "source": "string",
+      "status": "string",
+      "equipmentId": "string",
+      "temperatureCelsius": "integer"
+    }
+  },
+  "runtimeRails": [
+    "audit",
+    "tool-allowlist",
+    "tool-call-limit@1:3"
+  ],
+  "runId": "b4e18730-2d31-4ee5-998c-b55635d957a4",
+  "runStatus": "succeeded",
+  "skillLoaded": true,
+  "generatedToolInvoked": true,
+  "railDefinition": {
+    "rails": [
+      {
+        "parameters": {
+          "maximum": 3
+        },
+        "templateId": "tool-call-limit@1"
+      }
+    ],
+    "schemaVersion": 1
+  },
+  "railRuntime": {
+    "configuredMaximum": 3,
+    "railRuntimeBound": true,
+    "belowLimit": true,
+    "events": [
+      {
+        "rail": "tool-call-limit",
+        "tool": "get_equipment",
+        "count": 1,
+        "event": "call_allowed",
+        "limit": 3,
+        "sessionId": "b4e18730-2d31-4ee5-998c-b55635d957a4"
+      },
+      {
+        "rail": "tool-call-limit",
+        "tool": "skill_tool",
+        "count": 2,
+        "event": "call_allowed",
+        "limit": 3,
+        "sessionId": "b4e18730-2d31-4ee5-998c-b55635d957a4"
+      }
+    ]
+  },
+  "mockCalls": [
+    {
+      "operation": "equipment-status",
+      "input": {
+        "equipmentId": "PUMP-001"
+      },
+      "status": 200
+    }
+  ],
+  "branches": [
+    {
+      "caseId": "AC-21",
+      "branchId": "independent-role-records",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "tester_and_developer_have_distinct_completed_sessions",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-21",
+      "branchId": "shared-confirmed-baseline",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "both_roles_use_one_confirmed_baseline",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "empty-tool-source",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "implementation_written_after_red_test",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "build",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "unit_contract_package_and_candidate_build_pass",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "actual-http-mapping",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "generated_http_tool_calls_pinned_mock_operation_once",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "empty-skill-source",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "skill_created_during_developer_role_after_red",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "loaded",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "runtime_loaded_exact_generated_skill_digest",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "model-trigger",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "model_invoked_generated_tool_and_mock_received_request",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22d",
+      "branchId": "rail-source",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "developer_generated_registered_rail_definition",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22d",
+      "branchId": "loaded-hook",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "generated_rail_is_bound_and_hook_emits_scoped_events",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22d",
+      "branchId": "below-limit",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "real_candidate_allows_calls_below_generated_limit",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "verdict": "passed"
+}

@@ -8,11 +8,11 @@ export interface CaseObservation {
   run: { id: string; status: string; result?: unknown }; calls: Record<string, unknown>[]; events: unknown[];
   actions: ActionRecord[]; attempts: { type: string;data?:unknown }[]; businessState: Record<string, unknown>; complete: boolean;
   beforeApprovalCalls?: unknown[];
-  candidateEvidence?:{ingress:string;requestId:string;candidate:ValidationCandidate;testDeployment:TestDeployment;loadedManifest:unknown};
+  candidateEvidence?:{ingress:string;requestId:string;candidate:ValidationCandidate;testDeployment:TestDeployment;loadedManifest:unknown;completionChecks?:Record<string,boolean>};
 }
 export const combineVerdicts = (values: ValidationVerdict[]): ValidationVerdict => values.includes('failed') ? 'failed' : values.includes('blocked') ? 'blocked' : !values.length || values.includes('unverified') ? 'unverified' : 'passed';
 function output(value: unknown): Record<string, unknown> | null {
-  const text = (value as { result?: { content?: unknown } } | null)?.result?.content;
+  const text = rawOutput(value);
   if (typeof text !== 'string') return null;
   try {
     // Accept a single fenced JSON block, never extract a convenient substring from arbitrary prose.
@@ -21,9 +21,41 @@ function output(value: unknown): Record<string, unknown> | null {
     return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed as Record<string, unknown> : null;
   } catch { return null; }
 }
+function rawOutput(value: unknown): unknown { return (value as { result?: { content?: unknown } } | null)?.result?.content; }
+function failureOutputHasNoFacts(evidence: CaseObservation, answer: Record<string, unknown> | null): boolean {
+  const content = rawOutput(evidence.run.result);
+  if (typeof content !== 'string' || !content.trim()) return false;
+  if (answer) {
+    const factFields = ['status', 'temperatureCelsius', 'source', 'currency', 'availableBalanceFen', 'asOf'];
+    if (factFields.some(field => Object.hasOwn(answer, field))) return false;
+    if (answer.kind === 'tool-error') {
+      return ['TOOL_UNAVAILABLE', 'TOOL_TIMEOUT'].includes(String(answer.code))
+        && typeof answer.message === 'string' && answer.message.trim().length > 0
+        && Object.keys(answer).every(key => ['kind', 'code', 'message'].includes(key));
+    }
+  }
+  const fields = ['status', 'temperatureCelsius', 'source', 'currency', 'availableBalanceFen', 'asOf'];
+  const operations = new Set(['equipment-status', 'getAccountBalance']);
+  const facts = evidence.calls.filter(call => operations.has(String(call.operation)))
+    .flatMap(call => {
+      const result = call.result;
+      return result && typeof result === 'object' && !Array.isArray(result)
+        ? fields.flatMap(field => {
+          const value = (result as Record<string, unknown>)[field];
+          if (typeof value !== 'string' && typeof value !== 'number') return [];
+          const rendered = String(value).trim();
+          return rendered ? [rendered] : [];
+        }) : [];
+    });
+  return facts.every(fact => {
+    const escaped = fact.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = /^\d+$/.test(fact) ? `(?<![A-Za-z0-9])${escaped}(?![A-Za-z0-9])` : escaped;
+    return !new RegExp(pattern, 'i').test(content);
+  });
+}
 export function evaluateProjectCase(item: BusinessCase, evidence: CaseObservation) {
   if (!evidence.complete || evidence.calls.some(call => call.runId !== evidence.run.id || typeof call.operation !== 'string' || typeof call.status !== 'number')) return { caseId: item.id, status: 'blocked' as const, assertions: [], reasons: ['EVIDENCE_INCOMPLETE'] };
-  const answer = output(evidence.run.result); const writes = evidence.calls.filter(c => c.operation === 'work-order-create');
+  const answer = output(evidence.run.result); const writes = evidence.calls.filter(c => ['work-order-create','createMockSubscription'].includes(String(c.operation)));
   const observed = evidence.calls.filter(c => c.operation === 'equipment-status' && c.status === 200);
   const orders = evidence.businessState.workOrders;
   const rules: Record<string, () => unknown> = {
@@ -36,11 +68,27 @@ export function evaluateProjectCase(item: BusinessCase, evidence: CaseObservatio
       if (!result || !['equipmentId','status','temperatureCelsius','source'].every(k => answer[k] === result[k])) return null;
       return Object.fromEntries(['equipmentId','status','temperatureCelsius','source'].map(k => [k, answer[k]]));
     },
+    'balance-report-schema': () => answer?.kind === 'account-balance' && Object.keys(answer).every(k => ['kind','accountId','currency','availableBalanceFen','asOf'].includes(k))
+      && typeof answer.accountId === 'string' && typeof answer.currency === 'string' && Number.isSafeInteger(answer.availableBalanceFen)
+      && typeof answer.asOf === 'string' && !Number.isNaN(Date.parse(answer.asOf)) ? 'account-balance@1' : null,
+    'balance-facts': () => {
+      const reads = evidence.calls.filter(c => c.operation === 'getAccountBalance' && c.status === 200);
+      if (reads.length !== 1 || !answer) return null;
+      const result = reads[0]!.result as Record<string, unknown> | null;
+      if (!result || !['accountId','currency','availableBalanceFen','asOf'].every(k => answer[k] === result[k])) return null;
+      return Object.fromEntries(['accountId','currency','availableBalanceFen','asOf'].map(k => [k, answer[k]]));
+    },
     'write-call-count': () => writes.length,
     'all-business-call-count': () => evidence.calls.length,
     'asks-for-equipment-id': () => answer?.kind === 'clarification' && Array.isArray(answer.missingFields) && answer.missingFields.includes('equipmentId') && typeof answer.message === 'string' && answer.message.trim().length > 0,
+    'asks-for-account-id': () => {
+      const content=(evidence.run.result as {result?:{content?:unknown}}|undefined)?.result?.content;
+      const structured=answer?.kind==='clarification'&&Array.isArray(answer.missingFields)&&answer.missingFields.includes('accountId')&&typeof answer.message==='string'&&answer.message.trim().length>0;
+      const natural=typeof content==='string'&&/账户(?:编号|号)/.test(content)&&/(请提供|请告诉|请告知|需要您提供)/.test(content);
+      return structured||natural;
+    },
     'tool-error-evidence': () => evidence.events.some(value => { const item = value as { data?: { event?: { event?: string } }; event?: { event?: string } }; return (item.data?.event ?? item.event)?.event === 'tool_error'; }),
-    'failure-output-no-facts': () => answer?.kind === 'tool-error' && ['TOOL_UNAVAILABLE','TOOL_TIMEOUT'].includes(String(answer.code)) && typeof answer.message === 'string' && answer.message.trim().length > 0 && Object.keys(answer).every(k => ['kind','code','message'].includes(k)),
+    'failure-output-no-facts': () => failureOutputHasNoFacts(evidence, answer),
     'before-approval-write-count': () => evidence.beforeApprovalCalls?.filter(call => (call as { operation?: string }).operation === 'work-order-create').length ?? null,
     'workorder-state-count': () => orders && typeof orders === 'object' && !Array.isArray(orders) ? Object.keys(orders).length : orders === undefined ? 0 : null,
     'effective-decision-count': () => new Set(evidence.actions.filter(action => action.decision === 'approve' && action.decisionId).map(action => action.decisionId)).size,

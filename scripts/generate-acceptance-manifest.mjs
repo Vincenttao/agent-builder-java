@@ -20,8 +20,8 @@ const branches = {
   'AC-17': ['interleaved-sessions'], 'AC-18': ['export-no-secrets', 'fresh-directory-import', 'rebind-required'],
   'AC-19': ['cancel-accepted-before-terminal', 'unknown-write-reconciled'], 'AC-20': ['simulation-not-publishable'],
   'AC-21': ['independent-role-records', 'shared-confirmed-baseline'],
-  'AC-22a': ['empty-tool-source', 'build', 'actual-http-mapping'], 'AC-22b': ['empty-skill-source', 'loaded', 'model-trigger'],
-  'AC-22c': ['agent-source', 'build', 'real-task'], 'AC-22d': ['rail-source', 'loaded-hook', 'below-limit', 'at-limit', 'above-limit'],
+  'AC-22a': ['separate-component-request', 'empty-tool-source', 'build', 'actual-http-mapping'], 'AC-22b': ['separate-component-request', 'empty-skill-source', 'loaded', 'model-trigger'],
+  'AC-22c': ['separate-component-request', 'agent-source', 'build', 'real-task'], 'AC-22d': ['separate-component-request', 'rail-source', 'loaded-hook', 'below-limit', 'at-limit', 'above-limit'],
   'AC-23': ['directory', 'dependency', 'command', 'connection'], 'AC-24': ['dev-copy-changed', 'tester-write-denied', 'digest-before', 'digest-after'],
   'AC-25': ['developer-deletes-case', 'tester-lowers-expectation'], 'AC-26': ['defect-observed', 'new-candidate', 'same-assertion', 'failure-history-retained'],
   'AC-27': ['regression-without-model'], 'AC-28': ['false-success-external-mismatch', 'environment-unavailable'],
@@ -81,12 +81,41 @@ for (const line of baseline.split('\n')) {
   if (/^NF-\d+$/.test(id)) entries.push({ id, phase: cells[2], requirements: references(cells[3]), title: cells[4] });
 }
 const previous = await readFile('tests/acceptance/manifest.json', 'utf8').then(JSON.parse).catch(() => ({ cases: [] }));
+const implementedTestFiles = {
+  'AC-21': 'scripts/verify-td15-ac21-ac22-generation-live.mjs',
+  'AC-22a': 'scripts/verify-td15-ac21-ac22-generation-live.mjs',
+  'AC-22b': 'scripts/verify-td15-ac21-ac22-generation-live.mjs',
+  'AC-22d': 'java/runtime-bridge/src/test/java/local/agentbuilder/bridge/AgentAssemblerTest.java',
+  'AC-23': 'scripts/verify-td15-ac23-policy-audit-live.mjs',
+  'AC-15': 'scripts/verify-td15-ac15-startup-failure-live.mjs',
+  'AC-19': 'scripts/verify-td15-ac19-cancel-unknown-write-live.mjs',
+  'AC-20': 'apps/server/src/releases/project-release-gate.test.ts',
+  'AC-08': 'scripts/verify-td15-nf01-validation-branches.mjs',
+  'AC-03': 'tests/e2e/requirements-mode.spec.ts',
+  'AC-09': 'scripts/verify-td15-nf01-validation-branches.mjs',
+  'AC-10': 'scripts/verify-td15-nf01-validation-branches.mjs',
+  'AC-11': 'scripts/verify-td15-ac11-live.mjs',
+  'AC-14': 'scripts/verify-td15-ac14-live.mjs',
+  'AC-16': 'scripts/verify-td15-ac16-current-live.mjs',
+  'AC-42a': 'scripts/verify-td15-ac42a-live.mjs',
+  'AC-12': 'scripts/verify-td15-nf01-validation-branches.mjs',
+  'EQ-03': 'scripts/verify-td15-nf01-validation-branches.mjs',
+  'EQ-02': 'scripts/verify-td15-nf01-validation-branches.mjs',
+  'EQ-01': 'scripts/verify-td15-eq01-empty-retrieval-live.mjs',
+  'AC-07': 'scripts/verify-td15-ac07-http-mcp.mjs',
+  'NF-02': 'scripts/verify-td15-nf02.mjs',
+  'NF-03': 'scripts/benchmark-td15-nf03.mjs',
+  'NF-04': 'scripts/verify-td15-nf04-event-retention-live.mjs',
+  'NF-05': 'scripts/verify-td15-nf05-workspace.mjs',
+  'AC-29a': 'scripts/verify-td15-ac29a-cancel-child-process.mjs',
+  'NF-06': 'scripts/verify-td15-ac29a-cancel-child-process.mjs'
+};
 const manifest = {
   schemaVersion: 1,
   baselineDigest: createHash('sha256').update(prd.replaceAll('\r\n', '\n')).update(baseline.replaceAll('\r\n', '\n')).digest('hex'),
   cases: entries.map(e => ({ caseId: e.id, phase: e.phase, title: e.title, requirementIds: e.requirements,
-    testFile: previous.cases.find(p => p.caseId === e.id)?.testFile ?? null,
-    executionMode: 'live-mock', branches: (branches[e.id] ?? ['scenario']).map(id => ({ id, evidenceKinds: ['assertions', 'execution-record'] })) }))
+    testFile: implementedTestFiles[e.id] ?? previous.cases.find(p => p.caseId === e.id)?.testFile ?? null,
+    executionMode: e.id === 'AC-20' ? 'simulated' : 'live-mock', branches: (branches[e.id] ?? ['scenario']).map(id => ({ id, evidenceKinds: ['assertions', 'execution-record'] })) }))
 };
 if (manifest.cases.length !== 88) throw new Error(`Expected 88 items, got ${manifest.cases.length}`);
 await mkdir('tests/acceptance', { recursive: true });

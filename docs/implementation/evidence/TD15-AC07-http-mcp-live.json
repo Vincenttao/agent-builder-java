@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/AC-07 real HTTP and MCP Tool calls against the same versioned Mock equipment service",
+  "executionMode": "isolated-live-docker",
+  "measuredAt": "2026-10-23T08:08:22.334Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "draftId": "8e4a2df8-33a3-403b-9b84-9e47a6b73fe9",
+  "snapshotId": "cb301823-62eb-4e1a-8424-548ce746541f",
+  "snapshotToolBindings": [
+    {
+      "name": "get_equipment",
+      "operationId": "equipment-status",
+      "protocol": "http",
+      "connectionRef": "enterprise-mock-http@1",
+      "toolVersion": "equipment-status-http@1"
+    },
+    {
+      "name": "get_equipment_mcp",
+      "operationId": "equipment-status",
+      "protocol": "mcp",
+      "connectionRef": "enterprise-mock-mcp@1",
+      "toolVersion": "equipment-status-mcp@1",
+      "remoteToolName": "equipment_status"
+    }
+  ],
+  "http": {
+    "runId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+    "environmentId": "97a6b8c9-3884-4265-afe0-a9b95d1f8ec3",
+    "runStatus": "succeeded",
+    "runDurationMs": 12457,
+    "runtimeEvents": [
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "before_invoke",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "before_model_call",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "after_model_call",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      },
+      {
+        "rail": "tool-allowlist",
+        "tool": "get_equipment",
+        "event": "before_tool_call",
+        "allowed": true,
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf"
+      },
+      {
+        "rail": "audit",
+        "tool": "get_equipment",
+        "event": "before_tool_call",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      },
+      {
+        "tool": "get_equipment",
+        "event": "tool_call",
+        "status": "succeeded",
+        "protocol": "http",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "durationMs": 29,
+        "toolVersion": "equipment-status-http@1",
+        "resultDigest": "5826cb5a757c7867d9b5153c8ffe1980e76c51ed857a6434864576117718e1f4",
+        "connectionRef": "enterprise-mock-http@1",
+        "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+      },
+      {
+        "rail": "audit",
+        "tool": "get_equipment",
+        "event": "after_tool_call",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "before_model_call",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "after_model_call",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "event": "assistant_output",
+        "content": "已通过 HTTP 工具 get_equipment 查询 PUMP-001，结果如下：\n\n- 设备编号：PUMP-001\n- 状态：warning（告警）\n- 温度：86 °C\n- 来源：seed-equipment-001@1\n\n温度偏高且状态为告警，建议尽快检查该泵的散热与负载情况。",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf"
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "after_invoke",
+        "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+        "turnCount": 1
+      }
+    ],
+    "mockCalls": [
+      {
+        "operation": "equipment-status",
+        "input": {
+          "equipmentId": "PUMP-001"
+        },
+        "status": 200,
+        "result": {
+          "source": "seed-equipment-001@1",
+          "status": "warning",
+          "equipmentId": "PUMP-001",
+          "temperatureCelsius": 86
+        },
+        "actorId": "U1001",
+        "runId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf"
+      }
+    ],
+    "httpCall": {
+      "tool": "get_equipment",
+      "event": "tool_call",
+      "status": "succeeded",
+      "protocol": "http",
+      "sessionId": "bdd9a93c-8a6a-4527-921c-9049295bb2cf",
+      "durationMs": 29,
+      "toolVersion": "equipment-status-http@1",
+      "resultDigest": "5826cb5a757c7867d9b5153c8ffe1980e76c51ed857a6434864576117718e1f4",
+      "connectionRef": "enterprise-mock-http@1",
+      "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+    }
+  },
+  "mcp": {
+    "runId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+    "environmentId": "eab8d6c9-5993-47f2-ad25-d4a0b73c35f6",
+    "runStatus": "succeeded",
+    "runDurationMs": 11475,
+    "runtimeEvents": [
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "before_invoke",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "before_model_call",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "after_model_call",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      },
+      {
+        "rail": "tool-allowlist",
+        "tool": "get_equipment_mcp",
+        "event": "before_tool_call",
+        "allowed": true,
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9"
+      },
+      {
+        "rail": "audit",
+        "tool": "get_equipment_mcp",
+        "event": "before_tool_call",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      },
+      {
+        "tool": "get_equipment_mcp",
+        "event": "mcp_tool_call",
+        "status": "succeeded",
+        "protocol": "mcp",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "durationMs": 381,
+        "serverName": "agent-builder-mock",
+        "toolVersion": "equipment-status-mcp@1",
+        "resultDigest": "5826cb5a757c7867d9b5153c8ffe1980e76c51ed857a6434864576117718e1f4",
+        "connectionRef": "enterprise-mock-mcp@1",
+        "serverVersion": "1.0.0",
+        "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+      },
+      {
+        "rail": "audit",
+        "tool": "get_equipment_mcp",
+        "event": "after_tool_call",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "before_model_call",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "after_model_call",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      },
+      {
+        "rail": "audit",
+        "event": "assistant_output",
+        "content": "查询结果（来源：MCP 工具 get_equipment_mcp）：\n\n- 设备编号：PUMP-001\n- 状态：warning（告警）\n- 温度：86 °C\n- 数据来源：seed-equipment-001@1\n\n该设备当前处于告警状态，温度 86 °C 偏高，建议尽快检查。",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9"
+      },
+      {
+        "rail": "audit",
+        "tool": "",
+        "event": "after_invoke",
+        "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+        "turnCount": 1
+      }
+    ],
+    "mockCalls": [
+      {
+        "operation": "equipment-status",
+        "input": {
+          "equipmentId": "PUMP-001"
+        },
+        "status": 200,
+        "result": {
+          "source": "seed-equipment-001@1",
+          "status": "warning",
+          "equipmentId": "PUMP-001",
+          "temperatureCelsius": 86
+        },
+        "actorId": "U1001",
+        "runId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9"
+      }
+    ],
+    "mcpCall": {
+      "tool": "get_equipment_mcp",
+      "event": "mcp_tool_call",
+      "status": "succeeded",
+      "protocol": "mcp",
+      "sessionId": "2a3d2f17-3ad1-4fce-9511-a54d08db99a9",
+      "durationMs": 381,
+      "serverName": "agent-builder-mock",
+      "toolVersion": "equipment-status-mcp@1",
+      "resultDigest": "5826cb5a757c7867d9b5153c8ffe1980e76c51ed857a6434864576117718e1f4",
+      "connectionRef": "enterprise-mock-mcp@1",
+      "serverVersion": "1.0.0",
+      "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+    }
+  },
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "verdict": "passed"
+}

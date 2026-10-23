@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15 P0-A AC-08/09/10/12 and EQ-03 branches from fixed-candidate work-order validation",
+  "executionMode": "live-mock",
+  "measuredAt": "2026-10-23T09:43:21.681Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "validationId": "38bb3417-8125-472b-9c75-1c6609d9353d",
+  "candidateId": "5bfff1a4-c84b-47a1-b8af-7663ef52760b",
+  "artifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
+  "reportDigest": "d956b3aad910daadf09430e0ab064549df0f1e55b333cc9f940cd65d419ab9a2",
+  "targetImageIds": [
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+  ],
+  "overallValidationVerdict": "failed",
+  "expectedInterruptedRun": "15f8aea4-09a9-4c3c-87c1-a7b3b67871a1",
+  "limitation": "TC-008 overall validation remains failed because SIGKILL correctly leaves the Run interrupted. Only response-loss reconciliation and no-duplicate-write assertions are recorded as passed.",
+  "evidence": {
+    "equipmentRunId": "4bd63650-9c4d-48fe-a18a-347bf9c4dc0b",
+    "missingParameterRunId": "76202cea-56a8-4c28-925c-525f383cf314",
+    "validationCaseStatuses": {
+      "TC-001": "passed",
+      "TC-002": "passed",
+      "TC-003": "passed",
+      "TC-004": "passed",
+      "TC-005": "passed",
+      "TC-006": "passed",
+      "TC-007": "passed",
+      "TC-008": "failed"
+    }
+  },
+  "branches": [
+    {
+      "caseId": "AC-08",
+      "branchId": "facts",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "equipment_facts_match_mock",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-08",
+      "branchId": "recommendations",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "recommendation_is_present",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-08",
+      "branchId": "sources",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "source_matches_tool_evidence",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-08",
+      "branchId": "output-schema",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "structured_output_and_schema_assertion",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-09",
+      "branchId": "clarification",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "asks_for_required_identifier",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-09",
+      "branchId": "zero-tool-calls",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "no_external_business_call",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-10",
+      "branchId": "refuse-zero-writes",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "rejected_action_has_zero_write",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-10",
+      "branchId": "cancel-preserves-analysis",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "refusal_cancels_and_retains_analysis",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-12",
+      "branchId": "write-response-lost",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "committed_write_response_pending_before_crash",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-12",
+      "branchId": "reconcile-no-replay",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "idempotency_lookup_without_duplicate_write",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "EQ-02",
+      "branchId": "read-timeout",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "timeout_report_has_no_invented_facts_or_writes",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "EQ-03",
+      "branchId": "expired",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "expired_approval_cannot_write",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "EQ-03",
+      "branchId": "changed-parameters",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "changed_approval_arguments_rejected",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

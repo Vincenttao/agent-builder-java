@@ -5,7 +5,7 @@ import {mkdir,readFile,writeFile,rename,readdir,appendFile} from 'node:fs/promis
 import {join,resolve} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
 import {canonicalJson} from '../../../../packages/contracts/src/canonical.js';
-import {generationProfile,validateGenerationRequest,PolicyError} from './profile.js';
+import {generationProfile,generationProfileFor,validateGenerationRequest,PolicyError} from './profile.js';
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 const hash=(value:unknown)=>createHash('sha256').update(canonicalJson(value)).digest('hex');
 const terminal=new Set(['built','failed','cancelled']);
@@ -26,15 +26,15 @@ export class EngineeringTaskManager {
    if(record.id!==id||record.inputDigest!==hash(input))throw new PolicyError('ENGINEERING_STATE_MISMATCH');
    const events=await this.events(id);const entry:Entry={record,input,writing:Promise.resolve(),sequence:events.at(-1)?.sequence??0};this.entries.set(id,entry);
    if(['running','cancelling'].includes(record.status)){record.status='reconciling';record.diagnostic='ENGINE_TASK_REQUIRES_RECONCILIATION';await this.persist(entry);}
-   if(record.status==='queued'&&record.profileDigest!==hash(generationProfile)){record.status='failed';record.diagnostic='ENGINEERING_PROFILE_CHANGED';await this.persist(entry);}
+   if(record.status==='queued'&&record.profileDigest!==hash(generationProfileFor(input.generation.profileVersion))){record.status='failed';record.diagnostic='ENGINEERING_PROFILE_CHANGED';await this.persist(entry);}
   }
  }
  async submit(id:string,input:EngineeringTaskInput):Promise<EngineeringTaskRecord>{return this.serial(async()=>{
   this.directory(id);if(this.closed)throw new PolicyError('ENGINEERING_CLOSED');if(this.retired.has(id))throw new PolicyError('ENGINEERING_TASK_RETIRED');
   const old=this.entries.get(id);if(old){if(old.record.inputDigest!==hash(input))throw new PolicyError('ENGINEERING_INPUT_CONFLICT');return structuredClone(old.record);}
-  validateGenerationRequest(input.generation);if(!Number.isInteger(input.maxSeconds)||input.maxSeconds<5||input.maxSeconds>generationProfile.maxTaskSeconds)throw new PolicyError('ENGINEERING_BUDGET_INVALID');
+  validateGenerationRequest(input.generation);const profile=generationProfileFor(input.generation.profileVersion);if(!Number.isInteger(input.maxSeconds)||input.maxSeconds<5||input.maxSeconds>profile.maxTaskSeconds)throw new PolicyError('ENGINEERING_BUDGET_INVALID');
   if([...this.entries.values()].filter(entry=>!terminal.has(entry.record.status)).length>=4)throw new PolicyError('ENGINEERING_QUEUE_LIMIT');
-  const now=new Date().toISOString();const record:EngineeringTaskRecord={id,inputDigest:hash(input),profileDigest:hash(generationProfile),status:'queued',createdAt:now,updatedAt:now,roles:[{role:'tester',status:'queued'},{role:'developer',status:'queued'}]};
+  const now=new Date().toISOString();const record:EngineeringTaskRecord={id,inputDigest:hash(input),profileDigest:hash(profile),status:'queued',createdAt:now,updatedAt:now,roles:[{role:'tester',status:'queued'},{role:'developer',status:'queued'}]};
   const directory=this.directory(id);await mkdir(directory,{recursive:true});
   try{await writeFile(join(directory,'input.json'),JSON.stringify(input),{flag:'wx'});}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST'||hash(JSON.parse(await readFile(join(directory,'input.json'),'utf8')))!==record.inputDigest)throw new PolicyError('ENGINEERING_INPUT_CONFLICT');}
   const entry:Entry={record,input:structuredClone(input),writing:Promise.resolve(),sequence:0};await this.persist(entry);this.entries.set(id,entry);return structuredClone(record);
@@ -50,7 +50,7 @@ export class EngineeringTaskManager {
   return{bundle,directory};
  }
  async file(id:string,path:string):Promise<{path:string;digest:string;content:string}>{
-  const record=await this.get(id);const allowed=[...generationProfile.developerFiles,...generationProfile.repair.regressionFiles,'test-plan.json'] as readonly string[];
+  const record=await this.get(id);const profile=generationProfileFor(this.entries.get(id)!.input.generation.profileVersion);const allowed=[...profile.developerFiles,...profile.repair.regressionFiles,'test-plan.json'] as readonly string[];
   if(!allowed.includes(path))throw new PolicyError('FILE_OPERATION_NOT_ALLOWED');
   if(record.status!=='built'||!record.bundle)throw new PolicyError('GENERATED_BUNDLE_MISSING');
   const manifest=record.bundle;const{digest,...body}=manifest;if(hash(body)!==digest)throw new PolicyError('GENERATED_BUNDLE_MISMATCH');
@@ -86,7 +86,7 @@ export class EngineeringTaskManager {
   const active=await this.serial(async()=>{
    this.directory(id);this.retired.add(id);await writeFile(join(this.root,'retired',`${id}.json`),JSON.stringify({id,retired:true}));
    const entry=this.entries.get(id);if(!entry||terminal.has(entry.record.status)||entry.record.status==='reconciling')return undefined;
-   if(entry.record.status==='queued'){entry.record.status='cancelled';await this.persist(entry);return undefined;}
+   if(entry.record.status==='queued'){entry.record.status='cancelled';for(const role of entry.record.roles)if(role.status==='queued')role.status='skipped';await this.persist(entry);return undefined;}
    entry.record.status='cancelling';if(budgetExceeded)entry.record.diagnostic='ENGINEERING_BUDGET_EXCEEDED';await this.persist(entry);return this.active?.id===id?this.active:undefined;
   });
   if(active){

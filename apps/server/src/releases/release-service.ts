@@ -3,7 +3,8 @@ import { randomUUID } from 'node:crypto';
 import type { ReleaseInput, ReleaseOperation, ReleaseReference, ReleasePointer, ReleaseVersion, ReleaseOverview } from '../../../../packages/contracts/src/releases.js';
 import { contentDigest } from '../snapshots/domain/assembly.js';
 import { AppError } from '../shared/errors.js';
-import type { ReleaseClaim } from '../shared/release-claim.js';
+import { assertReleaseClaim, type ReleaseClaim } from '../shared/release-claim.js';
+import { DependencyError } from '../runs/http-ports.js';
 export interface ReleaseGate { check(snapshotId: string, validationId: string): Promise<ReleaseReference> }
 export interface ReleaseDriver {
   prepare(operation: ReleaseOperation, claim: ReleaseClaim): Promise<{ ready: boolean; artifactDigest: string; snapshotDigest: string }>;
@@ -53,7 +54,16 @@ export class ReleaseService {
         const current = await this.gate.check(operation.request.snapshotId,operation.request.validationId);
         if (contentDigest(current) !== contentDigest(operation.reference)) throw new AppError('VALIDATION_BINDING_CHANGED','验证环境发生变化，不能复用报告',409);
         if (operation.status === 'queued' || operation.status === 'preparing') {
-          operation.status = 'preparing'; const deployment = await this.driver.prepare(operation, authority);
+          operation.status = 'preparing';
+          const phaseClient = await this.pool.connect();
+          try {
+            await phaseClient.query('BEGIN');
+            await assertReleaseClaim(phaseClient,authority,operation.smokeRunId);
+            await phaseClient.query('UPDATE release_operations SET record=$2 WHERE id=$1',[operation.id,operation]);
+            await phaseClient.query('COMMIT');
+          } catch (error) { await phaseClient.query('ROLLBACK'); throw error; }
+          finally { phaseClient.release(); }
+          const deployment = await this.driver.prepare(operation, authority);
           if (!deployment.ready || deployment.artifactDigest !== current.binding.artifactDigest || deployment.snapshotDigest !== current.binding.snapshotDigest) throw new AppError('DEPLOYMENT_NOT_READY','目标实例未就绪或摘要不匹配',409);
           operation.status = 'smoking';
         } else {
@@ -67,7 +77,7 @@ export class ReleaseService {
       } catch (error) {
         // Commit failure under the lease fence before any destructive cleanup. A stale
         // worker must never stop a deployment that its successor may have published.
-        operation.status = 'failed'; operation.diagnostic = error instanceof AppError ? error.code : 'RELEASE_EXECUTION_FAILED';
+        operation.status = 'failed'; operation.diagnostic = error instanceof AppError || error instanceof DependencyError ? error.code : 'RELEASE_EXECUTION_FAILED';
       }
       const client = await this.pool.connect();
       try {

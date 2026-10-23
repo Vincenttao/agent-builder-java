@@ -1,0 +1,1193 @@
+{
+  "schemaVersion": 1,
+  "baselineDigest": "b262943f73070de948c40ae86b37b01b157b623be92a2aefb0e1d3c93157fe25",
+  "manifestSha256": "c4c1f4cf72d8d03b2640d7114a19e6a9b5d598e6bd0a28ac7edb9495e0ddc95f",
+  "evidenceBoundary": "Candidate test references guide implementation and test planning. They are not branch execution evidence and cannot satisfy the live-mock acceptance gate.",
+  "cases": [
+    {
+      "caseId": "AC-01",
+      "title": "无模型连接，填写需求并保存",
+      "branches": [
+        {
+          "branchId": "save-without-model",
+          "candidateTestReferences": [
+            "tests/integration/drafts.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/e2e/draft-flow.spec.ts",
+            "scripts/verify-td15-ac01-no-model.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "run-blocked",
+          "candidateTestReferences": [
+            "tests/integration/drafts.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/e2e/draft-flow.spec.ts",
+            "scripts/verify-td15-ac01-no-model.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-02",
+      "title": "问答输入后切换表单，再返回问答",
+      "branches": [
+        {
+          "branchId": "guided-to-form",
+          "candidateTestReferences": [
+            "tests/integration/drafts.test.ts",
+            "tests/e2e/draft-flow.spec.ts",
+            "tests/e2e/requirements-mode.spec.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "form-to-guided",
+          "candidateTestReferences": [
+            "tests/integration/drafts.test.ts",
+            "tests/e2e/draft-flow.spec.ts",
+            "tests/e2e/requirements-mode.spec.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-03",
+      "title": "将只读目标改成创建工单",
+      "branches": [
+        {
+          "branchId": "write-confirmation-added",
+          "candidateTestReferences": [
+            "tests/integration/drafts.test.ts",
+            "tests/e2e/draft-flow.spec.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "resource-gap",
+          "candidateTestReferences": [
+            "tests/integration/drafts.test.ts",
+            "tests/e2e/draft-flow.spec.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "unrelated-fields-retained",
+          "candidateTestReferences": [
+            "tests/integration/drafts.test.ts",
+            "tests/e2e/draft-flow.spec.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-04",
+      "title": "生成不存在的工具或非法 Rail 参数",
+      "branches": [
+        {
+          "branchId": "unknown-tool",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "apps/web/src/assembly-editor.test.ts",
+            "tests/e2e/assembly-ui.spec.ts",
+            "scripts/verify-td15-ac04-invalid-assembly.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "invalid-rail-parameter",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "apps/web/src/assembly-editor.test.ts",
+            "tests/e2e/assembly-ui.spec.ts",
+            "scripts/verify-td15-ac04-invalid-assembly.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "invalid-change-not-applied",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "apps/web/src/assembly-editor.test.ts",
+            "tests/e2e/assembly-ui.spec.ts",
+            "scripts/verify-td15-ac04-invalid-assembly.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-05",
+      "title": "启用两个 Rail 并运行 DeepAgent",
+      "branches": [
+        {
+          "branchId": "two-rails-loaded",
+          "candidateTestReferences": [
+            "tests/adapters/platform-runtime.test.ts",
+            "tests/e2e/assembly-ui.spec.ts",
+            "scripts/verify-td15-ac05-two-rails-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "two-rails-triggered",
+          "candidateTestReferences": [
+            "tests/adapters/platform-runtime.test.ts",
+            "tests/e2e/assembly-ui.spec.ts",
+            "scripts/verify-td15-ac05-two-rails-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-06",
+      "title": "配置冲突 Rail 或不支持的 Agent 类型",
+      "branches": [
+        {
+          "branchId": "conflicting-rails",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "apps/web/src/assembly-editor.test.ts",
+            "scripts/verify-td15-ac06-incompatible-assembly.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "unsupported-agent",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "apps/web/src/assembly-editor.test.ts",
+            "scripts/verify-td15-ac06-incompatible-assembly.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-07",
+      "title": "分别调用一个 HTTP 和 MCP 工具",
+      "branches": [
+        {
+          "branchId": "http-tool",
+          "candidateTestReferences": [
+            "tests/contract/runner-api.test.ts",
+            "tests/contract/engineering-mcp.test.ts",
+            "tests/adapters/platform-runtime.test.ts",
+            "scripts/verify-td15-ac07-http-mcp.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "mcp-tool",
+          "candidateTestReferences": [
+            "tests/contract/runner-api.test.ts",
+            "tests/contract/engineering-mcp.test.ts",
+            "tests/adapters/platform-runtime.test.ts",
+            "scripts/verify-td15-ac07-http-mcp.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-08",
+      "title": "输入 PUMP-001 告警分析任务",
+      "branches": [
+        {
+          "branchId": "facts",
+          "candidateTestReferences": [
+            "tests/adapters/platform-runtime.test.ts",
+            "tests/integration/validations.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "recommendations",
+          "candidateTestReferences": [
+            "tests/adapters/platform-runtime.test.ts",
+            "tests/integration/validations.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "sources",
+          "candidateTestReferences": [
+            "tests/adapters/platform-runtime.test.ts",
+            "tests/integration/validations.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "output-schema",
+          "candidateTestReferences": [
+            "tests/adapters/platform-runtime.test.ts",
+            "tests/integration/validations.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-09",
+      "title": "不提供设备编号",
+      "branches": [
+        {
+          "branchId": "clarification",
+          "candidateTestReferences": [
+            "tests/integration/validations.test.ts",
+            "tests/e2e/workorder-validation-flow.spec.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "zero-tool-calls",
+          "candidateTestReferences": [
+            "tests/integration/validations.test.ts",
+            "tests/e2e/workorder-validation-flow.spec.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-10",
+      "title": "申请创建工单后拒绝确认",
+      "branches": [
+        {
+          "branchId": "refuse-zero-writes",
+          "candidateTestReferences": [
+            "tests/adapters/workorder-validation.test.ts",
+            "tests/e2e/workorder-validation-flow.spec.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "cancel-preserves-analysis",
+          "candidateTestReferences": [
+            "tests/adapters/workorder-validation.test.ts",
+            "tests/e2e/workorder-validation-flow.spec.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-11",
+      "title": "对同一动作重复批准",
+      "branches": [
+        {
+          "branchId": "sequential-duplicate",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/adapters/platform-approval.test.ts",
+            "tests/e2e/approval-flow.spec.ts",
+            "scripts/verify-td15-ac11-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "concurrent-duplicate",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/adapters/platform-approval.test.ts",
+            "tests/e2e/approval-flow.spec.ts",
+            "scripts/verify-td15-ac11-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-12",
+      "title": "工单写入返回超时但已成功",
+      "branches": [
+        {
+          "branchId": "write-response-lost",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/adapters/workorder-validation.test.ts",
+            "tests/e2e/workorder-validation-flow.spec.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "reconcile-no-replay",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/adapters/workorder-validation.test.ts",
+            "tests/e2e/workorder-validation-flow.spec.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-13",
+      "title": "运行中刷新页面，SSE 重连",
+      "branches": [
+        {
+          "branchId": "refresh",
+          "candidateTestReferences": [
+            "tests/integration/runs.test.ts",
+            "tests/e2e/debug-run.spec.ts",
+            "scripts/verify-td15-nf01-sse-reconnect.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "sse-reconnect",
+          "candidateTestReferences": [
+            "tests/integration/runs.test.ts",
+            "tests/e2e/debug-run.spec.ts",
+            "scripts/verify-td15-nf01-sse-reconnect.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "duplicate-events",
+          "candidateTestReferences": [
+            "tests/integration/runs.test.ts",
+            "tests/e2e/debug-run.spec.ts",
+            "scripts/verify-td15-nf01-sse-reconnect.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-14",
+      "title": "运行中修改草稿并再次测试",
+      "branches": [
+        {
+          "branchId": "old-run-pinned",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "tests/integration/test-deployments.test.ts",
+            "tests/e2e/snapshot-flow.spec.ts",
+            "scripts/verify-td15-ac14-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "new-snapshot",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "tests/integration/test-deployments.test.ts",
+            "tests/e2e/snapshot-flow.spec.ts",
+            "scripts/verify-td15-ac14-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "old-test-invalid",
+          "candidateTestReferences": [
+            "tests/integration/snapshots.test.ts",
+            "tests/integration/test-deployments.test.ts",
+            "tests/e2e/snapshot-flow.spec.ts",
+            "scripts/verify-td15-ac14-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-15",
+      "title": "发布 v2 时实例启动失败",
+      "branches": [
+        {
+          "branchId": "startup-failure-keeps-release",
+          "candidateTestReferences": [
+            "tests/integration/releases.test.ts",
+            "apps/server/src/releases/project-release-gate.test.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-16",
+      "title": "发布 v2 后回滚 v1",
+      "branches": [
+        {
+          "branchId": "new-request-rolled-back",
+          "candidateTestReferences": [
+            "tests/integration/releases.test.ts",
+            "apps/server/src/releases/project-release-gate.test.ts",
+            "scripts/verify-td15-ac16-rollback-evidence.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "history-unchanged",
+          "candidateTestReferences": [
+            "tests/integration/releases.test.ts",
+            "apps/server/src/releases/project-release-gate.test.ts",
+            "scripts/verify-td15-ac16-rollback-evidence.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-17",
+      "title": "两会话交替执行带状态 Rail",
+      "branches": [
+        {
+          "branchId": "interleaved-sessions",
+          "candidateTestReferences": [
+            "tests/integration/shared-runs.test.ts",
+            "tests/adapters/platform-runtime.test.ts",
+            "scripts/verify-td15-nf01-two-sessions.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-18",
+      "title": "导出并导入新工作区",
+      "branches": [
+        {
+          "branchId": "export-no-secrets",
+          "candidateTestReferences": [
+            "tests/contract/project-export.test.ts",
+            "tests/integration/project-imports.test.ts",
+            "tests/e2e/project-package-ui.spec.ts",
+            "scripts/verify-td15-nf05-workspace.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "fresh-directory-import",
+          "candidateTestReferences": [
+            "tests/contract/project-export.test.ts",
+            "tests/integration/project-imports.test.ts",
+            "tests/e2e/project-package-ui.spec.ts",
+            "scripts/verify-td15-nf05-workspace.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "rebind-required",
+          "candidateTestReferences": [
+            "tests/contract/project-export.test.ts",
+            "tests/integration/project-imports.test.ts",
+            "tests/e2e/project-package-ui.spec.ts",
+            "scripts/verify-td15-nf05-workspace.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-19",
+      "title": "运行中取消，外部结果暂不明确",
+      "branches": [
+        {
+          "branchId": "cancel-accepted-before-terminal",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/adapters/platform-approval.test.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "unknown-write-reconciled",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/adapters/platform-approval.test.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-20",
+      "title": "仅有模拟执行测试通过时尝试发布",
+      "branches": [
+        {
+          "branchId": "simulation-not-publishable",
+          "candidateTestReferences": [
+            "apps/server/src/releases/project-release-gate.test.ts",
+            "tests/integration/releases.test.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "AC-42a",
+      "title": "检查 trusted-local 模式和业务连接；经正常代理调用伪造身份／管理操作／未审批写动作",
+      "branches": [
+        {
+          "branchId": "trusted-local-visible",
+          "candidateTestReferences": [
+            "tests/contract/runner-api.test.ts",
+            "tests/integration/invocations.test.ts",
+            "tests/adapters/platform-runtime.test.ts",
+            "scripts/verify-td15-ac42a-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "production-connection-denied",
+          "candidateTestReferences": [
+            "tests/contract/runner-api.test.ts",
+            "tests/integration/invocations.test.ts",
+            "tests/adapters/platform-runtime.test.ts",
+            "scripts/verify-td15-ac42a-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "EQ-01",
+      "title": "设备资料检索为空",
+      "branches": [
+        {
+          "branchId": "empty-retrieval",
+          "candidateTestReferences": [
+            "tests/integration/mock-services.test.ts",
+            "apps/server/src/snapshots/domain/assembly.test.ts",
+            "scripts/verify-td15-eq01-empty-retrieval-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "EQ-02",
+      "title": "工具不可用／只读查询超时",
+      "branches": [
+        {
+          "branchId": "tool-unavailable",
+          "candidateTestReferences": [
+            "tests/integration/mock-services.test.ts",
+            "tests/adapters/workorder-validation.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "read-timeout",
+          "candidateTestReferences": [
+            "tests/integration/mock-services.test.ts",
+            "tests/adapters/workorder-validation.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "EQ-03",
+      "title": "工单确认参数变化或动作过期后批准",
+      "branches": [
+        {
+          "branchId": "changed-parameters",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/adapters/workorder-validation.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "expired",
+          "candidateTestReferences": [
+            "tests/integration/actions.test.ts",
+            "tests/adapters/workorder-validation.test.ts",
+            "scripts/verify-td15-nf01-validation-branches.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "NF-01",
+      "title": "两会话交替运行、刷新重连、重启；快照与事件不串用、不重复执行，未知状态可核对",
+      "branches": [
+        {
+          "branchId": "two-sessions",
+          "candidateTestReferences": [
+            "tests/integration/run-leases.test.ts",
+            "tests/integration/shared-runs.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/adapters/deployment-recovery.test.ts",
+            "scripts/verify-td15-nf01-active-write-restart.mjs",
+            "scripts/verify-td15-nf01-restart-snapshot-events.mjs",
+            "scripts/verify-td15-nf01-two-sessions.mjs",
+            "scripts/verify-td15-nf01-sse-reconnect.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "refresh-reconnect",
+          "candidateTestReferences": [
+            "tests/integration/run-leases.test.ts",
+            "tests/integration/shared-runs.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/adapters/deployment-recovery.test.ts",
+            "scripts/verify-td15-nf01-active-write-restart.mjs",
+            "scripts/verify-td15-nf01-restart-snapshot-events.mjs",
+            "scripts/verify-td15-nf01-two-sessions.mjs",
+            "scripts/verify-td15-nf01-sse-reconnect.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "restart-snapshots-events",
+          "candidateTestReferences": [
+            "tests/integration/run-leases.test.ts",
+            "tests/integration/shared-runs.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/adapters/deployment-recovery.test.ts",
+            "scripts/verify-td15-nf01-active-write-restart.mjs",
+            "scripts/verify-td15-nf01-restart-snapshot-events.mjs",
+            "scripts/verify-td15-nf01-two-sessions.mjs",
+            "scripts/verify-td15-nf01-sse-reconnect.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "no-replay-unknown-reconcile",
+          "candidateTestReferences": [
+            "tests/integration/run-leases.test.ts",
+            "tests/integration/shared-runs.test.ts",
+            "tests/integration/runs.test.ts",
+            "tests/adapters/deployment-recovery.test.ts",
+            "scripts/verify-td15-nf01-active-write-restart.mjs",
+            "scripts/verify-td15-nf01-restart-snapshot-events.mjs",
+            "scripts/verify-td15-nf01-two-sessions.mjs",
+            "scripts/verify-td15-nf01-sse-reconnect.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "NF-02",
+      "title": "使用专用假密钥哨兵配置连接；日志、错误、导出包均不出现完整值；不使用真实密钥做泄漏测试",
+      "branches": [
+        {
+          "branchId": "sentinel-logs",
+          "candidateTestReferences": [
+            "tests/contract/project-export.test.ts",
+            "tests/integration/project-imports.test.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "sentinel-errors",
+          "candidateTestReferences": [
+            "tests/contract/project-export.test.ts",
+            "tests/integration/project-imports.test.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "sentinel-export",
+          "candidateTestReferences": [
+            "tests/contract/project-export.test.ts",
+            "tests/integration/project-imports.test.ts"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "NF-03",
+      "title": "固定并记录参考机、数据量、并发和测量方法；普通保存／列表 p95 小于 1 秒，排除模型／业务工具耗时但保留请求失败率",
+      "branches": [
+        {
+          "branchId": "reference-workload",
+          "candidateTestReferences": [
+            "scripts/benchmark-td15-nf03.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "save-p95",
+          "candidateTestReferences": [
+            "scripts/benchmark-td15-nf03.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "list-p95",
+          "candidateTestReferences": [
+            "scripts/benchmark-td15-nf03.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "error-rate",
+          "candidateTestReferences": [
+            "scripts/benchmark-td15-nf03.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "NF-04",
+      "title": "配置有限轮次／超时并触发上限；输出可识别终态，错误定位到需求、装配、连接或运行层；事件保留与清理策略有实际配置",
+      "branches": [
+        {
+          "branchId": "iteration-limit",
+          "candidateTestReferences": [
+            "tests/integration/runs.test.ts",
+            "scripts/verify-td15-nf04-budget.mjs",
+            "scripts/verify-td15-nf04-errors.mjs",
+            "scripts/verify-td15-nf04-live-iterations.mjs",
+            "scripts/verify-td15-nf04-event-retention-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "timeout",
+          "candidateTestReferences": [
+            "tests/integration/runs.test.ts",
+            "scripts/verify-td15-nf04-budget.mjs",
+            "scripts/verify-td15-nf04-errors.mjs",
+            "scripts/verify-td15-nf04-live-iterations.mjs",
+            "scripts/verify-td15-nf04-event-retention-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "error-classification",
+          "candidateTestReferences": [
+            "tests/integration/runs.test.ts",
+            "scripts/verify-td15-nf04-budget.mjs",
+            "scripts/verify-td15-nf04-errors.mjs",
+            "scripts/verify-td15-nf04-live-iterations.mjs",
+            "scripts/verify-td15-nf04-event-retention-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "event-retention",
+          "candidateTestReferences": [
+            "tests/integration/runs.test.ts",
+            "scripts/verify-td15-nf04-budget.mjs",
+            "scripts/verify-td15-nf04-errors.mjs",
+            "scripts/verify-td15-nf04-live-iterations.mjs",
+            "scripts/verify-td15-nf04-event-retention-live.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "NF-05",
+      "title": "在新目录按说明启动并恢复导出项目；端口可调整、连接需重绑，无个人绝对路径依赖",
+      "branches": [
+        {
+          "branchId": "fresh-directory-start",
+          "candidateTestReferences": [
+            "tests/integration/project-imports.test.ts",
+            "tests/e2e/project-package-ui.spec.ts",
+            "scripts/init-local.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "export-import",
+          "candidateTestReferences": [
+            "tests/integration/project-imports.test.ts",
+            "tests/e2e/project-package-ui.spec.ts",
+            "scripts/init-local.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "configurable-ports",
+          "candidateTestReferences": [
+            "tests/integration/project-imports.test.ts",
+            "tests/e2e/project-package-ui.spec.ts",
+            "scripts/init-local.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        },
+        {
+          "branchId": "rebind",
+          "candidateTestReferences": [
+            "tests/integration/project-imports.test.ts",
+            "tests/e2e/project-package-ui.spec.ts",
+            "scripts/init-local.mjs"
+          ],
+          "acceptanceStatus": "unverified",
+          "missingEvidence": [
+            "fixed-target live-mock execution record",
+            "branch-specific assertions",
+            "managed evidence files"
+          ]
+        }
+      ]
+    }
+  ]
+}

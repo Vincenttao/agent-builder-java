@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-01 Run refresh and SSE reconnect continuity",
+  "executionMode": "isolated-live-docker",
+  "measuredAt": "2026-10-23T09:49:28.604Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "draftId": "ee98bb57-2cea-4edd-90c7-0367a2b32c14",
+  "snapshotId": "777fc6e8-e579-4c28-921d-35381ade9046",
+  "snapshotDigestBefore": "6d1a0a7c6d7124d33cbb51c817bc79ba910b7dbea2008695075c9471c517a2ef",
+  "snapshotDigestAfter": "6d1a0a7c6d7124d33cbb51c817bc79ba910b7dbea2008695075c9471c517a2ef",
+  "runId": "f6477961-60f6-49b6-8a90-bb1efef08393",
+  "runStatus": "succeeded",
+  "firstStreamEventIds": [
+    205636
+  ],
+  "reconnectCursor": 205636,
+  "resumedEventIds": [
+    205637,
+    205638,
+    205639,
+    205644,
+    205645,
+    205646,
+    205647,
+    205648,
+    205649,
+    205658,
+    205659,
+    205660,
+    205672
+  ],
+  "authoritativeEventIds": [
+    205636,
+    205637,
+    205638,
+    205639,
+    205644,
+    205645,
+    205646,
+    205647,
+    205648,
+    205649,
+    205658,
+    205659,
+    205660,
+    205672
+  ],
+  "runFoundAfterRefresh": true,
+  "cursorResumed": true,
+  "noDuplicates": true,
+  "noGaps": true,
+  "eventDigest": "ee8e9ea64454c8e597cccc50b2c7a2278336052787fea0ddf6f4bc37cc85578f",
+  "verdict": "passed",
+  "targetImageIds": [
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+  ]
+}

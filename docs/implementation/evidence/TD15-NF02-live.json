@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "TD-15/NF-02",
+  "measuredAt": "2026-10-23T08:08:33.283Z",
+  "baseUrl": "http://127.0.0.1:18080",
+  "appImageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+  "invalidCredentialField": {
+    "route": "/api/connection-bindings",
+    "status": 400
+  },
+  "checks": {
+    "errorResponse": true,
+    "export": true,
+    "containerLogs": true,
+    "logChannelPresent": true
+  },
+  "digests": {
+    "errorResponse": "3c82630da254827aac5601480a527fdab6da494f6d98d123488f7e225f8d3c53",
+    "export": "f9f6ae85ad1f1fcf44472dc3fc69eb7b5a4210ebe32f6cf96ae81e921bcd5143",
+    "containerLogs": "5bfbe3650ff22052778133207169763d6e14f02a1a80d795c7607a0459c5ab79"
+  },
+  "scannedLogBytes": 2373,
+  "verdict": "passed"
+}

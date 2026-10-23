@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-01 restart persistence and no replay",
+  "probe": {
+    "executionMode": "live-platform",
+    "checkedAt": "2026-10-22T08:52:30.478Z",
+    "draftId": "0220127a-81dc-4bc3-8866-feebb23fa981",
+    "snapshotId": "63091d9f-4941-4042-ba26-009b08178b1b",
+    "snapshotDigest": "8b77e27bc193d9bbecc3d1f838b984feb248a23d3e710a077f82dec2c60b87f5",
+    "persistedExactly": true,
+    "snapshotPersistedExactly": true,
+    "previousSessionInvalidated": true,
+    "servicesRestarted": [
+      "postgres",
+      "mock-services",
+      "runner",
+      "app"
+    ],
+    "runId": "903df356-a67c-460e-99ad-63b7887b85cd",
+    "runPersistedExactly": true,
+    "eventsPersistedExactly": true,
+    "externalCallsPersistedExactly": true,
+    "runnerExecutionPersistedExactly": true,
+    "actionsPersistedExactly": true,
+    "businessStatePersistedExactly": true
+  },
+  "postRestart": {
+    "readiness": "ready",
+    "services": [
+      {
+        "service": "app",
+        "status": "Up 37 seconds (healthy)",
+        "imageId": "sha256:bac4f8f0f961425c34dba49f70f5fd0740919aec06da8b61e405feeb686f276f"
+      },
+      {
+        "service": "mock-services",
+        "status": "Up 37 seconds (healthy)",
+        "imageId": "sha256:16c18bbb785bdaeabc8fb9e5524333536f0f2a2433934ded316c41047cb7734a"
+      },
+      {
+        "service": "postgres",
+        "status": "Up 37 seconds (healthy)",
+        "imageId": "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a"
+      },
+      {
+        "service": "runner",
+        "status": "Up 37 seconds (healthy)",
+        "imageId": "sha256:2f9e2a0f8290049e388eba5c881727989418a4600d68801ba5e0126663f803f4"
+      }
+    ]
+  }
+}

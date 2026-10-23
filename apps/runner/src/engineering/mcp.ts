@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import {createHash,timingSafeEqual} from 'node:crypto';
 import type {EngineeringWorkspace} from './workspace.js';
 import type {EngineeringRole} from '../../../../packages/contracts/src/development.js';
-import {generationProfile,PolicyError} from './profile.js';
+import {PolicyError} from './profile.js';
 const object=(properties:Record<string,unknown>,required=Object.keys(properties))=>({type:'object',additionalProperties:false,properties,required});
 const tools=[
  {name:'profile',description:'Inspect fixed generation policy and real TDD/build state.',inputSchema:object({})},
@@ -31,7 +31,7 @@ export function createEngineeringMcp(workspace:EngineeringWorkspace,tokens:{deve
     if(!args||typeof args!=='object'||Array.isArray(args))throw new PolicyError('TOOL_ARGUMENTS_INVALID');
     const values=args as Record<string,unknown>;const expected=name==='read'?['path']:name==='write'?['path','content']:name==='run'&&role==='developer'?['commandId']:name==='profile'?[]:null;
     if(!expected||Object.keys(values).length!==expected.length||expected.some(key=>typeof values[key]!=='string'))throw new PolicyError('TOOL_ARGUMENTS_INVALID');
-    const value=name==='read'?await workspace.read(role,values.path as string):name==='write'?await workspace.write(role,values.path as string,values.content as string):name==='run'?await workspace.run(role,values.commandId as string):{profile:generationProfile,state:workspace.inspect()};
+    const value=name==='read'?await workspace.read(role,values.path as string):name==='write'?await workspace.write(role,values.path as string,values.content as string):name==='run'?await workspace.run(role,values.commandId as string):{profile:workspace.profile,state:workspace.inspect()};
     result={content:[{type:'text',text:typeof value==='string'?value:JSON.stringify(value)}]};
    }catch(error){result={isError:true,content:[{type:'text',text:error instanceof PolicyError?error.code:(error as NodeJS.ErrnoException).code==='ENOENT'?'FILE_NOT_FOUND':'ENGINEERING_OPERATION_FAILED'}]};}
   }else return{jsonrpc:'2.0',id:id??null,error:{code:-32601,message:'Method not found'}};

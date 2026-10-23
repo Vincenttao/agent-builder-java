@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/AC-03 Write intent adds confirmation and resource requirements while retaining unrelated requirement fields",
+  "executionMode": "live-browser-isolated-docker",
+  "measuredAt": "2026-10-23T08:07:13.670Z",
+  "base": "http://127.0.0.1:18080",
+  "composeProject": "agent-builder-td15-nf01",
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "assertions": {
+    "confirmationRequirementShown": true,
+    "missingWriteInterfaceShown": true,
+    "audienceRetained": true,
+    "outputRetained": true,
+    "hintSurvivedFormSwitch": true
+  },
+  "verdict": "passed",
+  "branches": [
+    {
+      "caseId": "AC-03",
+      "branchId": "write-confirmation-added",
+      "status": "passed"
+    },
+    {
+      "caseId": "AC-03",
+      "branchId": "resource-gap",
+      "status": "passed"
+    },
+    {
+      "caseId": "AC-03",
+      "branchId": "unrelated-fields-retained",
+      "status": "passed"
+    }
+  ]
+}

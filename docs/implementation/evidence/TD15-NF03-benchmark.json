@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "TD-15/NF-03",
+  "measuredAt": "2026-10-23T08:08:42.487Z",
+  "baseUrl": "http://127.0.0.1:18080",
+  "runtime": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "cpuModel": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "logicalCpus": 8,
+    "totalMemoryBytes": 16969424896,
+    "appImageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256"
+  },
+  "workload": {
+    "sampleCount": 100,
+    "concurrency": 5,
+    "listPageLimit": 100,
+    "modelCalls": 0,
+    "externalBusinessCalls": 0
+  },
+  "save": {
+    "count": 100,
+    "p50Ms": 8.888299999999987,
+    "p95Ms": 15.469499999999996,
+    "maxMs": 38.036100000000005
+  },
+  "list": {
+    "count": 100,
+    "p50Ms": 15.823300000000017,
+    "p95Ms": 26.527800000000013,
+    "maxMs": 29.192300000000046
+  },
+  "failures": 0,
+  "failureStatuses": {},
+  "savedRecords": 100,
+  "cleanup": "complete",
+  "targetP95Ms": 1000,
+  "verdict": "passed"
+}

@@ -30,7 +30,8 @@ import java.util.function.Consumer;
 @SpringBootApplication
 public class BridgeApplication {
     public record ToolDescriptor(String name, String description, String operationId,
-                                 Map<String, String> inputFields, Map<String, String> responseFields) {}
+                                 Map<String, String> inputFields, Map<String, String> responseFields,
+                                 String protocol, String connectionRef, String remoteToolName, String toolVersion) {}
     public record Configuration(AgentSpec agent, List<ToolDescriptor> tools) {
         public Configuration { tools = List.copyOf(tools); }
     }
@@ -81,15 +82,33 @@ public class BridgeApplication {
         };
         List<Tool> tools = new ArrayList<>();
         for (ToolDescriptor descriptor : config.tools()) {
-            if (!descriptor.operationId().matches("[a-z][a-z0-9-]{0,63}")) throw new IllegalArgumentException("INVALID_OPERATION_ID");
-            if (components.enabled() && (!"equipment-status".equals(descriptor.operationId()) || !"get_equipment".equals(descriptor.name()))) throw new IllegalArgumentException("GENERATED_TOOL_BINDING_INVALID");
-            URI endpoint = URI.create(env.getRequiredProperty("builder.proxy-base") + "/operations/" + descriptor.operationId());
-            Tool transport = new RegisteredHttpTool(descriptor.name(), descriptor.description(), endpoint,
-                    env.getRequiredProperty("builder.proxy-token"), descriptor.inputFields(), descriptor.responseFields(), Duration.ofSeconds(5), !components.enabled() && "equipment-status".equals(descriptor.operationId()));
+            if (!validOperationId(descriptor.operationId())) throw new IllegalArgumentException("INVALID_OPERATION_ID");
+            if (components.enabled() && !components.binds(descriptor.name(), descriptor.operationId())) throw new IllegalArgumentException("GENERATED_TOOL_BINDING_INVALID");
+            Tool transport;
+            if ("mcp".equals(descriptor.protocol())) {
+                if (!"enterprise-mock-mcp@1".equals(descriptor.connectionRef()) || descriptor.remoteToolName() == null || components.enabled())
+                    throw new IllegalArgumentException("UNSUPPORTED_MCP_CONNECTION");
+                URI endpoint = URI.create(env.getRequiredProperty("builder.proxy-base") + "/mcp");
+                transport = new RegisteredMcpTool(descriptor.name(), descriptor.description(), endpoint,
+                        env.getRequiredProperty("builder.proxy-token"), descriptor.remoteToolName(), descriptor.connectionRef(), descriptor.toolVersion(),
+                        descriptor.inputFields(), descriptor.responseFields(), Duration.ofSeconds(5), sink);
+            } else {
+                if (descriptor.protocol() != null && !"http".equals(descriptor.protocol())) throw new IllegalArgumentException("UNSUPPORTED_TOOL_PROTOCOL");
+                URI endpoint = URI.create(env.getRequiredProperty("builder.proxy-base") + "/operations/" + descriptor.operationId());
+                transport = new RegisteredHttpTool(descriptor.name(), descriptor.description(), endpoint,
+                        env.getRequiredProperty("builder.proxy-token"), descriptor.inputFields(), descriptor.responseFields(), Duration.ofSeconds(5),
+                        !components.enabled() && "equipment-status".equals(descriptor.operationId()),
+                        descriptor.connectionRef() == null ? "enterprise-mock-http@1" : descriptor.connectionRef(),
+                        descriptor.toolVersion() == null ? descriptor.operationId() + "@1" : descriptor.toolVersion(), sink);
+            }
             tools.add(components.enabled() ? components.wrap(transport, sink) : transport);
         }
         return new AgentAssembler().assemble(config.agent(), workspace, model, tools, sink, executions, components);
     }
 
     @Bean AgentHandler agentHandler(DeepAgent agent, SessionExecutions executions) { return new ManagedAgentHandler(new JiuwenCoreAgentHandler(agent), executions); }
+
+    static boolean validOperationId(String value) {
+        return value != null && value.matches("[a-z][a-zA-Z0-9-]{0,63}");
+    }
 }

@@ -7,6 +7,7 @@ import { DraftService } from '../../apps/server/src/drafts/application/draft-ser
 import { PostgresSnapshotRepository } from '../../apps/server/src/snapshots/adapters/postgres-snapshots.js';
 import { SnapshotService } from '../../apps/server/src/snapshots/application/snapshot-service.js';
 import { RunService, type RunRuntime, type MockControl } from '../../apps/server/src/runs/run-service.js';
+import { RunEventRetention } from '../../apps/server/src/runs/event-retention.js';
 import { draftInput } from '../support/fixtures.js';
 
 const url = process.env.TEST_DATABASE_URL ?? 'postgres://builder_test:local-test-only@127.0.0.1:15432/builder_test';
@@ -23,7 +24,7 @@ const snapshot = async () => {
   return snapshots.create(draft.id, { expectedRevision: 1, assembly: { agentType: 'DeepAgent', systemPrompt: '工具事实', maxIterations: 4, railIds: ['audit@1', 'tool-allowlist@1'], toolIds: ['equipment-status@1'] } });
 };
 function ports() {
-  let starts = 0; let queries = 0; let stops = 0; let finished = false; let evidenceAvailable = true; let loseResponse = false;
+  let starts = 0; let queries = 0; let stops = 0; let finished = false; let failure: string | undefined; let evidenceAvailable = true; let loseResponse = false;
   const executions = new Map<string, { id: string; status: string; events: unknown[]; result: unknown }>();
   const deployed=new Set<string>();
   const runtime: RunRuntime = {
@@ -35,15 +36,24 @@ function ports() {
       if (loseResponse) { loseResponse = false; throw new Error('LOST_RESPONSE'); }
       return executions.get(id)!;
     },
-    execution: async id => { const record = executions.get(id); if (!record) return null; return finished ? { ...record, status: 'succeeded', result: { answer: '86°C' }, events: [{ event: 'rail.after_tool_call' }] } : record; },
+    execution: async id => { const record = executions.get(id); if (!record) return null; return finished ? { ...record, status: failure ? 'failed' : 'succeeded', ...(failure ? { error: failure } : {}), result: { answer: '86°C' }, events: [{ event: 'rail.after_tool_call' }] } : record; },
     cancel: async id => { const record = executions.get(id)??{id,status:'cancelled',events:[],result:null}; record.status = 'cancelled'; return record; },
     stop: async () => { stops++; return { status: 'stopped' }; },
     events: async () => [{ event: 'rail.before_model_call' }]
   };
   const mock: MockControl = { ready: async () => true, prepare: async () => {}, release: async () => {}, calls: async () => { if (!evidenceAvailable) throw new Error('EVIDENCE_UNAVAILABLE'); return [{ operation: 'equipment-status', status: 200, result: { temperatureCelsius: 86 } }]; } };
-  return { runtime, mock, stats: () => ({ starts, queries, stops }), finish: () => { finished = true; }, loseNext: () => { loseResponse = true; }, evidence: (value: boolean) => { evidenceAvailable = value; } };
+  return { runtime, mock, stats: () => ({ starts, queries, stops }), finish: () => { finished = true; }, fail: (error:string) => { failure=error; finished=true; }, loseNext: () => { loseResponse = true; }, evidence: (value: boolean) => { evidenceAvailable = value; } };
 }
 describe('TD-04 durable Run orchestration', () => {
+  it('classifies the exhausted iteration budget when the bridge returns its generic query failure', async () => {
+    const p=ports(),s=new RunService(pool,snapshots,p.runtime,p.mock),target=await snapshot();
+    const run=await s.create(target.id,{clientRequestId:randomUUID(),input:'查询设备'});await s.tick();
+    p.runtime.events=async()=>[{event:{sessionId:run.id,event:'iteration_limit_reached',maxIterations:1,modelCallCount:1}}];
+    p.fail('JVM_QUERY_FAILED');await s.tick();
+    expect(await s.get(run.id)).toMatchObject({status:'failed',diagnostic:'ITERATION_LIMIT_REACHED'});
+    const ended=(await s.events(run.id,0)).find(event=>event.type==='run.failed');
+    expect(ended?.data).toMatchObject({runtimeError:'JVM_QUERY_FAILED'});
+  });
   it('an accepted cancellation wins over a terminal runtime response and retains the earlier analysis',async()=>{
     const p=ports(),s=new RunService(pool,snapshots,p.runtime,p.mock),target=await snapshot();
     const run=await s.create(target.id,{clientRequestId:randomUUID(),input:'查询设备'});await s.tick();
@@ -112,5 +122,20 @@ describe('TD-04 durable Run orchestration', () => {
     finally { await pool.query('DROP TRIGGER injected_event_failure ON run_events'); }
     await s.tick(); expect((await s.get(run.id)).status).toBe('succeeded');
     expect((await s.events(run.id, 0)).filter(e => e.type === 'run.succeeded')).toHaveLength(1);
+  });
+  it('prunes expired terminal Run events but preserves active Run history and appends a gap marker', async () => {
+    const p = ports(); const s = new RunService(pool, snapshots, p.runtime, p.mock); const target = await snapshot();
+    const ended = await s.create(target.id, { clientRequestId: randomUUID(), input: '查询已结束的设备 Run' });
+    await s.tick(); p.finish(); await s.tick();
+    const active = await s.create(target.id, { clientRequestId: randomUUID(), input: '保留活动 Run 事件' });
+    const oldAt = new Date(Date.now() - 91 * 24 * 60 * 60 * 1000).toISOString();
+    await pool.query("INSERT INTO run_events(run_id,source,source_key,type,data,created_at) VALUES($1,'runtime','expired-sentinel','runtime.old','{}',$2),($3,'runtime','active-sentinel','runtime.old','{}',$2)", [ended.id, oldAt, active.id]);
+    const result = await new RunEventRetention(pool, 90).prune(new Date());
+    const endedEvents = await s.events(ended.id, 0); const activeEvents = await s.events(active.id, 0);
+    expect(result).toMatchObject({ runCount: 1, eventCount: 1 });
+    expect(endedEvents.some(event => event.type === 'runtime.old')).toBe(false);
+    expect(endedEvents).toContainEqual(expect.objectContaining({ type: 'run.event_history_pruned', data: expect.objectContaining({ removedCount: 1, throughSeq: expect.any(Number) }) }));
+    expect(activeEvents.some(event => event.type === 'runtime.old')).toBe(true);
+    await expect(pool.query('DELETE FROM run_events WHERE run_id=$1 AND source_key=$2', [active.id, 'active-sentinel'])).rejects.toThrow('immutable');
   });
 });

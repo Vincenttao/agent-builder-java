@@ -45,7 +45,8 @@ export const assemblyInputSchema = {
     agentType: { type: 'string', maxLength: 40 }, systemPrompt: { type: 'string', minLength: 1, maxLength: 8000 },
     maxIterations: { type: 'integer', minimum: 1, maximum: 20 },
     railIds: { type: 'array', items: { type: 'string', maxLength: 80 }, maxItems: 10 },
-    toolIds: { type: 'array', items: { type: 'string', maxLength: 80 }, maxItems: 20 }
+    toolIds: { type: 'array', items: { type: 'string', maxLength: 80 }, maxItems: 20 },
+    generationProfileVersion: { enum: ['equipment-java@3','wealth-balance-java@1'] }
   }
 } as const;
 export const snapshotInputSchema = {
@@ -57,7 +58,8 @@ export type SnapshotInput = FromSchema<typeof snapshotInputSchema>;
 export interface Draft extends DraftInput { id: string; revision: number; createdAt: string; updatedAt: string }
 export interface RuntimeSpec {
   agent: { id: string; type: string; systemPrompt: string; maxIterations: number; rails: string[] };
-  tools: { name: string; description: string; operationId: string; inputFields: Record<string, string>; responseFields: Record<string, string> }[];
+  tools: { name: string; description: string; operationId: string; inputFields: Record<string, string>; responseFields: Record<string, string>;
+    protocol?: 'http' | 'mcp'; connectionRef?: string; remoteToolName?: string; toolVersion?: string }[];
 }
 export interface Snapshot {
   id: string; draftId: string; draftRevision: number; digest: string; createdAt: string;

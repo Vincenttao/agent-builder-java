@@ -10,8 +10,9 @@ import {BaselineService} from '../../apps/server/src/acceptance/application/base
 import {DevelopmentService,type EngineeringPort} from '../../apps/server/src/development/development-service.js';
 import {EngineeringTaskManager} from '../../apps/runner/src/engineering/task-manager.js';
 import {generationProfile} from '../../apps/runner/src/engineering/profile.js';
-import {equipmentAssembly} from '../../packages/contracts/src/equipment-template.js';
-import type {EngineeringTaskRecord} from '../../packages/contracts/src/development.js';
+import {wealthBalanceGenerationRequest} from '../../packages/contracts/src/generation-profile.js';
+import {equipmentAssembly,wealthBalanceAssembly} from '../../packages/contracts/src/equipment-template.js';
+import type {EngineeringTaskRecord,GenerationRequest} from '../../packages/contracts/src/development.js';
 import {draftInput} from '../support/fixtures.js';
 import {DependencyError} from '../../apps/server/src/runs/http-ports.js';
 import {resolve} from 'node:path';
@@ -24,11 +25,11 @@ const snapshots=new SnapshotService(drafts,new PostgresSnapshotRepository(pool),
 const baselines=new BaselineService(pool,clock,ids);
 beforeAll(async()=>{await admin.query(`CREATE SCHEMA "${schema}"`);await migrate(pool);});
 afterAll(async()=>{await pool.end();await admin.query(`DROP SCHEMA "${schema}" CASCADE`);await admin.end();});
-const generation={profileVersion:generationProfile.version,scope:['tool','skill'] as ('tool'|'skill')[],dependencies:[...generationProfile.dependencies],connectionProfile:generationProfile.connectionProfile};
-async function setup(){
+const generation={profileVersion:generationProfile.version,scope:[...generationProfile.scope],dependencies:[...generationProfile.dependencies],connectionProfile:generationProfile.connectionProfile};
+async function setup(finance=false){
  const draft=await drafts.create({...draftInput,brief:{...draftInput.brief,output:{value:'设备报告',source:'user',confirmed:true}}});
- const snapshot=await snapshots.create(draft.id,{expectedRevision:1,assembly:equipmentAssembly()});
- const preview=await baselines.preview(draft.id,'equipment-read@1');const baseline=await baselines.confirm(draft.id,{expectedRevision:1,templateId:'equipment-read@1',expectedDigest:preview.digest,confirmed:true});
+ const snapshot=await snapshots.create(draft.id,{expectedRevision:1,assembly:finance?wealthBalanceAssembly():equipmentAssembly()});
+ const templateId=finance?'wealth-balance-read@1':'equipment-read@1';const preview=await baselines.preview(draft.id,templateId);const baseline=await baselines.confirm(draft.id,{expectedRevision:1,templateId,expectedDigest:preview.digest,confirmed:true});
  const manager=new EngineeringTaskManager(resolve('test-results',`development-${randomUUID()}`),()=>({run:async()=>{throw new Error('fixture not executed');},cancel:async()=>{}}));await manager.initialize();
  let submitHook=async()=>{};let afterSubmitHook=async()=>{};
  const port:EngineeringPort={submit:async(id,input)=>{await submitHook();const result=await manager.submit(id,input);await afterSubmitHook();return result;},get:id=>manager.get(id),cancel:id=>manager.cancel(id),events:(id,after)=>manager.events(id,after)};
@@ -55,6 +56,14 @@ it('rejects a different baseline and preserves cancellation across an in-flight 
  expect((await h.service.get(job.id)).status).toBe('cancelled');await expect(h.manager.get(job.id)).rejects.toMatchObject({code:'ENGINEERING_NOT_FOUND'});
  await h.manager.close();await other.manager.close();
 });
+it('retains terminal Runner role states when cancellation is accepted',async()=>{
+ const h=await setup();const job=await h.service.start(h.snapshot.id,h.input);await h.service.tick();const queued=await h.manager.get(job.id);
+ const cancelled:EngineeringTaskRecord={...queued,status:'cancelled',roles:[{role:'tester',status:'cancelled'},{role:'developer',status:'skipped'}]};
+ const port:EngineeringPort={...h.port,cancel:async id=>({id,status:'cancelled'}),get:async()=>cancelled};
+ const service=new DevelopmentService(pool,snapshots,baselines,port);await service.cancel(job.id);await service.tick();
+ expect(await service.get(job.id)).toMatchObject({status:'cancelled',roles:[{role:'tester',status:'cancelled'},{role:'developer',status:'skipped'}]});
+ await h.manager.close();
+});
 it('does not promote a mismatched runner binding or a nonterminal cancellation to success',async()=>{
  const h=await setup();const job=await h.service.start(h.snapshot.id,h.input);
  const invalid:EngineeringPort={...h.port,submit:async()=>({id:job.id,inputDigest:'wrong',status:'built',roles:[]} as unknown as EngineeringTaskRecord),cancel:async()=>({id:job.id,status:'reconciling'})};
@@ -64,4 +73,31 @@ it('does not promote a mismatched runner binding or a nonterminal cancellation t
 it('reports explicit pre-execution model configuration rejection instead of leaving a task queued forever',async()=>{
  const h=await setup();const service=new DevelopmentService(pool,snapshots,baselines,{...h.port,submit:async()=>{throw new DependencyError(409,'ENGINE_MODEL_NOT_CONFIGURED');}});
  const job=await service.start(h.snapshot.id,h.input);await service.tick();expect(await service.get(job.id)).toMatchObject({status:'failed',diagnostic:'ENGINE_MODEL_NOT_CONFIGURED'});await h.manager.close();
+});
+it('durably records rejected generation profiles and returns the same rejection on retry without starting Runner',async()=>{
+ const h=await setup();let submissions=0;h.setSubmitHook(async()=>{submissions++;});
+ const rejected:{generation:GenerationRequest;code:string}[]=[
+  {generation:{...generation,scope:['tool']},code:'GENERATION_SCOPE_UNSUPPORTED'},
+  {generation:{...generation,dependencies:['unreviewed-package@1']},code:'DEPENDENCY_NOT_ALLOWED'},
+  {generation:{...generation,connectionProfile:'production-bank'},code:'BUSINESS_CONNECTION_NOT_ALLOWED'},
+  {generation:{...generation,profileVersion:'equipment-java@99'},code:'GENERATION_PROFILE_UNSUPPORTED'}
+ ];
+ try{
+  for(const {generation:candidate,code} of rejected){
+   const input={...h.input,clientRequestId:randomUUID(),generation:candidate};
+   const job=await h.service.start(h.snapshot.id,input);
+   expect(job).toMatchObject({status:'failed',diagnostic:code,roles:[{role:'tester',status:'skipped'},{role:'developer',status:'skipped'}]});
+   expect(await h.service.events(job.id)).toEqual([expect.objectContaining({sequence:1,subjectId:job.id,role:null,type:'policy.rejected',data:expect.objectContaining({code,stage:'generation-admission'})})]);
+   expect(await h.service.start(h.snapshot.id,input)).toEqual(job);
+  }
+  expect(submissions).toBe(0);
+ }finally{await h.manager.close();}
+});
+it('admits the bounded finance balance profile and submits that exact profile to Runner',async()=>{
+ const h=await setup(true);let submitted:GenerationRequest|undefined;
+ const service=new DevelopmentService(pool,snapshots,baselines,{...h.port,submit:async(id,input)=>{submitted=input.generation;return h.manager.submit(id,input);}});
+ const input={...h.input,clientRequestId:randomUUID(),generation:{...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]}};
+ const job=await service.start(h.snapshot.id,input);expect(job.status).toBe('queued');await service.tick();
+ expect(submitted).toEqual(input.generation);expect((await service.get(job.id)).diagnostic).not.toBe('GENERATION_PROFILE_NOT_IMPLEMENTED');
+ await h.manager.close();
 });

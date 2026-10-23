@@ -13,7 +13,7 @@ export interface AcceptanceCase {
   phase: Phase;
   requirementIds: string[];
   testFile: string | null;
-  executionMode: 'live-mock';
+  executionMode: 'live-mock' | 'simulated';
   branches: { id: string; evidenceKinds: string[] }[];
 }
 export interface BranchResult {

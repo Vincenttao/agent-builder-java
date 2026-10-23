@@ -1,7 +1,13 @@
 name: agent-builder-platform
+x-default-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 services:
   postgres:
     image: postgres:18.1-bookworm@sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a
+    logging: *default-logging
     environment:
       POSTGRES_USER: builder
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the local env file}
@@ -15,6 +21,7 @@ services:
       retries: 30
   migrate:
     image: agent-builder-app:0.1.0
+    logging: *default-logging
     build:
       context: .
       dockerfile: deploy/Dockerfile
@@ -28,6 +35,7 @@ services:
         condition: service_healthy
   app:
     image: agent-builder-app:0.1.0
+    logging: *default-logging
     build:
       context: .
       dockerfile: deploy/Dockerfile
@@ -35,6 +43,7 @@ services:
       DATABASE_URL: postgres://builder:${POSTGRES_PASSWORD}@postgres:5432/builder
       LOCAL_BOOTSTRAP_TOKEN: ${LOCAL_BOOTSTRAP_TOKEN:?Set LOCAL_BOOTSTRAP_TOKEN}
       APP_ORIGIN: ${APP_ORIGIN:-http://127.0.0.1:8080}
+      RUN_EVENT_RETENTION_DAYS: ${RUN_EVENT_RETENTION_DAYS:-90}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       RUNNER_BASE_URL: http://runner:8081
       RUNNER_CONTROL_TOKEN: ${RUNNER_CONTROL_TOKEN:?Run scripts/init-local.mjs}
@@ -43,7 +52,7 @@ services:
       MOCK_CONTROL_TOKEN: ${MOCK_CONTROL_TOKEN:?Run scripts/init-local.mjs}
       MOCK_SERVICE_TOKEN: ${MOCK_SERVICE_TOKEN:?Run scripts/init-local.mjs}
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -58,6 +67,7 @@ services:
       retries: 20
   mock-services:
     image: agent-builder-app:0.1.0
+    logging: *default-logging
     command: ["node", "dist/apps/mock-services/src/main.js"]
     environment:
       HOST: 0.0.0.0
@@ -75,6 +85,7 @@ services:
       retries: 20
   runner:
     image: agent-builder-runner:0.1.0
+    logging: *default-logging
     build:
       context: .
       dockerfile: deploy/Runner.Dockerfile

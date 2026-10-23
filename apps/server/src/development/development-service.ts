@@ -5,9 +5,10 @@ import type {DevelopmentInput,DevelopmentJob,EngineeringTaskInput,EngineeringTas
 import {randomUUID} from 'node:crypto';
 import {contentDigest} from '../snapshots/domain/assembly.js';
 import {AppError} from '../shared/errors.js';
-import {generationPolicyError} from '../../../../packages/contracts/src/generation-profile.js';
+import {wealthBalanceGenerationRequest,generationImplementationError} from '../../../../packages/contracts/src/generation-profile.js';
 import {DependencyError} from '../runs/http-ports.js';
 import {prepareRepair,type RepairSources} from './repair-input.js';
+import type {PortableDevelopmentJob} from '../../../../packages/contracts/src/project-package.js';
 export interface EngineeringPort {
  submit(id:string,input:EngineeringTaskInput):Promise<EngineeringTaskRecord>;
  get(id:string):Promise<EngineeringTaskRecord>;
@@ -20,7 +21,6 @@ export class DevelopmentService {
  private working=false;
  constructor(private pool:Pool,private snapshots:SnapshotService,private baselines:BaselineService,private runner:EngineeringPort,private repairSources?:RepairSources){}
  async start(snapshotId:string,input:DevelopmentInput):Promise<DevelopmentJob>{
-  const policy=generationPolicyError(input.generation);if(policy)throw new AppError(policy,'生成请求超出当前受限生成规格',422);
   if(!Number.isInteger(input.maxSeconds)||input.maxSeconds<5||input.maxSeconds>900)throw new AppError('ENGINEERING_BUDGET_INVALID','开发时限应为 5～900 秒',422);
   const findExisting=async(db:Pick<Pool,'query'>)=>{
    const row=(await db.query<{record:DevelopmentJob;task_input:EngineeringTaskInput}>('SELECT record,task_input FROM development_jobs WHERE snapshot_id=$1 AND client_request_id=$2',[snapshotId,input.clientRequestId])).rows[0];
@@ -31,8 +31,10 @@ export class DevelopmentService {
   };
   const existing=await findExisting(this.pool);if(existing)return existing;
   const snapshot=await this.snapshots.get(snapshotId);const baseline=await this.baselines.assertTarget(input.baselineId,snapshot);
-  if(baseline.content.templateId!=='equipment-read@1')throw new AppError('GENERATION_BASELINE_UNSUPPORTED','当前生成规格仅覆盖设备只读 Tool 和 Skill',422);
-  const task:EngineeringTaskInput={context:{snapshotId,baseline,goal:snapshot.content.draft.brief.goal.value},generation:input.generation,maxSeconds:input.maxSeconds};
+  const requiredBaseline=input.generation.profileVersion===wealthBalanceGenerationRequest.profileVersion?'wealth-balance-read@1':'equipment-read@1';
+  if(baseline.content.templateId!==requiredBaseline)throw new AppError('GENERATION_BASELINE_UNSUPPORTED',`当前生成规格需要 ${requiredBaseline} 验收基线`,422);
+  const task:EngineeringTaskInput={context:{snapshotId,baseline,goal:snapshot.content.draft.brief.goal.value,runtimeSpec:snapshot.content.runtimeSpec},generation:input.generation,maxSeconds:input.maxSeconds};
+  const policy=generationImplementationError(input.generation);
   if(input.repairExecutionId)task.context.repair=await prepareRepair(this.pool,this.runner,this.repairSources,input.repairExecutionId,snapshot,baseline);
   const client=await this.pool.connect();
   try{
@@ -46,8 +48,12 @@ export class DevelopmentService {
     repair.reference.attempt=attempts.length+1;
    }
    const inputDigest=contentDigest(task),now=new Date().toISOString();
-   const record:DevelopmentJob={id:randomUUID(),agentId:snapshot.draftId,snapshotId,baselineId:baseline.id,baselineDigest:baseline.digest,inputDigest,status:'queued',createdAt:now,updatedAt:now,roles:[{role:'tester',status:repair?'reused':'queued'},{role:'developer',status:'queued'}],...(repair?{repair:repair.reference}:{})};
-   await client.query('INSERT INTO development_jobs(id,draft_id,snapshot_id,baseline_id,client_request_id,input_digest,task_input,record) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(snapshot_id,client_request_id) DO NOTHING',[record.id,record.agentId,snapshotId,baseline.id,input.clientRequestId,inputDigest,task,record]);
+   const record:DevelopmentJob={id:randomUUID(),agentId:snapshot.draftId,snapshotId,baselineId:baseline.id,baselineDigest:baseline.digest,inputDigest,status:policy?'failed':'queued',createdAt:now,updatedAt:now,roles:[{role:'tester',status:policy?'skipped':repair?'reused':'queued'},{role:'developer',status:policy?'skipped':'queued'}],...(policy?{diagnostic:policy}:{}),...(repair?{repair:repair.reference}:{})};
+   const inserted=await client.query('INSERT INTO development_jobs(id,draft_id,snapshot_id,baseline_id,client_request_id,input_digest,task_input,record) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(snapshot_id,client_request_id) DO NOTHING',[record.id,record.agentId,snapshotId,baseline.id,input.clientRequestId,inputDigest,task,record]);
+   if(policy&&inserted.rowCount){
+    const event:EngineeringEvent={sequence:1,occurredAt:now,subjectId:record.id,role:null,type:'policy.rejected',data:{code:policy,stage:'generation-admission'}};
+    await client.query('INSERT INTO development_events(job_id,seq,record) VALUES($1,$2,$3)',[record.id,event.sequence,event]);
+   }
    const saved=await findExisting(client);await client.query('COMMIT');return saved!;
   }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
  }
@@ -56,6 +62,16 @@ export class DevelopmentService {
   if(!row)throw new AppError('DEVELOPMENT_NOT_FOUND','开发任务不存在',404);return row.record;
  }
  async list(agentId:string):Promise<DevelopmentJob[]>{return(await this.pool.query<{record:DevelopmentJob}>("SELECT record FROM development_jobs WHERE draft_id=$1 ORDER BY record->>'createdAt' DESC LIMIT 100",[agentId])).rows.map(row=>row.record);}
+ async exportProject(agentId:string):Promise<PortableDevelopmentJob[]>{
+  const rows=(await this.pool.query<{record:DevelopmentJob;task_input:EngineeringTaskInput}>("SELECT record,task_input FROM development_jobs WHERE draft_id=$1 AND record->>'status'='built' ORDER BY record->>'createdAt' DESC LIMIT 100",[agentId])).rows;
+  const result:PortableDevelopmentJob[]=[];
+  for(const row of rows){const job=row.record;if(!job.bundle)throw new AppError('PROJECT_EXPORT_INCOMPLETE','已构建开发任务缺少固定 Bundle',409);
+   const snapshot=await this.snapshots.get(job.snapshotId);if(snapshot.draftId!==agentId||snapshot.id!==job.snapshotId||job.bundle.snapshotId!==job.snapshotId)throw new AppError('PROJECT_EXPORT_INTEGRITY_ERROR','生成任务快照与项目不匹配',409);
+   const files=[];for(const descriptor of job.bundle.files.filter(file=>file.path!=='component.jar')){const file=await this.file(job.id,descriptor.path);if(file.digest!==descriptor.digest)throw new AppError('PROJECT_EXPORT_INTEGRITY_ERROR','生成源码摘要不匹配',409);files.push(file);}
+   result.push({id:job.id,snapshotId:job.snapshotId,snapshotDigest:snapshot.digest,baselineId:job.baselineId,baselineDigest:job.baselineDigest,inputDigest:job.inputDigest,status:'built',generation:structuredClone(row.task_input.generation),bundle:structuredClone(job.bundle),files});
+  }
+  return result;
+ }
  async events(id:string,after=0):Promise<EngineeringEvent[]>{await this.get(id);return(await this.pool.query<{record:EngineeringEvent}>('SELECT record FROM development_events WHERE job_id=$1 AND seq>$2 ORDER BY seq LIMIT 500',[id,after])).rows.map(row=>row.record);}
  async file(id:string,path:string){const job=await this.get(id);if(job.status!=='built'||!job.bundle?.files.some(file=>file.path===path&&path!=='component.jar'))throw new AppError('GENERATED_FILE_UNAVAILABLE','此任务没有可审阅的固定文件',409);
   if(!this.runner.file)throw new AppError('ENGINEERING_UNAVAILABLE','生成文件读取不可用',503);return this.runner.file(id,path);}
@@ -72,7 +88,16 @@ export class DevelopmentService {
     try{
      if(row.record.status==='cancelling'){
       const result=await this.runner.cancel(row.id);if(result.id!==row.id)throw new Error('MISMATCH');
-      if(result.status==='cancelled')next.status='cancelled';
+      if(result.status==='cancelled'){
+       try{
+        const actual=await this.runner.get(row.id);this.merge(next,actual,row.task_input);
+        if(actual.status!=='cancelled'){next.status='cancelling';next.diagnostic='ENGINEERING_CANCEL_STATUS_MISMATCH';}
+       }catch(error){
+        if(error instanceof DependencyError&&error.code==='ENGINEERING_NOT_FOUND'||error instanceof Error&&'code' in error&&error.code==='ENGINEERING_NOT_FOUND'){
+         next.status='cancelled';next.roles=next.roles.map(role=>role.status==='queued'?{...role,status:'skipped'}:role);delete next.diagnostic;
+        }else throw error;
+       }
+      }
       else if(result.status==='built'||result.status==='failed'){const actual=await this.runner.get(row.id);this.merge(next,actual,row.task_input);}
       else next.diagnostic='ENGINEERING_STOP_UNCONFIRMED';
      }else{

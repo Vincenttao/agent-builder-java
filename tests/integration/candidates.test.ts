@@ -7,11 +7,12 @@ import {PostgresDraftRepository} from '../../apps/server/src/drafts/adapters/pos
 import {SnapshotService} from '../../apps/server/src/snapshots/application/snapshot-service.js';
 import {PostgresSnapshotRepository} from '../../apps/server/src/snapshots/adapters/postgres-snapshots.js';
 import {CandidateService} from '../../apps/server/src/candidates/candidate-service.js';
-import {equipmentAssembly} from '../../packages/contracts/src/equipment-template.js';
+import {equipmentAssembly,wealthBalanceAssembly} from '../../packages/contracts/src/equipment-template.js';
 import {draftInput} from '../support/fixtures.js';
 import {BaselineService} from '../../apps/server/src/acceptance/application/baseline-service.js';
 import {contentDigest} from '../../apps/server/src/snapshots/domain/assembly.js';
 import {builtDevelopmentFixture} from '../support/built-development.js';
+import {wealthBalanceGenerationRequest,wealthBalanceRuntimeTool} from '../../packages/contracts/src/generation-profile.js';
 const schema=`it_candidates_${randomUUID().replaceAll('-','')}`;
 const url=process.env.TEST_DATABASE_URL??'postgres://builder_test:local-test-only@127.0.0.1:15432/builder_test';
 const admin=new Pool({connectionString:url});const pool=new Pool({connectionString:url,options:`-c search_path=${schema}`});
@@ -53,4 +54,30 @@ it('binds an actual Runner registration to the exact built job and rejects a mis
  runtimeBase='b'.repeat(64);await expect(service.create(snapshot.id,h.job.id)).rejects.toMatchObject({code:'CANDIDATE_SDK_CHANGED'});expect(packages).toBe(3);runtimeBase='a'.repeat(64);
  const other=await drafts.create({...draftInput,brief:{...draftInput.brief,output:{value:'报告',source:'user',confirmed:true}}});const otherSnapshot=await snapshots.create(other.id,{expectedRevision:1,assembly:equipmentAssembly()});
  await expect(service.create(otherSnapshot.id,h.job.id)).rejects.toBeDefined();expect(await service.list(other.id)).toHaveLength(0);
+});
+it('pins a generated Rail into the candidate RuntimeSpec and rejects any other binding',async()=>{
+ const goal='设备 Agent 每次运行最多 3 次工具调用';
+ const draft=await drafts.create({...draftInput,brief:{...draftInput.brief,goal:{value:goal,source:'user',confirmed:true},output:{value:'设备报告',source:'user',confirmed:true}}});
+ const snapshot=await snapshots.create(draft.id,{expectedRevision:1,assembly:equipmentAssembly()});const baselines=new BaselineService(pool,clock,ids);
+ const preview=await baselines.preview(draft.id,'equipment-read@1');const baseline=await baselines.confirm(draft.id,{expectedRevision:1,templateId:'equipment-read@1',expectedDigest:preview.digest,confirmed:true});
+ const definition={schemaVersion:1 as const,rails:[{templateId:'tool-call-limit@1' as const,parameters:{maximum:3}}]};
+ const h=await builtDevelopmentFixture(pool,snapshot,baseline,'a'.repeat(64),goal,definition);let specDigest='';
+ const service=new CandidateService(pool,snapshots,{capabilities:async()=>({artifactDigest:'a'.repeat(64),modelConfigured:true,executionMode:'trusted-local',bootId:'fixture'}),
+  packageGenerated:async(_id,input)=>{specDigest=input.specDigest;return{...h.artifact,generated:{...h.artifact.generated,specDigest:input.specDigest}};}},baselines);
+ const candidate=await service.create(snapshot.id,h.job.id);
+ expect(candidate.runtimeSpec?.agent.rails).toContain('tool-call-limit@1:3');expect(candidate.specDigest).toBe(specDigest);
+});
+it('binds the finance balance Tool, operation and Skill identity into a generated candidate',async()=>{
+ const draft=await drafts.create({...draftInput,brief:{...draftInput.brief,goal:{value:'查询模拟账户余额',source:'user',confirmed:true},output:{value:'余额',source:'user',confirmed:true}}});
+ const snapshot=await snapshots.create(draft.id,{expectedRevision:1,assembly:wealthBalanceAssembly('查询模拟账户余额')});const baselines=new BaselineService(pool,clock,ids);
+ const preview=await baselines.preview(draft.id,'wealth-balance-read@1');const baseline=await baselines.confirm(draft.id,{expectedRevision:1,templateId:'wealth-balance-read@1',expectedDigest:preview.digest,confirmed:true});
+ const financeGeneration={...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]};
+ const h=await builtDevelopmentFixture(pool,snapshot,baseline,'a'.repeat(64),'Generate balance Tool and Skill',{schemaVersion:1,rails:[]},financeGeneration);
+ const service=new CandidateService(pool,snapshots,{capabilities:async()=>({artifactDigest:'a'.repeat(64),modelConfigured:true,executionMode:'trusted-local',bootId:'fixture'}),
+  packageGenerated:async(_id,input)=>({...h.artifact,generated:{...h.artifact.generated,specDigest:input.specDigest}})},baselines);
+ const candidate=await service.create(snapshot.id,h.job.id);
+ expect(candidate.runtimeSpec?.tools).toEqual([wealthBalanceRuntimeTool]);
+ const artifact=candidate.generated?.runtimeArtifact;expect(artifact?.kind).toBe('generated-component');
+ if(artifact?.kind!=='generated-component')throw new Error('GENERATED_COMPONENT_EXPECTED');
+ expect(artifact.generated).toMatchObject({toolName:'get_account_balance',operationId:'getAccountBalance',skillName:'balance-query',skillPath:'skills/balance-query/SKILL.md'});
 });

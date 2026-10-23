@@ -37,11 +37,11 @@ it('rechecks the actual environment and accepts only the same validated target',
   h.identity.mockDigest='e'.repeat(64);await expect(h.gate.check('snapshot','validation')).rejects.toMatchObject({code:'VALIDATION_BINDING_CHANGED'});
 });
 it('revalidates the exact generated candidate and plan instead of substituting the default template',async()=>{
-  const h=setup();const candidate={id:'candidate',agentId:'draft',snapshotId:h.snapshot.id,snapshotDigest:h.snapshot.digest,specDigest:'f'.repeat(64),artifactDigest:'9'.repeat(64),bundleDigest:'8'.repeat(64),provenance:'generated-component' as const,createdAt:''};
-  const ref={id:candidate.id,bundleDigest:candidate.bundleDigest,provenance:candidate.provenance,developmentJobId:'job',testPlanDigest:'7'.repeat(64)};h.report.binding.candidate={...ref};h.report.binding.artifactDigest=candidate.artifactDigest;
+  const h=setup();const runtimeSpec={...h.snapshot.content.runtimeSpec,agent:{...h.snapshot.content.runtimeSpec.agent,rails:[...h.snapshot.content.runtimeSpec.agent.rails,'tool-call-limit@1:3']}};const candidate={id:'candidate',agentId:'draft',snapshotId:h.snapshot.id,snapshotDigest:h.snapshot.digest,runtimeSpec,specDigest:contentDigest(runtimeSpec),artifactDigest:'9'.repeat(64),bundleDigest:'8'.repeat(64),provenance:'generated-component' as const,createdAt:''};
+  const ref={id:candidate.id,bundleDigest:candidate.bundleDigest,specDigest:candidate.specDigest,provenance:candidate.provenance,developmentJobId:'job',testPlanDigest:'7'.repeat(64)};h.report.binding.candidate={...ref};h.report.binding.artifactDigest=candidate.artifactDigest;
   const selected:string[]=[];const environment={identity:async(id?:string)=>{selected.push(id??'template');return{...h.identity,artifactDigest:id===candidate.id?candidate.artifactDigest:h.identity.artifactDigest};}};
   const gate=new ProjectReleaseGate({report:async()=>h.report},{assertTarget:async()=>h.baseline},{get:async()=>h.snapshot},environment,{get:async()=>candidate,validationReference:async()=>ref});
-  expect((await gate.check('snapshot','validation')).binding).toEqual(h.report.binding);expect(selected).toEqual(['candidate']);
+  const release=await gate.check('snapshot','validation');expect(release.binding).toEqual(h.report.binding);expect(release.runtimeSpec).toEqual(runtimeSpec);expect(selected).toEqual(['candidate']);
   ref.testPlanDigest='6'.repeat(64);await expect(gate.check('snapshot','validation')).rejects.toMatchObject({code:'VALIDATION_BINDING_CHANGED'});
   await expect(new ProjectReleaseGate({report:async()=>h.report},{assertTarget:async()=>h.baseline},{get:async()=>h.snapshot},environment).check('snapshot','validation')).rejects.toMatchObject({code:'CANDIDATE_VALIDATION_UNAVAILABLE'});
 });

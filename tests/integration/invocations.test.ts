@@ -25,7 +25,7 @@ afterAll(async()=>{await pool.end();await admin.query(`DROP SCHEMA "${schema}" C
 async function setup(){
   const draft=await drafts.create({...draftInput,brief:{...draftInput.brief,output:{value:'设备与工单',source:'user',confirmed:true}}});
   const snapshot=await snapshots.create(draft.id,{expectedRevision:1,assembly:workOrderAssembly()});
-  let ready=true;let mockDigest='b'.repeat(64);let probe:()=>Promise<void>=async()=>{};const executions=new Map<string,string>();
+  let ready=true;let restartPending=false;let mockDigest='b'.repeat(64);let probe:()=>Promise<void>=async()=>{};let redeploys=0;const executions=new Map<string,string>();
   const runtime:RunRuntime={claim:async()=>{},retire:async()=>({status:'stopped'}),capabilities:async()=>({artifactDigest,modelConfigured:true,executionMode:'trusted-local',bootId:'fixture',modelProfile:profile}),
     deploy:async()=>({status:ready?'ready':'stopped'}),begin:async id=>{executions.set(id,'running');return{id,status:'running',events:[]};},
     execution:async id=>executions.has(id)?{id,status:executions.get(id)!,events:[],result:{output:'fixture'}}:null,
@@ -35,16 +35,22 @@ async function setup(){
   const releases=new ReleaseService(pool,gate,{prepare:async()=>({ready:true,artifactDigest,snapshotDigest:snapshot.digest}),smoke:async()=>({status:'passed',evidence:{fixture:true}}),stop:async()=>{}});
   async function publish(revision=0,rollbackVersionId?:string){const op=await releases.start(draft.id,{snapshotId:snapshot.id,validationId:randomUUID(),clientRequestId:randomUUID(),expectedRevision:revision,...(rollbackVersionId?{rollbackVersionId}:{})});await releases.tick();await releases.tick();return op;}
   const v1=await publish();
-  const makeEntry=()=>new InvocationService(pool,snapshots,runs,{deployment:async()=>{await probe();return{status:ready?'ready':'stopped',artifactDigest,specDigest:contentDigest(snapshot.content.runtimeSpec),modelProfile:profile};}},actions,{identity:async()=>({implementationDigest:mockDigest})});
+  const makeEntry=()=>new InvocationService(pool,snapshots,runs,{deployment:async()=>{await probe();return{status:restartPending?'interrupted':ready?'ready':'stopped',artifactDigest,specDigest:contentDigest(snapshot.content.runtimeSpec),modelProfile:profile};},deploy:async()=>{redeploys++;ready=true;restartPending=false;return{status:'ready'};}},actions,{identity:async()=>({implementationDigest:mockDigest})});
   const entry=makeEntry();
   const identity=await entry.identity(draft.id,'U1001');
-  return{draft,snapshot,runs,entry,makeEntry,identity,publish,v1,actions,executions,setReady:(value:boolean)=>{ready=value;},setMockDigest:(value:string)=>{mockDigest=value;},setProbe:(value:()=>Promise<void>)=>{probe=value;}};
+  return{draft,snapshot,runs,entry,makeEntry,identity,publish,v1,actions,executions,redeploys:()=>redeploys,setReady:(value:boolean)=>{ready=value;},setRestartPending:(value:boolean)=>{restartPending=value;},setMockDigest:(value:string)=>{mockDigest=value;},setProbe:(value:()=>Promise<void>)=>{probe=value;}};
 }
 const input=()=>({clientRequestId:randomUUID(),input:'查询 PUMP-001'});
 it('blocks a published target when the actual business service changes after validation',async()=>{
   const h=await setup();h.setMockDigest('f'.repeat(64));const request=await h.entry.send(h.identity,input());await h.entry.tick();
   expect((await h.entry.get(h.identity,request.requestId)).request).toMatchObject({status:'blocked',diagnostic:'PUBLISHED_DEPENDENCY_CHANGED'});
   expect(await h.runs.list(h.snapshot.id)).toHaveLength(0);await h.entry.cancel(h.identity,request.requestId);
+});
+it('restarts the exact non-retired published target before admitting a request after Runner recovery',async()=>{
+  const h=await setup();h.setReady(false);h.setRestartPending(true);const request=await h.entry.send(h.identity,input());await h.entry.tick();
+  expect(h.redeploys()).toBe(1);
+  expect(await h.entry.get(h.identity,request.requestId)).toMatchObject({request:{status:'admitted',agentVersion:h.v1.versionId},run:{status:'queued',artifactDigest}});
+  await h.entry.cancel(h.identity,request.requestId);await h.runs.tick();
 });
 it('deduplicates before resolving the pointer, pins conversations and routes new conversations after publish/rollback',async()=>{
   const h=await setup();const body=input();const first=await h.entry.send(h.identity,body);await h.entry.tick();

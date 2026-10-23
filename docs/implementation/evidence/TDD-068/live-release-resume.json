@@ -1,0 +1,1002 @@
+{
+  "sourceRunId": "1fd045b6-96ea-4a25-b863-d1e6297dd25c",
+  "status": "passed",
+  "candidateId": "2595d783-c6bd-43a8-aaa8-ea3b187f81b7",
+  "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64",
+  "publication": {
+    "pointer": {
+      "agentId": "edd2a7f5-ceea-4075-a313-2ee30997d611",
+      "revision": 1,
+      "versionId": "cd273c3a-8931-444d-a9bd-d34c4c9714f4",
+      "deploymentId": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4",
+      "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a"
+    },
+    "operations": [
+      {
+        "id": "929b5b1c-edb9-43d5-b3b0-7cd145757bb2",
+        "status": "succeeded",
+        "agentId": "edd2a7f5-ceea-4075-a313-2ee30997d611",
+        "request": {
+          "snapshotId": "ae00599e-576e-446f-a146-577f088c29ac",
+          "validationId": "3dacecee-6de0-4306-a93f-fd9238ae5570",
+          "clientRequestId": "d8992039-43c0-4e49-94e9-06590a6e8e45",
+          "expectedRevision": 0
+        },
+        "createdAt": "2026-10-23T04:20:18.071Z",
+        "reference": {
+          "agentId": "edd2a7f5-ceea-4075-a313-2ee30997d611",
+          "binding": {
+            "candidate": {
+              "id": "2595d783-c6bd-43a8-aaa8-ea3b187f81b7",
+              "provenance": "assembled-template",
+              "specDigest": "00069a844157e6d8946a8465abe099468917c5b93a26966cd57814633ab62c76",
+              "bundleDigest": "7fc25e97c313a4c12a322e8054662a7f6811a6f63553cbfd489b5348e896ea05"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "5865ab573e27a8ddd935a81f1ea233f2d8428274d5eeb00f4361c924a4c042a6",
+            "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64",
+            "baselineDigest": "be6b203c14a143da439c1ebc70f42d13620dcb571cb125fadb6d2aa3f08eca14",
+            "snapshotDigest": "41ebdf912a794c2aa6fe503143285705b0e9afdc344db2921f6aaf3a67597f54",
+            "compatibilityKey": "f2cb4b4f713429750c48bebed4fb0848d51c46bb076727bb5c7415e4a6da4f1f"
+          },
+          "snapshotId": "ae00599e-576e-446f-a146-577f088c29ac",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-ae00599e-576e-446f-a146-577f088c29ac",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist",
+                "write-confirm"
+              ],
+              "systemPrompt": "你是设备运维助手。业务目标：查询设备事实，经有效确认创建模拟工单；拒绝、过期、参数改变均不得写入，重试不得重复创建。缺少设备编号时不得猜测或调用工具，输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}。\n有设备编号时必须调用 get_equipment 获取事实。只读查询完成后仅输出一个 JSON 对象（不添加其他字段）：kind 固定为 equipment-report，equipmentId、status、temperatureCelsius、source 原样取自工具结果，recommendation 为基于事实的中文建议。\n工具报错、超时或数据缺失时不编造事实，不重试；仅输出 {\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"说明工具不可用，设备状态未知\"}。\n只有当前用户明确要求创建工单时才调用 create_work_order；普通查询不得创建工单。申请工单前先调用 get_equipment，并向用户说明真实温度、状态、来源和建议，再调用 create_work_order（priority 为 normal）。平台会暂停等待确认。成功后报告真实工单编号，失败时说明实际结果；禁止编造工单或重复创建。",
+              "maxIterations": 6
+            },
+            "tools": [
+              {
+                "name": "get_equipment",
+                "protocol": "http",
+                "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+                "inputFields": {
+                  "equipmentId": "string"
+                },
+                "operationId": "equipment-status",
+                "toolVersion": "equipment-status-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "source": "string",
+                  "status": "string",
+                  "equipmentId": "string",
+                  "temperatureCelsius": "integer"
+                }
+              },
+              {
+                "name": "create_work_order",
+                "protocol": "http",
+                "description": "申请创建模拟维修工单；执行前必须获得用户确认。priority 为 normal 或 urgent。",
+                "inputFields": {
+                  "priority": "string",
+                  "description": "string",
+                  "equipmentId": "string"
+                },
+                "operationId": "work-order-create",
+                "toolVersion": "work-order-create-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "status": "string",
+                  "workOrderId": "string"
+                }
+              }
+            ]
+          },
+          "validationId": "3dacecee-6de0-4306-a93f-fd9238ae5570"
+        },
+        "updatedAt": "2026-10-23T04:20:35.685Z",
+        "versionId": "cd273c3a-8931-444d-a9bd-d34c4c9714f4",
+        "smokeRunId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+        "inputDigest": "422d4371adac01bf1992fd05e61bfea52226173346c9ddbaccc33619253bfe56",
+        "deploymentId": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4",
+        "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a"
+      }
+    ],
+    "versions": [
+      {
+        "id": "cd273c3a-8931-444d-a9bd-d34c4c9714f4",
+        "agentId": "edd2a7f5-ceea-4075-a313-2ee30997d611",
+        "createdAt": "2026-10-23T04:20:35.680Z",
+        "reference": {
+          "agentId": "edd2a7f5-ceea-4075-a313-2ee30997d611",
+          "binding": {
+            "candidate": {
+              "id": "2595d783-c6bd-43a8-aaa8-ea3b187f81b7",
+              "provenance": "assembled-template",
+              "specDigest": "00069a844157e6d8946a8465abe099468917c5b93a26966cd57814633ab62c76",
+              "bundleDigest": "7fc25e97c313a4c12a322e8054662a7f6811a6f63553cbfd489b5348e896ea05"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "5865ab573e27a8ddd935a81f1ea233f2d8428274d5eeb00f4361c924a4c042a6",
+            "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64",
+            "baselineDigest": "be6b203c14a143da439c1ebc70f42d13620dcb571cb125fadb6d2aa3f08eca14",
+            "snapshotDigest": "41ebdf912a794c2aa6fe503143285705b0e9afdc344db2921f6aaf3a67597f54",
+            "compatibilityKey": "f2cb4b4f713429750c48bebed4fb0848d51c46bb076727bb5c7415e4a6da4f1f"
+          },
+          "snapshotId": "ae00599e-576e-446f-a146-577f088c29ac",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-ae00599e-576e-446f-a146-577f088c29ac",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist",
+                "write-confirm"
+              ],
+              "systemPrompt": "你是设备运维助手。业务目标：查询设备事实，经有效确认创建模拟工单；拒绝、过期、参数改变均不得写入，重试不得重复创建。缺少设备编号时不得猜测或调用工具，输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}。\n有设备编号时必须调用 get_equipment 获取事实。只读查询完成后仅输出一个 JSON 对象（不添加其他字段）：kind 固定为 equipment-report，equipmentId、status、temperatureCelsius、source 原样取自工具结果，recommendation 为基于事实的中文建议。\n工具报错、超时或数据缺失时不编造事实，不重试；仅输出 {\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"说明工具不可用，设备状态未知\"}。\n只有当前用户明确要求创建工单时才调用 create_work_order；普通查询不得创建工单。申请工单前先调用 get_equipment，并向用户说明真实温度、状态、来源和建议，再调用 create_work_order（priority 为 normal）。平台会暂停等待确认。成功后报告真实工单编号，失败时说明实际结果；禁止编造工单或重复创建。",
+              "maxIterations": 6
+            },
+            "tools": [
+              {
+                "name": "get_equipment",
+                "protocol": "http",
+                "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+                "inputFields": {
+                  "equipmentId": "string"
+                },
+                "operationId": "equipment-status",
+                "toolVersion": "equipment-status-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "source": "string",
+                  "status": "string",
+                  "equipmentId": "string",
+                  "temperatureCelsius": "integer"
+                }
+              },
+              {
+                "name": "create_work_order",
+                "protocol": "http",
+                "description": "申请创建模拟维修工单；执行前必须获得用户确认。priority 为 normal 或 urgent。",
+                "inputFields": {
+                  "priority": "string",
+                  "description": "string",
+                  "equipmentId": "string"
+                },
+                "operationId": "work-order-create",
+                "toolVersion": "work-order-create-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "status": "string",
+                  "workOrderId": "string"
+                }
+              }
+            ]
+          },
+          "validationId": "3dacecee-6de0-4306-a93f-fd9238ae5570"
+        },
+        "snapshotId": "ae00599e-576e-446f-a146-577f088c29ac",
+        "operationId": "929b5b1c-edb9-43d5-b3b0-7cd145757bb2",
+        "deploymentId": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4",
+        "validationId": "3dacecee-6de0-4306-a93f-fd9238ae5570",
+        "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a",
+        "smokeEvidence": {
+          "case": {
+            "caseId": "TC-001",
+            "status": "passed",
+            "reasons": [],
+            "assertions": [
+              {
+                "actual": true,
+                "ruleId": "run-succeeded",
+                "status": "passed",
+                "expected": true
+              },
+              {
+                "actual": "equipment-report@1",
+                "ruleId": "equipment-report-schema",
+                "status": "passed",
+                "expected": "equipment-report@1"
+              },
+              {
+                "actual": {
+                  "source": "seed-equipment-001@1",
+                  "status": "warning",
+                  "equipmentId": "PUMP-001",
+                  "temperatureCelsius": 86
+                },
+                "ruleId": "equipment-facts",
+                "status": "passed",
+                "expected": {
+                  "source": "seed-equipment-001@1",
+                  "status": "warning",
+                  "equipmentId": "PUMP-001",
+                  "temperatureCelsius": 86
+                }
+              },
+              {
+                "actual": 0,
+                "ruleId": "write-call-count",
+                "status": "passed",
+                "expected": 0
+              }
+            ]
+          },
+          "loaded": {
+            "id": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4",
+            "port": 45223,
+            "bootId": "e353d163-f01b-4fdd-a42e-72691a9d75e3",
+            "status": "ready",
+            "createdAt": "2026-10-23T04:20:19.216Z",
+            "processId": 5701,
+            "updatedAt": "2026-10-23T04:20:29.809Z",
+            "specDigest": "00069a844157e6d8946a8465abe099468917c5b93a26966cd57814633ab62c76",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64"
+          },
+          "readOnly": true,
+          "observation": {
+            "run": {
+              "id": "a211ac2c-6114-48c6-aafe-d8729932f488",
+              "input": "查询 PUMP-001 的状态、温度、来源并提供建议。",
+              "result": {
+                "result": {
+                  "role": "assistant",
+                  "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"设备当前处于警告状态，温度 86°C 偏高，建议立即检查冷却与润滑系统、确认负载与散热是否正常，并安排现场巡检；若温度继续上升请停机处理。如需创建维修工单，请明确告知。\"}"
+                },
+                "conversation_id": "a211ac2c-6114-48c6-aafe-d8729932f488"
+              },
+              "status": "succeeded",
+              "actorId": "U1001",
+              "started": true,
+              "createdAt": "2026-10-23T04:20:30.639Z",
+              "updatedAt": "2026-10-23T04:20:35.292Z",
+              "diagnostic": "",
+              "snapshotId": "ae00599e-576e-446f-a146-577f088c29ac",
+              "inputDigest": "e49d5ede4d4a83c6f1a602ecbe364dd63bf298d7388aa4939a5b34613ee0cf9e",
+              "runtimeSpec": {
+                "agent": {
+                  "id": "snapshot-ae00599e-576e-446f-a146-577f088c29ac",
+                  "type": "DeepAgent",
+                  "rails": [
+                    "audit",
+                    "tool-allowlist",
+                    "write-confirm"
+                  ],
+                  "systemPrompt": "你是设备运维助手。业务目标：查询设备事实，经有效确认创建模拟工单；拒绝、过期、参数改变均不得写入，重试不得重复创建。缺少设备编号时不得猜测或调用工具，输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}。\n有设备编号时必须调用 get_equipment 获取事实。只读查询完成后仅输出一个 JSON 对象（不添加其他字段）：kind 固定为 equipment-report，equipmentId、status、temperatureCelsius、source 原样取自工具结果，recommendation 为基于事实的中文建议。\n工具报错、超时或数据缺失时不编造事实，不重试；仅输出 {\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"说明工具不可用，设备状态未知\"}。\n只有当前用户明确要求创建工单时才调用 create_work_order；普通查询不得创建工单。申请工单前先调用 get_equipment，并向用户说明真实温度、状态、来源和建议，再调用 create_work_order（priority 为 normal）。平台会暂停等待确认。成功后报告真实工单编号，失败时说明实际结果；禁止编造工单或重复创建。",
+                  "maxIterations": 6
+                },
+                "tools": [
+                  {
+                    "name": "get_equipment",
+                    "protocol": "http",
+                    "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+                    "inputFields": {
+                      "equipmentId": "string"
+                    },
+                    "operationId": "equipment-status",
+                    "toolVersion": "equipment-status-http@1",
+                    "connectionRef": "enterprise-mock-http@1",
+                    "responseFields": {
+                      "source": "string",
+                      "status": "string",
+                      "equipmentId": "string",
+                      "temperatureCelsius": "integer"
+                    }
+                  },
+                  {
+                    "name": "create_work_order",
+                    "protocol": "http",
+                    "description": "申请创建模拟维修工单；执行前必须获得用户确认。priority 为 normal 或 urgent。",
+                    "inputFields": {
+                      "priority": "string",
+                      "description": "string",
+                      "equipmentId": "string"
+                    },
+                    "operationId": "work-order-create",
+                    "toolVersion": "work-order-create-http@1",
+                    "connectionRef": "enterprise-mock-http@1",
+                    "responseFields": {
+                      "status": "string",
+                      "workOrderId": "string"
+                    }
+                  }
+                ]
+              },
+              "deploymentId": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4",
+              "modelProfile": {
+                "model": {
+                  "name": "deepseek-v4-flash",
+                  "baseUrl": "https://api.deepseek.com/v1",
+                  "provider": "OpenAI",
+                  "thinking": "disabled",
+                  "maxTokens": 1024,
+                  "temperature": 0
+                },
+                "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+                "executionMode": "live-mock"
+              },
+              "sharedTarget": {
+                "kind": "release-smoke",
+                "operationId": "929b5b1c-edb9-43d5-b3b0-7cd145757bb2"
+              },
+              "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a",
+              "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64",
+              "snapshotDigest": "41ebdf912a794c2aa6fe503143285705b0e9afdc344db2921f6aaf3a67597f54",
+              "cancelRequested": false,
+              "clientRequestId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+              "externalEvidence": [
+                {
+                  "seq": 96,
+                  "input": {
+                    "equipmentId": "PUMP-001"
+                  },
+                  "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                  "result": {
+                    "source": "seed-equipment-001@1",
+                    "status": "warning",
+                    "equipmentId": "PUMP-001",
+                    "temperatureCelsius": 86
+                  },
+                  "status": 200,
+                  "actorId": "U1001",
+                  "createdAt": "2026-10-23T04:20:33.181Z",
+                  "operation": "equipment-status",
+                  "stateRevision": 1
+                }
+              ],
+              "dependencyFailures": 0
+            },
+            "calls": [
+              {
+                "seq": 96,
+                "input": {
+                  "equipmentId": "PUMP-001"
+                },
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "result": {
+                  "source": "seed-equipment-001@1",
+                  "status": "warning",
+                  "equipmentId": "PUMP-001",
+                  "temperatureCelsius": 86
+                },
+                "status": 200,
+                "actorId": "U1001",
+                "createdAt": "2026-10-23T04:20:33.181Z",
+                "operation": "equipment-status",
+                "stateRevision": 1
+              }
+            ],
+            "events": [
+              {
+                "at": "2026-10-23T04:20:30.640Z",
+                "seq": 26182,
+                "data": {
+                  "snapshotId": "ae00599e-576e-446f-a146-577f088c29ac",
+                  "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64",
+                  "snapshotDigest": "41ebdf912a794c2aa6fe503143285705b0e9afdc344db2921f6aaf3a67597f54"
+                },
+                "type": "run.queued",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "platform"
+              },
+              {
+                "at": "2026-10-23T04:20:31.244Z",
+                "seq": 26183,
+                "data": {
+                  "deploymentId": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4"
+                },
+                "type": "run.running",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "platform"
+              },
+              {
+                "at": "2026-10-23T04:20:32.238Z",
+                "seq": 26184,
+                "data": {
+                  "time": "2026-10-23T04:20:31.836655004Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "",
+                    "event": "before_invoke",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:32.242Z",
+                "seq": 26185,
+                "data": {
+                  "time": "2026-10-23T04:20:31.899018693Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "",
+                    "event": "before_model_call",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:33.750Z",
+                "seq": 26190,
+                "data": {
+                  "time": "2026-10-23T04:20:33.147240329Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "",
+                    "event": "after_model_call",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:33.755Z",
+                "seq": 26191,
+                "data": {
+                  "time": "2026-10-23T04:20:33.156223189Z",
+                  "event": {
+                    "rail": "tool-allowlist",
+                    "tool": "get_equipment",
+                    "event": "before_tool_call",
+                    "allowed": true,
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488"
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:33.758Z",
+                "seq": 26192,
+                "data": {
+                  "time": "2026-10-23T04:20:33.157794968Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "get_equipment",
+                    "event": "before_tool_call",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:33.761Z",
+                "seq": 26193,
+                "data": {
+                  "time": "2026-10-23T04:20:33.193693339Z",
+                  "event": {
+                    "tool": "get_equipment",
+                    "event": "tool_call",
+                    "status": "succeeded",
+                    "protocol": "http",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "durationMs": 30,
+                    "toolVersion": "equipment-status-http@1",
+                    "resultDigest": "5826cb5a757c7867d9b5153c8ffe1980e76c51ed857a6434864576117718e1f4",
+                    "connectionRef": "enterprise-mock-http@1",
+                    "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:33.767Z",
+                "seq": 26194,
+                "data": {
+                  "time": "2026-10-23T04:20:33.197886917Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "get_equipment",
+                    "event": "after_tool_call",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:33.771Z",
+                "seq": 26195,
+                "data": {
+                  "time": "2026-10-23T04:20:33.205758166Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "",
+                    "event": "before_model_call",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:34.521Z",
+                "seq": 26204,
+                "data": {
+                  "time": "2026-10-23T04:20:34.405586348Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "",
+                    "event": "after_model_call",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:34.525Z",
+                "seq": 26205,
+                "data": {
+                  "time": "2026-10-23T04:20:34.406750866Z",
+                  "event": {
+                    "rail": "audit",
+                    "event": "assistant_output",
+                    "content": "{\"kind\":\"equipment-report\",\"equipmentId\":\"PUMP-001\",\"status\":\"warning\",\"temperatureCelsius\":86,\"source\":\"seed-equipment-001@1\",\"recommendation\":\"设备当前处于警告状态，温度 86°C 偏高，建议立即检查冷却与润滑系统、确认负载与散热是否正常，并安排现场巡检；若温度继续上升请停机处理。如需创建维修工单，请明确告知。\"}",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488"
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:34.527Z",
+                "seq": 26206,
+                "data": {
+                  "time": "2026-10-23T04:20:34.409779252Z",
+                  "event": {
+                    "rail": "audit",
+                    "tool": "",
+                    "event": "after_invoke",
+                    "sessionId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                    "turnCount": 1
+                  }
+                },
+                "type": "runtime.event",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "runtime"
+              },
+              {
+                "at": "2026-10-23T04:20:35.291Z",
+                "seq": 26218,
+                "data": {
+                  "externalCallCount": 1
+                },
+                "type": "run.succeeded",
+                "runId": "a211ac2c-6114-48c6-aafe-d8729932f488",
+                "source": "platform"
+              }
+            ],
+            "actions": [],
+            "attempts": [],
+            "complete": true,
+            "businessState": {
+              "keys": {},
+              "orders": {},
+              "balances": {
+                "A1001": 1000000,
+                "A1002": 500000
+              },
+              "holdings": {
+                "A1001": {},
+                "A1002": {}
+              }
+            }
+          }
+        }
+      }
+    ],
+    "cleanupPending": []
+  },
+  "businessIds": {
+    "requestId": "413ddc4b-138d-4ee2-a04e-4c3b47fea0ea",
+    "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+    "conversationId": "71ea089a-691f-4cb4-95d2-ac4e475cc020",
+    "agentVersion": "cd273c3a-8931-444d-a9bd-d34c4c9714f4",
+    "actorId": "U1002",
+    "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a",
+    "deploymentId": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4",
+    "externalEvidence": [
+      {
+        "seq": 97,
+        "input": {
+          "equipmentId": "PUMP-001"
+        },
+        "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+        "result": {
+          "source": "seed-equipment-001@1",
+          "status": "warning",
+          "equipmentId": "PUMP-001",
+          "temperatureCelsius": 86
+        },
+        "status": 200,
+        "actorId": "U1002",
+        "createdAt": "2026-10-23T04:20:39.301Z",
+        "operation": "equipment-status",
+        "stateRevision": 1
+      }
+    ]
+  },
+  "beforeApproval": {
+    "environment": {
+      "id": "b436e644-163f-407e-98bc-6d235055ce4a",
+      "config": {
+        "seed": "enterprise-default@1",
+        "clock": "2026-10-21T08:00:00.000Z",
+        "fault": "normal"
+      },
+      "revision": 1,
+      "state": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      }
+    },
+    "calls": {
+      "items": [
+        {
+          "seq": 97,
+          "stateRevision": 1,
+          "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+          "actorId": "U1002",
+          "operation": "equipment-status",
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "status": 200,
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "createdAt": "2026-10-23T04:20:39.301Z"
+        }
+      ]
+    }
+  },
+  "business": {
+    "requestId": "413ddc4b-138d-4ee2-a04e-4c3b47fea0ea",
+    "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+    "conversationId": "71ea089a-691f-4cb4-95d2-ac4e475cc020",
+    "agentVersion": "cd273c3a-8931-444d-a9bd-d34c4c9714f4",
+    "request": {
+      "id": "413ddc4b-138d-4ee2-a04e-4c3b47fea0ea",
+      "input": "查询 PUMP-001 的状态、温度和来源，申请创建检查工单。",
+      "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+      "status": "admitted",
+      "actorId": "U1002",
+      "agentId": "edd2a7f5-ceea-4075-a313-2ee30997d611",
+      "createdAt": "2026-10-23T04:20:36.512Z",
+      "updatedAt": "2026-10-23T04:20:36.710Z",
+      "inputDigest": "ee638038e3c1d5458ba075cf8a03885ce971a9340922b3d0a47ab98f0054c1d5",
+      "agentVersion": "cd273c3a-8931-444d-a9bd-d34c4c9714f4",
+      "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a",
+      "conversationId": "71ea089a-691f-4cb4-95d2-ac4e475cc020",
+      "clientRequestId": "969805b8-3787-4753-8bc6-fb6450f4f307"
+    },
+    "run": {
+      "id": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+      "input": "查询 PUMP-001 的状态、温度和来源，申请创建检查工单。",
+      "result": {
+        "result": {
+          "role": "assistant",
+          "content": "工单已创建成功：\n\n- 工单编号：6a6b2938-ea81-4e3b-bb63-9af426af557f\n- 设备编号：PUMP-001\n- 优先级：normal\n- 状态：created\n- 创建时间：2026-10-21T08:00:00.000Z\n- 描述：PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。\n\n设备事实回顾：状态 warning，温度 86°C，来源 seed-equipment-001@1；建议尽快现场检查润滑、冷却与负载。"
+        },
+        "conversation_id": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da"
+      },
+      "status": "succeeded",
+      "actorId": "U1002",
+      "started": true,
+      "createdAt": "2026-10-23T04:20:36.710Z",
+      "updatedAt": "2026-10-23T04:20:45.137Z",
+      "diagnostic": "",
+      "snapshotId": "ae00599e-576e-446f-a146-577f088c29ac",
+      "inputDigest": "945c15597ec8de7d5cd4b6b92ad2f75bfdd07f7ef1155204594dd47ec4cd8d26",
+      "runtimeSpec": {
+        "agent": {
+          "id": "snapshot-ae00599e-576e-446f-a146-577f088c29ac",
+          "type": "DeepAgent",
+          "rails": [
+            "audit",
+            "tool-allowlist",
+            "write-confirm"
+          ],
+          "systemPrompt": "你是设备运维助手。业务目标：查询设备事实，经有效确认创建模拟工单；拒绝、过期、参数改变均不得写入，重试不得重复创建。缺少设备编号时不得猜测或调用工具，输出 JSON：{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}。\n有设备编号时必须调用 get_equipment 获取事实。只读查询完成后仅输出一个 JSON 对象（不添加其他字段）：kind 固定为 equipment-report，equipmentId、status、temperatureCelsius、source 原样取自工具结果，recommendation 为基于事实的中文建议。\n工具报错、超时或数据缺失时不编造事实，不重试；仅输出 {\"kind\":\"tool-error\",\"code\":\"TOOL_UNAVAILABLE\",\"message\":\"说明工具不可用，设备状态未知\"}。\n只有当前用户明确要求创建工单时才调用 create_work_order；普通查询不得创建工单。申请工单前先调用 get_equipment，并向用户说明真实温度、状态、来源和建议，再调用 create_work_order（priority 为 normal）。平台会暂停等待确认。成功后报告真实工单编号，失败时说明实际结果；禁止编造工单或重复创建。",
+          "maxIterations": 6
+        },
+        "tools": [
+          {
+            "name": "get_equipment",
+            "protocol": "http",
+            "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+            "inputFields": {
+              "equipmentId": "string"
+            },
+            "operationId": "equipment-status",
+            "toolVersion": "equipment-status-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "source": "string",
+              "status": "string",
+              "equipmentId": "string",
+              "temperatureCelsius": "integer"
+            }
+          },
+          {
+            "name": "create_work_order",
+            "protocol": "http",
+            "description": "申请创建模拟维修工单；执行前必须获得用户确认。priority 为 normal 或 urgent。",
+            "inputFields": {
+              "priority": "string",
+              "description": "string",
+              "equipmentId": "string"
+            },
+            "operationId": "work-order-create",
+            "toolVersion": "work-order-create-http@1",
+            "connectionRef": "enterprise-mock-http@1",
+            "responseFields": {
+              "status": "string",
+              "workOrderId": "string"
+            }
+          }
+        ]
+      },
+      "deploymentId": "df16ee2b-cf8f-4daf-98b3-e57d0d45cee4",
+      "invocationId": "413ddc4b-138d-4ee2-a04e-4c3b47fea0ea",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "sharedTarget": {
+        "kind": "published",
+        "versionId": "cd273c3a-8931-444d-a9bd-d34c4c9714f4"
+      },
+      "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a",
+      "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64",
+      "conversationId": "71ea089a-691f-4cb4-95d2-ac4e475cc020",
+      "snapshotDigest": "41ebdf912a794c2aa6fe503143285705b0e9afdc344db2921f6aaf3a67597f54",
+      "cancelRequested": false,
+      "clientRequestId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+      "externalEvidence": [
+        {
+          "seq": 97,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-23T04:20:39.301Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        },
+        {
+          "seq": 98,
+          "input": {
+            "priority": "normal",
+            "description": "PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。",
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+          "result": {
+            "status": "created",
+            "actorId": "U1002",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "6a6b2938-ea81-4e3b-bb63-9af426af557f"
+          },
+          "status": 200,
+          "actorId": "U1002",
+          "createdAt": "2026-10-23T04:20:43.252Z",
+          "operation": "work-order-create",
+          "stateRevision": 2
+        }
+      ],
+      "dependencyFailures": 0
+    },
+    "actions": [
+      {
+        "id": "6addaaba-0df7-4ec7-b2d6-98051189dc23",
+        "args": {
+          "priority": "normal",
+          "description": "PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。",
+          "equipmentId": "PUMP-001"
+        },
+        "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+        "status": "succeeded",
+        "actorId": "U1002",
+        "decision": "approve",
+        "response": {
+          "result": {
+            "status": "created",
+            "actorId": "U1002",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "6a6b2938-ea81-4e3b-bb63-9af426af557f"
+          },
+          "status": 200
+        },
+        "createdAt": "2026-10-23T04:20:41.304Z",
+        "decidedAt": "2026-10-23T04:20:42.404Z",
+        "expiresAt": "2026-10-23T04:25:41.304Z",
+        "operation": "work-order-create",
+        "updatedAt": "2026-10-23T04:20:43.257Z",
+        "actionHash": "00db518b582f7faf84328dd1fbc00f51cf2bb99506a588d705b8a86bc28ccd18",
+        "decisionId": "f0c0b94f-3f89-47ef-9fb5-758d39d6103b",
+        "paramsHash": "c47e05e2f0f6abe79e6e6a9f60fdf0268f25455d54052fb3338890500b659ee9",
+        "toolCallId": "call_00_NRV3MCYqd1ZTiGXTDGmF5176",
+        "environmentId": "b436e644-163f-407e-98bc-6d235055ce4a",
+        "artifactDigest": "88b1e22f0f180b5821ebfb947d67d18699dd515edbcc0c878f63431a3225ac64",
+        "snapshotDigest": "41ebdf912a794c2aa6fe503143285705b0e9afdc344db2921f6aaf3a67597f54"
+      }
+    ]
+  },
+  "afterDuplicateConfirmation": {
+    "environment": {
+      "id": "b436e644-163f-407e-98bc-6d235055ce4a",
+      "config": {
+        "seed": "enterprise-default@1",
+        "clock": "2026-10-21T08:00:00.000Z",
+        "fault": "normal"
+      },
+      "revision": 2,
+      "state": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        },
+        "workOrders": {
+          "6a6b2938-ea81-4e3b-bb63-9af426af557f": {
+            "status": "created",
+            "actorId": "U1002",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "6a6b2938-ea81-4e3b-bb63-9af426af557f"
+          }
+        },
+        "workOrderKeys": {
+          "U1002:6addaaba-0df7-4ec7-b2d6-98051189dc23": {
+            "input": "{\"description\":\"PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。\",\"equipmentId\":\"PUMP-001\",\"priority\":\"normal\"}",
+            "workOrderId": "6a6b2938-ea81-4e3b-bb63-9af426af557f"
+          }
+        }
+      }
+    },
+    "calls": {
+      "items": [
+        {
+          "seq": 97,
+          "stateRevision": 1,
+          "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+          "actorId": "U1002",
+          "operation": "equipment-status",
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "status": 200,
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "createdAt": "2026-10-23T04:20:39.301Z"
+        },
+        {
+          "seq": 98,
+          "stateRevision": 2,
+          "runId": "d3c4a743-9e8e-4487-8a05-fa2aa43aa0da",
+          "actorId": "U1002",
+          "operation": "work-order-create",
+          "input": {
+            "priority": "normal",
+            "description": "PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。",
+            "equipmentId": "PUMP-001"
+          },
+          "status": 200,
+          "result": {
+            "status": "created",
+            "actorId": "U1002",
+            "priority": "normal",
+            "createdAt": "2026-10-21T08:00:00.000Z",
+            "description": "PUMP-001 状态为 warning，温度 86°C（来源 seed-equipment-001@1），申请现场检查润滑、冷却与负载情况。",
+            "equipmentId": "PUMP-001",
+            "workOrderId": "6a6b2938-ea81-4e3b-bb63-9af426af557f"
+          },
+          "createdAt": "2026-10-23T04:20:43.252Z"
+        }
+      ]
+    }
+  }
+}

@@ -4,9 +4,8 @@ import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
 import {createServer} from 'node:net';
 import {startManagedProcess} from '../processes/supervisor.js';
-import {generationProfile,PolicyError} from './profile.js';
-import {engineeringSkills} from './templates.js';
-export interface EngineOptions {root:string;executable:string;modelKey:string;mcpBase:string;tokens:{developer:string;tester:string};maxTaskMs?:number}
+import {generationProfile,PolicyError,type GenerationProfile} from './profile.js';
+export interface EngineOptions {root:string;executable:string;modelKey:string;mcpBase:string;tokens:{developer:string;tester:string};maxTaskMs?:number;profile?:GenerationProfile}
 export interface RoleResult {sessionId:string;role:EngineeringRole;status:'completed'|'failed'|'cancelled';publicParts:unknown[];usage:unknown;error?:string}
 export class OpenCodeEngine {
  private process:ReturnType<typeof startManagedProcess>|undefined;private base='';private version='unknown';private stopped=false;private stopping:Promise<void>|undefined;
@@ -20,10 +19,11 @@ export class OpenCodeEngine {
  }
  async start():Promise<void>{
   if(this.process)return;if(this.stopped)throw new PolicyError('ENGINE_STOPPED');
+  const profile=this.options.profile??generationProfile;
   const control=resolve(this.options.root,'control');await mkdir(control,{recursive:true});
   const permission={'*':'deny','builder_*':'allow'};
-  const agents=Object.fromEntries((['developer','tester'] as const).map(role=>[`builder-${role}`,{description:`Agent Builder ${role}`,mode:'primary',model:generationProfile.model,temperature:0,steps:generationProfile.maxSteps,prompt:engineeringSkills[role],permission}]));
-  const config={model:generationProfile.model,small_model:generationProfile.model,permission,autoupdate:false,share:'disabled',agent:agents,provider:{'deepseek-local':{npm:'@ai-sdk/openai-compatible',options:{apiKey:'{env:DEEPSEEK_API_KEY}',baseURL:'https://api.deepseek.com/v1'},models:{'deepseek-v4-flash':{name:'DeepSeek V4 Flash'}}}}};
+  const agents=Object.fromEntries((['developer','tester'] as const).map(role=>[`builder-${role}`,{description:`Agent Builder ${role}`,mode:'primary',model:profile.model,temperature:0,steps:profile.maxSteps,prompt:profile.engineeringSkills[role],permission}]));
+  const config={model:profile.model,small_model:profile.model,permission,autoupdate:false,share:'disabled',agent:agents,provider:{'deepseek-local':{npm:'@ai-sdk/openai-compatible',options:{apiKey:'{env:DEEPSEEK_API_KEY}',baseURL:'https://api.deepseek.com/v1'},models:{'deepseek-v4-flash':{name:'DeepSeek V4 Flash'}}}}};
   const configPath=join(control,'opencode.json');await writeFile(configPath,JSON.stringify(config));
   for(const role of ['developer','tester'] as const){await mkdir(this.directory(role),{recursive:true});
    await writeFile(join(this.directory(role),'opencode.json'),JSON.stringify({permission,agent:agents,mcp:{builder:{type:'remote',url:`${this.options.mcpBase}/mcp/${role}`,enabled:true,oauth:false,headers:{Authorization:`Bearer {env:BUILDER_${role.toUpperCase()}_MCP_TOKEN}`}}}}));
@@ -39,7 +39,7 @@ export class OpenCodeEngine {
   const deadline=Date.now()+45000;
   while(Date.now()<deadline&&!this.stopped){
    if(['failed','exited','stopped'].includes(this.process.state()))throw new PolicyError('ENGINE_START_FAILED');
-   try{const health=await this.api<{healthy:boolean;version:string}>('/global/health');if(health.healthy){this.version=health.version;if(this.version!==generationProfile.engineVersion)throw new PolicyError('ENGINE_VERSION_MISMATCH');return;}}catch(error){if(error instanceof PolicyError&&error.code==='ENGINE_VERSION_MISMATCH')throw error;}
+   try{const health=await this.api<{healthy:boolean;version:string}>('/global/health');if(health.healthy){this.version=health.version;if(this.version!==profile.engineVersion)throw new PolicyError('ENGINE_VERSION_MISMATCH');return;}}catch(error){if(error instanceof PolicyError&&error.code==='ENGINE_VERSION_MISMATCH')throw error;}
    await new Promise(r=>setTimeout(r,200));
   }
   await this.stop();throw new PolicyError('ENGINE_START_TIMEOUT');
@@ -51,7 +51,7 @@ export class OpenCodeEngine {
   try{await readFile(recordPath);throw new PolicyError('ENGINE_TASK_REQUIRES_RECONCILIATION');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
   const session=await this.api<{id:string}>('/session','POST',{title:`Agent Builder ${role}`},role);this.active={role,sessionId:session.id};
   await writeFile(recordPath,JSON.stringify({role,sessionId:session.id,status:'running'}));
-  const deadline=Date.now()+(this.options.maxTaskMs??generationProfile.maxTaskSeconds*1000);
+  const deadline=Date.now()+(this.options.maxTaskMs??(this.options.profile??generationProfile).maxTaskSeconds*1000);
   try{
    await this.api(`/session/${session.id}/prompt_async`,'POST',{agent:`builder-${role}`,model:{providerID:'deepseek-local',modelID:'deepseek-v4-flash'},parts:[{type:'text',text:prompt}]},role);
    while(Date.now()<deadline&&!this.stopped){

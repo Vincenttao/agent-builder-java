@@ -23,14 +23,18 @@ export class ProjectReleaseGate implements ReleaseGate {
         if(matched.length!==1||!result||result.status!=='passed'||contentDigest(result.expected)!==contentDigest(rule.expected)||contentDigest(result.actual)!==contentDigest(rule.expected)) throw new AppError('VALIDATION_INCOMPLETE','验收断言与确认基线不一致',409);
       }
     }
-    const identity=await this.environment.identity(report.binding.candidate?.id);const current=validationBinding(snapshot,baseline,identity);
+    const identity=await this.environment.identity(report.binding.candidate?.id);const current=validationBinding(snapshot,baseline,identity);let runtimeSpec=snapshot.content.runtimeSpec;
     if(report.binding.candidate){
       if(!this.candidates)throw new AppError('CANDIDATE_VALIDATION_UNAVAILABLE','无法核验报告对应的候选制品',409);
       const candidate=await this.candidates.get(report.binding.candidate.id);
       if(candidate.snapshotId!==snapshot.id||candidate.artifactDigest!==report.binding.artifactDigest||candidate.snapshotDigest!==snapshot.digest)throw new AppError('RELEASE_TARGET_MISMATCH','报告与候选制品不匹配',409);
+      runtimeSpec=candidate.runtimeSpec??snapshot.content.runtimeSpec;
+      if(contentDigest(runtimeSpec)!==candidate.specDigest||(report.binding.candidate.specDigest??contentDigest(snapshot.content.runtimeSpec))!==candidate.specDigest)throw new AppError('RELEASE_TARGET_MISMATCH','报告与候选运行规格不匹配',409);
       current.candidate=await this.candidates.validationReference(candidate.id);
     }
-    if(identity.modelProfile.executionMode!=='live-mock'||contentDigest(current)!==contentDigest(report.binding)) throw new AppError('VALIDATION_BINDING_CHANGED','运行环境或目标版本已变化，需要重新验证',409);
-    return { agentId:snapshot.draftId,snapshotId,validationId,binding:report.binding };
+    const reportBinding=structuredClone(report.binding);
+    if(reportBinding.candidate&&!reportBinding.candidate.specDigest)reportBinding.candidate.specDigest=contentDigest(snapshot.content.runtimeSpec);
+    if(identity.modelProfile.executionMode!=='live-mock'||contentDigest(current)!==contentDigest(reportBinding)) throw new AppError('VALIDATION_BINDING_CHANGED','运行环境或目标版本已变化，需要重新验证',409);
+    return { agentId:snapshot.draftId,snapshotId,validationId,binding:report.binding,runtimeSpec:structuredClone(runtimeSpec) };
   }
 }

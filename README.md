@@ -42,6 +42,13 @@ docker compose --env-file .env.local ps
 
 启动成功后，`app`、`runner`、`mock-services`、`postgres` 应为健康状态；一次性的 `migrate` 正常退出即可。首次构建包含固定版本 Java SDK 的下载与编译，耗时取决于网络和机器。
 
+Docker 镜像构建负责生产编译和打包，不重复执行单元／契约测试、类型检查或 Java Bridge 测试；这些质量检查由 CI 执行。修改代码后按“开发与测试”章节先运行相关检查，再构建受影响的镜像。代码未变时，直接执行 `docker compose --env-file .env.local up -d --wait`，不要添加 `--build`。
+
+- 仅 Web／Server／Mock 服务变更：`docker compose --env-file .env.local build app`，再 `docker compose --env-file .env.local up -d --wait app mock-services`。
+- 仅 Runner／Java Bridge 变更：`docker compose --env-file .env.local build runner`，再 `docker compose --env-file .env.local up -d --wait runner`。
+- `packages/contracts` 或共享配置变更：重建并更新 `app`、`runner`。
+- 首次启动或确实需要所有服务跟随源码重建时，才使用 `up -d --build --wait`。
+
 ### 3. 打开工作台
 
 访问 **http://127.0.0.1:8080**，输入 `.env.local` 中的 `LOCAL_BOOTSTRAP_TOKEN`，点击“进入工作台”。查看环境诊断；“模型已配置”只说明存在配置，实际可用性由运行核验。
@@ -68,7 +75,7 @@ docker compose --env-file .env.local ps
 | 演示发布 | 只读冒烟后切换现行版本、发布历史与回滚、模拟企业 App 的独立业务身份 |
 | 企业 Mock | 设备／工单场景；余额、理财与申购基础 API。金融 Agent 与金融 App 流程尚未接通 |
 
-Agent／Rail 自动生成、工单组件自动生成、金融 Agent、导入导出、完整会话恢复、生产多租户与任务沙箱仍未交付。已有 Rail 是模板内置能力，不表示已经支持 Rail 自动生成。
+Agent／Rail 自动生成、工单组件自动生成、金融 Agent、完整项目导入导出与新目录恢复、完整会话恢复、生产多租户与任务沙箱仍未交付。工作台已有基础 JSON 项目包，可恢复需求和装配快照，并要求重新验收、重绑连接；它不包含自动生成源码／JAR、Mock 场景包或完整证据，因此不能视为完整项目迁移。
 
 ## 架构速览
 
@@ -108,6 +115,8 @@ pnpm typecheck
 pnpm test
 pnpm build
 ```
+
+`pnpm build` 已执行生产 TypeScript 编译；Docker 构建会再次编译并打包运行镜像，但不会重复跑上述测试。Java Bridge 测试在 CI 中执行，Runner 镜像只编译 Bridge 生产 JAR。
 
 未全局安装 pnpm 时，可将 `pnpm` 替换为 `npx pnpm@10.32.1`。宿主机开发、数据库集成测试、Java 构建及浏览器测试的完整前置条件见[操作指南](docs/操作指南.md#开发与测试)。
 

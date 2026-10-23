@@ -60,8 +60,9 @@ export class PostgresActions {
       if (old) { if (old.paramsHash !== paramsHash) throw problem('ACTION_INPUT_CONFLICT'); return old; }
       if (run.cancelRequested || !['running','waiting_confirmation'].includes(run.status)) throw problem('RUN_NOT_ACTIVE');
       const snapshot = (await client.query<{ content: Snapshot['content']; digest: string }>('SELECT content,digest FROM snapshots WHERE id=$1', [run.snapshotId])).rows[0];
+      const runtimeSpec=run.runtimeSpec??snapshot?.content.runtimeSpec;
       if (!snapshot || snapshot.digest !== run.snapshotDigest || digest(snapshot.content) !== run.snapshotDigest
-          || !snapshot.content.runtimeSpec.agent.rails.includes('write-confirm') || !snapshot.content.runtimeSpec.tools.some(tool => tool.operationId === operation)) throw problem('ACTION_NOT_BOUND');
+          || !runtimeSpec?.agent.rails.includes('write-confirm') || !runtimeSpec.tools.some(tool => tool.operationId === operation)) throw problem('ACTION_NOT_BOUND');
       const createdAt = this.clock.now();
       const target = { id: randomUUID(), runId, actorId: run.actorId, environmentId: run.environmentId, snapshotDigest: run.snapshotDigest, artifactDigest: run.artifactDigest,
         toolCallId, operation, args, paramsHash, createdAt, expiresAt: new Date(Date.parse(createdAt) + ttl).toISOString() };

@@ -2,3 +2,4 @@ packages:
   - apps/*
   - packages/*
 injectWorkspacePackages: true
+forceLegacyDeploy: true

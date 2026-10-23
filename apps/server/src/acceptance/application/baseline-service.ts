@@ -5,19 +5,20 @@ import type { Clock, IdGenerator } from '../../drafts/domain/ports.js';
 import { contentDigest } from '../../snapshots/domain/assembly.js';
 import { AppError } from '../../shared/errors.js';
 import { equipmentBaseline } from './equipment-baseline.js';
+import {wealthBalanceBaseline} from './wealth-balance-baseline.js';
 
 export class BaselineService {
   constructor(private readonly pool: Pool, private readonly clock: Clock, private readonly ids: IdGenerator) {}
   async preview(draftId: string, templateId: string) {
-    if (templateId !== 'equipment-read@1' && templateId !== 'equipment-workorder@1') throw new AppError('UNKNOWN_BASELINE_TEMPLATE', '验收模板未登记', 422);
+    if (templateId !== 'equipment-read@1' && templateId !== 'equipment-workorder@1' && templateId !== 'wealth-balance-read@1') throw new AppError('UNKNOWN_BASELINE_TEMPLATE', '验收模板未登记', 422);
     const draft = (await this.pool.query<{ content: Draft }>('SELECT r.content FROM drafts d JOIN draft_revisions r ON r.draft_id=d.id AND r.revision=d.revision WHERE d.id=$1', [draftId])).rows[0]?.content;
     if (!draft) throw new AppError('DRAFT_NOT_FOUND', '草稿不存在', 404);
-    const content = equipmentBaseline(draft, templateId); return { content, digest: contentDigest(content) };
+    const content = templateId === 'wealth-balance-read@1' ? wealthBalanceBaseline(draft) : equipmentBaseline(draft, templateId); return { content, digest: contentDigest(content) };
   }
   async confirm(draftId: string, input: BaselineInput): Promise<AcceptanceBaseline> {
     if (input.confirmed !== true) throw new AppError('BASELINE_CONFIRMATION_REQUIRED', '请先审阅并确认验收基线', 422);
     const template = input.templateId;
-    if (template !== 'equipment-read@1' && template !== 'equipment-workorder@1') throw new AppError('UNKNOWN_BASELINE_TEMPLATE', '验收模板未登记', 422);
+    if (template !== 'equipment-read@1' && template !== 'equipment-workorder@1' && template !== 'wealth-balance-read@1') throw new AppError('UNKNOWN_BASELINE_TEMPLATE', '验收模板未登记', 422);
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
@@ -26,7 +27,7 @@ export class BaselineService {
       if (latest.revision !== input.expectedRevision) throw new AppError('REVISION_CONFLICT', '需求已变更，请重新审阅验收基线', 409);
       const draft = (await client.query<{ content: Draft }>('SELECT content FROM draft_revisions WHERE draft_id=$1 AND revision=$2', [draftId, input.expectedRevision])).rows[0]!.content;
       if (Object.values(draft.brief).some(field => !field.confirmed || !field.value.trim())) throw new AppError('BRIEF_NOT_CONFIRMED', '请补齐并确认需求', 422);
-      const content = equipmentBaseline(draft, template); const digest = contentDigest(content);
+      const content = template === 'wealth-balance-read@1' ? wealthBalanceBaseline(draft) : equipmentBaseline(draft, template); const digest = contentDigest(content);
       if (input.expectedDigest !== digest) throw new AppError('BASELINE_PREVIEW_MISMATCH', '验收草案已变化，请重新审阅后确认', 409);
       const old = (await client.query<{ record: AcceptanceBaseline }>('SELECT record FROM acceptance_baselines WHERE draft_id=$1 AND digest=$2', [draftId, digest])).rows[0]?.record;
       if (old) { await client.query('COMMIT'); return old; }
@@ -46,11 +47,13 @@ export class BaselineService {
   }
   async assertTarget(id: string, snapshot: Snapshot) {
     const baseline = await this.get(id);
-    if(baseline.content.templateId==='equipment-workorder@1'&&baseline.content.rulesVersion!=='equipment-workorder-assertions@2')throw new AppError('BASELINE_RULES_CHANGED','工单验收规则已更新，请重新审阅并确认基线',409);
+    if(baseline.content.templateId==='equipment-read@1'&&baseline.content.rulesVersion!=='equipment-assertions@2')throw new AppError('BASELINE_RULES_CHANGED','设备验收规则已更新，请重新审阅并确认基线',409);
+    if(baseline.content.templateId==='equipment-workorder@1'&&baseline.content.rulesVersion!=='equipment-workorder-assertions@3')throw new AppError('BASELINE_RULES_CHANGED','工单验收规则已更新，请重新审阅并确认基线',409);
+    if(baseline.content.templateId==='wealth-balance-read@1'&&baseline.content.rulesVersion!=='wealth-balance-assertions@2')throw new AppError('BASELINE_RULES_CHANGED','余额验收规则已更新，请重新审阅并确认基线',409);
     if (contentDigest(snapshot.content) !== snapshot.digest) throw new AppError('SNAPSHOT_INTEGRITY_ERROR', '快照摘要校验失败', 409);
     if (snapshot.draftId !== baseline.draftId || snapshot.draftRevision !== baseline.draftRevision) throw new AppError('BASELINE_TARGET_MISMATCH', '验收基线与需求版本不匹配', 409);
     const operations = snapshot.content.runtimeSpec.tools.map(tool => tool.operationId).sort();
-    const covered = baseline.content.templateId === 'equipment-workorder@1' ? ['equipment-status','work-order-create'] : ['equipment-status'];
+    const covered = baseline.content.templateId === 'equipment-workorder@1' ? ['equipment-status','work-order-create'] : baseline.content.templateId === 'wealth-balance-read@1' ? [] : ['equipment-status'];
     if (JSON.stringify(operations) !== JSON.stringify(covered)) throw new AppError('BASELINE_COVERAGE_MISMATCH', '此验收基线不覆盖该版本绑定的工具', 409);
     return baseline;
   }

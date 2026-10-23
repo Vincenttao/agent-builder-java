@@ -1,8 +1,9 @@
 import type { ValidationBinding } from './validations.js';
 import type { RunEnvironment } from './runs.js';
 import type {RuntimeArtifact} from './artifacts.js';
+import type {RuntimeSpec} from './index.js';
 export interface Candidate {
-  id: string; agentId: string; snapshotId: string; snapshotDigest: string; specDigest: string;
+  id: string; agentId: string; snapshotId: string; snapshotDigest: string; runtimeSpec?:RuntimeSpec; specDigest: string;
   artifactDigest: string; bundleDigest: string; provenance: 'assembled-template'|'generated-component'; createdAt: string;
   generated?:{developmentJobId:string;developmentBundleDigest:string;baselineId:string;baselineDigest:string;sourceDigest:string;runtimeArtifact:RuntimeArtifact};
 }
@@ -12,7 +13,7 @@ export interface TestDeploymentInput {
 }
 export interface TestDeployment {
   validation?: {executionId:string;caseId:string;runId:string;input:string;actorId:'U1001'|'U1002'};
-  id: string; clientRequestId: string; inputDigest: string; agentId: string; candidateId: string;
+  id: string; clientRequestId: string; inputDigest: string; agentId: string; candidateId: string; runtimeSpec?:RuntimeSpec;
   snapshotId: string; deploymentId: string; environmentId: string; environmentConfig: RunEnvironment;
   requirementBaselineId: string; purpose: 'test' | 'preview'; binding: ValidationBinding;
   status: 'preparing' | 'ready' | 'stopping' | 'stopped' | 'failed';

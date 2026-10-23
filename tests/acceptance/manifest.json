@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "baselineDigest": "ae9542ad2cfae0bea911da96d92bbc1c17138be103c7159a6e77098d2196e1ae",
+  "baselineDigest": "b262943f73070de948c40ae86b37b01b157b623be92a2aefb0e1d3c93157fe25",
   "cases": [
     {
       "caseId": "AC-01",
@@ -10,7 +10,7 @@
         "FR-001",
         "FR-008"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac01-no-model.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -36,7 +36,7 @@
       "requirementIds": [
         "FR-002"
       ],
-      "testFile": null,
+      "testFile": "tests/e2e/requirements-mode.spec.ts",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -63,7 +63,7 @@
         "FR-002",
         "FR-003"
       ],
-      "testFile": null,
+      "testFile": "tests/e2e/requirements-mode.spec.ts",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -97,7 +97,7 @@
         "FR-004",
         "FR-006"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac04-invalid-assembly.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -132,7 +132,7 @@
         "FR-006",
         "FR-010"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac05-two-rails-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -159,7 +159,7 @@
         "FR-005",
         "FR-006"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac06-incompatible-assembly.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -185,7 +185,7 @@
       "requirementIds": [
         "FR-007"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac07-http-mcp.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -213,7 +213,7 @@
         "FR-010",
         "FR-012"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-validation-branches.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -254,7 +254,7 @@
         "FR-002",
         "FR-012"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-validation-branches.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -280,7 +280,7 @@
       "requirementIds": [
         "FR-011"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-validation-branches.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -306,7 +306,7 @@
       "requirementIds": [
         "FR-011"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac11-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -333,7 +333,7 @@
         "FR-011",
         "FR-014"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-validation-branches.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -360,7 +360,7 @@
         "FR-010",
         "FR-014"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-sse-reconnect.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -394,7 +394,7 @@
         "FR-004",
         "FR-012"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac14-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -427,7 +427,7 @@
       "requirementIds": [
         "FR-013"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac15-startup-failure-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -446,7 +446,7 @@
       "requirementIds": [
         "FR-013"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac16-current-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -473,7 +473,7 @@
         "FR-006",
         "NFR-03"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-two-sessions.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -493,7 +493,7 @@
         "FR-015",
         "NFR-04"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf05-workspace.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -526,7 +526,7 @@
       "requirementIds": [
         "FR-011"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac19-cancel-unknown-write-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -553,8 +553,8 @@
         "FR-012",
         "FR-013"
       ],
-      "testFile": null,
-      "executionMode": "live-mock",
+      "testFile": "apps/server/src/releases/project-release-gate.test.ts",
+      "executionMode": "simulated",
       "branches": [
         {
           "id": "simulation-not-publishable",
@@ -572,7 +572,7 @@
       "requirementIds": [
         "FR-017"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac21-ac22-generation-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -598,9 +598,16 @@
       "requirementIds": [
         "FR-018"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac21-ac22-generation-live.mjs",
       "executionMode": "live-mock",
       "branches": [
+        {
+          "id": "separate-component-request",
+          "evidenceKinds": [
+            "assertions",
+            "execution-record"
+          ]
+        },
         {
           "id": "empty-tool-source",
           "evidenceKinds": [
@@ -631,9 +638,16 @@
       "requirementIds": [
         "FR-018"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac21-ac22-generation-live.mjs",
       "executionMode": "live-mock",
       "branches": [
+        {
+          "id": "separate-component-request",
+          "evidenceKinds": [
+            "assertions",
+            "execution-record"
+          ]
+        },
         {
           "id": "empty-skill-source",
           "evidenceKinds": [
@@ -668,6 +682,13 @@
       "executionMode": "live-mock",
       "branches": [
         {
+          "id": "separate-component-request",
+          "evidenceKinds": [
+            "assertions",
+            "execution-record"
+          ]
+        },
+        {
           "id": "agent-source",
           "evidenceKinds": [
             "assertions",
@@ -697,9 +718,16 @@
       "requirementIds": [
         "FR-018"
       ],
-      "testFile": null,
+      "testFile": "java/runtime-bridge/src/test/java/local/agentbuilder/bridge/AgentAssemblerTest.java",
       "executionMode": "live-mock",
       "branches": [
+        {
+          "id": "separate-component-request",
+          "evidenceKinds": [
+            "assertions",
+            "execution-record"
+          ]
+        },
         {
           "id": "rail-source",
           "evidenceKinds": [
@@ -746,7 +774,7 @@
         "FR-019",
         "NFR-09"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac23-policy-audit-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -786,7 +814,7 @@
       "requirementIds": [
         "FR-019"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac24-candidate-integrity-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -941,7 +969,7 @@
         "FR-017",
         "FR-019"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac29a-cancel-child-process.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -1009,7 +1037,7 @@
         "FR-021",
         "NFR-11"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac30-mock-isolation-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -1717,7 +1745,7 @@
         "FR-021",
         "NFR-09"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac42a-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -1898,7 +1926,7 @@
         "FR-010",
         "FR-012"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-eq01-empty-retrieval-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -1920,7 +1948,7 @@
         "FR-012",
         "FR-014"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-validation-branches.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -1946,7 +1974,7 @@
       "requirementIds": [
         "FR-011"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-validation-branches.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -2509,7 +2537,7 @@
         "NFR-02",
         "NFR-03"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf01-sse-reconnect.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -2549,7 +2577,7 @@
       "requirementIds": [
         "NFR-04"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf02.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -2582,7 +2610,7 @@
       "requirementIds": [
         "NFR-05"
       ],
-      "testFile": null,
+      "testFile": "scripts/benchmark-td15-nf03.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -2623,7 +2651,7 @@
         "NFR-06",
         "NFR-07"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf04-event-retention-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -2663,7 +2691,7 @@
       "requirementIds": [
         "NFR-08"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-nf05-workspace.mjs",
       "executionMode": "live-mock",
       "branches": [
         {
@@ -2705,7 +2733,7 @@
         "NFR-10",
         "NFR-11"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac29a-cancel-child-process.mjs",
       "executionMode": "live-mock",
       "branches": [
         {

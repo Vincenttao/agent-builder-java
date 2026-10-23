@@ -27,6 +27,17 @@ const reviewed = async (id: string, value = input) => ({ ...value, expectedDiges
 beforeAll(async () => { await admin.query(`CREATE SCHEMA "${schema}"`); await migrate(pool); });
 afterAll(async () => { await app.close(); await pool.end(); await admin.query(`DROP SCHEMA "${schema}" CASCADE`); await admin.end(); });
 describe('independent, user-confirmed project acceptance baseline', () => {
+  it('versions the corrected no-facts assertion and rejects stale read baselines for new validation',async()=>{
+    const draft=await drafts.create(confirmedInput),preview=await baselines.preview(draft.id,'equipment-read@1');
+    expect(preview.content.rulesVersion).toBe('equipment-assertions@2');
+    const staleContent={...preview.content,rulesVersion:'equipment-assertions@1' as const},staleDigest=contentDigest(staleContent);
+    const stale={id:randomUUID(),draftId:draft.id,draftRevision:1,digest:staleDigest,confirmedAt:clock.now(),confirmedBy:'local-operator',content:staleContent};
+    await pool.query('INSERT INTO acceptance_baselines(id,draft_id,draft_revision,digest,record) VALUES ($1,$2,$3,$4,$5)',[stale.id,draft.id,1,staleDigest,stale]);
+    const snapshot=await snapshots.create(draft.id,{expectedRevision:1,assembly:{agentType:'DeepAgent',systemPrompt:'只查询设备状态',maxIterations:4,railIds:['audit@1','tool-allowlist@1'],toolIds:['equipment-status@1']}});
+    await expect(baselines.assertTarget(stale.id,snapshot)).rejects.toMatchObject({code:'BASELINE_RULES_CHANGED'});
+    const current=await baselines.confirm(draft.id,{expectedRevision:1,templateId:'equipment-read@1',expectedDigest:preview.digest,confirmed:true});
+    await expect(baselines.assertTarget(current.id,snapshot)).resolves.toEqual(current);
+  });
   it('preserves historical workorder rules but requires explicit confirmation of current rules before reuse',async()=>{
     const draft=await drafts.create(confirmedInput),preview=await baselines.preview(draft.id,input.templateId);
     const content={...preview.content,rulesVersion:'equipment-assertions@1' as const},digest=contentDigest(content);
@@ -36,7 +47,7 @@ describe('independent, user-confirmed project acceptance baseline', () => {
     await expect(baselines.assertTarget(old.id,snapshot)).rejects.toMatchObject({code:'BASELINE_RULES_CHANGED'});
     expect(await baselines.get(old.id)).toEqual(old);
     const current=await baselines.confirm(draft.id,{...input,expectedDigest:preview.digest});
-    expect(current.digest).not.toBe(old.digest);expect(current.content.rulesVersion).toBe('equipment-workorder-assertions@2');
+    expect(current.digest).not.toBe(old.digest);expect(current.content.rulesVersion).toBe('equipment-workorder-assertions@3');
     await expect(baselines.assertTarget(current.id,snapshot)).resolves.toEqual(current);
     expect(await baselines.list(draft.id)).toHaveLength(2);
   });
@@ -46,6 +57,15 @@ describe('independent, user-confirmed project acceptance baseline', () => {
     expect(preview.content.cases).toHaveLength(8); expect(await baselines.list(draft.id)).toEqual([]);
     await expect(baselines.confirm(draft.id, { ...input, expectedDigest: 'f'.repeat(64) })).rejects.toMatchObject({ code: 'BASELINE_PREVIEW_MISMATCH' });
     expect((await baselines.confirm(draft.id, { ...input, expectedDigest: preview.digest })).digest).toBe(preview.digest);
+  });
+  it('confirms a read-only finance baseline with account identity, failure and no-write assertions',async()=>{
+    const draft=await drafts.create(confirmedInput);const preview=await baselines.preview(draft.id,'wealth-balance-read@1');
+    expect(preview.content.cases.map(item=>item.scenario)).toEqual(['balance-normal','balance-missing-id','balance-tool-failure']);
+    expect(preview.content.cases.every(item=>item.assertions.length>0&&item.required)).toBe(true);
+    const confirmedBaseline=await baselines.confirm(draft.id,{expectedRevision:1,templateId:'wealth-balance-read@1',confirmed:true,expectedDigest:preview.digest});
+    expect(confirmedBaseline.content.rulesVersion).toBe('wealth-balance-assertions@2');
+    const snapshot=await snapshots.create(draft.id,{expectedRevision:1,assembly:{agentType:'DeepAgent',systemPrompt:'查余额',maxIterations:4,railIds:['audit@1','tool-allowlist@1'],toolIds:[]}});
+    await expect(baselines.assertTarget(confirmedBaseline.id,snapshot)).resolves.toEqual(confirmedBaseline);
   });
   it('requires confirmed requirements and explicit baseline confirmation', async () => {
     const draft = await drafts.create(draftInput);

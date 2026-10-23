@@ -14,6 +14,9 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.security.MessageDigest;
+import java.util.HexFormat;
+import java.util.function.Consumer;
 
 /** Supported v1 contract: required flat scalar fields. Endpoint and token are never model arguments. */
 public final class RegisteredHttpTool extends Tool {
@@ -25,14 +28,22 @@ public final class RegisteredHttpTool extends Tool {
     private final Duration timeout;
     private final HttpClient client;
     private final boolean readErrorResults;
+    private final String connectionRef;
+    private final String toolVersion;
+    private final Consumer<Map<String,Object>> events;
     public record ReadFailure(String kind, String code, String message) {}
 
     public RegisteredHttpTool(String name, String description, URI endpoint, String token,
                               Map<String, String> inputFields, Map<String, String> responseFields, Duration timeout) {
-        this(name, description, endpoint, token, inputFields, responseFields, timeout, false);
+        this(name, description, endpoint, token, inputFields, responseFields, timeout, false, "local-test-http@1", "local-test-tool@1", event -> {});
     }
     public RegisteredHttpTool(String name, String description, URI endpoint, String token,
                               Map<String, String> inputFields, Map<String, String> responseFields, Duration timeout, boolean readErrorResults) {
+        this(name, description, endpoint, token, inputFields, responseFields, timeout, readErrorResults, "local-test-http@1", "local-test-tool@1", event -> {});
+    }
+    public RegisteredHttpTool(String name, String description, URI endpoint, String token,
+                              Map<String, String> inputFields, Map<String, String> responseFields, Duration timeout, boolean readErrorResults,
+                              String connectionRef, String toolVersion, Consumer<Map<String,Object>> events) {
         super(new ToolCard(name + "-v1", name, description, schema(inputFields)));
         if (!List.of("http", "https").contains(endpoint.getScheme()) || endpoint.getUserInfo() != null || endpoint.getFragment() != null)
             throw new IllegalArgumentException("INVALID_TOOL_ENDPOINT");
@@ -40,15 +51,34 @@ public final class RegisteredHttpTool extends Tool {
         this.responseFields = Map.copyOf(responseFields); this.timeout = timeout;
         this.client = HttpClient.newBuilder().connectTimeout(timeout).followRedirects(HttpClient.Redirect.NEVER).build();
         this.readErrorResults = readErrorResults;
+        this.connectionRef = connectionRef; this.toolVersion = toolVersion; this.events = events;
         for (String type : responseFields.values()) validateType(type);
     }
 
     @Override protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs) throws Exception {
-        try { return request(inputs, kwargs); }
+        if (!valid(inputs, inputFields, true)) throw new IllegalArgumentException("TOOL_INPUT_CONTRACT_INVALID");
+        long started = System.nanoTime();
+        String sessionId = kwargs != null && kwargs.get("session") instanceof AgentSessionApi session ? session.getSessionId() : "";
+        try {
+            Object result = request(inputs, kwargs);
+            events.accept(Map.ofEntries(Map.entry("event", "tool_call"), Map.entry("tool", getCard().getName()), Map.entry("protocol", "http"),
+                    Map.entry("connectionRef", connectionRef), Map.entry("toolVersion", toolVersion), Map.entry("parameterDigest", digest(inputs)),
+                    Map.entry("resultDigest", digest(result)), Map.entry("durationMs", Math.max(0L,(System.nanoTime()-started)/1_000_000L)),
+                    Map.entry("status", "succeeded"), Map.entry("sessionId", sessionId)));
+            return result;
+        }
         catch (IllegalStateException error) {
+            if (error.getMessage() != null && error.getMessage().startsWith("TOOL_")) events.accept(Map.ofEntries(
+                    Map.entry("event", "tool_call"), Map.entry("tool", getCard().getName()), Map.entry("protocol", "http"),
+                    Map.entry("connectionRef", connectionRef), Map.entry("toolVersion", toolVersion), Map.entry("parameterDigest", digest(inputs)),
+                    Map.entry("durationMs", Math.max(0L,(System.nanoTime()-started)/1_000_000L)), Map.entry("status", "failed"),
+                    Map.entry("errorCode", error.getMessage()), Map.entry("sessionId", sessionId)));
             if (!readErrorResults) throw error;
             return readFailure(error);
         }
+    }
+    private static String digest(Object value) throws Exception {
+        return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(JSON.writeValueAsBytes(value)));
     }
     static ReadFailure readFailure(IllegalStateException error) {
         String code = error.getMessage();

@@ -1,5 +1,8 @@
 export type EngineeringRole='developer'|'tester';
 import type {AcceptanceBaseline} from './baselines.js';
+import type {RuntimeSpec} from './index.js';
+import type {GeneratedRailDefinition} from './rail-generation.js';
+import {runtimeSpecSchema} from './runtime.js';
 export interface GenerationRequest {
   profileVersion:string; scope:('agent'|'skill'|'rail'|'tool')[]; dependencies:string[]; connectionProfile:string;
 }
@@ -7,7 +10,9 @@ export interface EngineeringEvent {sequence:number;occurredAt:string;subjectId:s
 export interface CommandResult {id:string;commandId:string;executable:string;args:string[];exitCode:number|null;status:'passed'|'failed'|'cancelled'|'timed_out';startedAt:string;finishedAt:string;output:string;truncated:boolean}
 export interface GeneratedBundle {
   digest:string;artifactDigest:string;sourceDigest:string;profileDigest:string;sdkArtifactDigest:string;
+  profileVersion?:string;
   snapshotId:string;baselineId:string;baselineDigest:string;planDigest:string;
+  railDefinition?:GeneratedRailDefinition;runtimeSpec?:RuntimeSpec;
   files:{path:string;digest:string;size:number}[];unitRedId:string;unitGreenId:string;contractCheckId:string;buildId:string;
   repair?:RepairReference;
 }
@@ -20,7 +25,7 @@ export interface EngineeringRepair {
  files:{path:string;digest:string;content:string}[];
  failures:{caseId:string;input:string;ruleId:string;expected:unknown;actual:unknown;evidenceId:string;evidenceDigest:string}[];
 }
-export interface EngineeringContext {baseline:AcceptanceBaseline;goal:string;snapshotId:string;repair?:EngineeringRepair}
+export interface EngineeringContext {baseline:AcceptanceBaseline;goal:string;snapshotId:string;runtimeSpec?:RuntimeSpec;repair?:EngineeringRepair}
 export interface EngineeringTaskInput {context:EngineeringContext;generation:GenerationRequest;maxSeconds:number}
 export interface EngineeringTaskRecord {
   id:string;inputDigest:string;profileDigest:string;status:'queued'|'running'|'cancelling'|'cancelled'|'failed'|'reconciling'|'built';
@@ -50,17 +55,20 @@ const caseSchema={type:'object',additionalProperties:false,required:['id','scena
  assertions:{type:'array',minItems:1,maxItems:100,items:{type:'object',additionalProperties:false,required:['ruleId','expected'],properties:{ruleId:{type:'string',maxLength:100},expected:{}}}}
 }} as const;
 const baselineContentSchema={type:'object',additionalProperties:false,required:['schemaVersion','templateId','draftId','draftRevision','audience','requirements','cases','seed','rulesVersion'],properties:{
- schemaVersion:{const:1},templateId:{enum:['equipment-read@1','equipment-workorder@1']},draftId:uuid,draftRevision:{type:'integer',minimum:1},audience:{type:'string',maxLength:8000},seed:{const:'enterprise-default@1'},rulesVersion:{const:'equipment-assertions@1'},
+ schemaVersion:{const:1},templateId:{enum:['equipment-read@1','equipment-workorder@1','wealth-balance-read@1']},draftId:uuid,draftRevision:{type:'integer',minimum:1},audience:{type:'string',maxLength:8000},seed:{const:'enterprise-default@1'},rulesVersion:{enum:['equipment-assertions@1','equipment-assertions@2','equipment-workorder-assertions@2','equipment-workorder-assertions@3','wealth-balance-assertions@1','wealth-balance-assertions@2']},
  requirements:{type:'array',minItems:1,maxItems:100,items:requirementSchema},cases:{type:'array',minItems:1,maxItems:100,items:caseSchema}
 }} as const;
 const baselineSchema={type:'object',additionalProperties:false,required:['id','draftId','draftRevision','digest','confirmedAt','confirmedBy','content'],properties:{
  id:uuid,draftId:uuid,draftRevision:{type:'integer',minimum:1},digest,confirmedAt:{type:'string',format:'date-time'},confirmedBy:{type:'string',minLength:1,maxLength:100},content:baselineContentSchema
 }} as const;
 const repairReferenceSchema={type:'object',additionalProperties:false,required:['executionId','reportDigest','candidateId','candidateBundleDigest','artifactDigest','parentJobId','rootJobId','attempt','maxAttempts'],properties:{executionId:uuid,reportDigest:digest,candidateId:uuid,candidateBundleDigest:digest,artifactDigest:digest,parentJobId:uuid,rootJobId:uuid,attempt:{type:'integer',minimum:1,maximum:3},maxAttempts:{const:3}}} as const;
-const bundleProperties={digest,artifactDigest:digest,sourceDigest:digest,profileDigest:digest,sdkArtifactDigest:digest,snapshotId:uuid,baselineId:uuid,baselineDigest:digest,planDigest:digest,unitRedId:uuid,unitGreenId:uuid,contractCheckId:uuid,buildId:uuid,files:{type:'array',minItems:4,maxItems:8,items:{type:'object',additionalProperties:false,required:['path','digest','size'],properties:{path:{type:'string',maxLength:160},digest,size:{type:'integer',minimum:0,maximum:10485760}}}}} as const;
-const repairSchema={type:'object',additionalProperties:false,required:['reference','bundle','files','failures'],properties:{reference:repairReferenceSchema,bundle:{type:'object',additionalProperties:false,required:Object.keys(bundleProperties),properties:{...bundleProperties,repair:repairReferenceSchema}},files:{type:'array',minItems:4,maxItems:7,items:{type:'object',additionalProperties:false,required:['path','digest','content'],properties:{path:{type:'string',maxLength:160},digest,content:{type:'string',maxLength:32768}}}},failures:{type:'array',minItems:1,maxItems:100,items:{type:'object',additionalProperties:false,required:['caseId','input','ruleId','expected','actual','evidenceId','evidenceDigest'],properties:{caseId:{type:'string',maxLength:100},input:{type:'string',maxLength:8000},ruleId:{type:'string',maxLength:100},expected:{},actual:{},evidenceId:uuid,evidenceDigest:digest}}}}} as const;
+const railDefinitionSchema={type:'object',additionalProperties:false,required:['schemaVersion','rails'],properties:{schemaVersion:{const:1},rails:{type:'array',maxItems:1,items:{type:'object',additionalProperties:false,required:['templateId','parameters'],properties:{templateId:{const:'tool-call-limit@1'},parameters:{type:'object',additionalProperties:false,required:['maximum'],properties:{maximum:{type:'integer',minimum:1,maximum:20}}}}}}}} as const;
+const bundleProperties={digest,artifactDigest:digest,sourceDigest:digest,profileDigest:digest,sdkArtifactDigest:digest,profileVersion:{type:'string',maxLength:80},snapshotId:uuid,baselineId:uuid,baselineDigest:digest,planDigest:digest,unitRedId:uuid,unitGreenId:uuid,contractCheckId:uuid,buildId:uuid,files:{type:'array',minItems:4,maxItems:8,items:{type:'object',additionalProperties:false,required:['path','digest','size'],properties:{path:{type:'string',maxLength:160},digest,size:{type:'integer',minimum:0,maximum:10485760}}}},railDefinition:railDefinitionSchema,runtimeSpec:runtimeSpecSchema} as const;
+const bundleRequired=['digest','artifactDigest','sourceDigest','profileDigest','sdkArtifactDigest','snapshotId','baselineId','baselineDigest','planDigest','unitRedId','unitGreenId','contractCheckId','buildId','files'];
+export const generatedBundleSchema={type:'object',additionalProperties:false,required:bundleRequired,properties:{...bundleProperties,repair:repairReferenceSchema}} as const;
+const repairSchema={type:'object',additionalProperties:false,required:['reference','bundle','files','failures'],properties:{reference:repairReferenceSchema,bundle:{type:'object',additionalProperties:false,required:bundleRequired,properties:{...bundleProperties,repair:repairReferenceSchema}},files:{type:'array',minItems:4,maxItems:7,items:{type:'object',additionalProperties:false,required:['path','digest','content'],properties:{path:{type:'string',maxLength:160},digest,content:{type:'string',maxLength:32768}}}},failures:{type:'array',minItems:1,maxItems:100,items:{type:'object',additionalProperties:false,required:['caseId','input','ruleId','expected','actual','evidenceId','evidenceDigest'],properties:{caseId:{type:'string',maxLength:100},input:{type:'string',maxLength:8000},ruleId:{type:'string',maxLength:100},expected:{},actual:{},evidenceId:uuid,evidenceDigest:digest}}}}} as const;
 export const engineeringTaskInputSchema={type:'object',additionalProperties:false,required:['context','generation','maxSeconds'],properties:{
  generation:generationRequestSchema,maxSeconds:{type:'integer',minimum:5,maximum:900},context:{type:'object',additionalProperties:false,required:['snapshotId','goal','baseline'],properties:{
- snapshotId:uuid,goal:{type:'string',minLength:1,maxLength:8000},baseline:baselineSchema,repair:repairSchema
+ snapshotId:uuid,goal:{type:'string',minLength:1,maxLength:8000},baseline:baselineSchema,runtimeSpec:runtimeSpecSchema,repair:repairSchema
  }}
 }} as const;

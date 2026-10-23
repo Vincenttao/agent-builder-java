@@ -61,6 +61,89 @@ class AgentAssemblerTest {
         } finally { agent.destroy(); }
     }
 
+    @Test void generatedToolCallLimitRailHonorsBelowAtAndAboveLimitAcrossRuns() {
+        AtomicInteger modelCalls = new AtomicInteger();
+        Model model = new Model((messages, config, client, options) -> {
+            int index = modelCalls.getAndIncrement();
+            // Run 1: two calls (below 3); Run 2: three calls (at 3); Run 3: four
+            // requested calls (the fourth must be stopped by the Rail).
+            if (index == 0 || index == 1 || (index >= 3 && index <= 5) || (index >= 7 && index <= 10)) return CompletableFuture.completedFuture(AssistantMessage.builder().content("")
+                    .toolCalls(List.of(ToolCall.builder().id("limited-" + index).name("get_equipment")
+                            .arguments("{\"equipmentId\":\"PUMP-001\"}").build())).build());
+            return CompletableFuture.completedFuture(new AssistantMessage("查询结束"));
+        });
+        AtomicInteger calls = new AtomicInteger();
+        Tool tool = new Tool(new ToolCard("equipment-v1", "get_equipment", "查询设备", Map.of())) {
+            @Override protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs) {
+                calls.incrementAndGet(); return Map.of("status", "normal");
+            }
+        };
+        List<Map<String, Object>> events = new CopyOnWriteArrayList<>();
+        var configured = spec("DeepAgent", List.of("audit", "tool-allowlist", "tool-call-limit@1:3"));
+        DeepAgent agent = new AgentAssembler().assemble(configured, workspace, model, List.of(tool), events::add);
+        try {
+            agent.invoke(Map.of("query", "查询设备两次", "conversation_id", "limit-session"));
+            assertThat(calls.get()).isEqualTo(2);
+            assertThat(events).noneSatisfy(event -> assertThat(event).containsEntry("rail", "tool-call-limit").containsEntry("event", "limit_reached"));
+
+            agent.invoke(Map.of("query", "恰好查询设备三次", "conversation_id", "limit-session"));
+            assertThat(calls.get()).isEqualTo(5);
+            assertThat(events).anySatisfy(event -> assertThat(event)
+                    .containsEntry("rail", "tool-call-limit")
+                    .containsEntry("event", "call_allowed")
+                    .containsEntry("count", 3)
+                    .containsEntry("limit", 3));
+            long blockedBeforeThirdRun = events.stream().filter(event -> "tool-call-limit".equals(event.get("rail")) && "limit_reached".equals(event.get("event"))).count();
+            assertThat(blockedBeforeThirdRun).isZero();
+
+            agent.invoke(Map.of("query", "尝试查询设备四次", "conversation_id", "limit-session"));
+            assertThat(calls.get()).isEqualTo(8);
+            assertThat(modelCalls.get()).isEqualTo(11);
+            assertThat(events).anySatisfy(event -> assertThat(event)
+                    .containsEntry("rail", "tool-call-limit")
+                    .containsEntry("event", "limit_reached")
+                    .containsEntry("limit", 3));
+        } finally { agent.destroy(); }
+    }
+
+    @Test void runtimeMaxIterationsCapsRepeatedModelToolCycles() {
+        AtomicInteger modelCalls = new AtomicInteger();
+        Model model = new Model((messages, config, client, options) -> {
+            int index = modelCalls.incrementAndGet();
+            return CompletableFuture.completedFuture(AssistantMessage.builder().content("")
+                    .toolCalls(List.of(ToolCall.builder().id("iteration-" + index).name("get_equipment")
+                            .arguments("{\"equipmentId\":\"PUMP-001\"}").build())).build());
+        });
+        AtomicInteger toolCalls = new AtomicInteger();
+        Tool tool = new Tool(new ToolCard("equipment-v1", "get_equipment", "查询设备", Map.of())) {
+            @Override protected Object invokeInternal(Map<String, Object> inputs, Map<String, Object> kwargs) {
+                toolCalls.incrementAndGet(); return Map.of("status", "normal");
+            }
+        };
+        var oneIteration = new AgentSpec("iteration-limit", "DeepAgent", "持续调用工具", 1, List.of("audit", "tool-allowlist"));
+        List<Map<String, Object>> events = new CopyOnWriteArrayList<>();
+        DeepAgent agent = new AgentAssembler().assemble(oneIteration, workspace, model, List.of(tool), events::add);
+        try {
+            agent.invoke(Map.of("query", "执行查询", "conversation_id", "iteration-limit-session"));
+            assertThat(modelCalls.get()).isEqualTo(1);
+            assertThat(toolCalls.get()).isLessThanOrEqualTo(1);
+            assertThat(events).anySatisfy(event -> assertThat(event).containsEntry("event", "iteration_limit_reached")
+                    .containsEntry("maxIterations", 1).containsEntry("modelCallCount", 1));
+        } finally { agent.destroy(); }
+    }
+
+    @Test void rejectsInvalidToolCallLimitParameters() {
+        var assembler = new AgentAssembler();
+        var model = mock(Model.class);
+        for (String rail : List.of("tool-call-limit@1:0", "tool-call-limit@1:21", "tool-call-limit@2:1")) {
+            assertThatThrownBy(() -> assembler.assemble(spec("DeepAgent", List.of("tool-allowlist", rail)), workspace, model, List.of(), event -> {}))
+                    .hasMessage("UNKNOWN_RAIL:" + rail);
+        }
+        assertThatThrownBy(() -> new ToolCallLimitRail(0, event -> {})).hasMessage("INVALID_RAIL_PARAMETER:maximum");
+        assertThatThrownBy(() -> new ToolCallLimitRail(21, event -> {})).hasMessage("INVALID_RAIL_PARAMETER:maximum");
+        verifyNoInteractions(model);
+    }
+
     private AgentSpec spec(String type, List<String> rails) {
         return new AgentSpec("test-" + UUID.randomUUID(), type, "你是设备助手。只能使用已登记工具，不编造结果。", 4, rails);
     }

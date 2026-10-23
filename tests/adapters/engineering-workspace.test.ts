@@ -7,10 +7,15 @@ import type {AcceptanceBaseline} from '../../packages/contracts/src/baselines.js
 import {generatedUnit,generatedTool,generatedSkill} from '../support/generated-equipment.js';
 import {repairContext,repairUnit,defectiveTool,sha} from '../support/repair-context.js';
 import {RuntimeArtifactRegistry} from '../../apps/runner/src/runtime/artifact-registry.js';
+import {assemble} from '../../apps/server/src/snapshots/domain/assembly.js';
+import {equipmentAssembly} from '../../packages/contracts/src/equipment-template.js';
 const baseline:AcceptanceBaseline={id:randomUUID(),draftId:randomUUID(),draftRevision:1,digest:'b'.repeat(64),confirmedAt:new Date().toISOString(),confirmedBy:'fixture',content:{schemaVersion:1,templateId:'equipment-read@1',draftId:randomUUID(),draftRevision:1,audience:'fixture',requirements:[{id:'BR-001',text:'Report actual temperature',source:'user'}],cases:[{id:'TC-001',scenario:'read',title:'Read',requirementIds:['BR-001'],required:true,input:'查询设备',fault:'normal',assertions:[{ruleId:'temperature',expected:86}]}],seed:'enterprise-default@1',rulesVersion:'equipment-assertions@1'}};
-async function workspace(){const root=resolve('test-results',`engineering-workspace-${randomUUID()}`);const ws=new EngineeringWorkspace(root,resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'),{baseline,goal:'Generate equipment Tool and Skill',snapshotId:randomUUID()});await ws.initialize();return{root,ws};}
+async function workspace(){const root=resolve('test-results',`engineering-workspace-${randomUUID()}`),snapshotId=randomUUID();const runtimeSpec=assemble(snapshotId,equipmentAssembly('Generate equipment Tool and Skill'));const ws=new EngineeringWorkspace(root,resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'),{baseline,goal:'Generate equipment Tool and Skill',snapshotId,runtimeSpec});await ws.initialize();return{root,ws};}
 it('requires independent baseline-bound planning, observes a real failing Java unit test before implementation, and freezes its assertions',async()=>{
  const{root,ws}=await workspace();
+ const sourceStub=await ws.read('tester','implementation/src/generated/EquipmentTool.java');
+ await expect(ws.write('tester','implementation/src/generated/EquipmentTool.java','tampered by tester')).rejects.toMatchObject({code:'FILE_OPERATION_NOT_ALLOWED'});
+ expect(await ws.read('tester','implementation/src/generated/EquipmentTool.java')).toBe(sourceStub);
  await expect(ws.write('developer','src/generated/EquipmentTool.java',generatedTool)).rejects.toMatchObject({code:'UNIT_RED_REQUIRED'});
  await expect(ws.write('tester','tests/plan.json','null')).rejects.toMatchObject({code:'TEST_PLAN_INVALID'});
  await expect(ws.write('tester','tests/plan.json',JSON.stringify({baselineDigest:baseline.digest,cases:[]}))).rejects.toMatchObject({code:'TEST_BASELINE_IMMUTABLE'});
@@ -22,8 +27,17 @@ it('requires independent baseline-bound planning, observes a real failing Java u
  expect((await ws.run('developer','unit-test')).status).toBe('passed');const built=await ws.run('developer','build');expect(built.status).toBe('passed');
  const bundle=ws.inspect().bundle!;expect(bundle.artifactDigest).toMatch(/^[a-f0-9]{64}$/);
  const pinned=await readFile(join(root,'bundles',bundle.digest,'src/generated/EquipmentTool.java'),'utf8');
+ const registry=new RuntimeArtifactRegistry(join(root,'runtime'),resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'));await registry.initialize();
+ const candidateArtifact=await registry.compose(bundle,join(root,'bundles',bundle.digest),'a'.repeat(64));
+ const candidateBytes=await readFile(registry.path(candidateArtifact.artifactDigest));const candidateDigest=sha(candidateBytes);
  await ws.write('developer','src/generated/EquipmentTool.java',generatedTool.replace('data.get("temperatureCelsius")','0'));
  expect(await readFile(join(root,'bundles',bundle.digest,'src/generated/EquipmentTool.java'),'utf8')).toBe(pinned);
+ expect(sha(await readFile(registry.path(candidateArtifact.artifactDigest)))).toBe(candidateDigest);
+ expect(await registry.get(candidateArtifact.artifactDigest)).toEqual(candidateArtifact);
+ await writeFile(registry.path(candidateArtifact.artifactDigest),Buffer.concat([candidateBytes,Buffer.from('tampered candidate bytes')]));
+ await expect(registry.get(candidateArtifact.artifactDigest)).rejects.toThrow('ARTIFACT_MISMATCH');
+ await writeFile(registry.path(candidateArtifact.artifactDigest),candidateBytes);
+ expect(await registry.get(candidateArtifact.artifactDigest)).toEqual(candidateArtifact);
  await expect(ws.run('developer','build')).rejects.toMatchObject({code:'UNIT_GREEN_STALE'});
  // A local edit outside the model tool must also invalidate recorded unit evidence at build time.
  await ws.write('developer','src/generated/EquipmentTool.java',generatedTool);
@@ -33,7 +47,7 @@ it('requires independent baseline-bound planning, observes a real failing Java u
 },90000);
 it('pins SDK bytes before engineering commands and rejects replacement under the same path',async()=>{
  const root=resolve('test-results',`engineering-sdk-${randomUUID()}`);await mkdir(root,{recursive:true});const sdk=join(root,'sdk.jar');await copyFile(resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'),sdk);
- const ws=new EngineeringWorkspace(join(root,'workspace'),sdk,{baseline,goal:'equipment',snapshotId:randomUUID()});await ws.initialize();
+ const snapshotId=randomUUID();const runtimeSpec=assemble(snapshotId,equipmentAssembly('equipment'));const ws=new EngineeringWorkspace(join(root,'workspace'),sdk,{baseline,goal:'equipment',snapshotId,runtimeSpec});await ws.initialize();
  try{
   await ws.write('tester','tests/plan.json',JSON.stringify({baselineDigest:baseline.digest,cases:baseline.content.cases.map(c=>({caseId:c.id,requirementIds:c.requirementIds,assertions:c.assertions,steps:['Invoke','Verify']}))}));
   await ws.write('developer','test/generated/EquipmentToolTest.java',generatedUnit);await writeFile(sdk,'replaced fixture');
@@ -42,7 +56,7 @@ it('pins SDK bytes before engineering commands and rejects replacement under the
 });
 it('reproduces a repair defect against old source, freezes prior tests and plan, then builds a new bundle with all regression tests',async()=>{
  const root=resolve('test-results',`engineering-repair-${randomUUID()}`),sdk=resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'),snapshotId=randomUUID();
- const repair=repairContext(baseline,snapshotId,sha(await readFile(sdk)));const ws=new EngineeringWorkspace(root,sdk,{baseline,goal:'Repair actual temperature mapping',snapshotId,repair});
+ const repair=repairContext(baseline,snapshotId,sha(await readFile(sdk)));const runtimeSpec=assemble(snapshotId,equipmentAssembly('Repair actual temperature mapping'));const ws=new EngineeringWorkspace(root,sdk,{baseline,goal:'Repair actual temperature mapping',snapshotId,repair,runtimeSpec});
  await ws.initialize();
  try{
   expect(await ws.read('developer','src/generated/EquipmentTool.java')).toBe(defectiveTool);

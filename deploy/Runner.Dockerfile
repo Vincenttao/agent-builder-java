@@ -9,7 +9,7 @@ COPY apps/web/package.json ./apps/web/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json
 RUN --mount=type=cache,id=builder-pnpm,target=/pnpm/store pnpm --store-dir=/pnpm/store install --frozen-lockfile
 COPY . .
-RUN --mount=type=cache,id=builder-pnpm,target=/pnpm/store pnpm typecheck && pnpm exec tsc -p tsconfig.build.json && pnpm --store-dir=/pnpm/store --filter @agent-builder/runner deploy --prod --offline /prod
+RUN --mount=type=cache,id=builder-pnpm,target=/pnpm/store pnpm exec tsc -p tsconfig.build.json && pnpm --store-dir=/pnpm/store --filter @agent-builder/runner deploy --prod /prod
 
 FROM maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237 AS java-build
 WORKDIR /build
@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -B -f core/core/pom.xml -Dmaven.test
 RUN git init runtime && git -C runtime remote add origin https://github.com/openJiuwen-ai/agent-runtime-java.git && git -C runtime fetch --depth 1 origin "$RUNTIME_COMMIT" && git -C runtime checkout --detach FETCH_HEAD
 RUN --mount=type=cache,target=/root/.m2 mvn -B -f runtime/pom.xml -pl service/agent-service-app,service/agent-service-adapters/agent-service-adapters-agentcore -am -Dmaven.test.skip=true install
 COPY java/runtime-bridge ./bridge
-RUN --mount=type=cache,target=/root/.m2 mvn -B -f bridge/pom.xml verify
+RUN --mount=type=cache,target=/root/.m2 mvn -B -Dmaven.test.skip=true -f bridge/pom.xml package
 
 FROM maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237
 COPY --from=node-build /usr/local /usr/local

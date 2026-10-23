@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15 P0-A AC-14 old Run pinning, new snapshot, and stale report rejection",
+  "executionMode": "live-mock",
+  "measuredAt": "2026-10-23T09:49:55.376Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "targetImageIds": [
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+  ],
+  "draftId": "08fc5cfe-1eda-418b-ba1b-f12b92c4bb2d",
+  "oldSnapshotId": "1435a140-e672-4422-ae39-761ad8d8edf5",
+  "oldSnapshotDigest": "de99d4673a501a35ca93040edf3ff68bf44dfefd2f641b3e0053891072df2bb8",
+  "newSnapshotId": "790de683-b1c1-4b1d-95ad-3b26fc3fcf7d",
+  "newSnapshotDigest": "ddff6d63c33d66f92380db324ad7769c4ac3e0d739cc483a4d5ef5bbfa14dd7f",
+  "oldRunId": "eb1f8487-dd4a-426d-992c-61fd753baab4",
+  "oldRunStatus": "succeeded",
+  "oldRunSnapshotId": "1435a140-e672-4422-ae39-761ad8d8edf5",
+  "newRunId": "09c7ad9c-8c12-4da5-bb55-8961a9fec0ed",
+  "newRunStatus": "succeeded",
+  "newRunSnapshotId": "790de683-b1c1-4b1d-95ad-3b26fc3fcf7d",
+  "oldValidationId": "3fa80bff-dd2c-4fb5-95d8-e626b3b86b55",
+  "oldValidationVerdict": "passed",
+  "staleReportReleaseStatus": 409,
+  "staleReportReleaseCode": "RELEASE_TARGET_MISMATCH",
+  "releaseOperationCountBefore": 1,
+  "releaseOperationCountAfter": 1,
+  "verdict": "passed",
+  "branches": [
+    {
+      "caseId": "AC-14",
+      "branchId": "old-run-pinned",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "old_run_retains_original_snapshot",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-14",
+      "branchId": "new-snapshot",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "new_revision_has_distinct_snapshot_and_run",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "caseId": "AC-14",
+      "branchId": "old-test-invalid",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "old_report_cannot_start_release_for_new_snapshot",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

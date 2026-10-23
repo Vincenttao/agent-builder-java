@@ -8,7 +8,7 @@ const password = existing.POSTGRES_PASSWORD ?? secret();
 const mockPassword = existing.MOCK_DB_PASSWORD ?? secret();
 const defaults = {
   POSTGRES_PASSWORD: password, DATABASE_URL: `postgres://builder:${password}@127.0.0.1:15433/builder`,
-  LOCAL_BOOTSTRAP_TOKEN: secret(), APP_ORIGIN: 'http://127.0.0.1:8080',
+  LOCAL_BOOTSTRAP_TOKEN: secret(), APP_PORT: '8080', APP_ORIGIN: 'http://127.0.0.1:8080',
   DEEPSEEK_BASE_URL: 'https://api.deepseek.com', DEEPSEEK_MODEL: 'deepseek-v4-flash', DEEPSEEK_API_KEY: '',
   RUNNER_CONTROL_TOKEN: secret(), TOOL_PROXY_TOKEN: secret(), MOCK_CONTROL_TOKEN: secret(), MOCK_SERVICE_TOKEN: secret(),
   MOCK_DB_PASSWORD: mockPassword, MOCK_DATABASE_URL: `postgres://builder_mock:${mockPassword}@127.0.0.1:15433/builder_mock`,

@@ -1,28 +1,47 @@
 import type {EngineeringRole,GenerationRequest} from '../../../../packages/contracts/src/development.js';
-import {equipmentGenerationRequest,generationPolicyError} from '../../../../packages/contracts/src/generation-profile.js';
+import {equipmentGenerationRequest,wealthBalanceGenerationRequest,generationImplementationError,equipmentRuntimeTool,wealthBalanceRuntimeTool} from '../../../../packages/contracts/src/generation-profile.js';
 import {createHash} from 'node:crypto';
-import {toolStub,toolContract,repairContract,engineeringSkills,platformContractTest} from './templates.js';
+import {toolStub,toolContract,repairContract,engineeringSkills,platformContractTest,balanceToolStub,balanceToolContract,balancePlatformContractTest,balanceEngineeringSkills} from './templates.js';
 export class PolicyError extends Error {constructor(public readonly code:string){super(code);}}
-export const generationProfile={version:equipmentGenerationRequest.profileVersion,executionMode:'trusted-local',scope:equipmentGenerationRequest.scope,
+const hashTemplates=(entries:Record<string,string>)=>Object.fromEntries(Object.entries(entries).map(([name,source])=>[name,createHash('sha256').update(source).digest('hex')]));
+const limits={executionMode:'trusted-local',engineVersion:'1.19.3',model:'deepseek-local/deepseek-v4-flash',maxSteps:16,maxTaskSeconds:900,maxCommandSeconds:60,maxFileBytes:32768,maxOutputBytes:262144,commands:['unit-test','build'] as const,testerFiles:['tests/plan.json','tests/proposal.json'] as const};
+export const generationProfile={...limits,version:equipmentGenerationRequest.profileVersion,scope:equipmentGenerationRequest.scope,
   dependencies:equipmentGenerationRequest.dependencies,connectionProfile:equipmentGenerationRequest.connectionProfile,
-  templates:Object.fromEntries(Object.entries({toolStub,toolContract,repairContract,platformContractTest,...engineeringSkills}).map(([name,source])=>[name,createHash('sha256').update(source).digest('hex')])),
-  engineVersion:'1.19.3',model:'deepseek-local/deepseek-v4-flash',maxSteps:16,maxTaskSeconds:900,maxCommandSeconds:60,maxFileBytes:32768,maxOutputBytes:262144,
-  commands:['unit-test','build'],developerFiles:['src/generated/EquipmentTool.java','test/generated/EquipmentToolTest.java','skills/equipment-query/SKILL.md'],testerFiles:['tests/plan.json','tests/proposal.json'],
-  repair:{maxAttempts:3,regressionFiles:['test/generated/EquipmentRepair1Test.java','test/generated/EquipmentRepair2Test.java','test/generated/EquipmentRepair3Test.java']}
+  runtimeTool:equipmentRuntimeTool,
+  developerFiles:['src/generated/EquipmentTool.java','test/generated/EquipmentToolTest.java','skills/equipment-query/SKILL.md','rails/definition.json'],
+  repair:{maxAttempts:3,regressionFiles:['test/generated/EquipmentRepair1Test.java','test/generated/EquipmentRepair2Test.java','test/generated/EquipmentRepair3Test.java']},
+  toolClassName:'generated.EquipmentTool',toolName:'get_equipment',operationId:'equipment-status',skillName:'equipment-query',skillPath:'skills/equipment-query/SKILL.md',contractClass:'EquipmentContract',
+  sourceStub:toolStub,implementationContract:toolContract,repairContract,platformContractTest,engineeringSkills,
+  templates:hashTemplates({toolStub,toolContract,repairContract,platformContractTest,...engineeringSkills})
 } as const;
-export function validateGenerationRequest(request:GenerationRequest):void{
-  const error=generationPolicyError(request);if(error)throw new PolicyError(error);
+export const wealthBalanceProfile={...generationProfile,version:wealthBalanceGenerationRequest.profileVersion,scope:wealthBalanceGenerationRequest.scope,
+  dependencies:wealthBalanceGenerationRequest.dependencies,connectionProfile:wealthBalanceGenerationRequest.connectionProfile,
+  runtimeTool:wealthBalanceRuntimeTool,
+  developerFiles:['src/generated/AccountBalanceTool.java','test/generated/AccountBalanceToolTest.java','skills/balance-query/SKILL.md','rails/definition.json'],
+  repair:{maxAttempts:3,regressionFiles:['test/generated/AccountBalanceRepair1Test.java','test/generated/AccountBalanceRepair2Test.java','test/generated/AccountBalanceRepair3Test.java']},
+  toolClassName:'generated.AccountBalanceTool',toolName:'get_account_balance',operationId:'getAccountBalance',skillName:'balance-query',skillPath:'skills/balance-query/SKILL.md',contractClass:'BalanceContract',
+  sourceStub:balanceToolStub,implementationContract:balanceToolContract,repairContract:'',platformContractTest:balancePlatformContractTest,engineeringSkills:balanceEngineeringSkills,
+  templates:hashTemplates({toolStub:balanceToolStub,toolContract:balanceToolContract,platformContractTest:balancePlatformContractTest,...balanceEngineeringSkills})
+} as const;
+export type GenerationProfile=typeof generationProfile|typeof wealthBalanceProfile;
+export function generationProfileFor(version:string):GenerationProfile{
+  if(version===generationProfile.version)return generationProfile;
+  if(version===wealthBalanceProfile.version)return wealthBalanceProfile;
+  throw new PolicyError('GENERATION_PROFILE_UNSUPPORTED');
 }
-export function checkFileAccess(role:EngineeringRole,operation:'read'|'write',path:string,repairAttempt=0):void{
-  const own:readonly string[]=role==='developer'?generationProfile.developerFiles:generationProfile.testerFiles;
+export function validateGenerationRequest(request:GenerationRequest):void{
+ const error=generationImplementationError(request);if(error)throw new PolicyError(error);
+}
+export function checkFileAccess(role:EngineeringRole,operation:'read'|'write',path:string,repairAttempt=0,profile:GenerationProfile=generationProfile):void{
+  const own:readonly string[]=role==='developer'?profile.developerFiles:profile.testerFiles;
   if(own.includes(path))return;
-  const regression=generationProfile.repair.regressionFiles.slice(0,repairAttempt);
+  const regression=profile.repair.regressionFiles.slice(0,repairAttempt);
   if(role==='developer'&&regression.some(file=>file===path))return;
   if(operation==='read'&&(path==='context.json'||path==='engineering-skill.md'))return;
-  if(operation==='read'&&role==='tester'&&path.startsWith('implementation/')&&generationProfile.developerFiles.some(file=>path===`implementation/${file}`))return;
+  if(operation==='read'&&role==='tester'&&path.startsWith('implementation/')&&profile.developerFiles.some(file=>path===`implementation/${file}`))return;
   if(operation==='read'&&role==='tester'&&regression.some(file=>path===`implementation/${file}`))return;
   throw new PolicyError('FILE_OPERATION_NOT_ALLOWED');
 }
-export function checkCommand(role:EngineeringRole,command:string):void{
-  if(role!=='developer'||!generationProfile.commands.some(allowed=>allowed===command))throw new PolicyError('COMMAND_NOT_ALLOWED');
+export function checkCommand(role:EngineeringRole,command:string,profile:GenerationProfile=generationProfile):void{
+  if(role!=='developer'||!profile.commands.some(allowed=>allowed===command))throw new PolicyError('COMMAND_NOT_ALLOWED');
 }

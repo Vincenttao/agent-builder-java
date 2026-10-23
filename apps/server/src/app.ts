@@ -26,6 +26,9 @@ import { validationInputSchema, type ValidationInput } from '../../../packages/c
 import { registerToolProxy, type ToolProxyOptions } from './runs/tool-proxy.js';
 import { runInputSchema, type RunInput } from '../../../packages/contracts/src/runs.js';
 import { bindingInputSchema, draftInputSchema, draftParamsSchema, draftUpdateSchema, snapshotInputSchema, type SnapshotInput, type BindingInput, type DraftInput, type DraftUpdate, type EnvironmentStatus } from '../../../packages/contracts/src/index.js';
+import {registerProjectRoutes} from './projects/routes.js';
+import type {ProjectPackageStore} from './projects/project-package-store.js';
+import type {MockScenePackage} from '../../../packages/contracts/src/mock-scene.js';
 export interface AppOptions {
   drafts: DraftService; databaseReady: () => Promise<boolean>; now: () => string;
   bootstrapToken: string; origin: string; modelConfigured: boolean;
@@ -40,11 +43,15 @@ export interface AppOptions {
   testDeployments?: TestDeploymentService;
   validationLeaseTokens?:ValidationLeaseTokens;
   development?:DevelopmentService;
+  projectPackages?:ProjectPackageStore;
+  projectScene?:()=>Promise<MockScenePackage>;
   toolProxy?: ToolProxyOptions;
 }
 export function createApp(options: AppOptions) {
   if (options.bootstrapToken.length < 24) throw new Error('LOCAL_BOOTSTRAP_TOKEN must contain at least 24 characters');
-  const app = Fastify({ bodyLimit: 65536, ajv: { customOptions: { removeAdditional: false, coerceTypes: false, useDefaults: false } } });
+  const app = Fastify({ bodyLimit: 2 * 1024 * 1024,
+    logger: { level: 'info', redact: { paths: ['req.url', 'req.headers.authorization', 'req.headers.cookie', 'req.headers["x-csrf-token"]'], censor: '[REDACTED]' } },
+    ajv: { customOptions: { removeAdditional: false, coerceTypes: false, useDefaults: false } } });
   const sessions = new Map<string, { csrfToken: string; expiresAt: number }>();
   const cookieId = (request: FastifyRequest) => request.headers.cookie?.split(';').map(v => v.trim()).find(v => v.startsWith('builder_session='))?.slice('builder_session='.length);
   const equal = (left: string, right: string) => timingSafeEqual(createHash('sha256').update(left).digest(), createHash('sha256').update(right).digest());
@@ -66,7 +73,10 @@ export function createApp(options: AppOptions) {
     // Do not forward driver errors, request bodies, credentials or stack traces.
     return reply.code(500).send({ code: 'INTERNAL_ERROR', message: '服务内部错误，请使用关联编号定位', details: null, correlationId: request.id });
   });
-  app.setNotFoundHandler((request, reply) => reply.code(404).send({ code: 'NOT_FOUND', message: '接口不存在', details: null, correlationId: request.id }));
+  app.setNotFoundHandler((request, reply) => {
+    request.log.warn({ method: request.method, path: request.url.split('?')[0] }, 'route.not_found');
+    return reply.code(404).send({ code: 'NOT_FOUND', message: '接口不存在', details: null, correlationId: request.id });
+  });
   app.addHook('onRequest', async (request, reply) => {
     reply.header('X-Content-Type-Options', 'nosniff');
     if (!request.url.startsWith('/api/')) return;
@@ -136,6 +146,7 @@ export function createApp(options: AppOptions) {
     app.get<{ Params: { id: string } }>('/api/drafts/:id/snapshots', { schema: { params: draftParamsSchema } }, async request => ({ items: await snapshots.list(request.params.id) }));
     app.get<{ Params: { id: string } }>('/api/snapshots/:id', { schema: { params: draftParamsSchema } }, async request => snapshots.get(request.params.id));
   }
+  registerProjectRoutes(app,options.drafts,options.snapshots,options.baselines,options.now,options.development,options.candidates,options.projectPackages,options.projectScene);
   if (options.validations) {
     const validations = options.validations;
     app.post<{ Params: { id: string }; Body: ValidationInput }>('/api/snapshots/:id/validations', { schema: { params: draftParamsSchema, body: validationInputSchema } }, async (request, reply) => reply.code(202).send(await validations.start(request.params.id, request.body)));
@@ -148,7 +159,7 @@ export function createApp(options: AppOptions) {
   if (options.baselines) {
     const baselines = options.baselines;
     app.get<{ Params: { id: string }; Querystring: { templateId: string } }>('/api/drafts/:id/baseline-preview', { schema: { params: draftParamsSchema, querystring: {
-      type: 'object', additionalProperties: false, required: ['templateId'], properties: { templateId: { enum: ['equipment-read@1','equipment-workorder@1'] } }
+      type: 'object', additionalProperties: false, required: ['templateId'], properties: { templateId: { enum: ['equipment-read@1','equipment-workorder@1','wealth-balance-read@1'] } }
     } } }, async request => baselines.preview(request.params.id, request.query.templateId));
     app.post<{ Params: { id: string }; Body: BaselineInput }>('/api/drafts/:id/baselines', { schema: { params: draftParamsSchema, body: baselineInputSchema } }, async (request, reply) => reply.code(201).send(await baselines.confirm(request.params.id, request.body)));
     app.get<{ Params: { id: string } }>('/api/drafts/:id/baselines', { schema: { params: draftParamsSchema } }, async request => { await options.drafts.get(request.params.id); return { items: await baselines.list(request.params.id) }; });

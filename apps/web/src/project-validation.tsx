@@ -33,17 +33,17 @@ export function BaselineReview({ draft, templateId, enabled, api, onError, onCon
 export function ProjectValidation({ snapshot, baselineRevision, canRun, api, onError, showRelease = true, onReport }: { snapshot: Snapshot; baselineRevision: number; canRun: boolean; api: Api; onError(error: unknown): void; showRelease?: boolean; onReport?(report?: ValidationReport): void }) {
   const [baselines, setBaselines] = useState<AcceptanceBaseline[]>([]); const [selected, setSelected] = useState(''); const [allowWrites, setAllowWrites] = useState(false);
   const [history, setHistory] = useState<ValidationExecution[]>([]); const [execution, setExecution] = useState<ValidationExecution>(); const [report, setReport] = useState<ValidationReport>(); const [evidence, setEvidence] = useState<unknown>(); const [busy, setBusy] = useState(false);
-  const pending = useRef<ValidationInput | null>(null); const writeEnabled = snapshot.content.assembly.toolIds.includes('work-order-create@1');
+  const pending = useRef<ValidationInput | null>(null); const financeProfile=snapshot.content.connectionProfile==='mock-finance@1';const writeEnabled = snapshot.content.assembly.toolIds.includes('work-order-create@1');
   const [candidates,setCandidates]=useState<Candidate[]>([]);const [candidateId,setCandidateId]=useState('');const [candidateRefresh,setCandidateRefresh]=useState(0);
   useEffect(()=>{let mounted=true;void api<{items:Candidate[]}>(`/api/drafts/${snapshot.draftId}/candidates`).then(value=>{if(mounted)setCandidates(value.items.filter(item=>item.snapshotId===snapshot.id));}).catch(onError);return()=>{mounted=false;};},[snapshot.id,candidateRefresh]);
   useEffect(() => {
     let mounted = true;
     void api<{ items: AcceptanceBaseline[] }>(`/api/drafts/${snapshot.draftId}/baselines`).then(list => {
-      if (!mounted) return; const compatible = list.items.filter(b => b.draftRevision === snapshot.draftRevision && b.content.templateId === (writeEnabled ? 'equipment-workorder@1' : 'equipment-read@1') && (!writeEnabled || b.content.rulesVersion === 'equipment-workorder-assertions@2'));
+      if (!mounted) return; const templateId = financeProfile ? 'wealth-balance-read@1' : writeEnabled ? 'equipment-workorder@1' : 'equipment-read@1'; const rulesVersion = financeProfile ? 'wealth-balance-assertions@2' : writeEnabled ? 'equipment-workorder-assertions@3' : 'equipment-assertions@2'; const compatible = list.items.filter(b => b.draftRevision === snapshot.draftRevision && b.content.templateId === templateId && b.content.rulesVersion === rulesVersion);
       setBaselines(compatible); setSelected(compatible[0]?.id ?? '');
     }).catch(onError);
     return () => { mounted = false; };
-  }, [snapshot.id, baselineRevision]);
+  }, [snapshot.id, baselineRevision,financeProfile]);
   useEffect(() => {
     let mounted = true; void api<{ items: ValidationExecution[] }>(`/api/snapshots/${snapshot.id}/validations`).then(value => { if (mounted) { setHistory(value.items); setExecution(value.items[0]); } }).catch(onError);
     return () => { mounted = false; };
@@ -68,17 +68,19 @@ export function ProjectValidation({ snapshot, baselineRevision, canRun, api, onE
     catch (error) { onError(error); } finally { setBusy(false); }
   }
   const active = execution && execution.status !== 'completed';
-  const incompatibleCandidate=Boolean(candidateId&&!candidates.some(c=>c.id===candidateId&&(!c.generated||c.generated.baselineId===selected)));
+  const selectedCandidate=candidates.find(c=>c.id===candidateId);const financeCandidateReady=Boolean(selectedCandidate?.generated?.baselineId===selected&&selectedCandidate.generated.runtimeArtifact.kind==='generated-component'&&selectedCandidate.generated.runtimeArtifact.generated.operationId==='getAccountBalance');
+  const incompatibleCandidate=Boolean(candidateId&&!candidates.some(c=>c.id===candidateId&&(!c.generated||c.generated.baselineId===selected))||financeProfile&&candidateId&&!financeCandidateReady);
   return <section className="validation-section" data-testid={`validation-${snapshot.id}`} aria-label="项目验收"><h3>项目验收</h3>
     <DevelopmentPanel snapshot={snapshot} baseline={baselines.find(item=>item.id===selected)} {...(report?{repairReport:report}:{})} api={api} onError={onError}/>
     <CandidatePreview snapshot={snapshot} baseline={baselines.find(item=>item.id===selected)} api={api} onError={onError} onRegistered={value=>{setCandidates(previous=>[value,...previous.filter(c=>c.id!==value.id)]);if(!active)setCandidateId(value.id);}}/>
     <p className="muted">选择固定候选后，平台通过测试入口逐项执行已确认场景，并为每项用例创建独立数据环境。报告绑定候选、测试计划与实际制品；页面关闭后任务继续运行。</p>
-    <label>自动验收目标<select value={candidateId} disabled={busy||Boolean(active)} onChange={event=>setCandidateId(event.target.value)}><option value="">当前模板装配（未指定候选）</option>{candidates.map(c=><option key={c.id} value={c.id}>{c.provenance==='generated-component'?'生成 Tool 与 Skill':'固定模板候选'} · {c.id.slice(0,8)}</option>)}</select></label>
+    <label>自动验收目标<select value={candidateId} disabled={busy||Boolean(active)} onChange={event=>setCandidateId(event.target.value)}>{!financeProfile&&<option value="">当前模板装配（未指定候选）</option>}{candidates.map(c=><option key={c.id} value={c.id}>{c.provenance==='generated-component'?'生成 Tool 与 Skill':'固定模板候选'} · {c.id.slice(0,8)}</option>)}</select></label>
     <button type="button" className="secondary" disabled={busy} onClick={()=>setCandidateRefresh(value=>value+1)}>刷新验收候选</button>
     {incompatibleCandidate&&<p className="hint">请选择与当前验收基线匹配的候选。</p>}
     {baselines.length ? <label>使用验收基线<select value={selected} disabled={busy || Boolean(active)} onChange={e => setSelected(e.target.value)}>{baselines.map(b => <option key={b.id} value={b.id}>{b.id.slice(0, 8)} · {b.content.cases.length} 个必测场景</option>)}</select></label> : <p className="hint">此需求修订尚未确认匹配的验收基线。</p>}
     {writeEnabled && <label className="confirmation"><input type="checkbox" checked={allowWrites} disabled={busy || Boolean(active)} onChange={e => setAllowWrites(e.target.checked)}/>允许测试执行器按场景批准模拟工单写入</label>}
-    <button type="button" className="secondary" disabled={busy || Boolean(active) || !canRun || !selected || incompatibleCandidate || writeEnabled && !allowWrites} onClick={() => { void start(); }}>运行验收用例</button>
+    {financeProfile&&!candidateId&&<p className="hint">余额用例必须运行刚生成的候选，避免用未绑定 Tool 的空模板代替真实生成产物。</p>}
+    <button type="button" className="secondary" disabled={busy || Boolean(active) || !canRun || !selected || incompatibleCandidate || financeProfile&&!financeCandidateReady || writeEnabled && !allowWrites} onClick={() => { void start(); }}>运行验收用例</button>
     {history.length > 0 && <label>验证记录<select value={execution?.id ?? ''} onChange={e => setExecution(history.find(item => item.id === e.target.value))}>{history.map(item => <option key={item.id} value={item.id}>{new Date(item.createdAt).toLocaleString('zh-CN')} · {item.verdict ? labels[item.verdict] : '进行中'}</option>)}</select></label>}
     {execution && <><p className="hint" data-testid="validation-id">验证任务 {execution.id}</p>
       <p className="hint" data-testid="validation-candidate">{execution.binding.candidate?`验收候选 ${execution.binding.candidate.id}`:'模板装配验收'} · 制品 {execution.binding.artifactDigest.slice(0,12)}</p>

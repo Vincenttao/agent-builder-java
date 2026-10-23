@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import { canonicalJson } from '../../../packages/contracts/src/canonical.js';
+import {mockSceneContent} from './scene.js';
 
 export class MockError extends Error { constructor(public code: string, public status = 409) { super(code); } }
 export interface EnvironmentConfig { seed: 'enterprise-default@1' | 'enterprise-low-balance@1'; fault: 'normal' | 'read-timeout' | 'write-before-failure' | 'write-after-timeout' | 'missing-field'; clock: string }
@@ -10,11 +11,7 @@ export interface BusinessState { balances: Record<string, number>; holdings: Rec
   workOrders?: Record<string, WorkOrder>; workOrderKeys?: Record<string, { input: string; workOrderId: string }> }
 export interface MockEnvironment { id: string; config: EnvironmentConfig; revision: number; state: BusinessState }
 export interface BusinessContext { environmentId: string; actorId: string; runId: string; idempotencyKey?: string }
-const seed = (config: EnvironmentConfig): BusinessState => ({ balances: { A1001: config.seed === 'enterprise-low-balance@1' ? 50000 : 1000000, A1002: 500000 }, holdings: { A1001: {}, A1002: {} }, orders: {}, keys: {} });
-const products = [
-  { productId: 'SIM-W001', name: '示例理财产品 A', status: 'available', minimumAmountFen: 10000, description: '纯模拟资料，不计算收益、净值或份额', version: 'seed-finance-001@1' },
-  { productId: 'SIM-W002', name: '示例理财产品 B', status: 'suspended', minimumAmountFen: 10000, description: '纯模拟资料；暂停申购', version: 'seed-finance-001@1' }
-];
+const seed = (config: EnvironmentConfig): BusinessState => {const profile=mockSceneContent.seeds.find(item=>item.id===config.seed)!;return{balances:Object.fromEntries(profile.accounts.map(account=>[account.accountId,account.availableBalanceFen])),holdings:Object.fromEntries(profile.accounts.map(account=>[account.accountId,{}])),orders:{},keys:{}};};
 export class MockRepository {
   constructor(private readonly pool: Pool) {}
   async ready() { await this.pool.query('SELECT id FROM mock_environments LIMIT 0'); return true; }
@@ -90,7 +87,8 @@ export class MockRepository {
       if (typeof id !== 'string' || !(id in env.state.balances)) throw new MockError('ACCOUNT_NOT_FOUND', 404);
       if (id !== (context.actorId === 'U1001' ? 'A1001' : 'A1002')) throw new MockError('FORBIDDEN', 403); return id;
     };
-    const product = (id: unknown) => { const p = products.find(p => p.productId === id); if (!p) throw new MockError('PRODUCT_NOT_FOUND', 404); return p; };
+    const profile=mockSceneContent.seeds.find(item=>item.id===env.config.seed)!;
+    const product = (id: unknown) => { const p = profile.products.find(p => p.productId === id); if (!p) throw new MockError('PRODUCT_NOT_FOUND', 404); return p; };
     switch (operation) {
       case 'work-order-by-key': {
         const key = env.state.workOrderKeys?.[`${context.actorId}:${String(input.key)}`]; if (!key) throw new MockError('NOT_FOUND', 404);
@@ -106,10 +104,13 @@ export class MockRepository {
         (env.state.workOrders ??= {})[order.workOrderId] = order; (env.state.workOrderKeys ??= {})[key] = { input: digest, workOrderId: order.workOrderId }; return { ...order };
       }
       case 'equipment-status':
-        if (input.equipmentId !== 'PUMP-001') throw new MockError('EQUIPMENT_NOT_FOUND', 404);
-        return { equipmentId: 'PUMP-001', status: 'warning', temperatureCelsius: 86, source: 'seed-equipment-001@1' };
+        {const item=profile.equipment.find(item=>item.equipmentId===input.equipmentId);if(!item)throw new MockError('EQUIPMENT_NOT_FOUND',404);return structuredClone(item);}
+      case 'maintenance-search':
+        if (typeof input.equipmentId !== 'string' || !input.equipmentId.trim() || input.equipmentId.length > 80) throw new MockError('INVALID_EQUIPMENT_ID', 400);
+        // The demo scene intentionally has no maintenance documents. Return explicit empty search evidence.
+        return { equipmentId: input.equipmentId, found: false, resultCount: 0 };
       case 'getAccountBalance': { const id = account(input.accountId); return { accountId: id, currency: 'CNY', availableBalanceFen: env.state.balances[id], asOf: env.config.clock }; }
-      case 'listWealthProducts': return { items: products, version: 'seed-finance-001@1' };
+      case 'listWealthProducts': return { items: profile.products, version: 'seed-finance-001@1' };
       case 'getWealthProduct': return product(input.productId);
       case 'listHoldings': { const id = account(input.accountId); return { accountId: id, items: Object.entries(env.state.holdings[id] ?? {}).map(([productId, amountFen]) => ({ productId, amountFen })) }; }
       case 'getOrderByIdempotencyKey': {

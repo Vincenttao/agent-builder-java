@@ -42,6 +42,8 @@ export function createRunnerApp(options: RunnerAppOptions) {
   app.put<{ Params: { id: string }; Body: { artifactDigest: string; spec: RuntimeSpec } }>('/deployments/:id',
     { schema: { params: uuidParamsSchema, body: deploymentRequestSchema } }, async (request, reply) => {
       if (!options.modelConfigured) throw new RunnerError('MODEL_NOT_CONFIGURED', 409);
+      const existing=await options.runtime.get(request.params.id).catch(error=>{if(error instanceof RunnerError&&error.status===404)return null;throw error;});
+      if(existing&&existing.status!=='ready'&&options.journal.hasActiveDeployment(request.params.id))throw new RunnerError('DEPLOYMENT_HAS_ACTIVE_EXECUTIONS');
       return reply.code(201).send(await options.runtime.start(request.params.id, request.body.spec, request.body.artifactDigest));
     });
   app.get<{ Params: { id: string } }>('/deployments/:id', { schema: { params: uuidParamsSchema } }, async request => options.runtime.get(request.params.id));

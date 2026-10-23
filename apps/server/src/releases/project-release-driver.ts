@@ -23,14 +23,15 @@ export class ProjectReleaseDriver implements ReleaseDriver {
   }
   private async loaded(operation:ReleaseOperation) {
     const snapshot=await this.snapshots.get(operation.reference.snapshotId);const actual=await this.runtime.deployment(operation.deploymentId);
+    const runtimeSpec=operation.reference.runtimeSpec??snapshot.content.runtimeSpec;
     if(actual.status!=='ready'||snapshot.digest!==operation.reference.binding.snapshotDigest||actual.artifactDigest!==operation.reference.binding.artifactDigest
-      ||actual.specDigest!==contentDigest(snapshot.content.runtimeSpec)||actual.modelProfile?.digest!==operation.reference.binding.modelProfile.digest)
+      ||actual.specDigest!==contentDigest(runtimeSpec)||(operation.reference.binding.candidate?.specDigest??contentDigest(runtimeSpec))!==actual.specDigest||actual.modelProfile?.digest!==operation.reference.binding.modelProfile.digest)
       throw new AppError('DEPLOYMENT_MANIFEST_MISMATCH','部署未就绪或实际装载摘要与验证目标不一致',409);
     return {snapshot,actual};
   }
   async prepare(operation:ReleaseOperation,claim:ReleaseClaim):ReturnType<ReleaseDriver['prepare']>{
     await this.own(operation,claim);const snapshot=await this.snapshots.get(operation.reference.snapshotId);
-    await this.runtime.deploy(operation.deploymentId,operation.reference.binding.artifactDigest,snapshot.content.runtimeSpec);
+    await this.runtime.deploy(operation.deploymentId,operation.reference.binding.artifactDigest,operation.reference.runtimeSpec??snapshot.content.runtimeSpec);
     const {actual}=await this.loaded(operation);await this.own(operation,claim);
     await this.mock.prepare(operation.environmentId,operation.smokeRunId);
     return {ready:true,artifactDigest:actual.artifactDigest,snapshotDigest:snapshot.digest};
@@ -42,7 +43,7 @@ export class ProjectReleaseDriver implements ReleaseDriver {
     if(!item)throw new AppError('SMOKE_SCENARIO_UNAVAILABLE','该基线没有已实现的只读冒烟场景',409);
     const run=await this.runs.createShared(snapshot.id,{clientRequestId:operation.smokeRunId,input:item.input},{runId:operation.smokeRunId,
       environmentId:operation.environmentId,deploymentId:operation.deploymentId,artifactDigest:operation.reference.binding.artifactDigest,
-      modelDigest:operation.reference.binding.modelProfile.digest,actorId:'U1001',target:{kind:'release-smoke',claim}});
+      modelDigest:operation.reference.binding.modelProfile.digest,runtimeSpec:operation.reference.runtimeSpec??snapshot.content.runtimeSpec,actorId:'U1001',target:{kind:'release-smoke',claim}});
     if(run.status==='waiting_confirmation'||Date.now()-Date.parse(run.createdAt)>180000)
       return {status:'failed',evidence:{runId:run.id,reason:run.status==='waiting_confirmation'?'SMOKE_REQUESTED_CONFIRMATION':'SMOKE_TIMEOUT'}};
     if(!['succeeded','failed','cancelled','interrupted'].includes(run.status))return{status:'pending'};

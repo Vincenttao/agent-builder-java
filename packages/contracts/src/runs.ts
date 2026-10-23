@@ -1,4 +1,5 @@
 import type { RuntimeModelProfile } from './model-profile.js';
+import type {RuntimeSpec} from './index.js';
 export interface RunEnvironment { seed: 'enterprise-default@1' | 'enterprise-low-balance@1'; fault: 'normal' | 'read-timeout' | 'write-before-failure' | 'write-after-timeout' | 'missing-field'; clock: string }
 export const runInputSchema = { type: 'object', additionalProperties: false, required: ['clientRequestId', 'input'], properties: {
   clientRequestId: { type: 'string', format: 'uuid' }, input: { type: 'string', minLength: 1, maxLength: 8000, pattern: '\\S' }
@@ -11,6 +12,7 @@ export interface RunRecord {
   cancelRequested: boolean; started: boolean; createdAt: string; updatedAt: string; result?: unknown;
   externalEvidence: unknown[]; diagnostic?: string; dependencyFailures: number;
   modelProfile?: RuntimeModelProfile;
+  runtimeSpec?:RuntimeSpec;
   environmentConfig?: RunEnvironment;
   validationId?: string;
   invocationId?: string;

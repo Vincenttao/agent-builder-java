@@ -3,6 +3,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { MockError, type BusinessContext, type EnvironmentConfig, type MockRepository } from './repository.js';
 import { uuidParamsSchema } from '../../../packages/contracts/src/runtime.js';
+import {mockBusinessPath,mockBusinessReadRoutes,mockScenePackage} from './scene.js';
 export interface MockAppOptions { repository: MockRepository; controlToken: string; businessToken: string; faultDelayMs?: number }
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 export function createMockApp(options: MockAppOptions) {
@@ -24,6 +25,47 @@ export function createMockApp(options: MockAppOptions) {
   });
   app.get('/health/live', async () => ({ status: 'ok' }));
   app.get('/control/manifest', async () => ({ implementationDigest }));
+  app.get('/control/project-scene',async()=>mockScenePackage);
+  // Stateless Streamable HTTP MCP endpoint for the registered read-only equipment capability.
+  // Each tools/call is routed through the same repository as the HTTP contract so call evidence,
+  // environment state, identity, and fault behavior remain identical across both transports.
+  app.post<{ Body: { jsonrpc?: string; id?: string | number; method?: string; params?: Record<string, unknown> } }>('/mcp', async (request, reply) => {
+    const body = request.body;
+    const respond = (result: unknown) => ({ jsonrpc: '2.0', id: body.id, result });
+    const fail = (code: number, message: string) => ({ jsonrpc: '2.0', id: body.id, error: { code, message } });
+    if (!body || body.jsonrpc !== '2.0' || typeof body.method !== 'string')
+      return reply.code(400).send(fail(-32600, 'Invalid Request'));
+    if (body.method.startsWith('notifications/')) return reply.code(202).send();
+    if (!body.params || typeof body.params !== 'object' || Array.isArray(body.params)) return reply.code(400).send(fail(-32600, 'Invalid Request'));
+    if (body.method === 'initialize') {
+      const requested = body.params.protocolVersion;
+      const supported = ['2025-03-26', '2025-06-18'];
+      if (typeof requested !== 'string') return reply.code(400).send(fail(-32602, 'Invalid protocol version'));
+      if (!supported.includes(requested)) return reply.code(400).send(fail(-32602, 'Unsupported protocol version'));
+      return respond({ protocolVersion: requested, capabilities: { tools: { listChanged: false } }, serverInfo: { name: 'agent-builder-mock', version: '1.0.0' } });
+    }
+    if (body.method === 'ping') return respond({});
+    if (body.method === 'tools/list') return respond({ tools: [{ name: 'equipment_status', description: 'Query mock equipment status.', _meta: { version: 'equipment-status-mcp@1' }, inputSchema: {
+      type: 'object', properties: { equipmentId: { type: 'string' } }, required: ['equipmentId'], additionalProperties: false
+    }, outputSchema: { type: 'object', properties: { equipmentId: { type: 'string' }, status: { type: 'string' }, temperatureCelsius: { type: 'integer' }, source: { type: 'string' } }, required: ['equipmentId', 'status', 'temperatureCelsius', 'source'], additionalProperties: false } }] });
+    if (body.method === 'tools/call') {
+      if (body.params.name !== 'equipment_status') return respond({ isError: true, content: [{ type: 'text', text: 'MCP_TOOL_NOT_FOUND' }] });
+      const args = body.params.arguments;
+      if (!args || typeof args !== 'object' || Array.isArray(args) || Object.keys(args).length !== 1 || typeof (args as Record<string, unknown>).equipmentId !== 'string')
+        return respond({ isError: true, content: [{ type: 'text', text: 'INVALID_TOOL_ARGUMENTS' }] });
+      try {
+        const callContext = context(request.headers);
+        const outcome = await options.repository.invoke(callContext, 'equipment-status', args as Record<string, unknown>);
+        if (outcome.delay) await new Promise(resolve => setTimeout(resolve, options.faultDelayMs ?? 6000));
+        const isError = outcome.status < 200 || outcome.status >= 300;
+        return respond({ isError, structuredContent: outcome.result, content: [{ type: 'text', text: JSON.stringify(outcome.result) }] });
+      } catch (error) {
+        const code = error instanceof MockError ? error.code : 'MOCK_INTERNAL_ERROR';
+        return respond({ isError: true, content: [{ type: 'text', text: code }] });
+      }
+    }
+    return reply.code(400).send(fail(-32601, 'Method not found'));
+  });
   app.get('/health/ready', async (_r, reply) => { const ready = await options.repository.ready().catch(() => false); return reply.code(ready ? 200 : 503).send({ status: ready ? 'ready' : 'unavailable' }); });
   app.put<{ Params: { id: string }; Body: EnvironmentConfig }>('/control/environments/:id', { schema: { params: uuidParamsSchema, body: {
     type: 'object', additionalProperties: false, required: ['seed', 'fault', 'clock'], properties: {
@@ -45,24 +87,19 @@ export function createMockApp(options: MockAppOptions) {
     if (typeof env !== 'string' || !uuid.test(env) || typeof run !== 'string' || !uuid.test(run) || typeof actor !== 'string' || actor.length > 80 || key !== undefined && (typeof key !== 'string' || key.length > 100)) throw new MockError('INVALID_CONTEXT', 400);
     return { environmentId: env, actorId: actor, runId: run, ...(typeof key === 'string' ? { idempotencyKey: key } : {}) };
   };
-  const routes = [
-    ['/equipment/:equipmentId', 'equipment-status'], ['/accounts/:accountId/balance', 'getAccountBalance'],
-    ['/wealth/products', 'listWealthProducts'], ['/wealth/products/:productId', 'getWealthProduct'], ['/accounts/:accountId/holdings', 'listHoldings'],
-    ['/wealth/orders/by-key/:key', 'getOrderByIdempotencyKey'], ['/wealth/orders/:orderId', 'getMockOrder'], ['/work-orders/by-key/:key', 'work-order-by-key']
-  ] as const;
-  for (const [path, operation] of routes) app.get<{ Params: Record<string, string> }>(`/mock-business/v1${path}`, async (request, reply) => {
-    const response = await options.repository.invoke(context(request.headers), operation, request.params);
+  for (const route of mockBusinessReadRoutes) app.get<{ Params: Record<string, string> }>(route.path, async (request, reply) => {
+    const response = await options.repository.invoke(context(request.headers), route.operationId, request.params);
     if (response.delay) await new Promise(r => setTimeout(r, options.faultDelayMs ?? 6000));
     return reply.code(response.status).send(response.result);
   });
-  app.post<{ Body: { accountId: string; productId: string; amountFen: number } }>('/mock-business/v1/wealth/orders', { schema: { body: {
+  app.post<{ Body: { accountId: string; productId: string; amountFen: number } }>(mockBusinessPath('createMockSubscription'), { schema: { body: {
     type: 'object', additionalProperties: false, required: ['accountId', 'productId', 'amountFen'], properties: { accountId: { type: 'string', maxLength: 80 }, productId: { type: 'string', maxLength: 80 }, amountFen: { type: 'integer' } }
   } } }, async (request, reply) => {
     const response = await options.repository.invoke(context(request.headers), 'createMockSubscription', request.body);
     if (response.delay) await new Promise(r => setTimeout(r, options.faultDelayMs ?? 6000));
     return reply.code(response.status).send(response.result);
   });
-  app.post<{ Body: { equipmentId: string; description: string; priority: string } }>('/mock-business/v1/work-orders', { schema: { body: {
+  app.post<{ Body: { equipmentId: string; description: string; priority: string } }>(mockBusinessPath('work-order-create'), { schema: { body: {
     type: 'object', additionalProperties: false, required: ['equipmentId','description','priority'], properties: {
       equipmentId: { type: 'string', minLength: 1, maxLength: 80 }, description: { type: 'string', minLength: 1, maxLength: 2000 }, priority: { enum: ['normal','urgent'] }
     }

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-22T08:17:28.034Z",
+  "baseUrl": "http://127.0.0.1:8080",
+  "environment": {
+    "database": "ready",
+    "runtime": "ready",
+    "canRun": true
+  },
+  "draftId": "d33671cf-a2a9-4fb4-a118-f40a528c4a0c",
+  "versionId": "987df990-dc29-4a03-9672-a517f6f83017",
+  "deploymentId": "e6b9ac7f-1b3b-4ce2-8c09-ab200f14ddbb",
+  "artifactDigest": "0a7f589b59b2d4a70bcb8d549adf7a36a37597f04513121d1ff4c26972a71ebf",
+  "requestId": "fa7107c7-7758-436b-9b4f-69d832ea0abf",
+  "runId": "903df356-a67c-460e-99ad-63b7887b85cd",
+  "status": "succeeded",
+  "externalEvidenceCount": 1,
+  "eventCount": 13,
+  "eventTypes": [
+    "run.queued",
+    "run.running",
+    "runtime.event",
+    "run.succeeded"
+  ],
+  "resultDigest": "052653efbf05093c3e6d307ba4edcc1476a66cc6c73bfc3e28f2ba79e429a6f5"
+}

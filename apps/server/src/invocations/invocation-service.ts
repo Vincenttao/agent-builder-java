@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
+import type { RuntimeSpec } from '../../../../packages/contracts/src/index.js';
 import type { SnapshotService } from '../snapshots/application/snapshot-service.js';
 import type { RunService } from '../runs/run-service.js';
 import type { PostgresActions } from '../actions/postgres-actions.js';
@@ -13,7 +14,10 @@ import { AppError } from '../shared/errors.js';
 import {requireTestTarget} from '../candidates/test-deployment-service.js';
 import {assertTestAuthority,type ValidationTestAuthority} from '../shared/validation-claim.js';
 import type {TestDeployment} from '../../../../packages/contracts/src/candidates.js';
-export interface PublishedRuntime { deployment(id: string): Promise<{status:string;artifactDigest:string;specDigest:string;modelProfile?:RuntimeModelProfile|null}> }
+export interface PublishedRuntime {
+  deployment(id: string): Promise<{status:string;artifactDigest:string;specDigest:string;error?:string;modelProfile?:RuntimeModelProfile|null}>;
+  deploy?(id:string,artifactDigest:string,spec:RuntimeSpec):Promise<{status:string}>;
+}
 export class InvocationService {
   private working=false;
   constructor(private readonly pool: Pool, private readonly snapshots: SnapshotService, private readonly runs: RunService, private readonly runtime: PublishedRuntime, private readonly actions: PostgresActions,
@@ -109,22 +113,29 @@ export class InvocationService {
         if(test.agentId!==request.agentId||test.environmentId!==request.environmentId||test.candidateId!==request.candidateId||test.binding.artifactDigest!==request.artifactDigest)
           throw new AppError('TEST_TARGET_MISMATCH','测试目标不匹配',409);
         if(mock.implementationDigest!==test.binding.mockDigest)throw new AppError('TEST_BINDING_CHANGED','测试业务服务已变化',409);
-        if(loaded.status!=='ready'||loaded.artifactDigest!==test.binding.artifactDigest||loaded.specDigest!==contentDigest(snapshot.content.runtimeSpec)||loaded.modelProfile?.digest!==test.binding.modelProfile.digest||snapshot.digest!==test.binding.snapshotDigest)
+        const runtimeSpec=test.runtimeSpec??snapshot.content.runtimeSpec;
+        if(loaded.status!=='ready'||loaded.artifactDigest!==test.binding.artifactDigest||loaded.specDigest!==contentDigest(runtimeSpec)||(test.binding.candidate?.specDigest??contentDigest(runtimeSpec))!==loaded.specDigest||loaded.modelProfile?.digest!==test.binding.modelProfile.digest||snapshot.digest!==test.binding.snapshotDigest)
           throw new AppError('TEST_MANIFEST_MISMATCH','测试部署不可用或实际装载不匹配',409);
         await this.runs.createShared(test.snapshotId,{clientRequestId:request.runId,input:request.input},{runId:request.runId,actorId:request.actorId,environmentId:test.environmentId,deploymentId:test.deploymentId,
-          artifactDigest:test.binding.artifactDigest,modelDigest:test.binding.modelProfile.digest,invocationId:request.id,conversationId:request.conversationId,target:{kind:'test',testDeploymentId:test.id,candidateId:test.candidateId}});
+          artifactDigest:test.binding.artifactDigest,modelDigest:test.binding.modelProfile.digest,runtimeSpec,invocationId:request.id,conversationId:request.conversationId,target:{kind:'test',testDeploymentId:test.id,candidateId:test.candidateId}});
         return;
       }
       const version=(await this.pool.query<{record:ReleaseVersion}>('SELECT record FROM release_versions WHERE id=$1',[request.agentVersion])).rows[0]?.record;
       if(!version||version.agentId!==request.agentId||version.environmentId!==request.environmentId)throw new AppError('PUBLISHED_TARGET_MISMATCH','发布目标不匹配',409);
-      const [loaded,snapshot,mock]=await Promise.all([this.runtime.deployment(version.deploymentId),this.snapshots.get(version.snapshotId),this.mock.identity()]);
+      let [loaded,snapshot,mock]=await Promise.all([this.runtime.deployment(version.deploymentId),this.snapshots.get(version.snapshotId),this.mock.identity()]);
+      const runtimeSpec=version.reference.runtimeSpec??snapshot.content.runtimeSpec;
       if(mock.implementationDigest!==version.reference.binding.mockDigest)throw new AppError('PUBLISHED_DEPENDENCY_CHANGED','业务服务已变化，请重新验收并发布',409);
+      const recoverable=loaded.status==='interrupted'||loaded.status==='failed'&&loaded.error==='DEPLOYMENT_RESTORE_FAILED';
+      if(recoverable&&this.runtime.deploy){
+        await this.runtime.deploy(version.deploymentId,version.reference.binding.artifactDigest,runtimeSpec);
+        loaded=await this.runtime.deployment(version.deploymentId);
+      }
       if(loaded.status!=='ready')throw new AppError('DEPLOYMENT_NOT_READY','原版本不可执行，请取消此请求并新建会话',409);
       const binding=version.reference.binding;
-      if(loaded.artifactDigest!==binding.artifactDigest||loaded.modelProfile?.digest!==binding.modelProfile.digest||loaded.specDigest!==contentDigest(snapshot.content.runtimeSpec)||snapshot.digest!==binding.snapshotDigest)
+      if(loaded.artifactDigest!==binding.artifactDigest||loaded.modelProfile?.digest!==binding.modelProfile.digest||loaded.specDigest!==contentDigest(runtimeSpec)||(binding.candidate?.specDigest??contentDigest(runtimeSpec))!==loaded.specDigest||snapshot.digest!==binding.snapshotDigest)
         throw new AppError('DEPLOYMENT_MANIFEST_MISMATCH','实际部署与发布版本不一致',409);
       await this.runs.createShared(version.snapshotId,{clientRequestId:request.runId,input:request.input},{runId:request.runId,actorId:request.actorId,environmentId:version.environmentId,deploymentId:version.deploymentId,artifactDigest:binding.artifactDigest,modelDigest:binding.modelProfile.digest,
-        invocationId:request.id,conversationId:request.conversationId,target:{kind:'published',versionId:version.id}});
+        runtimeSpec,invocationId:request.id,conversationId:request.conversationId,target:{kind:'published',versionId:version.id}});
     }catch(error){
       if(request)await this.pool.query("UPDATE invocations SET record=record || $2::jsonb,next_attempt_at=now()+interval '5 seconds' WHERE id=$1 AND record->>'status' IN ('reserved','blocked')",[request.id,{status:'blocked',diagnostic:error instanceof AppError?error.code:'INVOCATION_DEPENDENCY_UNAVAILABLE',updatedAt:new Date().toISOString()}]);
     }finally{this.working=false;}

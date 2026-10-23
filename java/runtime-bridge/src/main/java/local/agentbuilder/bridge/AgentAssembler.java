@@ -31,7 +31,7 @@ public final class AgentAssembler {
         if (spec.systemPrompt() == null || spec.systemPrompt().isBlank()) throw new IllegalArgumentException("EMPTY_SYSTEM_PROMPT");
         Set<String> railIds = new HashSet<>();
         for (String rail : spec.rails()) {
-            if (!Set.of("audit", "tool-allowlist", "write-confirm").contains(rail)) throw new IllegalArgumentException("UNKNOWN_RAIL:" + rail);
+            if (!Set.of("audit", "tool-allowlist", "write-confirm").contains(rail) && !toolCallLimit(rail).isPresent()) throw new IllegalArgumentException("UNKNOWN_RAIL:" + rail);
             if (!railIds.add(rail)) throw new IllegalArgumentException("CONFLICTING_RAIL:" + rail);
         }
         if (!railIds.contains("tool-allowlist")) throw new IllegalArgumentException("REQUIRED_RAIL:tool-allowlist");
@@ -44,19 +44,28 @@ public final class AgentAssembler {
         List<Object> rails = new ArrayList<>();
         rails.add(new SessionCancellationRail(executions));
         if (components.enabled()) {
-            if (!allowedTools.equals(Set.of("get_equipment"))) throw new IllegalArgumentException("GENERATED_TOOL_BINDING_INVALID");
+            if (allowedTools.size()!=1 || !allowedTools.contains(components.toolName())) throw new IllegalArgumentException("GENERATED_TOOL_BINDING_INVALID");
             allowedTools.add("skill_tool"); rails.add(new ManagedSkillRail(components, events));
         }
-        for (String id : spec.rails()) rails.add(switch (id) {
-            case "audit" -> new AuditRail(events);
-            case "write-confirm" -> new WriteConfirmationRail(writes, events);
-            default -> new ToolAllowlistRail(allowedTools, events);
-        });
+        for (String id : spec.rails()) {
+            var callLimit = toolCallLimit(id);
+            if (callLimit.isPresent()) rails.add(new ToolCallLimitRail(callLimit.getAsInt(), events));
+            else rails.add(switch (id) {
+                case "audit" -> new AuditRail(events, spec.maxIterations());
+                case "write-confirm" -> new WriteConfirmationRail(writes, events);
+                default -> new ToolAllowlistRail(allowedTools, events);
+            });
+        }
         DeepAgentConfig config = DeepAgentConfig.builder().systemPrompt(spec.systemPrompt())
                 .workspacePath(workspace.toAbsolutePath().toString()).model(new SessionModel(model, executions)).maxIterations(spec.maxIterations())
                 .maxParallelToolCalls(1).rails(rails).tools(new ArrayList<>(tools))
                 .restrictToWorkDir(true).enableTaskLoop(true).enableTaskPlanning(false)
                 .enableSkillDiscovery(false).addGeneralPurposeAgent(false).build();
         return HarnessFactory.createDeepAgent(AgentCard.builder().id(spec.id()).name(spec.id()).description("Agent Builder managed candidate").build(), config, null);
+    }
+
+    private java.util.OptionalInt toolCallLimit(String id) {
+        if (id == null || !id.matches("tool-call-limit@1:(?:[1-9]|1[0-9]|20)")) return java.util.OptionalInt.empty();
+        return java.util.OptionalInt.of(Integer.parseInt(id.substring(id.indexOf(':') + 1)));
     }
 }

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-05 NFR-08 fresh workspace restore",
+  "executionMode": "isolated-live-docker",
+  "sourceBase": "http://127.0.0.1:18080",
+  "targetBase": "http://127.0.0.1:18081",
+  "composeProject": "agent-builder-td15-nf05",
+  "startedAt": "2026-10-23T08:20:38.509Z",
+  "sourceDraftId": "5c274b65-12d2-4b76-b31f-79c519c59fa2",
+  "sourceDevelopmentJobId": "20cfe75f-5911-4cd0-bf93-a5526f075b61",
+  "sourceCandidateId": "43d521c8-513c-4c3f-8128-92efb4341165",
+  "exportedGeneratedFiles": [
+    {
+      "path": "src/generated/EquipmentTool.java",
+      "digest": "81d328a1b6a3c5aa684203eedfd46e83aa3473d99d83a2be886479e928ae920f"
+    },
+    {
+      "path": "test/generated/EquipmentToolTest.java",
+      "digest": "0fe2e081d54ec666affa37205131d88d385cc738c2a3f5bed132809535df7306"
+    },
+    {
+      "path": "skills/equipment-query/SKILL.md",
+      "digest": "bcf9e19732468cb55d00af45202b55619768eda4bceb7e6dfdaa46a99e7bc130"
+    },
+    {
+      "path": "rails/definition.json",
+      "digest": "db1314db9b614b7105a864fbb3c807783b0bd9ba8414a6423511a4d8bd2f99e3"
+    },
+    {
+      "path": "test-plan.json",
+      "digest": "e2bcac3b6a6803010b3aa629e2e6945ae8b2d615b8a14d4fe1dc8585b6c8ff37"
+    }
+  ],
+  "exportedMockScene": {
+    "version": "enterprise-mock@1",
+    "contracts": 11,
+    "seeds": [
+      "enterprise-default@1",
+      "enterprise-low-balance@1"
+    ]
+  },
+  "credentialsAbsent": true,
+  "projectPackageSha256": "b1766341022ee39dcbc05e907fe3becf1f44f0564fa00ca0f19bb90bbf9f5a65",
+  "targetComposeRunningServices": 4,
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "importedDraftId": "98dd8f9b-de5c-4cb1-a2da-db75c4e90baf",
+  "importedSnapshotId": "6af6bb18-6ae9-499a-bf16-81754ff59162",
+  "needsRequirementConfirmation": false,
+  "connectionRebindRequired": [
+    "equipment-mock@1"
+  ],
+  "generatedArtifactsToRebuild": [
+    {
+      "artifactDigest": "7e2e033da91b1aeac2b80b4bf90ba19409032c309f7b4d8cf50c419f4f98d016",
+      "sourceJobId": "20cfe75f-5911-4cd0-bf93-a5526f075b61",
+      "reason": "SOURCE_INCLUDED_BINARY_NOT_PACKAGED"
+    }
+  ],
+  "restoredDevelopmentJobId": "5b650608-fb84-489c-8d24-67ca30a213b6",
+  "restoredBundleDigest": "f0ae7709a8d3f3a44e50cbc364e07c992c2159360fbbdffc1bcd04980cfd8b18",
+  "restoredCandidateId": "b017eb77-ad82-4ce9-992b-10f00d157bd0",
+  "restoredArtifactDigest": "fb4cad919aa35b9ab8f58b9b392516b5780e01fe04219ad0b7f8e4c3c068d37d",
+  "smokeRunId": "e19e41fa-eee7-4ed9-9f19-29635dca5125",
+  "mockOperations": [
+    "equipment-status"
+  ],
+  "restoreVerdict": "passed",
+  "recoveryPackageSurvivedAppRestart": true,
+  "targetRestarted": true,
+  "verdict": "passed",
+  "targetStackRemoved": true,
+  "finishedAt": "2026-10-23T08:22:48.043Z",
+  "acceptanceResultsPath": "test-results/acceptance/td15-nf05-results.json"
+}

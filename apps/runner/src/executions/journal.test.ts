@@ -41,11 +41,16 @@ describe('persistent execution request journal', () => {
     await expect(recovered.resume(id, { ...resume, approved: false })).rejects.toMatchObject({ code: 'RESUME_INPUT_CONFLICT' });
   });
   it('marks waiting sessions interrupted after a Runner restart rather than silently replaying the task', async () => {
-    const h = await setup(); const id = randomUUID(); await h.journal.begin(id, request()); await expect.poll(h.calls).toBe(1);
+    const h = await setup(); const id = randomUUID(); const input=request(); await h.journal.begin(id, input); await expect.poll(h.calls).toBe(1);
     h.finish({ result: { _interrupt: { toolCallId: 'call-write' } } });
     await expect.poll(async () => (await h.journal.get(id)).status).toBe('waiting_confirmation');
     const recovered = new ExecutionJournal(h.root, h.runtime); await recovered.initialize();
-    expect((await recovered.get(id)).status).toBe('interrupted'); expect(h.calls()).toBe(1);
+    expect((await recovered.get(id)).status).toBe('interrupted');
+    expect(recovered.hasActiveDeployment(input.deploymentId)).toBe(false);
+    expect(h.calls()).toBe(1);
+    const restartedAgain = new ExecutionJournal(h.root, h.runtime); await restartedAgain.initialize();
+    expect(restartedAgain.restartUnsafeDeployments.has(input.deploymentId)).toBe(true);
+    expect(h.calls()).toBe(1);
   });
   it('concurrent identical submissions run once, retain result and recover it without replay', async () => {
     const h = await setup(); const id = randomUUID(); const input = request();

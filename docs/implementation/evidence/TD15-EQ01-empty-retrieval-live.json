@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15 P0-A EQ-01 empty maintenance retrieval must not fabricate sources or repair conclusions",
+  "executionMode": "live-mock",
+  "measuredAt": "2026-10-23T08:19:55.990Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "targetImageIds": [
+    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+  ],
+  "draftId": "b4f95ffa-d55d-4655-bd6d-c5bd8564d794",
+  "snapshotId": "0c759d80-595a-40ed-a409-8db343e667eb",
+  "runId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+  "environmentId": "74d4f1ff-a690-4497-b925-f730101dc128",
+  "runStatus": "succeeded",
+  "runtimeEvents": [
+    {
+      "rail": "audit",
+      "tool": "",
+      "event": "before_invoke",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    },
+    {
+      "rail": "audit",
+      "tool": "",
+      "event": "before_model_call",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    },
+    {
+      "rail": "audit",
+      "tool": "",
+      "event": "after_model_call",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    },
+    {
+      "rail": "tool-allowlist",
+      "tool": "search_maintenance_manuals",
+      "event": "before_tool_call",
+      "allowed": true,
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435"
+    },
+    {
+      "rail": "audit",
+      "tool": "search_maintenance_manuals",
+      "event": "before_tool_call",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    },
+    {
+      "tool": "search_maintenance_manuals",
+      "event": "tool_call",
+      "status": "succeeded",
+      "protocol": "http",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "durationMs": 30,
+      "toolVersion": "maintenance-search-http@1",
+      "resultDigest": "f835f159a11560e79b1e5db48a5ddd79d8d5f292678d411b0302654e25e75102",
+      "connectionRef": "enterprise-mock-http@1",
+      "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+    },
+    {
+      "rail": "audit",
+      "tool": "search_maintenance_manuals",
+      "event": "after_tool_call",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    },
+    {
+      "rail": "audit",
+      "tool": "",
+      "event": "before_model_call",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    },
+    {
+      "rail": "audit",
+      "tool": "",
+      "event": "after_model_call",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    },
+    {
+      "rail": "audit",
+      "event": "assistant_output",
+      "content": "{\"kind\":\"evidence-insufficient\",\"equipmentId\":\"PUMP-001\",\"message\":\"没有检索到 PUMP-001 的维护资料，依据不足，不能据此判断故障原因或维修结论。\",\"sources\":[],\"repairDiagnosis\":null}",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435"
+    },
+    {
+      "rail": "audit",
+      "tool": "",
+      "event": "after_invoke",
+      "sessionId": "b10d1f94-e2fb-4381-b220-73df4dc27435",
+      "turnCount": 1
+    }
+  ],
+  "mockCalls": [
+    {
+      "operation": "maintenance-search",
+      "input": {
+        "equipmentId": "PUMP-001"
+      },
+      "status": 200,
+      "result": {
+        "found": false,
+        "equipmentId": "PUMP-001",
+        "resultCount": 0
+      },
+      "actorId": "U1001",
+      "runId": "b10d1f94-e2fb-4381-b220-73df4dc27435"
+    }
+  ],
+  "answer": {
+    "kind": "evidence-insufficient",
+    "equipmentId": "PUMP-001",
+    "message": "没有检索到 PUMP-001 的维护资料，依据不足，不能据此判断故障原因或维修结论。",
+    "sources": [],
+    "repairDiagnosis": null
+  },
+  "branches": [
+    {
+      "caseId": "EQ-01",
+      "branchId": "empty-retrieval",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "real_empty_retrieval_call",
+          "passed": true
+        },
+        {
+          "name": "no_fabricated_source",
+          "passed": true
+        },
+        {
+          "name": "no_unfounded_repair_conclusion",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "verdict": "passed"
+}

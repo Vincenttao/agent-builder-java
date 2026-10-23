@@ -37,7 +37,7 @@ export interface RunRuntime {
 export interface MockControl { ready(): Promise<boolean>; prepare(environmentId: string, runId: string, config?: RunEnvironment): Promise<void>; release(environmentId: string, runId: string): Promise<void>; calls(environmentId: string, runId: string): Promise<unknown[]> }
 export interface ValidationRunSetup { runId: string; environmentConfig: RunEnvironment; artifactDigest: string; modelDigest: string; claim: ValidationClaim }
 export interface SharedRunSetup {
-  runId: string; environmentId: string; deploymentId: string; artifactDigest: string; modelDigest: string;
+  runId: string; environmentId: string; deploymentId: string; artifactDigest: string; modelDigest: string; runtimeSpec?:RuntimeSpec;
   actorId: 'U1001' | 'U1002';
   invocationId?: string; conversationId?: string;
   target: { kind: 'release-smoke'; claim: ReleaseClaim } | { kind: 'published'; versionId: string } | {kind:'test';testDeploymentId:string;candidateId:string};
@@ -68,17 +68,18 @@ export class RunService {
       : shared?.target.kind === 'release-smoke' ? { kind: 'release-smoke', operationId: shared.target.claim.operationId }
       : shared?.target.kind === 'test' ? {...shared.target} : undefined;
     const stableSetup = setup ? { runId: setup.runId, environmentConfig: setup.environmentConfig, artifactDigest: setup.artifactDigest, modelDigest: setup.modelDigest, validationId: setup.claim.executionId }
-      : shared ? { runId: shared.runId, environmentId: shared.environmentId, deploymentId: shared.deploymentId, artifactDigest: shared.artifactDigest, modelDigest: shared.modelDigest, actorId: shared.actorId, sharedTarget, ...(shared.invocationId?{invocationId:shared.invocationId,conversationId:shared.conversationId}:{}) } : undefined;
+      : shared ? { runId: shared.runId, environmentId: shared.environmentId, deploymentId: shared.deploymentId, artifactDigest: shared.artifactDigest, modelDigest: shared.modelDigest, ...(shared.runtimeSpec?{specDigest:contentDigest(shared.runtimeSpec)}:{}), actorId: shared.actorId, sharedTarget, ...(shared.invocationId?{invocationId:shared.invocationId,conversationId:shared.conversationId}:{}) } : undefined;
     const inputDigest = createHash('sha256').update(canonicalJson(stableSetup ? { input, setup: stableSetup } : input)).digest('hex');
     const old = await this.findRequest(snapshotId, input.clientRequestId);
     if (old) { if (old.inputDigest !== inputDigest) throw new AppError('REQUEST_INPUT_CONFLICT', '同一请求编号不能更改输入', 409); return old; }
     const target = await this.snapshots.get(snapshotId); const readiness = await this.readiness();
     if (!readiness.canRun) throw new AppError('ENVIRONMENT_BLOCKED', 'Runner、模型配置或 Mock 服务未就绪', 409);
     const pinned = setup ?? shared;
-    if (pinned && (!await runtimeArtifactMatches(this.runtime,pinned.artifactDigest,readiness.runtime!.artifactDigest,contentDigest(target.content.runtimeSpec),snapshotId) || readiness.runtime!.modelProfile?.digest !== pinned.modelDigest)) throw new AppError('VALIDATION_BINDING_CHANGED', '验收依赖版本已改变，请重新发起验证', 409);
+    const runtimeSpec=shared?.runtimeSpec??target.content.runtimeSpec;
+    if (pinned && (!await runtimeArtifactMatches(this.runtime,pinned.artifactDigest,readiness.runtime!.artifactDigest,contentDigest(runtimeSpec),snapshotId) || readiness.runtime!.modelProfile?.digest !== pinned.modelDigest)) throw new AppError('VALIDATION_BINDING_CHANGED', '验收依赖版本已改变，请重新发起验证', 409);
     const now = new Date().toISOString(); const id = pinned?.runId ?? randomUUID();
     const record: RunRecord = { id, snapshotId, snapshotDigest: target.digest, artifactDigest: pinned?.artifactDigest ?? readiness.runtime!.artifactDigest, environmentId: shared?.environmentId ?? randomUUID(), actorId: shared?.actorId ?? 'U1001',
-      ...input, ...(sharedTarget ? { sharedTarget } : {}), ...(setup ? { environmentConfig: setup.environmentConfig, validationId: setup.claim.executionId } : {}), ...(readiness.runtime?.modelProfile ? { modelProfile: readiness.runtime.modelProfile } : {}), inputDigest, deploymentId: shared?.deploymentId ?? id, status: 'queued', cancelRequested: false, started: false, createdAt: now, updatedAt: now, externalEvidence: [], dependencyFailures: 0 };
+      ...input, ...(sharedTarget ? { sharedTarget } : {}), ...(shared?.runtimeSpec?{runtimeSpec:structuredClone(shared.runtimeSpec)}:{}), ...(setup ? { environmentConfig: setup.environmentConfig, validationId: setup.claim.executionId } : {}), ...(readiness.runtime?.modelProfile ? { modelProfile: readiness.runtime.modelProfile } : {}), inputDigest, deploymentId: shared?.deploymentId ?? id, status: 'queued', cancelRequested: false, started: false, createdAt: now, updatedAt: now, externalEvidence: [], dependencyFailures: 0 };
     if(shared?.invocationId){record.invocationId=shared.invocationId;if(shared.conversationId)record.conversationId=shared.conversationId;}
     const client = await this.pool.connect();
     try {
@@ -97,6 +98,7 @@ export class RunService {
       // All candidate admission and stop transactions lock deployment before request and Run.
       const test=shared?.target.kind==='test'?await requireTestTarget(client,shared.target.testDeploymentId,true):undefined;
       if(test&&(!shared?.invocationId||shared.target.kind!=='test'||test.candidateId!==shared.target.candidateId))throw new AppError('SHARED_TARGET_MISMATCH','测试运行必须由固定候选请求准入',409);
+      if(test&&(!shared?.runtimeSpec||contentDigest(shared.runtimeSpec)!==contentDigest(test.runtimeSpec??target.content.runtimeSpec)||(test.binding.candidate?.specDigest??contentDigest(test.runtimeSpec??target.content.runtimeSpec))!==contentDigest(shared.runtimeSpec)))throw new AppError('SHARED_TARGET_MISMATCH','测试运行规格与候选不匹配',409);
       if(shared?.invocationId){
         const request=(await client.query<{record:Invocation}>('SELECT record FROM invocations WHERE id=$1 FOR UPDATE',[shared.invocationId])).rows[0]?.record;
         if(!request||!['reserved','blocked'].includes(request.status)||request.runId!==id||request.conversationId!==shared.conversationId||request.input!==input.input
@@ -153,7 +155,7 @@ export class RunService {
     if(run.sharedTarget?.kind==='test')await requireTestTarget(this.pool,run.sharedTarget.testDeploymentId);
     if (run.status !== 'running' || run.cancelRequested) throw new AppError('RUN_NOT_ACTIVE', '运行已停止或尚未开始', 409);
     const snapshot = await this.snapshots.get(run.snapshotId);
-    const operations = snapshot.content.runtimeSpec.tools.map(tool => tool.operationId)
+    const operations = (run.runtimeSpec??snapshot.content.runtimeSpec).tools.map(tool => tool.operationId)
       .filter(id => run.sharedTarget?.kind !== 'release-smoke' || id === 'equipment-status');
     return { runId: run.id, environmentId: run.environmentId, actorId: run.actorId, operations };
   }
@@ -259,7 +261,7 @@ export class RunService {
       // Persist intent before starting the JVM; recovery reuses the same deployment/execution IDs.
       await this.patch(run.id, { started: true }); run.started = true;
       const snapshot = await this.snapshots.get(run.snapshotId);
-      const deployment = await this.effect(run.id,()=>this.runtime.deploy(run.deploymentId, run.artifactDigest, snapshot.content.runtimeSpec));
+      const deployment = await this.effect(run.id,()=>this.runtime.deploy(run.deploymentId, run.artifactDigest, run.runtimeSpec??snapshot.content.runtimeSpec));
       if (deployment.status !== 'ready') {
         await this.finish(run.id, 'interrupted', { diagnostic: 'DEPLOYMENT_NOT_READY' }, { deploymentStatus: deployment.status }); return;
       }
@@ -314,7 +316,13 @@ export class RunService {
     await this.effect(run.id,()=>this.mock.release(run.environmentId, run.id));
     const status = execution.status as 'succeeded' | 'failed' | 'cancelled';
     const result = status === 'cancelled' ? (await this.get(run.id)).result ?? execution.result : execution.result;
-    await this.finish(run.id, status, { result: result ?? null, externalEvidence, dependencyFailures: 0, diagnostic: execution.error ?? '' }, { externalCallCount: externalEvidence.length });
+    const iterationLimitReported=events.some(item=>{
+      const event=(item as {event?:{event?:string;sessionId?:string}}|null)?.event;
+      return event?.event==='iteration_limit_reached'&&event.sessionId===run.id;
+    });
+    const diagnostic=status==='failed'&&execution.error==='JVM_QUERY_FAILED'&&iterationLimitReported?'ITERATION_LIMIT_REACHED':execution.error??'';
+    await this.finish(run.id, status, { result: result ?? null, externalEvidence, dependencyFailures: 0, diagnostic },
+      { externalCallCount: externalEvidence.length, ...(diagnostic!==execution.error?{runtimeError:execution.error}:{}) });
   }
   private async cancelUnstarted(run:RunRecord,token:string){
     const execution=await this.effect(run.id,()=>this.runtime.cancel(run.id,token));

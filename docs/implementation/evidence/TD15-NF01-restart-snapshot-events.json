@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-01 snapshot and event persistence after App/Runner restart",
+  "executionMode": "isolated-live-docker",
+  "measuredAt": "2026-10-23T09:43:28.094Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "draftId": "e745bc9d-59b3-4cc2-8524-ea4f754ef2f7",
+  "snapshotId": "c7d81d2b-e6fa-4e61-b76c-7bcb6b8e1970",
+  "snapshotDigest": "56bdf1faa8c96f9d2023604e65884be9173151771e9be1ee1ba14ebdcbb55046",
+  "validationId": "38bb3417-8125-472b-9c75-1c6609d9353d",
+  "runId": "15f8aea4-09a9-4c3c-87c1-a7b3b67871a1",
+  "runStatus": "interrupted",
+  "beforeRestartRuntimeEventCount": 17,
+  "afterRestartRuntimeEventCount": 21,
+  "totalEventCount": 27,
+  "eventSequenceUnique": true,
+  "snapshotBindingMatches": true,
+  "eventLogRetained": true,
+  "verdict": "passed"
+}

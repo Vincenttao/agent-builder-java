@@ -27,8 +27,10 @@ const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
 export class ExecutionJournal {
   private entries = new Map<string, Entry>();
   private queues = new Map<string, Promise<void>>();
+  private readonly restartUnsafe = new Set<string>();
   private readonly fence:ExecutionFence;
   constructor(private readonly root: string, private readonly runtime: ExecutionRuntime) {this.fence=new ExecutionFence(join(root,'claims'));}
+  get restartUnsafeDeployments():ReadonlySet<string>{return new Set(this.restartUnsafe);}
   async initialize() {
     await mkdir(this.root, { recursive: true });
     await this.fence.initialize();
@@ -38,8 +40,13 @@ export class ExecutionJournal {
       if (`${record.id}.json` !== name) throw new RunnerError('EXECUTION_STATE_CORRUPT', 503);
       const interrupted = ['running', 'waiting_confirmation', 'cancelling'].includes(record.status);
       if (interrupted) {
+        this.restartUnsafe.add(record.deploymentId);
         record.status = 'interrupted'; record.error = 'RUNNER_RESTART_REQUIRES_RECONCILIATION';
       }
+      // A prior boot may already have made the execution terminal-interrupted.
+      // Keep its deployment quarantined on every later boot until it is retired;
+      // otherwise an unrelated Runner restart can silently relaunch its JVM.
+      if (record.status === 'interrupted') this.restartUnsafe.add(record.deploymentId);
       const entry = { record, saving: Promise.resolve() }; this.entries.set(record.id, entry);
       if (interrupted) await this.persist(entry);
     }
@@ -133,5 +140,5 @@ export class ExecutionJournal {
     return this.get(id);
   }
   async drain() { await Promise.all([...this.entries.values()].map(entry => entry.work)); }
-  hasActiveDeployment(id: string) { return [...this.entries.values()].some(entry => entry.record.deploymentId === id && ['running','waiting_confirmation','cancelling','interrupted'].includes(entry.record.status)); }
+  hasActiveDeployment(id: string) { return [...this.entries.values()].some(entry => entry.record.deploymentId === id && ['running','waiting_confirmation','cancelling'].includes(entry.record.status)); }
 }

@@ -1,7 +1,7 @@
 import type { RuntimeModelProfile } from './model-profile.js';
 export type ValidationVerdict = 'passed' | 'failed' | 'blocked' | 'unverified';
 export interface ValidationInput { clientRequestId: string; baselineId: string; allowMockWrites: boolean; candidateId?: string }
-export interface ValidationCandidate { id:string; bundleDigest:string; provenance:'assembled-template'|'generated-component'; developmentJobId?:string; testPlanDigest?:string }
+export interface ValidationCandidate { id:string; bundleDigest:string; specDigest?:string; provenance:'assembled-template'|'generated-component'; developmentJobId?:string; testPlanDigest?:string }
 export interface ValidationBinding {
   baselineDigest: string; snapshotDigest: string; artifactDigest: string; testSetDigest: string; compatibilityKey: string;
   modelProfile: RuntimeModelProfile; mockDigest: string; candidate?:ValidationCandidate;

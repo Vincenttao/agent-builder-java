@@ -1,6 +1,7 @@
 import type { ValidationBinding } from './validations.js';
+import type {RuntimeSpec} from './index.js';
 export interface ReleaseInput { clientRequestId: string; snapshotId: string; validationId: string; expectedRevision: number; rollbackVersionId?: string }
-export interface ReleaseReference { agentId: string; snapshotId: string; validationId: string; binding: ValidationBinding }
+export interface ReleaseReference { agentId: string; snapshotId: string; validationId: string; binding: ValidationBinding; runtimeSpec?:RuntimeSpec }
 export interface ReleaseOperation {
   id: string; agentId: string; versionId: string; deploymentId: string; environmentId: string; smokeRunId: string;
   request: ReleaseInput; inputDigest: string; reference: ReleaseReference;

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-06 AC-29a managed execution cancellation and stale-worker fencing",
+  "executionMode": "deterministic-fixture-adapter",
+  "scope": "subcriterion only; not full NF-06 or live Docker acceptance",
+  "measuredAt": "2026-10-23T06:13:24.918Z",
+  "adapterJarSha256": "b7e8d6f32997f08c434eccd9801e00d0a902a53f325247a8aeb40bb4a207e3fa",
+  "testEvidence": {
+    "modelMode": "deterministic-fixture",
+    "run": {
+      "id": "0000ccd3-0aa7-409b-ac00-484933aee294",
+      "input": "查询 PUMP-001",
+      "status": "cancelled",
+      "actorId": "U1001",
+      "started": true,
+      "createdAt": "2026-10-23T06:13:15.223Z",
+      "updatedAt": "2026-10-23T06:13:24.710Z",
+      "snapshotId": "75c9c909-7ab2-4a23-9e2f-c8bcec0494d6",
+      "inputDigest": "1cca2595c12d7fc688d11374ae54ec99bf754778c26586b884f0c862321f8a5e",
+      "deploymentId": "0000ccd3-0aa7-409b-ac00-484933aee294",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "http://127.0.0.1:22411/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "cb01120ca83a14da9458a43292fa21a64107db8becf40bf5401b072f97fdd69c",
+        "executionMode": "simulated"
+      },
+      "environmentId": "1474e0d9-f437-43f8-9eb8-92f3eb5bc7ef",
+      "artifactDigest": "b7e8d6f32997f08c434eccd9801e00d0a902a53f325247a8aeb40bb4a207e3fa",
+      "snapshotDigest": "7a1f28cb917e16126f2f2756b4f3ba9bb261c1a6f529990b4c772fa34c794c93",
+      "cancelRequested": true,
+      "clientRequestId": "0ffcf7cb-6b83-4e02-a22b-ed41fbf0aab2",
+      "externalEvidence": [],
+      "dependencyFailures": 0
+    },
+    "events": [
+      {
+        "seq": 257,
+        "runId": "0000ccd3-0aa7-409b-ac00-484933aee294",
+        "source": "platform",
+        "type": "run.queued",
+        "data": {
+          "snapshotId": "75c9c909-7ab2-4a23-9e2f-c8bcec0494d6",
+          "artifactDigest": "b7e8d6f32997f08c434eccd9801e00d0a902a53f325247a8aeb40bb4a207e3fa",
+          "snapshotDigest": "7a1f28cb917e16126f2f2756b4f3ba9bb261c1a6f529990b4c772fa34c794c93"
+        },
+        "at": "2026-10-23T06:13:15.169Z"
+      },
+      {
+        "seq": 258,
+        "runId": "0000ccd3-0aa7-409b-ac00-484933aee294",
+        "source": "platform",
+        "type": "run.running",
+        "data": {
+          "deploymentId": "0000ccd3-0aa7-409b-ac00-484933aee294"
+        },
+        "at": "2026-10-23T06:13:24.438Z"
+      },
+      {
+        "seq": 259,
+        "runId": "0000ccd3-0aa7-409b-ac00-484933aee294",
+        "source": "platform",
+        "type": "run.cancel_requested",
+        "data": {},
+        "at": "2026-10-23T06:13:24.445Z"
+      },
+      {
+        "seq": 260,
+        "runId": "0000ccd3-0aa7-409b-ac00-484933aee294",
+        "source": "platform",
+        "type": "run.cancelled",
+        "data": {
+          "processStarted": true,
+          "executionRetired": true
+        },
+        "at": "2026-10-23T06:13:24.757Z"
+      }
+    ],
+    "deployment": {
+      "id": "0000ccd3-0aa7-409b-ac00-484933aee294",
+      "bootId": "d581041f-0908-4fa7-b8f8-5b3787d8d397",
+      "status": "stopped",
+      "artifactDigest": "b7e8d6f32997f08c434eccd9801e00d0a902a53f325247a8aeb40bb4a207e3fa",
+      "specDigest": "7972ffbb7e8abbc0606e756ac6d7fe42ceee802d112cb488107a697f95d24dca",
+      "modelProfile": {
+        "executionMode": "simulated",
+        "model": {
+          "provider": "OpenAI",
+          "baseUrl": "http://127.0.0.1:22411/v1",
+          "name": "deepseek-v4-flash",
+          "temperature": 0,
+          "maxTokens": 1024,
+          "thinking": "disabled"
+        },
+        "digest": "cb01120ca83a14da9458a43292fa21a64107db8becf40bf5401b072f97fdd69c"
+      },
+      "createdAt": "2026-10-23T06:13:15.664Z",
+      "updatedAt": "2026-10-23T06:13:24.686Z",
+      "port": 54729,
+      "processId": 20516
+    },
+    "modelCalls": 0,
+    "externalCalls": [],
+    "staleWorkerChangedTerminal": false
+  },
+  "assertions": {
+    "cancelledAfterReplacementWorker": true,
+    "noModelCallAfterCancel": true,
+    "noExternalCalls": true,
+    "deploymentStopped": true,
+    "staleWorkerDidNotChangeTerminal": true,
+    "retiredRunRejected": true,
+    "retiredMockReservationRejected": true
+  },
+  "verdict": "passed"
+}
