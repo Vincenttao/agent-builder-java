@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "benchmark": "TD-15/NF-02",
-  "measuredAt": "2026-10-23T08:08:33.283Z",
+  "measuredAt": "2026-10-23T17:21:40.014Z",
   "baseUrl": "http://127.0.0.1:18080",
-  "appImageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+  "appImageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
   "invalidCredentialField": {
     "route": "/api/connection-bindings",
     "status": 400
@@ -15,10 +15,10 @@
     "logChannelPresent": true
   },
   "digests": {
-    "errorResponse": "3c82630da254827aac5601480a527fdab6da494f6d98d123488f7e225f8d3c53",
-    "export": "f9f6ae85ad1f1fcf44472dc3fc69eb7b5a4210ebe32f6cf96ae81e921bcd5143",
-    "containerLogs": "5bfbe3650ff22052778133207169763d6e14f02a1a80d795c7607a0459c5ab79"
+    "errorResponse": "6c8d77d7c6bc870bad1362c7491d3b93e302e45ddfd5b7be740d7ff3b81ae10a",
+    "export": "4b9b5ea452cefcface91b9e3604291dbe002ce6c8d49a07c381cd1bce3fc537b",
+    "containerLogs": "b9747cfed71d5ec80cde2f277ad464ce6a9bd16dcb0b6e21736de7779dfb7bfa"
   },
-  "scannedLogBytes": 2373,
+  "scannedLogBytes": 2387,
   "verdict": "passed"
 }

@@ -2,18 +2,18 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A EQ-02 tool unavailable during live read",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T08:11:44.157Z",
+  "measuredAt": "2026-10-23T17:23:46.057Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
   ],
-  "appImageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-  "runnerImageId": "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36",
-  "candidateId": "fcdf7cbe-25bf-4ef2-8388-0cb7f290629e",
+  "appImageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+  "runnerImageId": "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9",
+  "candidateId": "5bfff1a4-c84b-47a1-b8af-7663ef52760b",
   "artifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
-  "snapshotId": "4adbeaa8-d1a0-46f3-b93d-4ad413915856",
-  "runId": "5f2edf97-135b-43f4-a072-4c8b6006561f",
+  "snapshotId": "c7d81d2b-e6fa-4e61-b76c-7bcb6b8e1970",
+  "runId": "5c2fb884-f56a-4d79-be5c-162dc7e66297",
   "runStatus": "succeeded",
   "diagnostic": "",
   "toolError": {

@@ -4,20 +4,20 @@
   "executionMode": "live-mock",
   "engine": "OpenCode 1.19.3 / deepseek-v4-flash",
   "businessBackend": "isolated PostgreSQL Mock; no business Tool was invoked",
-  "measuredAt": "2026-10-23T08:11:13.438Z",
+  "measuredAt": "2026-10-23T17:23:10.216Z",
   "composeProject": "agent-builder-td15-nf01",
   "base": "http://127.0.0.1:18080",
   "targetImageIds": [
-    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
   ],
-  "runnerContainer": "bccd6975abd9e94d6a6ff5552debe5a6d156a556d617163833e54daad8231771",
-  "jobId": "b3571999-62ae-4d23-9710-3548d00944ba",
-  "inputDigest": "ab930ecb2e3740d3694b801371145f68872b3282155b9c94bf7b43517e9cc028",
-  "baselineDigest": "d38c34e3d7eb51c62004d3ec37252ae6b3d76dd65f0aa8f3fef9689a75ee2cb3",
+  "runnerContainer": "27959ca35c1cc5c7eccc10348a0772a2f6113018b4758c9a328bbc2b4081030f",
+  "jobId": "05e0f084-1672-4433-8699-37d47d9a0fe1",
+  "inputDigest": "43082cb5d0db22adcdad2fadfc953dd03d5dfa0a68287aafd6a12f48990da4be",
+  "baselineDigest": "38c9d5727fb640d38f48c79884e4e373981e0332d894ae5a86fb401f211059a6",
   "cancelAccepted": true,
   "processBefore": [
-    "10001               1123310             1034557             51                  08:11               ?                   00:00:00            /app/node_modules/.pnpm/opencode-ai@1.19.3/node_modules/opencode-ai/bin/opencode.exe serve --hostname 127.0.0.1 --port 41299"
+    "10001               1911001             1841988             52                  17:23               ?                   00:00:00            /app/node_modules/.pnpm/opencode-ai@1.19.3/node_modules/opencode-ai/bin/opencode.exe serve --hostname 127.0.0.1 --port 38441"
   ],
   "processAfter": [],
   "finalStatus": "cancelled",

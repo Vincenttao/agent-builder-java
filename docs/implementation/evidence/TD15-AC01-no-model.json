@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "requirement": "TD-15/AC-01 Save and block Run without model connection",
   "executionMode": "isolated-live-docker",
-  "measuredAt": "2026-10-23T08:05:47.635Z",
+  "measuredAt": "2026-10-23T17:19:36.698Z",
   "composeProject": "agent-builder-td15-ac01",
   "model": "not_configured",
   "canSaveDraft": true,
@@ -10,14 +10,14 @@
   "blockerCodes": [
     "MODEL_NOT_CONFIGURED"
   ],
-  "draftId": "e9931ee0-0972-478e-a7b0-bab9884fd8ee",
+  "draftId": "b01179b1-ea74-4964-a656-6530665b65b1",
   "draftPersisted": true,
-  "snapshotId": "6b2692ae-af1f-4771-9af4-79543b66c39a",
+  "snapshotId": "17eb8e60-3a3a-4033-b87f-fa43fbbd5434",
   "runAttemptHttpStatus": 409,
   "runAttemptCode": "ENVIRONMENT_BLOCKED",
   "targetImageIds": [
-    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
   ],
   "verdict": "passed"
 }

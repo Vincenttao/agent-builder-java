@@ -1,0 +1,1249 @@
+{
+  "phase": "P0-B",
+  "binding": {
+    "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+    "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+    "testSetDigest": "4fd3c6cd83856e3d5ba2d441ef2b5ddb2520ee7f65a722e7efa9b20c65ad969d",
+    "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+  },
+  "status": "unverified",
+  "branches": [
+    {
+      "caseId": "AC-01",
+      "branchId": "save-without-model",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-01",
+      "branchId": "run-blocked",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-02",
+      "branchId": "guided-to-form",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-02",
+      "branchId": "form-to-guided",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-03",
+      "branchId": "write-confirmation-added",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-03",
+      "branchId": "resource-gap",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-03",
+      "branchId": "unrelated-fields-retained",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-04",
+      "branchId": "unknown-tool",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-04",
+      "branchId": "invalid-rail-parameter",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-04",
+      "branchId": "invalid-change-not-applied",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-05",
+      "branchId": "two-rails-loaded",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-05",
+      "branchId": "two-rails-triggered",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-06",
+      "branchId": "conflicting-rails",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-06",
+      "branchId": "unsupported-agent",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-07",
+      "branchId": "http-tool",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-07",
+      "branchId": "mcp-tool",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-08",
+      "branchId": "facts",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-08",
+      "branchId": "recommendations",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-08",
+      "branchId": "sources",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-08",
+      "branchId": "output-schema",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-09",
+      "branchId": "clarification",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-09",
+      "branchId": "zero-tool-calls",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-10",
+      "branchId": "refuse-zero-writes",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-10",
+      "branchId": "cancel-preserves-analysis",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-11",
+      "branchId": "sequential-duplicate",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-11",
+      "branchId": "concurrent-duplicate",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-12",
+      "branchId": "write-response-lost",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-12",
+      "branchId": "reconcile-no-replay",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-13",
+      "branchId": "refresh",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-13",
+      "branchId": "sse-reconnect",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-13",
+      "branchId": "duplicate-events",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-14",
+      "branchId": "old-run-pinned",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-14",
+      "branchId": "new-snapshot",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-14",
+      "branchId": "old-test-invalid",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-15",
+      "branchId": "startup-failure-keeps-release",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-16",
+      "branchId": "new-request-rolled-back",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-16",
+      "branchId": "history-unchanged",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-17",
+      "branchId": "interleaved-sessions",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-18",
+      "branchId": "export-no-secrets",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-18",
+      "branchId": "fresh-directory-import",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-18",
+      "branchId": "rebind-required",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-19",
+      "branchId": "cancel-accepted-before-terminal",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-19",
+      "branchId": "unknown-write-reconciled",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-20",
+      "branchId": "simulation-not-publishable",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-21",
+      "branchId": "independent-role-records",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-21",
+      "branchId": "shared-confirmed-baseline",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "separate-component-request",
+      "status": "unverified",
+      "reasons": [
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "empty-tool-source",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "build",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "actual-http-mapping",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "separate-component-request",
+      "status": "unverified",
+      "reasons": [
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "empty-skill-source",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "loaded",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "model-trigger",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-23",
+      "branchId": "directory",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-23",
+      "branchId": "dependency",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-23",
+      "branchId": "command",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-23",
+      "branchId": "connection",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-24",
+      "branchId": "dev-copy-changed",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-24",
+      "branchId": "tester-write-denied",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-24",
+      "branchId": "digest-before",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-24",
+      "branchId": "digest-after",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-25",
+      "branchId": "developer-deletes-case",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-25",
+      "branchId": "tester-lowers-expectation",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-26",
+      "branchId": "defect-observed",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-26",
+      "branchId": "new-candidate",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-26",
+      "branchId": "same-assertion",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-26",
+      "branchId": "failure-history-retained",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-27",
+      "branchId": "regression-without-model",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-28",
+      "branchId": "false-success-external-mismatch",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-28",
+      "branchId": "environment-unavailable",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-29a",
+      "branchId": "budget",
+      "status": "unverified",
+      "reasons": [
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-29a",
+      "branchId": "cancel-child-process",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-29a",
+      "branchId": "restart-no-replay",
+      "status": "unverified",
+      "reasons": [
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-29a",
+      "branchId": "history-retained",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-30",
+      "branchId": "same-seed",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-30",
+      "branchId": "independent-instances",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-30",
+      "branchId": "active-run-reset-denied",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-30",
+      "branchId": "unknown-write-reset-denied",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-30",
+      "branchId": "history-after-reset",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-31",
+      "branchId": "generate-empty-assets",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-31",
+      "branchId": "load-and-query",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-32",
+      "branchId": "app-balance",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-32",
+      "branchId": "app-products",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-32",
+      "branchId": "request-run-version",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-33a",
+      "branchId": "cross-account",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-33a",
+      "branchId": "cross-identity-request",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-36a",
+      "branchId": "duplicate-read",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-36a",
+      "branchId": "refresh",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-36a",
+      "branchId": "same-id-different-input",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-36a",
+      "branchId": "retry-after-release-switch",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-38a",
+      "branchId": "contract-change",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-38a",
+      "branchId": "old-report-invalid",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-38a",
+      "branchId": "repair-and-retest",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-38b",
+      "branchId": "seed-change",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-38b",
+      "branchId": "fault-change",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-38b",
+      "branchId": "old-report-retained",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39a",
+      "branchId": "compatible-independent-instance",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39a",
+      "branchId": "readiness",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39a",
+      "branchId": "readonly-smoke",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39a",
+      "branchId": "switch-after-ready",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39b",
+      "branchId": "service-change",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39b",
+      "branchId": "connection-change",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39b",
+      "branchId": "policy-change",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-39b",
+      "branchId": "uncovered-seed",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-40a",
+      "branchId": "tool-skill-export",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-40a",
+      "branchId": "no-credentials",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-40a",
+      "branchId": "digest",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-40a",
+      "branchId": "fresh-import-rebind",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-40a",
+      "branchId": "reverify",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41a",
+      "branchId": "first-candidate-no-release",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41a",
+      "branchId": "actual-artifact",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41a",
+      "branchId": "release-pointer-unchanged",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41b",
+      "branchId": "parallel-v1-v2",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41b",
+      "branchId": "actual-artifact-run-report",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41c",
+      "branchId": "wrong-auth",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41c",
+      "branchId": "expired-auth",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41c",
+      "branchId": "cross-deployment-request",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41c",
+      "branchId": "cross-deployment-session",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41c",
+      "branchId": "not-ready",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41c",
+      "branchId": "stopped",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-41c",
+      "branchId": "history-readable",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42a",
+      "branchId": "trusted-local-visible",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-42a",
+      "branchId": "production-connection-denied",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "AC-42b",
+      "branchId": "spoofed-identity",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42b",
+      "branchId": "unregistered-operation",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42b",
+      "branchId": "arbitrary-url",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42b",
+      "branchId": "mock-admin",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42b",
+      "branchId": "normal-read",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42c",
+      "branchId": "generated-proxy-template",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42c",
+      "branchId": "no-admin-credential",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "AC-42c",
+      "branchId": "unauthenticated-mock-denied",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "EQ-01",
+      "branchId": "empty-retrieval",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "EQ-02",
+      "branchId": "tool-unavailable",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "EQ-02",
+      "branchId": "read-timeout",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "EQ-03",
+      "branchId": "changed-parameters",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "EQ-03",
+      "branchId": "expired",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "TC-001a",
+      "branchId": "scenario",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-001b",
+      "branchId": "scenario",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-002a",
+      "branchId": "list",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-002a",
+      "branchId": "details",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-002c",
+      "branchId": "scenario",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-003a",
+      "branchId": "scenario",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-003c",
+      "branchId": "scenario",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-007c",
+      "branchId": "scenario",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "TC-007d",
+      "branchId": "scenario",
+      "status": "unverified",
+      "reasons": [
+        "TEST_NOT_IMPLEMENTED",
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "NF-01",
+      "branchId": "two-sessions",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-01",
+      "branchId": "refresh-reconnect",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-01",
+      "branchId": "restart-snapshots-events",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-01",
+      "branchId": "no-replay-unknown-reconcile",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-02",
+      "branchId": "sentinel-logs",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-02",
+      "branchId": "sentinel-errors",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-02",
+      "branchId": "sentinel-export",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-03",
+      "branchId": "reference-workload",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-03",
+      "branchId": "save-p95",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-03",
+      "branchId": "list-p95",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-03",
+      "branchId": "error-rate",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-04",
+      "branchId": "iteration-limit",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-04",
+      "branchId": "timeout",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-04",
+      "branchId": "error-classification",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-04",
+      "branchId": "event-retention",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-05",
+      "branchId": "fresh-directory-start",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-05",
+      "branchId": "export-import",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-05",
+      "branchId": "configurable-ports",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-05",
+      "branchId": "rebind",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-06",
+      "branchId": "runner-constraints",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-06",
+      "branchId": "cancel",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-06",
+      "branchId": "immutable-candidate-report",
+      "status": "unverified",
+      "reasons": [
+        "RESULT_MISSING"
+      ]
+    },
+    {
+      "caseId": "NF-06",
+      "branchId": "independent-environments",
+      "status": "passed",
+      "reasons": []
+    },
+    {
+      "caseId": "NF-06",
+      "branchId": "evaluation-records",
+      "status": "unverified",
+      "reasons": [
+        "RESULT_MISSING"
+      ]
+    }
+  ],
+  "errors": []
+}

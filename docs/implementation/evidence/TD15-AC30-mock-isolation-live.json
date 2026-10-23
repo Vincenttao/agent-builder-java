@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-B AC-30 deterministic seed, independent Mock instances, reset guards and evidence retention",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T08:41:40.842Z",
+  "measuredAt": "2026-10-23T17:51:24.805Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
   ],
-  "mockImageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-  "artifactDigest": "99785dfe3233b68650fa62789f15d8c05ea1364075e9279b343a7087aa020f35",
-  "compatibilityKey": "04e532d57a6d3b855f6111e41f651d1898257de69204ea49b0511bfd92a675f6",
+  "mockImageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+  "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+  "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e",
   "environments": [
-    "bcb83bba-74e5-4e74-ac71-dc52e9feddf1",
-    "8a2ed3f6-1bd8-4c7e-b125-81b62036a1d8",
-    "59c5fe26-d1c6-43d7-a759-d18c6c922613"
+    "b69e6b06-6a9a-44a6-9cc3-31ab2630aeca",
+    "5cb47d06-db59-4742-b3c0-d7e8e942c000",
+    "3f9ee183-2b9e-4f59-8ae2-34f0aa7291c1"
   ],
   "seed": "enterprise-default@1",
   "assertions": {

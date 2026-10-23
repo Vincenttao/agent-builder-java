@@ -83,9 +83,13 @@ assert.ok(typeof ac01.composeProject === 'string' && ac01.composeProject.startsW
 assert.deepEqual(ac01.targetImageIds, currentImages, 'AC01_EVIDENCE_TARGET_CHANGED');
 assert.equal(ac02.verdict, 'passed');
 assert.equal(ac02.composeProject, project);
+assert.equal(ac02.browserComposeProject, 'agent-builder-td15-ac01', 'AC02_BROWSER_PROJECT_MISSING');
+assert.equal(ac02.servedAppImageId, currentImages[0], 'AC02_SERVED_APP_TARGET_CHANGED');
 assert.deepEqual(ac02.targetImageIds, currentImages, 'AC02_EVIDENCE_TARGET_CHANGED');
 assert.equal(ac03.verdict, 'passed');
 assert.equal(ac03.composeProject, project);
+assert.equal(ac03.browserComposeProject, 'agent-builder-td15-ac01', 'AC03_BROWSER_PROJECT_MISSING');
+assert.equal(ac03.servedAppImageId, currentImages[0], 'AC03_SERVED_APP_TARGET_CHANGED');
 assert.deepEqual(ac03.targetImageIds, currentImages, 'AC03_EVIDENCE_TARGET_CHANGED');
 assert.equal(ac04.verdict, 'passed');
 assert.equal(ac04.composeProject, project);

@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-42a trusted-local disclosure and production connection denial",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T07:44:28.447Z",
+  "measuredAt": "2026-10-23T17:13:36.042Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
   ],
-  "appImageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-  "runnerImageId": "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36",
-  "validationId": "24877842-0ddf-4557-9dee-6baf64b9f89f",
-  "candidateId": "fcdf7cbe-25bf-4ef2-8388-0cb7f290629e",
+  "appImageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+  "runnerImageId": "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9",
+  "validationId": "38bb3417-8125-472b-9c75-1c6609d9353d",
+  "candidateId": "5bfff1a4-c84b-47a1-b8af-7663ef52760b",
   "observed": {
     "executionMode": "trusted-local",
     "sandboxEnabled": false,

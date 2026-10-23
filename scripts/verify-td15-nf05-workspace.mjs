@@ -27,11 +27,13 @@ const targetEnv = {
   DEEPSEEK_MODEL: local.DEEPSEEK_MODEL ?? 'deepseek-v4-flash', APP_PORT: String(targetPort),
   APP_ORIGIN: targetBase
 };
+const sensitiveValues = Object.entries(targetEnv).filter(([key]) => /TOKEN|KEY|PASSWORD/.test(key)).map(([, value]) => value);
 const environment = (base, authOrigin = base) => ({ origin: base, authOrigin, cookie: '', csrf: '', readHeaders: {}, writeHeaders: {} });
 let source = environment(sourceBase, sourceOrigin);
 let target = environment(targetBase, targetBase);
 let targetCreated = false;
 let deployment;
+let sourceRunnerPausedAt;
 let result = { schemaVersion: 1, requirement: 'TD-15/NF-05 NFR-08 fresh workspace restore', executionMode: 'isolated-live-docker', sourceBase, targetBase, composeProject: project, startedAt: new Date().toISOString() };
 
 function compose(args) {
@@ -42,6 +44,20 @@ function compose(args) {
     const output = [error.stdout, error.stderr].map(value => value?.toString().trim()).filter(Boolean).join('\n');
     throw new Error(`NF05_COMPOSE_FAILED:${args.join(' ')}${output ? `\n${output}` : ''}`, { cause: error });
   }
+}
+function sourceRunner(action) {
+  return execFileSync('docker', [action, 'agent-builder-td15-nf01-runner-1'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+}
+async function waitSourceRunnerHealthy(timeoutMs = 360000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const health = execFileSync('docker', ['inspect', '--format', '{{.State.Health.Status}}', 'agent-builder-td15-nf01-runner-1'], { encoding: 'utf8' }).trim();
+      if (health === 'healthy') return Date.now();
+    } catch {}
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  throw new Error('NF05_SOURCE_RUNNER_RECOVERY_TIMEOUT');
 }
 async function login(ctx, token) {
   const response = await fetch(`${ctx.origin}/api/auth/session`, { method: 'POST', headers: { origin: ctx.authOrigin, 'content-type': 'application/json' }, body: JSON.stringify({ token }) });
@@ -98,6 +114,7 @@ try {
   assert.ok(archive.automation.jobs.some(job => job.id === sourceJob.id && job.files.length > 0), 'EXPORTED_GENERATED_SOURCE_MISSING');
   assert.ok(archive.automation.candidates.some(candidate => candidate.id === sourceCandidate.id && candidate.generated), `EXPORTED_GENERATED_CANDIDATE_MISSING:${JSON.stringify({ requested: sourceCandidate, exported: archive.automation.candidates })}`);
   const knownSecrets = Object.values(local).filter(value => typeof value === 'string' && value.length >= 24 && /TOKEN|KEY|PASSWORD/.test(value));
+  sensitiveValues.push(...knownSecrets);
   const serialized = JSON.stringify(archive);
   const secretAbsent = knownSecrets.every(secret => !serialized.includes(secret));
   assert.ok(secretAbsent, 'PROJECT_EXPORT_CONTAINS_LOCAL_CREDENTIAL');
@@ -109,6 +126,9 @@ try {
   result.credentialsAbsent = secretAbsent;
 
   result.projectPackageSha256 = createHash('sha256').update(JSON.stringify(archive)).digest('hex');
+  sourceRunnerPausedAt = Date.now();
+  sourceRunner('stop');
+  result.sourceRunnerPausedForTargetBuild = true;
   targetCreated = true;
   compose(['up', '-d', '--no-build']);
   await waitReady();
@@ -209,9 +229,32 @@ try {
   if (deployment && target.cookie) await fetch(`${targetBase}/api/test-deployments/${deployment.id}/stop`, { method: 'POST', headers: target.writeHeaders, body: '{}' }).catch(() => {});
   if (target.cookie) await fetch(`${targetBase}/api/auth/session`, { method: 'DELETE', headers: target.writeHeaders }).catch(() => {});
   if (source.cookie) await fetch(`${sourceBase}/api/auth/session`, { method: 'DELETE', headers: source.writeHeaders }).catch(() => {});
+  if (targetCreated && result.verdict !== 'passed') {
+    try {
+      const ids = compose(['ps', '-q']).split(/\r?\n/).filter(Boolean);
+      result.targetContainerLogs = ids.map(id => {
+        let tail = execFileSync('docker', ['logs', '--tail', '160', id], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).slice(-12000);
+        for (const secret of sensitiveValues) if (secret) tail = tail.replaceAll(secret, '[REDACTED]');
+        tail = tail.replace(/((?:api[_-]?key|token|password)\s*[:=]\s*|authorization\s*[:=]\s*(?:Bearer\s+)?)[^\s,"]+/gi, '$1[REDACTED]');
+        return { id: id.slice(0, 12), service: execFileSync('docker', ['inspect', '--format', '{{.Config.Labels.com.docker.compose.service}}', id], { encoding: 'utf8' }).trim(), tail };
+      });
+    } catch (error) { result.targetLogCaptureFailure = String(error); }
+  }
   if (targetCreated) {
     try { compose(['down', '-v', '--remove-orphans']); result.targetStackRemoved = true; }
     catch (error) { result.targetStackRemoved = false; result.cleanupFailure = String(error); }
+  }
+  if (sourceRunnerPausedAt) {
+    try {
+      sourceRunner('start');
+      const recoveredAt = await waitSourceRunnerHealthy();
+      result.sourceRunnerRecoveryMs = recoveredAt - sourceRunnerPausedAt;
+      result.sourceRunnerRestoredHealthy = true;
+    } catch (error) {
+      result.sourceRunnerRestoredHealthy = false;
+      result.sourceRunnerRecoveryFailure = String(error?.stack ?? error);
+      result.verdict = 'failed';
+    }
   }
   await rm(envPath, { force: true });
   if (targetCreated && result.targetStackRemoved !== true) result.verdict = 'failed';

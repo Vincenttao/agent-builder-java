@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-19 accepted cancellation and uncertain Mock write reconciliation",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T08:19:33.681Z",
+  "measuredAt": "2026-10-23T17:31:56.227Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
-    "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36"
+    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
+    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
   ],
-  "draftId": "65bc0b05-9548-4e70-b80f-1ba63ba212ee",
-  "snapshotId": "6b41c232-35e7-4515-b546-2af4d36cfb4f",
-  "baselineId": "673e4ea4-c454-4354-b9a2-8eb247e6bb1d",
-  "candidateId": "767a17d6-6460-4125-88ca-20342d70a961",
-  "validationId": "6eea242d-5329-486a-a9bd-5f38d8e9ada9",
-  "runId": "6937470b-9a3f-4d76-9b23-805a57ec0e82",
-  "testDeploymentId": "199721f7-c808-4144-8703-91e0e629e4a1",
+  "draftId": "d56bf84e-7221-474a-af4b-0ef4c659f80d",
+  "snapshotId": "718f17c8-c230-42a8-b69d-2eeb047302db",
+  "baselineId": "cdd943d9-ff46-40c9-aa97-10d63945e639",
+  "candidateId": "c604bd29-afb3-4705-86fd-b70ffcb93568",
+  "validationId": "b9722332-0761-44ef-8442-aa5cffc12aff",
+  "runId": "a1ee2500-0f95-4a11-84ad-7ddaab342d16",
+  "testDeploymentId": "380bb134-d0cd-4b6f-94e9-59597348f1dd",
   "beforeCancel": {
     "runStatus": "running",
     "actionStatuses": [
@@ -46,9 +46,9 @@
         "actorId": "U1001",
         "priority": "normal",
         "createdAt": "2026-10-21T08:00:00.000Z",
-        "description": "PUMP-001 状态告警（warning），温度 86°C 偏高，申请现场检查：确认润滑、冷却系统与运行负载，并加强温度监测。",
+        "description": "PUMP-001 状态为 warning，温度 86°C 偏高，申请现场检查（润滑、冷却、负载及温度趋势）",
         "equipmentId": "PUMP-001",
-        "workOrderId": "907a2916-d22b-40a6-9c15-8275560d62df"
+        "workOrderId": "230a6ff8-06e4-409a-a0cd-e86e0eb75af0"
       },
       "status": 200
     },
@@ -91,7 +91,7 @@
     "mockWriteCalls": 1,
     "workOrders": [
       {
-        "workOrderId": "907a2916-d22b-40a6-9c15-8275560d62df",
+        "workOrderId": "230a6ff8-06e4-409a-a0cd-e86e0eb75af0",
         "status": "created",
         "actorId": "U1001"
       }

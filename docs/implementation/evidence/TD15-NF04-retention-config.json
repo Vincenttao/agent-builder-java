@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "requirement": "TD-15/NF-04 configured container log retention",
   "executionMode": "isolated-live-docker",
-  "measuredAt": "2026-10-23T08:10:51.122Z",
+  "measuredAt": "2026-10-23T17:22:42.337Z",
   "composeProject": "agent-builder-td15-nf01",
   "policy": {
     "driver": "json-file",
@@ -14,7 +14,7 @@
     {
       "service": "app",
       "status": "running",
-      "imageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+      "imageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
       "driver": "json-file",
       "options": {
         "max-file": "3",
@@ -24,7 +24,7 @@
     {
       "service": "migrate",
       "status": "exited",
-      "imageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+      "imageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
       "driver": "json-file",
       "options": {
         "max-file": "3",
@@ -34,7 +34,7 @@
     {
       "service": "mock-services",
       "status": "running",
-      "imageId": "sha256:ff6a983717690800c550aab825f82a01cf361935ddd6ab782617eb27b54ef256",
+      "imageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
       "driver": "json-file",
       "options": {
         "max-file": "3",
@@ -54,7 +54,7 @@
     {
       "service": "runner",
       "status": "running",
-      "imageId": "sha256:b412d6decab76629735dd1b2d10f5cd8cf8ff33742fad8334e0d58f912e3aa36",
+      "imageId": "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9",
       "driver": "json-file",
       "options": {
         "max-file": "3",

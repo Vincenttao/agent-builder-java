@@ -46,8 +46,14 @@ test('AC-02 guided and form modes keep one requirement state', async ({ page }) 
   const containers = execFileSync('docker', ['compose', '-p', project, 'ps', '-q', 'app', 'runner'], { encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean);
   expect(containers).toHaveLength(2);
   const targetImageIds = execFileSync('docker', ['inspect', '--format', '{{.Image}}', ...containers], { encoding: 'utf8' }).trim().split(/\r?\n/);
+  const browserProject = process.env.TD15_BROWSER_COMPOSE_PROJECT ?? 'agent-builder-td15-ac01';
+  const browserApp = execFileSync('docker', ['compose', '--env-file', '.env.local', '-p', browserProject, 'ps', '-q', 'app'], { encoding: 'utf8' }).trim();
+  expect(browserApp).toBeTruthy();
+  const servedAppImageId = execFileSync('docker', ['inspect', '--format', '{{.Image}}', browserApp], { encoding: 'utf8' }).trim();
+  expect(servedAppImageId).toBe(targetImageIds[0]);
   const evidence = { schemaVersion: 1, requirement: 'TD-15/AC-02 Requirement fields and confirmation state survive guided/form switches and reload',
     executionMode: 'live-browser-isolated-docker', measuredAt: new Date().toISOString(), base, composeProject: project, draftName: name,
+    browserComposeProject: browserProject, servedAppImageId,
     assertions: { guidedToFormPreservedValues: true, guidedToFormPreservedConfirmation: true, formToGuidedPreservedEdits: true,
       editedFieldConfirmationReset: true, savedDraftSurvivedReload: true }, targetImageIds, verdict: 'passed' };
   await mkdir('docs/implementation/evidence', { recursive: true });
@@ -78,8 +84,14 @@ test('AC-03 changing a read-only goal to work-order creation exposes confirmatio
   const containers = execFileSync('docker', ['compose', '-p', project, 'ps', '-q', 'app', 'runner'], { encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean);
   expect(containers).toHaveLength(2);
   const targetImageIds = execFileSync('docker', ['inspect', '--format', '{{.Image}}', ...containers], { encoding: 'utf8' }).trim().split(/\r?\n/);
+  const browserProject = process.env.TD15_BROWSER_COMPOSE_PROJECT ?? 'agent-builder-td15-ac01';
+  const browserApp = execFileSync('docker', ['compose', '--env-file', '.env.local', '-p', browserProject, 'ps', '-q', 'app'], { encoding: 'utf8' }).trim();
+  expect(browserApp).toBeTruthy();
+  const servedAppImageId = execFileSync('docker', ['inspect', '--format', '{{.Image}}', browserApp], { encoding: 'utf8' }).trim();
+  expect(servedAppImageId).toBe(targetImageIds[0]);
   const evidence = { schemaVersion: 1, requirement: 'TD-15/AC-03 Write intent adds confirmation and resource requirements while retaining unrelated requirement fields',
     executionMode: 'live-browser-isolated-docker', measuredAt: new Date().toISOString(), base: process.env.APP_ORIGIN, composeProject: project,
+    browserComposeProject: browserProject, servedAppImageId,
     targetImageIds, assertions: { confirmationRequirementShown: true, missingWriteInterfaceShown: true, audienceRetained: true, outputRetained: true, hintSurvivedFormSwitch: true },
     verdict: 'passed', branches: ['write-confirmation-added', 'resource-gap', 'unrelated-fields-retained'].map(branchId => ({ caseId: 'AC-03', branchId, status: 'passed' })) };
   await mkdir('docs/implementation/evidence', { recursive: true });
