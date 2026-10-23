@@ -40,6 +40,9 @@ describe('reviewed generation profile',()=>{
     expect(wealthQueryToolContract).toContain('without placing null in List.of');
     expect(wealthQueryToolContract).toContain('Arrays.asList');
     expect(wealthQueryEngineeringSkills.developer).toContain('Arrays.asList');
+    expect(wealthQueryToolContract).toContain('compare their contents with equals()');
+    expect(wealthQueryEngineeringSkills.developer).toContain('compare contents with equals()');
+    expect(wealthQueryEngineeringSkills.developer).toContain('Do not emit debug output');
   });
   it('rejects finance profile drift, extra scope, dependencies and production connections',()=>{
     const finance={...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]};
