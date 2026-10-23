@@ -5,7 +5,7 @@ import {join,resolve} from 'node:path';
 import {createServer} from 'node:net';
 import {startManagedProcess} from '../processes/supervisor.js';
 import {generationProfile,PolicyError,type GenerationProfile} from './profile.js';
-export interface EngineOptions {root:string;executable:string;modelKey:string;mcpBase:string;tokens:{developer:string;tester:string};maxTaskMs?:number;profile?:GenerationProfile}
+export interface EngineOptions {root:string;executable:string;modelKey:string;mcpBase:string;tokens:{developer:string;tester:string};maxTaskMs?:number;apiTimeoutMs?:number;profile?:GenerationProfile}
 export interface RoleResult {sessionId:string;role:EngineeringRole;status:'completed'|'failed'|'cancelled';publicParts:unknown[];usage:unknown;error?:string}
 export class OpenCodeEngine {
  private process:ReturnType<typeof startManagedProcess>|undefined;private base='';private version='unknown';private stopped=false;private stopping:Promise<void>|undefined;
@@ -14,7 +14,7 @@ export class OpenCodeEngine {
  private directory(role:EngineeringRole){return resolve(this.options.root,role);}
  private async api<T>(path:string,method='GET',body?:unknown,role?:EngineeringRole):Promise<T>{
   const url=new URL(this.base+path);if(role)url.searchParams.set('directory',this.directory(role));
-  const response=await fetch(url,{method,redirect:'error',signal:AbortSignal.timeout(15000),headers:{authorization:`Basic ${Buffer.from('opencode:'+this.password).toString('base64')}`,'content-type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  const response=await fetch(url,{method,redirect:'error',signal:AbortSignal.timeout(this.options.apiTimeoutMs??60_000),headers:{authorization:`Basic ${Buffer.from('opencode:'+this.password).toString('base64')}`,'content-type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});
   if(!response.ok)throw new PolicyError('ENGINE_REQUEST_FAILED');if(response.status===204)return undefined as T;return response.json() as Promise<T>;
  }
  async start():Promise<void>{
