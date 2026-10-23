@@ -1,5 +1,5 @@
 export const uuidParamsSchema = { type: 'object', additionalProperties: false, required: ['id'], properties: { id: { type: 'string', format: 'uuid' } } } as const;
-const fields = { type: 'object', maxProperties: 30, propertyNames: { pattern: '^[a-zA-Z][a-zA-Z0-9_]{0,63}$' }, additionalProperties: { enum: ['string', 'integer', 'boolean'] } } as const;
+const fields = (types: readonly string[]) => ({ type: 'object', maxProperties: 30, propertyNames: { pattern: '^[a-zA-Z][a-zA-Z0-9_]{0,63}$' }, additionalProperties: { enum: types } }) as const;
 export const runtimeSpecSchema = {
   type: 'object', additionalProperties: false, required: ['agent', 'tools'], properties: {
     agent: { type: 'object', additionalProperties: false, required: ['id', 'type', 'systemPrompt', 'maxIterations', 'rails'], properties: {
@@ -10,7 +10,7 @@ export const runtimeSpecSchema = {
     tools: { type: 'array', maxItems: 20, items: { type: 'object', additionalProperties: false,
       required: ['name', 'description', 'operationId', 'inputFields', 'responseFields'], properties: {
         name: { type: 'string', pattern: '^[a-z][a-z0-9_]{0,63}$' }, description: { type: 'string', maxLength: 1000 },
-        operationId: { type: 'string', pattern: '^[a-z][a-zA-Z0-9-]{0,63}$' }, inputFields: fields, responseFields: fields,
+        operationId: { type: 'string', pattern: '^[a-z][a-zA-Z0-9-]{0,63}$' }, inputFields: fields(['string', 'integer', 'boolean']), responseFields: fields(['string', 'integer', 'boolean', 'array']),
         protocol: { enum: ['http', 'mcp'] }, connectionRef: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,63}@[1-9][0-9]*$' },
         remoteToolName: { type: 'string', pattern: '^[a-zA-Z0-9_.-]{1,128}$' }, toolVersion: { type: 'string', pattern: '^[a-zA-Z0-9_.-]{1,128}@[1-9][0-9]*$' }
       }, allOf: [{ if: { properties: { protocol: { const: 'mcp' } }, required: ['protocol'] }, then: {

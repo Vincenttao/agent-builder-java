@@ -12,9 +12,9 @@ export class OpenCodeEngine {
  private readonly password=randomBytes(32).toString('hex');private active:{role:EngineeringRole;sessionId:string}|undefined;
  constructor(private readonly options:EngineOptions){}
  private directory(role:EngineeringRole){return resolve(this.options.root,role);}
- private async api<T>(path:string,method='GET',body?:unknown,role?:EngineeringRole):Promise<T>{
+ private async api<T>(path:string,method='GET',body?:unknown,role?:EngineeringRole,timeoutMs=this.options.apiTimeoutMs??60_000):Promise<T>{
   const url=new URL(this.base+path);if(role)url.searchParams.set('directory',this.directory(role));
-  const response=await fetch(url,{method,redirect:'error',signal:AbortSignal.timeout(this.options.apiTimeoutMs??60_000),headers:{authorization:`Basic ${Buffer.from('opencode:'+this.password).toString('base64')}`,'content-type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  const response=await fetch(url,{method,redirect:'error',signal:AbortSignal.timeout(timeoutMs),headers:{authorization:`Basic ${Buffer.from('opencode:'+this.password).toString('base64')}`,'content-type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});
   if(!response.ok)throw new PolicyError('ENGINE_REQUEST_FAILED');if(response.status===204)return undefined as T;return response.json() as Promise<T>;
  }
  async start():Promise<void>{
@@ -30,18 +30,20 @@ export class OpenCodeEngine {
   }
   const listener=createServer();await new Promise<void>(r=>listener.listen(0,'127.0.0.1',r));const address=listener.address();if(!address||typeof address==='string')throw new Error('ENGINE_PORT_UNAVAILABLE');const port=address.port;await new Promise<void>(r=>listener.close(()=>r()));this.base=`http://127.0.0.1:${port}`;
   if(this.stopped)throw new PolicyError('ENGINE_STOPPED');
+  const startupOutput:string[]=[];
   this.process=startManagedProcess({executable:this.options.executable,args:['serve','--hostname','127.0.0.1','--port',String(port)],cwd:resolve(this.options.root),
    env:{DEEPSEEK_API_KEY:this.options.modelKey,OPENCODE_SERVER_PASSWORD:this.password,OPENCODE_CONFIG:configPath,
     OPENCODE_CONFIG_CONTENT:JSON.stringify({permission,autoupdate:false}),XDG_CONFIG_HOME:join(control,'engine-config'),XDG_DATA_HOME:join(control,'engine-data'),XDG_CACHE_HOME:resolve(this.options.root,'..','engine-cache'),
     BUILDER_DEVELOPER_MCP_TOKEN:this.options.tokens.developer,BUILDER_TESTER_MCP_TOKEN:this.options.tokens.tester},
-   secrets:[this.options.modelKey,this.password,...Object.values(this.options.tokens)],onLine:()=>{}
+   secrets:[this.options.modelKey,this.password,...Object.values(this.options.tokens)],onLine:(line,stream)=>{startupOutput.push(`${stream}: ${line}`);if(startupOutput.length>200)startupOutput.shift();}
   });
   const deadline=Date.now()+45000;
   while(Date.now()<deadline&&!this.stopped){
    if(['failed','exited','stopped'].includes(this.process.state()))throw new PolicyError('ENGINE_START_FAILED');
-   try{const health=await this.api<{healthy:boolean;version:string}>('/global/health');if(health.healthy){this.version=health.version;if(this.version!==profile.engineVersion)throw new PolicyError('ENGINE_VERSION_MISMATCH');return;}}catch(error){if(error instanceof PolicyError&&error.code==='ENGINE_VERSION_MISMATCH')throw error;}
+   try{const health=await this.api<{healthy:boolean;version:string}>('/global/health','GET',undefined,undefined,Math.min(1_000,this.options.apiTimeoutMs??60_000));if(health.healthy){this.version=health.version;if(this.version!==profile.engineVersion)throw new PolicyError('ENGINE_VERSION_MISMATCH');return;}}catch(error){if(error instanceof PolicyError&&error.code==='ENGINE_VERSION_MISMATCH')throw error;}
    await new Promise(r=>setTimeout(r,200));
   }
+  if(startupOutput.length)await writeFile(join(control,'opencode-startup.log'),startupOutput.join('\n'));
   await this.stop();throw new PolicyError('ENGINE_START_TIMEOUT');
  }
  private safe<T>(value:T):T{let text=JSON.stringify(value);for(const secret of [this.options.modelKey,this.password,...Object.values(this.options.tokens)])if(secret)text=text.replaceAll(secret,'[REDACTED]');return JSON.parse(text) as T;}

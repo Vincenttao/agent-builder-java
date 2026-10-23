@@ -40,6 +40,21 @@ it('accepts camel-case operation IDs used by generated enterprise HTTP Tools',as
  }finally{await journal.drain();await app.close();}
 });
 
+it('accepts array-valued HTTP response fields while keeping input fields scalar',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'runner-array-response-'));const id=randomUUID();const token='runner-control-test-token-32-characters';
+ const runtime={artifactDigest:'a'.repeat(64),bootId:randomUUID(),start:async(_id:string,spec:unknown)=>({status:'ready',spec}),get:async()=>({status:'ready'}),
+  query:async()=>({result:{}}),events:async()=>[],cancelSession:async()=>({status:'cancelled' as const}),stop:async()=>({status:'stopped'}),retire:async()=>({status:'stopped' as const})};
+ const journal=new ExecutionJournal(root,runtime);await journal.initialize();const app=createRunnerApp({token,runtime:runtime as unknown as Parameters<typeof createRunnerApp>[0]['runtime'],journal,modelConfigured:true});
+ const headers={authorization:`Bearer ${token}`};const spec={agent:{id:'wealth-products',type:'DeepAgent',systemPrompt:'read only',maxIterations:2,rails:['tool-allowlist']},tools:[
+  {name:'list_wealth_products',description:'list products',operationId:'listWealthProducts',inputFields:{},responseFields:{items:'array',version:'string'},protocol:'http',connectionRef:'enterprise-mock-http@1',toolVersion:'wealth-products-http@1'}]};
+ try{
+  const response=await app.inject({method:'PUT',url:`/deployments/${id}`,headers,payload:{artifactDigest:'a'.repeat(64),spec}});
+  expect(response.statusCode).toBe(201);
+  const invalid=await app.inject({method:'PUT',url:`/deployments/${randomUUID()}`,headers,payload:{artifactDigest:'a'.repeat(64),spec:{...spec,tools:[{...spec.tools[0],inputFields:{ids:'array'}}]}}});
+  expect(invalid.statusCode).toBe(400);
+ }finally{await journal.drain();await app.close();}
+});
+
 it('rejects deployment stop while any session still has an active execution', async () => {
   let finish!: (value: unknown) => void; let stops = 0; let called = false;
   const id = randomUUID(); const token = 'runner-control-test-token-32-characters'; const root = await mkdtemp(join(tmpdir(), 'runner-shared-stop-'));
