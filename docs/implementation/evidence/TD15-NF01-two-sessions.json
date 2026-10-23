@@ -2,29 +2,30 @@
   "schemaVersion": 1,
   "requirement": "TD-15/NF-01 interleaved actors with stateful generated Rail",
   "executionMode": "isolated-live-docker",
-  "measuredAt": "2026-10-23T09:49:11.087Z",
+  "measuredAt": "2026-10-23T21:33:15.024Z",
   "composeProject": "agent-builder-td15-nf01",
-  "draftId": "5832ed72-edf8-4668-a2d6-eab85b7e46f1",
-  "snapshotId": "893b7879-2017-49df-a976-6f24fa4f69df",
-  "developmentJobId": "2a266f69-4915-4597-9997-572934b9a045",
-  "bundleDigest": "5acf5cae5af15c65be7685795be3532220f6f632aac55dccc5782ab6850f1ac4",
-  "candidateId": "dda5ba4a-df48-4b0d-b4af-9b94a76f38a3",
-  "candidateArtifactDigest": "6b4764ae68bc046780c32c501777e891c4d5c1d054b20685056d8f0fedae73ab",
-  "testDeploymentId": "881f7bda-1f9f-4727-861d-bddf9e327cde",
-  "environmentId": "a4123f3b-2b8b-41cf-8e65-2b67eaa1d55f",
+  "draftId": "4540f5fd-6a29-4f36-a08e-85a9e03d14bf",
+  "snapshotId": "4ea6064c-3d8f-4092-a0ee-3e3580304bd7",
+  "developmentJobId": "653d0e0c-cf4b-40f7-bd5a-d27fdf009909",
+  "bundleDigest": "133f27619ff50b2244a428913fc85cd58fb9686a4e70eb610bd9eedfe253e51f",
+  "candidateId": "eb2c68c6-c455-4a5c-875b-5dbbf3b5ee1c",
+  "candidateArtifactDigest": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
+  "testDeploymentId": "e59f04c1-3224-428b-81a7-e4e59eb14c57",
+  "environmentId": "f90c552a-5ec1-4a66-a912-377c07996f6f",
   "generatedRailMaximum": 3,
   "interleavedRuns": [
     {
       "actorId": "U1001",
       "equipmentId": "PUMP-001",
-      "conversationId": "a6699105-ea42-4b3e-9aef-cded05dcba05",
-      "runId": "7e58a513-4fbe-4d4a-a8a7-da3c042e5b39",
+      "conversationId": "a99ff5fb-ff08-4e20-b28a-fff9f3bc344b",
+      "runId": "f58319fe-f2f3-40bf-9821-348504a09487",
       "runStatus": "succeeded",
       "runActorId": "U1001",
       "conversationBound": true,
       "candidateRailLimitThree": true,
       "allowedCounts": [
-        1
+        1,
+        2
       ],
       "noLimitExceeded": true,
       "externalOperations": [
@@ -33,20 +34,21 @@
       "externalEquipmentIds": [
         "PUMP-001"
       ],
-      "runtimeEventCount": 13,
+      "runtimeEventCount": 21,
       "assertionPassed": true
     },
     {
       "actorId": "U1002",
       "equipmentId": "PUMP-002",
-      "conversationId": "28e55f34-4460-4411-8cf9-8878e7094a3a",
-      "runId": "4357ec59-af68-4ca3-8deb-b6f9ed1dfb37",
+      "conversationId": "54bfb65b-68bf-42e6-a705-641be98a383e",
+      "runId": "ad91a331-d74c-4f79-aae1-f278d8d276fa",
       "runStatus": "succeeded",
       "runActorId": "U1002",
       "conversationBound": true,
       "candidateRailLimitThree": true,
       "allowedCounts": [
-        1
+        1,
+        2
       ],
       "noLimitExceeded": true,
       "externalOperations": [
@@ -55,20 +57,21 @@
       "externalEquipmentIds": [
         "PUMP-002"
       ],
-      "runtimeEventCount": 14,
+      "runtimeEventCount": 22,
       "assertionPassed": true
     },
     {
       "actorId": "U1001",
       "equipmentId": "PUMP-001",
-      "conversationId": "a6699105-ea42-4b3e-9aef-cded05dcba05",
-      "runId": "39739b8b-3085-4da3-9dd2-5d191926b7d5",
+      "conversationId": "a99ff5fb-ff08-4e20-b28a-fff9f3bc344b",
+      "runId": "c96801b5-7b1c-42ef-a0b8-87196648ab7a",
       "runStatus": "succeeded",
       "runActorId": "U1001",
       "conversationBound": true,
       "candidateRailLimitThree": true,
       "allowedCounts": [
-        1
+        1,
+        2
       ],
       "noLimitExceeded": true,
       "externalOperations": [
@@ -77,20 +80,21 @@
       "externalEquipmentIds": [
         "PUMP-001"
       ],
-      "runtimeEventCount": 13,
+      "runtimeEventCount": 21,
       "assertionPassed": true
     },
     {
       "actorId": "U1002",
       "equipmentId": "PUMP-002",
-      "conversationId": "28e55f34-4460-4411-8cf9-8878e7094a3a",
-      "runId": "9fb2aa45-e484-4b08-b7f3-ea832baba1ff",
+      "conversationId": "54bfb65b-68bf-42e6-a705-641be98a383e",
+      "runId": "164386b6-adee-4c9c-a058-eecd43e50293",
       "runStatus": "succeeded",
       "runActorId": "U1002",
       "conversationBound": true,
       "candidateRailLimitThree": true,
       "allowedCounts": [
-        1
+        1,
+        2
       ],
       "noLimitExceeded": true,
       "externalOperations": [
@@ -99,7 +103,7 @@
       "externalEquipmentIds": [
         "PUMP-002"
       ],
-      "runtimeEventCount": 14,
+      "runtimeEventCount": 22,
       "assertionPassed": true
     }
   ],
@@ -110,7 +114,7 @@
   "verdict": "passed",
   "cleanupStatus": "stopped",
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ]
 }

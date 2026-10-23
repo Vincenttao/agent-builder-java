@@ -4,8 +4,8 @@
   "executionMode": "isolated-live-docker",
   "baseUrl": "http://127.0.0.1:18080",
   "composeProject": "agent-builder-td15-nf01",
-  "measuredAt": "2026-10-23T04:54:05.614Z",
-  "draftId": "6eeee2a8-dc58-48cf-824a-1711766281d3",
+  "measuredAt": "2026-10-23T21:36:25.985Z",
+  "draftId": "c4f88023-3914-4c79-b1df-81290d95f5bc",
   "errors": {
     "requirements": {
       "status": 422,

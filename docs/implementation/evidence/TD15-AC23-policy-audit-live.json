@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "requirement": "TD-15/AC-23 generation admission and Runner file/command policy reject out-of-scope requests with diagnostics",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T09:26:39.040Z",
+  "measuredAt": "2026-10-23T21:58:34.875Z",
   "composeProject": "agent-builder-td15-nf01",
-  "base": "http://127.0.0.1:18080",
+  "base": "http://127.0.0.1:18083",
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
   "results": [
     {
       "name": "scope",
       "code": "GENERATION_SCOPE_UNSUPPORTED",
-      "jobId": "db30ca30-9c27-47a0-b457-a8ef4f8a88d7",
-      "inputDigest": "c4fc9557ef76316e09b1187b232198baf70c0960029802c0dc21e2e8769ca89a",
+      "jobId": "7e39b910-7be5-48a0-8873-5b0d94e75e87",
+      "inputDigest": "7418d44b3e30233310b0cb9f2bc688d2f715794855a154c4ec401763c94ef08f",
       "event": {
         "data": {
           "code": "GENERATION_SCOPE_UNSUPPORTED",
@@ -23,17 +23,17 @@
         "role": null,
         "type": "policy.rejected",
         "sequence": 1,
-        "subjectId": "db30ca30-9c27-47a0-b457-a8ef4f8a88d7",
-        "occurredAt": "2026-10-23T09:26:35.832Z"
+        "subjectId": "7e39b910-7be5-48a0-8873-5b0d94e75e87",
+        "occurredAt": "2026-10-23T21:58:31.814Z"
       },
       "runnerStatus": 404,
-      "retryJobId": "db30ca30-9c27-47a0-b457-a8ef4f8a88d7"
+      "retryJobId": "7e39b910-7be5-48a0-8873-5b0d94e75e87"
     },
     {
       "name": "dependency",
       "code": "DEPENDENCY_NOT_ALLOWED",
-      "jobId": "bc6939be-5b21-4321-b397-38fbbceead68",
-      "inputDigest": "52e474b22d40b7e2fbbcae477e41e5df0b19345a28da95ae269d96f16a1f5149",
+      "jobId": "e9608d5b-af68-4987-b542-ee00bda2ba99",
+      "inputDigest": "b98d60881409ebabc7193160aed06ab5d4ac2932b0477469fc5ad084985ef7d3",
       "event": {
         "data": {
           "code": "DEPENDENCY_NOT_ALLOWED",
@@ -42,17 +42,17 @@
         "role": null,
         "type": "policy.rejected",
         "sequence": 1,
-        "subjectId": "bc6939be-5b21-4321-b397-38fbbceead68",
-        "occurredAt": "2026-10-23T09:26:36.201Z"
+        "subjectId": "e9608d5b-af68-4987-b542-ee00bda2ba99",
+        "occurredAt": "2026-10-23T21:58:32.202Z"
       },
       "runnerStatus": 404,
-      "retryJobId": "bc6939be-5b21-4321-b397-38fbbceead68"
+      "retryJobId": "e9608d5b-af68-4987-b542-ee00bda2ba99"
     },
     {
       "name": "connection",
       "code": "BUSINESS_CONNECTION_NOT_ALLOWED",
-      "jobId": "cbbdd1d2-e17c-4062-904d-19b4bc653d0c",
-      "inputDigest": "98b41500269e4120dcb55d7297fcc2e3e7e94c90e3d06f5ba4b139254667bac8",
+      "jobId": "6d79f6b8-b7e1-40f1-b8f5-4498518068cc",
+      "inputDigest": "6cab2478a438497df8fd28c90cb8dacc9084c8b0dde60f8962a707bf82b3f95e",
       "event": {
         "data": {
           "code": "BUSINESS_CONNECTION_NOT_ALLOWED",
@@ -61,17 +61,17 @@
         "role": null,
         "type": "policy.rejected",
         "sequence": 1,
-        "subjectId": "cbbdd1d2-e17c-4062-904d-19b4bc653d0c",
-        "occurredAt": "2026-10-23T09:26:36.611Z"
+        "subjectId": "6d79f6b8-b7e1-40f1-b8f5-4498518068cc",
+        "occurredAt": "2026-10-23T21:58:32.684Z"
       },
       "runnerStatus": 404,
-      "retryJobId": "cbbdd1d2-e17c-4062-904d-19b4bc653d0c"
+      "retryJobId": "6d79f6b8-b7e1-40f1-b8f5-4498518068cc"
     },
     {
       "name": "profile-version",
       "code": "GENERATION_PROFILE_UNSUPPORTED",
-      "jobId": "df7820b6-c872-477b-9319-263f6326eaf8",
-      "inputDigest": "6e3b85c7ddc33508324e76fcdb73f07353e11b1d174f5d3e7aff15c5535b2da0",
+      "jobId": "f60fba5e-3158-43de-a82c-ace0d47e2601",
+      "inputDigest": "658f207e2429773d6c472f796516212d2d0d6a297bc6bf16bae324859fa7f859",
       "event": {
         "data": {
           "code": "GENERATION_PROFILE_UNSUPPORTED",
@@ -80,11 +80,11 @@
         "role": null,
         "type": "policy.rejected",
         "sequence": 1,
-        "subjectId": "df7820b6-c872-477b-9319-263f6326eaf8",
-        "occurredAt": "2026-10-23T09:26:37.060Z"
+        "subjectId": "f60fba5e-3158-43de-a82c-ace0d47e2601",
+        "occurredAt": "2026-10-23T21:58:33.095Z"
       },
       "runnerStatus": 404,
-      "retryJobId": "df7820b6-c872-477b-9319-263f6326eaf8"
+      "retryJobId": "f60fba5e-3158-43de-a82c-ace0d47e2601"
     },
     {
       "name": "directory",

@@ -23,6 +23,12 @@ import static org.mockito.Mockito.*;
 class AgentAssemblerTest {
     @TempDir Path workspace;
 
+    @Test void requiresTheGeneratedSkillBeforeItsBusinessTool() {
+        var prompt = AgentAssembler.generatedSkillPrompt("你是设备助手。", "equipment-query");
+        assertThat(prompt).startsWith("你是设备助手。");
+        assertThat(prompt).contains("skill_tool", "equipment-query", "SKILL.md", "不得调用任何生成业务 Tool");
+    }
+
     @Test void rejectsUnsupportedTypeAndUnknownOrDuplicateRailsBeforeAssembly() {
         var assembler = new AgentAssembler();
         var model = mock(Model.class);

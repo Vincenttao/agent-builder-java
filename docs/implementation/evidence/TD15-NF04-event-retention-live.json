@@ -2,30 +2,30 @@
   "schemaVersion": 1,
   "requirement": "TD-15/NF-04 expired terminal Run event cleanup with gap marker",
   "executionMode": "isolated-live-docker",
-  "measuredAt": "2026-10-23T17:22:48.036Z",
+  "measuredAt": "2026-10-23T21:36:51.232Z",
   "composeProject": "agent-builder-td15-nf01",
   "baseUrl": "http://127.0.0.1:18080",
   "retentionDays": 90,
-  "cutoff": "2026-07-25T17:22:47.512Z",
+  "cutoff": "2026-07-25T21:36:50.443Z",
   "cleanupResult": {
     "runCount": 1,
     "eventCount": 1,
-    "cutoff": "2026-07-25T17:22:47.512Z"
+    "cutoff": "2026-07-25T21:36:50.443Z"
   },
-  "probeRunId": "363e576c-6479-4d66-b2f9-6dc1d7cbbb7c",
+  "probeRunId": "755bacaa-d433-4e68-bcb4-98ba352903e5",
   "observed": {
     "expiredSentinelCount": 0,
     "markerCount": 1,
     "markerData": {
-      "throughSeq": 220707,
+      "throughSeq": 244414,
       "removedCount": 1,
-      "deletedBefore": "2026-07-25T17:22:47.512Z",
+      "deletedBefore": "2026-07-25T21:36:50.443Z",
       "retentionDays": 90
     }
   },
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
   "verdict": "passed"
 }

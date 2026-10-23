@@ -4,6 +4,14 @@ import {equipmentGenerationRequest,generationPolicyError,generationImplementatio
 import {wealthQueryEngineeringSkills,wealthQueryToolContract} from './templates.js';
 const request={profileVersion:generationProfile.version,scope:[...generationProfile.scope],dependencies:[...generationProfile.dependencies],connectionProfile:generationProfile.connectionProfile};
 describe('reviewed generation profile',()=>{
+  it('requires generated finance Tool to project product records to the allowlisted response fields',()=>{
+    expect(wealthQueryToolContract).toContain('Project each product item into a new map containing only productId, name, status, minimumAmountFen and description');
+    expect(wealthQueryEngineeringSkills.developer).toContain('never return raw product maps or fields outside that allowlist');
+  });
+  it('requires an error-only response when a finance Tool fails',()=>{
+    expect(wealthQueryEngineeringSkills.developer).toContain('on TOOL_TIMEOUT or TOOL_UNAVAILABLE, return only a tool-error JSON object');
+    expect(wealthQueryEngineeringSkills.developer).toContain('never include account, currency, balance, date or product fields in an error response');
+  });
   it('selects profile-specific balance Tool and Skill paths without widening the equipment profile',()=>{
     const finance=generationProfileFor(wealthBalanceGenerationRequest.profileVersion);
     expect(finance).toMatchObject({version:'wealth-balance-java@1',toolClassName:'generated.AccountBalanceTool',toolName:'get_account_balance',operationId:'getAccountBalance',skillName:'balance-query',contractClass:'BalanceContract'});

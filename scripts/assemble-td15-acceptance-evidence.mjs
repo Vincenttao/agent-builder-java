@@ -66,7 +66,10 @@ assert.deepEqual(ac16.targetImageIds, currentImages, 'AC16_TARGET_CHANGED');
 assert.equal(ac21ac22.verdict, 'passed', 'AC21_AC22_GENERATION_NOT_PASSED');
 assert.deepEqual(ac21ac22.targetImageIds, currentImages, 'AC21_AC22_TARGET_CHANGED');
 assert.ok(ac21ac22.branches.length === 11 && ac21ac22.branches.every(branch => branch.status === 'passed' && branch.assertions.every(item => item.passed)), 'AC21_AC22_BRANCH_ASSERTION_FAILED');
-assert.match(ac22dRailBoundaryXml, /<testsuite[^>]*tests="7"[^>]*failures="0"[^>]*>/, 'AC22D_RAIL_BOUNDARY_TEST_NOT_GREEN');
+const railBoundarySuite = ac22dRailBoundaryXml.match(/<testsuite\b[^>]*>/)?.[0];
+assert.ok(railBoundarySuite && Number(railBoundarySuite.match(/\btests="(\d+)"/)?.[1]) >= 7
+  && Number(railBoundarySuite.match(/\bfailures="(\d+)"/)?.[1]) === 0
+  && Number(railBoundarySuite.match(/\berrors="(\d+)"/)?.[1]) === 0, 'AC22D_RAIL_BOUNDARY_TEST_NOT_GREEN');
 assert.match(ac22dRailBoundaryXml, /name="generatedToolCallLimitRailHonorsBelowAtAndAboveLimitAcrossRuns"/, 'AC22D_RAIL_BOUNDARY_TEST_MISSING');
 assert.ok(ac22dRailBoundarySource.includes('assertThat(calls.get()).isEqualTo(2)')
   && ac22dRailBoundarySource.includes('assertThat(calls.get()).isEqualTo(5)')

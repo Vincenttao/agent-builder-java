@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-16 v2 release then v1 rollback on current fixed Docker target",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T09:51:37.466Z",
+  "measuredAt": "2026-10-23T21:30:07.316Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
-  "appImageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-  "runnerImageId": "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9",
-  "agentId": "66466fd2-8b75-4d2d-93cd-58d651d7acb3",
-  "snapshotId": "c8271cc9-ccea-4cda-9aba-86165d78f777",
-  "baselineId": "6d5c674f-7657-44d3-94b5-d6e4194e1f77",
-  "candidateId": "fc969e9f-fcb2-40b3-805a-36e93b6066a5",
-  "validationId": "1b5206e3-e57d-4077-8c4a-9436a9a2540a",
+  "appImageId": "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+  "runnerImageId": "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797",
+  "agentId": "580e0c1a-5819-439c-96f7-3af72ba5ac5d",
+  "snapshotId": "525a9c4a-8cb4-48dc-b418-b635bb09c69b",
+  "baselineId": "e2a15b59-3977-4a77-9485-47ff487ad01a",
+  "candidateId": "dda49f25-27f2-4fe5-9257-1dc513ada007",
+  "validationId": "19d4b25f-4677-4dcd-be0f-ac37a610ebb0",
   "validationVerdict": "passed",
   "validationCases": [
     {
@@ -31,27 +31,27 @@
     }
   ],
   "v1": {
-    "operationId": "9774d50a-28bc-4869-a37e-87ddd80b84a8",
-    "versionId": "ebf5f70d-1044-45ad-a278-af5b4dccd29c",
-    "candidateId": "fc969e9f-fcb2-40b3-805a-36e93b6066a5",
-    "artifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065"
+    "operationId": "90a0474e-db28-40ad-a02c-5f9b62ffdef5",
+    "versionId": "3e6651e7-03ba-48b1-ab01-e450e08983a3",
+    "candidateId": "dda49f25-27f2-4fe5-9257-1dc513ada007",
+    "artifactDigest": "ed8a9390746e1ad3faece4412a0a749c33fc23d6b070460b046a674be46c9658"
   },
   "v2": {
-    "operationId": "b9d617d6-773a-4d45-b1ba-8aa499f01b58",
-    "versionId": "d9e23e85-0a34-49a4-ab6e-d755e9a8135a",
-    "candidateId": "fc969e9f-fcb2-40b3-805a-36e93b6066a5",
-    "artifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065"
+    "operationId": "b88841b3-a975-4e61-a56a-ae071a63a254",
+    "versionId": "f773ac9e-ca73-44f7-a849-748c5a3e63ac",
+    "candidateId": "dda49f25-27f2-4fe5-9257-1dc513ada007",
+    "artifactDigest": "ed8a9390746e1ad3faece4412a0a749c33fc23d6b070460b046a674be46c9658"
   },
   "rollback": {
-    "operationId": "576fb5bb-3d3a-47f1-9968-07cf1ccb5f47",
-    "versionId": "5beb4373-2992-4031-982c-b3bac764bea7",
-    "pointerVersionId": "5beb4373-2992-4031-982c-b3bac764bea7",
+    "operationId": "450105dc-e4b9-47b1-9cd4-265b9e292c0c",
+    "versionId": "8a523dee-669b-4e32-8366-fd986d4b8070",
+    "pointerVersionId": "8a523dee-669b-4e32-8366-fd986d4b8070",
     "pointerRevision": 3
   },
-  "newRequestId": "4db2a4fe-8cad-4204-af9b-ec37d385a92d",
-  "newRequestAgentVersion": "5beb4373-2992-4031-982c-b3bac764bea7",
+  "newRequestId": "53f75186-4863-480d-b52c-7af66aea247f",
+  "newRequestAgentVersion": "8a523dee-669b-4e32-8366-fd986d4b8070",
   "newRequestRunStatus": "succeeded",
-  "newRequestArtifactDigest": "3da7d296f20736d0985b14a038bb9afde47304ce9119eb6ffad843aecee55065",
+  "newRequestArtifactDigest": "ed8a9390746e1ad3faece4412a0a749c33fc23d6b070460b046a674be46c9658",
   "requestUsesV1Candidate": true,
   "historyUnchanged": true,
   "rollbackMatchesV1": true,

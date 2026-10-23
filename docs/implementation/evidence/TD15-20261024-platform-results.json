@@ -1,9 +1,9 @@
 {
   "binding": {
     "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-    "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-    "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-    "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+    "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+    "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+    "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
   },
   "results": [
     {
@@ -11,13 +11,13 @@
       "branchId": "independent-role-records",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "tester_and_developer_have_distinct_completed_sessions",
@@ -28,12 +28,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -42,13 +42,13 @@
       "branchId": "shared-confirmed-baseline",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "both_roles_use_one_confirmed_baseline",
@@ -59,12 +59,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -73,13 +73,13 @@
       "branchId": "empty-tool-source",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "implementation_written_after_red_test",
@@ -90,12 +90,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -104,13 +104,13 @@
       "branchId": "build",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "unit_contract_package_and_candidate_build_pass",
@@ -121,12 +121,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -135,13 +135,13 @@
       "branchId": "actual-http-mapping",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "generated_http_tool_calls_pinned_mock_operation_once",
@@ -152,12 +152,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -166,13 +166,13 @@
       "branchId": "empty-skill-source",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "skill_created_during_developer_role_after_red",
@@ -183,12 +183,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -197,13 +197,13 @@
       "branchId": "loaded",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "runtime_loaded_exact_generated_skill_digest",
@@ -214,12 +214,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -228,13 +228,13 @@
       "branchId": "model-trigger",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "model_invoked_generated_tool_and_mock_received_request",
@@ -245,12 +245,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -259,13 +259,13 @@
       "branchId": "rail-source",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "developer_generated_registered_rail_definition",
@@ -276,12 +276,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -290,13 +290,13 @@
       "branchId": "loaded-hook",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "generated_rail_is_bound_and_hook_emits_scoped_events",
@@ -307,12 +307,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -321,13 +321,13 @@
       "branchId": "below-limit",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "real_candidate_allows_calls_below_generated_limit",
@@ -338,12 +338,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         }
       ]
     },
@@ -352,13 +352,13 @@
       "branchId": "at-limit",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "sdk_run_allows_exactly_three_generated_rail_tool_calls",
@@ -369,22 +369,22 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC22d-rail-boundaries.xml",
-          "sha256": "72d9293871e9bd6fe0d05f20bba6d7107471dfb91ade0acaf3b0c7be6430cd02"
+          "sha256": "8fbfcd2a0692536e6a89bed7fd07823e617f6b5589758d3c94a05ce0cab36f8a"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC22d-rail-boundaries.xml",
-          "sha256": "72d9293871e9bd6fe0d05f20bba6d7107471dfb91ade0acaf3b0c7be6430cd02"
+          "sha256": "8fbfcd2a0692536e6a89bed7fd07823e617f6b5589758d3c94a05ce0cab36f8a"
         }
       ]
     },
@@ -393,13 +393,13 @@
       "branchId": "above-limit",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "sdk_run_blocks_fourth_tool_call_and_preserves_per_run_budget",
@@ -410,22 +410,22 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
-          "sha256": "6ae6db0bf178971bb4466bc3a9ee438afc90184a49e4c58b4cce1a02e0965f65"
+          "sha256": "30c5bae9f6cbdb6f05054f14677b9cd87fac8e2e2e524b4cdc5db6c91df954a3"
         },
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC22d-rail-boundaries.xml",
-          "sha256": "72d9293871e9bd6fe0d05f20bba6d7107471dfb91ade0acaf3b0c7be6430cd02"
+          "sha256": "8fbfcd2a0692536e6a89bed7fd07823e617f6b5589758d3c94a05ce0cab36f8a"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC22d-rail-boundaries.xml",
-          "sha256": "72d9293871e9bd6fe0d05f20bba6d7107471dfb91ade0acaf3b0c7be6430cd02"
+          "sha256": "8fbfcd2a0692536e6a89bed7fd07823e617f6b5589758d3c94a05ce0cab36f8a"
         }
       ]
     },
@@ -434,13 +434,13 @@
       "branchId": "save-without-model",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "model_not_configured",
@@ -459,12 +459,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC01-no-model.json",
-          "sha256": "4d5eeff9eaef345b08f85de34eb5ed19b982a9a43025f87b2346d9761515ef54"
+          "sha256": "d7e304684e29a6a46d0ee52910a7ba574019d09465c182257d03e97adb5fd868"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC01-no-model.json",
-          "sha256": "4d5eeff9eaef345b08f85de34eb5ed19b982a9a43025f87b2346d9761515ef54"
+          "sha256": "d7e304684e29a6a46d0ee52910a7ba574019d09465c182257d03e97adb5fd868"
         }
       ]
     },
@@ -473,13 +473,13 @@
       "branchId": "run-blocked",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "run_disabled_without_model",
@@ -498,12 +498,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC01-no-model.json",
-          "sha256": "4d5eeff9eaef345b08f85de34eb5ed19b982a9a43025f87b2346d9761515ef54"
+          "sha256": "d7e304684e29a6a46d0ee52910a7ba574019d09465c182257d03e97adb5fd868"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC01-no-model.json",
-          "sha256": "4d5eeff9eaef345b08f85de34eb5ed19b982a9a43025f87b2346d9761515ef54"
+          "sha256": "d7e304684e29a6a46d0ee52910a7ba574019d09465c182257d03e97adb5fd868"
         }
       ]
     },
@@ -512,13 +512,13 @@
       "branchId": "guided-to-form",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "requirement_values_preserved",
@@ -533,12 +533,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC02-mode-switch.json",
-          "sha256": "7077e76b5f6aaeb60aeef5c893aef2793e1e5561e92f24aee007c5aaf8b125bb"
+          "sha256": "62d88b15efbc02958fae138313e8596da02e38c34573c654566748b2ff66ddf7"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC02-mode-switch.json",
-          "sha256": "7077e76b5f6aaeb60aeef5c893aef2793e1e5561e92f24aee007c5aaf8b125bb"
+          "sha256": "62d88b15efbc02958fae138313e8596da02e38c34573c654566748b2ff66ddf7"
         }
       ]
     },
@@ -547,13 +547,13 @@
       "branchId": "form-to-guided",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "edits_preserved",
@@ -572,12 +572,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC02-mode-switch.json",
-          "sha256": "7077e76b5f6aaeb60aeef5c893aef2793e1e5561e92f24aee007c5aaf8b125bb"
+          "sha256": "62d88b15efbc02958fae138313e8596da02e38c34573c654566748b2ff66ddf7"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC02-mode-switch.json",
-          "sha256": "7077e76b5f6aaeb60aeef5c893aef2793e1e5561e92f24aee007c5aaf8b125bb"
+          "sha256": "62d88b15efbc02958fae138313e8596da02e38c34573c654566748b2ff66ddf7"
         }
       ]
     },
@@ -586,13 +586,13 @@
       "branchId": "write-confirmation-added",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "write_impact_and_unrelated_fields_asserted",
@@ -603,12 +603,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC03-requirement-impact.json",
-          "sha256": "5dc83df3c9cb74c13bb01c3364b2f7239548f500f3bfc14b8f86ee79742f2bde"
+          "sha256": "83ebf35b71132cb3b0cb1909d483a08df5c543ff9b1a29c0d49a4de32e87cb92"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC03-requirement-impact.json",
-          "sha256": "5dc83df3c9cb74c13bb01c3364b2f7239548f500f3bfc14b8f86ee79742f2bde"
+          "sha256": "83ebf35b71132cb3b0cb1909d483a08df5c543ff9b1a29c0d49a4de32e87cb92"
         }
       ]
     },
@@ -617,13 +617,13 @@
       "branchId": "resource-gap",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "write_impact_and_unrelated_fields_asserted",
@@ -634,12 +634,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC03-requirement-impact.json",
-          "sha256": "5dc83df3c9cb74c13bb01c3364b2f7239548f500f3bfc14b8f86ee79742f2bde"
+          "sha256": "83ebf35b71132cb3b0cb1909d483a08df5c543ff9b1a29c0d49a4de32e87cb92"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC03-requirement-impact.json",
-          "sha256": "5dc83df3c9cb74c13bb01c3364b2f7239548f500f3bfc14b8f86ee79742f2bde"
+          "sha256": "83ebf35b71132cb3b0cb1909d483a08df5c543ff9b1a29c0d49a4de32e87cb92"
         }
       ]
     },
@@ -648,13 +648,13 @@
       "branchId": "unrelated-fields-retained",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "write_impact_and_unrelated_fields_asserted",
@@ -665,12 +665,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC03-requirement-impact.json",
-          "sha256": "5dc83df3c9cb74c13bb01c3364b2f7239548f500f3bfc14b8f86ee79742f2bde"
+          "sha256": "83ebf35b71132cb3b0cb1909d483a08df5c543ff9b1a29c0d49a4de32e87cb92"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC03-requirement-impact.json",
-          "sha256": "5dc83df3c9cb74c13bb01c3364b2f7239548f500f3bfc14b8f86ee79742f2bde"
+          "sha256": "83ebf35b71132cb3b0cb1909d483a08df5c543ff9b1a29c0d49a4de32e87cb92"
         }
       ]
     },
@@ -679,13 +679,13 @@
       "branchId": "unknown-tool",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "unknown_tool_rejected",
@@ -696,12 +696,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC04-invalid-assembly.json",
-          "sha256": "1b4f48a9c7ab2bb369b3bb24c7ee08b3bd1a8c4a560eb798a968ce9e2fafe445"
+          "sha256": "8f66448f0b688fece00e6abdb89fa98800eca81a243c7b9060ac9e9cf8699a3d"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC04-invalid-assembly.json",
-          "sha256": "1b4f48a9c7ab2bb369b3bb24c7ee08b3bd1a8c4a560eb798a968ce9e2fafe445"
+          "sha256": "8f66448f0b688fece00e6abdb89fa98800eca81a243c7b9060ac9e9cf8699a3d"
         }
       ]
     },
@@ -710,13 +710,13 @@
       "branchId": "invalid-rail-parameter",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "invalid_rail_parameter_rejected",
@@ -727,12 +727,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC04-invalid-assembly.json",
-          "sha256": "1b4f48a9c7ab2bb369b3bb24c7ee08b3bd1a8c4a560eb798a968ce9e2fafe445"
+          "sha256": "8f66448f0b688fece00e6abdb89fa98800eca81a243c7b9060ac9e9cf8699a3d"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC04-invalid-assembly.json",
-          "sha256": "1b4f48a9c7ab2bb369b3bb24c7ee08b3bd1a8c4a560eb798a968ce9e2fafe445"
+          "sha256": "8f66448f0b688fece00e6abdb89fa98800eca81a243c7b9060ac9e9cf8699a3d"
         }
       ]
     },
@@ -741,13 +741,13 @@
       "branchId": "invalid-change-not-applied",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "draft_unchanged",
@@ -762,12 +762,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC04-invalid-assembly.json",
-          "sha256": "1b4f48a9c7ab2bb369b3bb24c7ee08b3bd1a8c4a560eb798a968ce9e2fafe445"
+          "sha256": "8f66448f0b688fece00e6abdb89fa98800eca81a243c7b9060ac9e9cf8699a3d"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC04-invalid-assembly.json",
-          "sha256": "1b4f48a9c7ab2bb369b3bb24c7ee08b3bd1a8c4a560eb798a968ce9e2fafe445"
+          "sha256": "8f66448f0b688fece00e6abdb89fa98800eca81a243c7b9060ac9e9cf8699a3d"
         }
       ]
     },
@@ -776,13 +776,13 @@
       "branchId": "conflicting-rails",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "conflicting_rails_rejected",
@@ -793,12 +793,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC06-incompatible-assembly.json",
-          "sha256": "b769e172c953a4b0930b7ad1ea399a814e50d5577d4b423ddb28ea662043d36f"
+          "sha256": "6aacc6352c7d06be33b2f44d1f0e4765e5355a61f9d9672198c7dc4cdc9bd77c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC06-incompatible-assembly.json",
-          "sha256": "b769e172c953a4b0930b7ad1ea399a814e50d5577d4b423ddb28ea662043d36f"
+          "sha256": "6aacc6352c7d06be33b2f44d1f0e4765e5355a61f9d9672198c7dc4cdc9bd77c"
         }
       ]
     },
@@ -807,13 +807,13 @@
       "branchId": "unsupported-agent",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "unsupported_agent_rejected",
@@ -828,12 +828,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC06-incompatible-assembly.json",
-          "sha256": "b769e172c953a4b0930b7ad1ea399a814e50d5577d4b423ddb28ea662043d36f"
+          "sha256": "6aacc6352c7d06be33b2f44d1f0e4765e5355a61f9d9672198c7dc4cdc9bd77c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC06-incompatible-assembly.json",
-          "sha256": "b769e172c953a4b0930b7ad1ea399a814e50d5577d4b423ddb28ea662043d36f"
+          "sha256": "6aacc6352c7d06be33b2f44d1f0e4765e5355a61f9d9672198c7dc4cdc9bd77c"
         }
       ]
     },
@@ -842,13 +842,13 @@
       "branchId": "two-rails-loaded",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "versioned_and_runtime_rails_bound",
@@ -863,12 +863,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC05-two-rails-live.json",
-          "sha256": "deb2d9c170b7143f2497692a48dbf36dacb87f3ac904a6411e88be6188e757de"
+          "sha256": "a40778998f3ad53d3bb9ffd0af2fbf7ab720b6c3b12f59fb03fd24447632ae4f"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC05-two-rails-live.json",
-          "sha256": "deb2d9c170b7143f2497692a48dbf36dacb87f3ac904a6411e88be6188e757de"
+          "sha256": "a40778998f3ad53d3bb9ffd0af2fbf7ab720b6c3b12f59fb03fd24447632ae4f"
         }
       ]
     },
@@ -877,13 +877,13 @@
       "branchId": "two-rails-triggered",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "audit_rail_observed_tool_call",
@@ -902,12 +902,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC05-two-rails-live.json",
-          "sha256": "deb2d9c170b7143f2497692a48dbf36dacb87f3ac904a6411e88be6188e757de"
+          "sha256": "a40778998f3ad53d3bb9ffd0af2fbf7ab720b6c3b12f59fb03fd24447632ae4f"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC05-two-rails-live.json",
-          "sha256": "deb2d9c170b7143f2497692a48dbf36dacb87f3ac904a6411e88be6188e757de"
+          "sha256": "a40778998f3ad53d3bb9ffd0af2fbf7ab720b6c3b12f59fb03fd24447632ae4f"
         }
       ]
     },
@@ -916,13 +916,13 @@
       "branchId": "http-tool",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "http_run_succeeded",
@@ -945,12 +945,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC07-http-mcp-live.json",
-          "sha256": "29a8f1b65f5e272675233c4e2375f185a1e7d76ad74c2af0d2a2c51520cd734c"
+          "sha256": "0927bb05f584a08a1b929d666ca95b56269a21fc37aa9ce75a6ec4d4c82489bd"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC07-http-mcp-live.json",
-          "sha256": "29a8f1b65f5e272675233c4e2375f185a1e7d76ad74c2af0d2a2c51520cd734c"
+          "sha256": "0927bb05f584a08a1b929d666ca95b56269a21fc37aa9ce75a6ec4d4c82489bd"
         }
       ]
     },
@@ -959,13 +959,13 @@
       "branchId": "mcp-tool",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "mcp_run_succeeded",
@@ -988,12 +988,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC07-http-mcp-live.json",
-          "sha256": "29a8f1b65f5e272675233c4e2375f185a1e7d76ad74c2af0d2a2c51520cd734c"
+          "sha256": "0927bb05f584a08a1b929d666ca95b56269a21fc37aa9ce75a6ec4d4c82489bd"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC07-http-mcp-live.json",
-          "sha256": "29a8f1b65f5e272675233c4e2375f185a1e7d76ad74c2af0d2a2c51520cd734c"
+          "sha256": "0927bb05f584a08a1b929d666ca95b56269a21fc37aa9ce75a6ec4d4c82489bd"
         }
       ]
     },
@@ -1002,13 +1002,13 @@
       "branchId": "export-no-secrets",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "credential_scan_clean",
@@ -1023,12 +1023,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         }
       ]
     },
@@ -1037,13 +1037,13 @@
       "branchId": "fresh-directory-import",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "fresh_compose_started",
@@ -1066,12 +1066,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         }
       ]
     },
@@ -1080,13 +1080,13 @@
       "branchId": "rebind-required",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "connection_rebind_required",
@@ -1097,12 +1097,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         }
       ]
     },
@@ -1111,13 +1111,13 @@
       "branchId": "fresh-directory-start",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "fresh_compose_and_restored_run_succeeded",
@@ -1128,12 +1128,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         }
       ]
     },
@@ -1142,13 +1142,13 @@
       "branchId": "export-import",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "source_without_credentials_rebuilt_and_ran",
@@ -1159,12 +1159,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         }
       ]
     },
@@ -1173,13 +1173,13 @@
       "branchId": "configurable-ports",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "isolated_workspace_uses_distinct_configured_port",
@@ -1190,12 +1190,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         }
       ]
     },
@@ -1204,13 +1204,13 @@
       "branchId": "rebind",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "import_requires_mock_connection_rebind",
@@ -1221,12 +1221,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF05-workspace.json",
-          "sha256": "a2baa16e137750f03acd844ac6d88763f738b8f940d0b7eb576220c451d72c5f"
+          "sha256": "5dd1f3884b01294575ca77a060e6abd824ed2407e48022cfdbff765d9ebc3c8c"
         }
       ]
     },
@@ -1235,13 +1235,13 @@
       "branchId": "dev-copy-changed",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "development_copy_change_does_not_change_or_replace_fixed_candidate",
@@ -1252,12 +1252,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         }
       ]
     },
@@ -1266,13 +1266,13 @@
       "branchId": "tester-write-denied",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "tester_mcp_write_to_implementation_is_rejected_and_audited",
@@ -1283,12 +1283,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         }
       ]
     },
@@ -1297,13 +1297,13 @@
       "branchId": "digest-before",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "candidate_digest_is_recorded_before_test",
@@ -1314,12 +1314,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         }
       ]
     },
@@ -1328,13 +1328,13 @@
       "branchId": "digest-after",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "candidate_tampering_is_detected_and_original_digest_remains_fixed",
@@ -1345,12 +1345,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         }
       ]
     },
@@ -1359,13 +1359,13 @@
       "branchId": "defect-observed",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "failing_candidate_preserves_fixed_assertion_failure",
@@ -1376,12 +1376,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         }
       ]
     },
@@ -1390,13 +1390,13 @@
       "branchId": "new-candidate",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "repair_creates_distinct_candidate_with_passing_validation",
@@ -1407,12 +1407,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         }
       ]
     },
@@ -1421,13 +1421,13 @@
       "branchId": "same-assertion",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "repair_retests_same_case_and_rule_against_expected_value",
@@ -1438,12 +1438,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         }
       ]
     },
@@ -1452,13 +1452,13 @@
       "branchId": "failure-history-retained",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "original_failure_report_is_retained_after_successful_repair",
@@ -1469,12 +1469,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC26-docker-live.json",
-          "sha256": "188761e4669706fa620221ada70d6d42a512ceb8a69428d6e131db7f49a707d9"
+          "sha256": "d57fe57fbe210fcbd910c4ee4201714a459ffafd8725fcf5987cdd3898f519f6"
         }
       ]
     },
@@ -1483,13 +1483,13 @@
       "branchId": "budget",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "running_generated_task_exceeds_budget_and_stops_managed_child_without_bundle",
@@ -1500,12 +1500,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC29a-budget-restart-live.json",
-          "sha256": "7829ce57206a4ecae3180abeda0fcc8405dcebc4e07b78249b34784561daed5f"
+          "sha256": "87d5cfde8a1cc02b789470077cb49df13b4a21563b51b4ea915709d001ca7cce"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC29a-budget-restart-live.json",
-          "sha256": "7829ce57206a4ecae3180abeda0fcc8405dcebc4e07b78249b34784561daed5f"
+          "sha256": "87d5cfde8a1cc02b789470077cb49df13b4a21563b51b4ea915709d001ca7cce"
         }
       ]
     },
@@ -1514,13 +1514,13 @@
       "branchId": "restart-no-replay",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "platform_restart_preserves_terminal_task_and_does_not_replay_child_or_events",
@@ -1531,12 +1531,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC29a-budget-restart-live.json",
-          "sha256": "7829ce57206a4ecae3180abeda0fcc8405dcebc4e07b78249b34784561daed5f"
+          "sha256": "87d5cfde8a1cc02b789470077cb49df13b4a21563b51b4ea915709d001ca7cce"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC29a-budget-restart-live.json",
-          "sha256": "7829ce57206a4ecae3180abeda0fcc8405dcebc4e07b78249b34784561daed5f"
+          "sha256": "87d5cfde8a1cc02b789470077cb49df13b4a21563b51b4ea915709d001ca7cce"
         }
       ]
     },
@@ -1545,13 +1545,13 @@
       "branchId": "directory",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "runner_mcp_rejects_traversal_path_and_audits_it",
@@ -1562,12 +1562,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         }
       ]
     },
@@ -1576,13 +1576,13 @@
       "branchId": "dependency",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "unapproved_dependency_is_rejected_before_runner_execution",
@@ -1593,12 +1593,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         }
       ]
     },
@@ -1607,13 +1607,13 @@
       "branchId": "command",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "runner_mcp_rejects_unapproved_command_and_retains_diagnostic",
@@ -1624,12 +1624,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         }
       ]
     },
@@ -1638,13 +1638,13 @@
       "branchId": "connection",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "production_business_connection_is_rejected_before_runner_execution",
@@ -1655,12 +1655,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         }
       ]
     },
@@ -1669,13 +1669,13 @@
       "branchId": "same-seed",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "same_seed_and_clock_produce_identical_initial_state",
@@ -1686,12 +1686,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         }
       ]
     },
@@ -1700,13 +1700,13 @@
       "branchId": "independent-instances",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "write_in_one_environment_does_not_change_other_instance",
@@ -1717,12 +1717,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         }
       ]
     },
@@ -1731,13 +1731,13 @@
       "branchId": "active-run-reset-denied",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "reset_is_denied_while_run_reservation_active",
@@ -1748,12 +1748,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         }
       ]
     },
@@ -1762,13 +1762,13 @@
       "branchId": "unknown-write-reset-denied",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "reset_is_denied_and_timed_out_write_is_observed",
@@ -1779,12 +1779,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         }
       ]
     },
@@ -1793,13 +1793,13 @@
       "branchId": "history-after-reset",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "reset_restores_seed_without_removing_execution_history",
@@ -1810,12 +1810,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         }
       ]
     },
@@ -1824,13 +1824,13 @@
       "branchId": "generate-empty-assets",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "two_roles_generate_tool_and_skill_from_empty_component_selection",
@@ -1841,12 +1841,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TDD-086-finance-generation-live.json",
-          "sha256": "6ce1719b23175d810eb037b9c1e59cf37d0c6310d895c31445c02a96e15b3bd3"
+          "sha256": "1f0d467a7d50970964462d9f9b9b67637fccf4f7290e82138426d1e75d1648d7"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TDD-086-finance-generation-live.json",
-          "sha256": "6ce1719b23175d810eb037b9c1e59cf37d0c6310d895c31445c02a96e15b3bd3"
+          "sha256": "1f0d467a7d50970964462d9f9b9b67637fccf4f7290e82138426d1e75d1648d7"
         }
       ]
     },
@@ -1855,13 +1855,13 @@
       "branchId": "load-and-query",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "generated_skill_tool_query_clarification_and_timeout_are_checked",
@@ -1872,12 +1872,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TDD-086-finance-generation-live.json",
-          "sha256": "6ce1719b23175d810eb037b9c1e59cf37d0c6310d895c31445c02a96e15b3bd3"
+          "sha256": "1f0d467a7d50970964462d9f9b9b67637fccf4f7290e82138426d1e75d1648d7"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TDD-086-finance-generation-live.json",
-          "sha256": "6ce1719b23175d810eb037b9c1e59cf37d0c6310d895c31445c02a96e15b3bd3"
+          "sha256": "1f0d467a7d50970964462d9f9b9b67637fccf4f7290e82138426d1e75d1648d7"
         }
       ]
     },
@@ -1886,13 +1886,13 @@
       "branchId": "no-replay-unknown-reconcile",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "unknown_run_remains_interrupted",
@@ -1911,12 +1911,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-active-write-restart.json",
-          "sha256": "c9060e5c69028409d4bbe24481b0632f949cfbc28c4b0dbde0ae4981ecd02fd8"
+          "sha256": "d96b0d225c7243603ca99e44d722803d73199d69723cfc36063604f06b6d343b"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-active-write-restart.json",
-          "sha256": "c9060e5c69028409d4bbe24481b0632f949cfbc28c4b0dbde0ae4981ecd02fd8"
+          "sha256": "d96b0d225c7243603ca99e44d722803d73199d69723cfc36063604f06b6d343b"
         }
       ]
     },
@@ -1925,13 +1925,13 @@
       "branchId": "restart-snapshots-events",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "snapshot_binding_survived_restart",
@@ -1946,12 +1946,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-restart-snapshot-events.json",
-          "sha256": "6451c0db2df1156f03347e4685f4cabd50cb806a8e41e9ec0bdfd9a1c588f4bf"
+          "sha256": "0d8dcdc1f5ea0bcf70bfff67afc5ca7a63f6aa320ac1ae6adcdc3dd18d773d5e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-restart-snapshot-events.json",
-          "sha256": "6451c0db2df1156f03347e4685f4cabd50cb806a8e41e9ec0bdfd9a1c588f4bf"
+          "sha256": "0d8dcdc1f5ea0bcf70bfff67afc5ca7a63f6aa320ac1ae6adcdc3dd18d773d5e"
         }
       ]
     },
@@ -1960,13 +1960,13 @@
       "branchId": "interleaved-sessions",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "distinct_actor_conversations",
@@ -1985,12 +1985,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-two-sessions.json",
-          "sha256": "ea6a97dd4aebd0859806f68b90a72d6e0b0d1cf8aace2fe3129b137ad0835095"
+          "sha256": "0c0517284a19bcdc1a497aa7cc0ced100812c0915a81b685e852571708f57eae"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-two-sessions.json",
-          "sha256": "ea6a97dd4aebd0859806f68b90a72d6e0b0d1cf8aace2fe3129b137ad0835095"
+          "sha256": "0c0517284a19bcdc1a497aa7cc0ced100812c0915a81b685e852571708f57eae"
         }
       ]
     },
@@ -1999,13 +1999,13 @@
       "branchId": "two-sessions",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "separate_actor_state_and_counts",
@@ -2020,12 +2020,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-two-sessions.json",
-          "sha256": "ea6a97dd4aebd0859806f68b90a72d6e0b0d1cf8aace2fe3129b137ad0835095"
+          "sha256": "0c0517284a19bcdc1a497aa7cc0ced100812c0915a81b685e852571708f57eae"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-two-sessions.json",
-          "sha256": "ea6a97dd4aebd0859806f68b90a72d6e0b0d1cf8aace2fe3129b137ad0835095"
+          "sha256": "0c0517284a19bcdc1a497aa7cc0ced100812c0915a81b685e852571708f57eae"
         }
       ]
     },
@@ -2034,13 +2034,13 @@
       "branchId": "refresh",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "run_found_after_refresh",
@@ -2055,12 +2055,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         }
       ]
     },
@@ -2069,13 +2069,13 @@
       "branchId": "sse-reconnect",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "cursor_resumed",
@@ -2090,12 +2090,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         }
       ]
     },
@@ -2104,13 +2104,13 @@
       "branchId": "duplicate-events",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "no_duplicate_events",
@@ -2121,12 +2121,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         }
       ]
     },
@@ -2135,13 +2135,13 @@
       "branchId": "refresh-reconnect",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "run_found_after_refresh",
@@ -2160,12 +2160,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-sse-reconnect.json",
-          "sha256": "80c48a7f01d6ea7bc2a9776bd26011048359ae802f9a0c53836d8fd9a393e6b7"
+          "sha256": "ad3ecc18d92fab654f17690076b8f7208f295365e14af5e621272c5ea27fad88"
         }
       ]
     },
@@ -2174,13 +2174,13 @@
       "branchId": "sentinel-logs",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "sentinel_absent_from_logs",
@@ -2191,12 +2191,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF02-live.json",
-          "sha256": "31b2e541f402e35b7885398f951277d7f23af5452f9869bfaeda5b74b4379d8b"
+          "sha256": "98aa2ca064b801cabd1da92e491309650e2a39e7c8b742aedb61dcb6c03e8616"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF02-live.json",
-          "sha256": "31b2e541f402e35b7885398f951277d7f23af5452f9869bfaeda5b74b4379d8b"
+          "sha256": "98aa2ca064b801cabd1da92e491309650e2a39e7c8b742aedb61dcb6c03e8616"
         }
       ]
     },
@@ -2205,13 +2205,13 @@
       "branchId": "sentinel-errors",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "sentinel_absent_from_error_response",
@@ -2222,12 +2222,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF02-live.json",
-          "sha256": "31b2e541f402e35b7885398f951277d7f23af5452f9869bfaeda5b74b4379d8b"
+          "sha256": "98aa2ca064b801cabd1da92e491309650e2a39e7c8b742aedb61dcb6c03e8616"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF02-live.json",
-          "sha256": "31b2e541f402e35b7885398f951277d7f23af5452f9869bfaeda5b74b4379d8b"
+          "sha256": "98aa2ca064b801cabd1da92e491309650e2a39e7c8b742aedb61dcb6c03e8616"
         }
       ]
     },
@@ -2236,13 +2236,13 @@
       "branchId": "sentinel-export",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "sentinel_absent_from_export",
@@ -2253,12 +2253,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF02-live.json",
-          "sha256": "31b2e541f402e35b7885398f951277d7f23af5452f9869bfaeda5b74b4379d8b"
+          "sha256": "98aa2ca064b801cabd1da92e491309650e2a39e7c8b742aedb61dcb6c03e8616"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF02-live.json",
-          "sha256": "31b2e541f402e35b7885398f951277d7f23af5452f9869bfaeda5b74b4379d8b"
+          "sha256": "98aa2ca064b801cabd1da92e491309650e2a39e7c8b742aedb61dcb6c03e8616"
         }
       ]
     },
@@ -2267,13 +2267,13 @@
       "branchId": "reference-workload",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "reference_machine_and_workload_recorded",
@@ -2284,12 +2284,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         }
       ]
     },
@@ -2298,13 +2298,13 @@
       "branchId": "save-p95",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "save_p95_under_target",
@@ -2315,12 +2315,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         }
       ]
     },
@@ -2329,13 +2329,13 @@
       "branchId": "list-p95",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "list_p95_under_target",
@@ -2346,12 +2346,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         }
       ]
     },
@@ -2360,13 +2360,13 @@
       "branchId": "error-rate",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "zero_failures_and_data_cleaned",
@@ -2377,12 +2377,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF03-benchmark.json",
-          "sha256": "c099180f6203862afdc6614a47e4088cd7d47b492c9c30bbe69d120cffd751fe"
+          "sha256": "353f4b502c9d6b5437a05160b4b57a45fc03c90717d1b2b63814d489a677c7c2"
         }
       ]
     },
@@ -2391,13 +2391,13 @@
       "branchId": "iteration-limit",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "iteration_limit_is_terminal_and_bounded",
@@ -2408,12 +2408,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF04-iterations-live.json",
-          "sha256": "4a493e0fa5230164cbbb280acef1269e37bc781cb78cd03997fcd19f33fe1e62"
+          "sha256": "84e7ac69acf1d9879be8c4b1a46be0dc120e409efa7e9fb9c83aecbc0542591d"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF04-iterations-live.json",
-          "sha256": "4a493e0fa5230164cbbb280acef1269e37bc781cb78cd03997fcd19f33fe1e62"
+          "sha256": "84e7ac69acf1d9879be8c4b1a46be0dc120e409efa7e9fb9c83aecbc0542591d"
         }
       ]
     },
@@ -2422,13 +2422,13 @@
       "branchId": "timeout",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "budget_timeout_stops_worker",
@@ -2439,12 +2439,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF04-budget-live.json",
-          "sha256": "50154633361104392314ffa50807e252d7105f09b33df411b4a26da2b8464851"
+          "sha256": "8f5a1d58a87ac86c9c62c4d8dcf9517a29e7b113da1c7381e9c93e86c32bc78c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF04-budget-live.json",
-          "sha256": "50154633361104392314ffa50807e252d7105f09b33df411b4a26da2b8464851"
+          "sha256": "8f5a1d58a87ac86c9c62c4d8dcf9517a29e7b113da1c7381e9c93e86c32bc78c"
         }
       ]
     },
@@ -2453,13 +2453,13 @@
       "branchId": "error-classification",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "requirement_assembly_connection_runtime_errors_distinct",
@@ -2470,12 +2470,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF04-errors-live.json",
-          "sha256": "07d0287e4fb69672ab1bd5e6278f3dbe9d245ed99bd74ce335d1dc04827a1db3"
+          "sha256": "0b434f40930e07eaec3726af42438537ee7bc4b9bc72fd2111799679538bd2cc"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF04-errors-live.json",
-          "sha256": "07d0287e4fb69672ab1bd5e6278f3dbe9d245ed99bd74ce335d1dc04827a1db3"
+          "sha256": "0b434f40930e07eaec3726af42438537ee7bc4b9bc72fd2111799679538bd2cc"
         }
       ]
     },
@@ -2484,13 +2484,13 @@
       "branchId": "event-retention",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "expired_terminal_event_removed",
@@ -2509,12 +2509,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF04-event-retention-live.json",
-          "sha256": "46397c6d37fa5b07af320eaecf3208c7f06681ccbf02f9f705e330dae6d3797d"
+          "sha256": "9120855f6d7d4ff4e5a99ff3993ddcb7ade4cc3b11b9ecb4c5fc970075dc7cc4"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF04-event-retention-live.json",
-          "sha256": "46397c6d37fa5b07af320eaecf3208c7f06681ccbf02f9f705e330dae6d3797d"
+          "sha256": "9120855f6d7d4ff4e5a99ff3993ddcb7ade4cc3b11b9ecb4c5fc970075dc7cc4"
         }
       ]
     },
@@ -2523,13 +2523,13 @@
       "branchId": "cancel-child-process",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "running_child_observed_and_cancel_accepted",
@@ -2544,12 +2544,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF06-cancel-child-process-live.json",
-          "sha256": "caad28e10c911f7006f03803722ec34b08a847afa33505df8e036296faec28b4"
+          "sha256": "6d112510b71aaacb5de5bfc6b19ed5148ce000bc8b6b9059b67a26c5159c0574"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF06-cancel-child-process-live.json",
-          "sha256": "caad28e10c911f7006f03803722ec34b08a847afa33505df8e036296faec28b4"
+          "sha256": "6d112510b71aaacb5de5bfc6b19ed5148ce000bc8b6b9059b67a26c5159c0574"
         }
       ]
     },
@@ -2558,13 +2558,13 @@
       "branchId": "history-retained",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "cancelled_task_retains_request_and_history",
@@ -2575,12 +2575,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF06-cancel-child-process-live.json",
-          "sha256": "caad28e10c911f7006f03803722ec34b08a847afa33505df8e036296faec28b4"
+          "sha256": "6d112510b71aaacb5de5bfc6b19ed5148ce000bc8b6b9059b67a26c5159c0574"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF06-cancel-child-process-live.json",
-          "sha256": "caad28e10c911f7006f03803722ec34b08a847afa33505df8e036296faec28b4"
+          "sha256": "6d112510b71aaacb5de5bfc6b19ed5148ce000bc8b6b9059b67a26c5159c0574"
         }
       ]
     },
@@ -2589,13 +2589,13 @@
       "branchId": "runner-constraints",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "normal_task_entrypoints_enforce_allowlists_and_candidate_integrity",
@@ -2606,22 +2606,22 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC23-policy-audit-live.json",
-          "sha256": "31d41b9aa94b1a648598e5a55f5386cc86afe34821303ed873a2cbac2ea06faf"
+          "sha256": "e75c5e5fd2230763c42991a34020b395e4ba7c6f1358d541305872be56976886"
         },
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC24-candidate-integrity-live.json",
-          "sha256": "352b59785f79f9783024a3e51e849553497071167c04ceb92f80ee18de7298f6"
+          "sha256": "ec43a24c84f35701b4d319aebbda9a965c5abbc2060a780696237a181f9c06f5"
         }
       ]
     },
@@ -2630,13 +2630,13 @@
       "branchId": "independent-environments",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "seeded_mock_instances_are_independent_and_reset_keeps_history",
@@ -2647,12 +2647,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC30-mock-isolation-live.json",
-          "sha256": "39f3bf74e2fad248ae79c1bc37b28ebc04e4e956244ebb5a9fc43afdfea9759c"
+          "sha256": "efcde2a9a61fbc1a9420b5cb9f1bd7380ccf427deeee520a15c35de011ea5d01"
         }
       ]
     },
@@ -2661,13 +2661,13 @@
       "branchId": "cancel",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "cancel_terminates_managed_opencode_child_and_retains_task",
@@ -2678,12 +2678,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF06-cancel-child-process-live.json",
-          "sha256": "caad28e10c911f7006f03803722ec34b08a847afa33505df8e036296faec28b4"
+          "sha256": "6d112510b71aaacb5de5bfc6b19ed5148ce000bc8b6b9059b67a26c5159c0574"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF06-cancel-child-process-live.json",
-          "sha256": "caad28e10c911f7006f03803722ec34b08a847afa33505df8e036296faec28b4"
+          "sha256": "6d112510b71aaacb5de5bfc6b19ed5148ce000bc8b6b9059b67a26c5159c0574"
         }
       ]
     },
@@ -2692,13 +2692,13 @@
       "branchId": "tool-unavailable",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "unavailable_tool_returns_unknown_fact_error",
@@ -2709,12 +2709,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-EQ02-tool-unavailable-live.json",
-          "sha256": "d34ff4ae22bbf3c8f1ef507f3ca8a8fcd9b4baf44c957148f6ba34d9b70f9e94"
+          "sha256": "f5afc70065dc6c2a6f8ec16c7fe660ad8185be189bdd005393818e8531e1d639"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-EQ02-tool-unavailable-live.json",
-          "sha256": "d34ff4ae22bbf3c8f1ef507f3ca8a8fcd9b4baf44c957148f6ba34d9b70f9e94"
+          "sha256": "f5afc70065dc6c2a6f8ec16c7fe660ad8185be189bdd005393818e8531e1d639"
         }
       ]
     },
@@ -2723,13 +2723,13 @@
       "branchId": "simulation-not-publishable",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "simulated",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "simulated_validation_rejected_for_publish",
@@ -2754,13 +2754,13 @@
       "branchId": "startup-failure-keeps-release",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "runner_startup_failure_reason_recorded",
@@ -2779,12 +2779,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC15-startup-failure-live.json",
-          "sha256": "b08d29578681597d07aba8c1c47fb603b28b0308fe860002c8c2a442b39bc0e5"
+          "sha256": "92ce36305bab4a5612feddd582b938a7f410b34e07445df9c1b8425384b74935"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC15-startup-failure-live.json",
-          "sha256": "b08d29578681597d07aba8c1c47fb603b28b0308fe860002c8c2a442b39bc0e5"
+          "sha256": "92ce36305bab4a5612feddd582b938a7f410b34e07445df9c1b8425384b74935"
         }
       ]
     },
@@ -2793,13 +2793,13 @@
       "branchId": "cancel-accepted-before-terminal",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "cancel_acknowledged_as_cancelling",
@@ -2814,12 +2814,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC19-cancel-unknown-write-live.json",
-          "sha256": "ca415926c658ed4ed9052ab89e95a6aa6b18e9f441208602190b49e687c01d31"
+          "sha256": "45d0ff81d7b4d62a28127507d3ba73a6dfd9c2546f594a3097901d93374031ce"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC19-cancel-unknown-write-live.json",
-          "sha256": "ca415926c658ed4ed9052ab89e95a6aa6b18e9f441208602190b49e687c01d31"
+          "sha256": "45d0ff81d7b4d62a28127507d3ba73a6dfd9c2546f594a3097901d93374031ce"
         }
       ]
     },
@@ -2828,13 +2828,13 @@
       "branchId": "unknown-write-reconciled",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "original_write_key_result_reconciled",
@@ -2849,12 +2849,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC19-cancel-unknown-write-live.json",
-          "sha256": "ca415926c658ed4ed9052ab89e95a6aa6b18e9f441208602190b49e687c01d31"
+          "sha256": "45d0ff81d7b4d62a28127507d3ba73a6dfd9c2546f594a3097901d93374031ce"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC19-cancel-unknown-write-live.json",
-          "sha256": "ca415926c658ed4ed9052ab89e95a6aa6b18e9f441208602190b49e687c01d31"
+          "sha256": "45d0ff81d7b4d62a28127507d3ba73a6dfd9c2546f594a3097901d93374031ce"
         }
       ]
     },
@@ -2863,13 +2863,13 @@
       "branchId": "empty-retrieval",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "real_empty_retrieval_call",
@@ -2888,12 +2888,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-EQ01-empty-retrieval-live.json",
-          "sha256": "025fef798dbce3201121eb5e8cee652e8d72c8e3643caa9ba94c11bfd802c884"
+          "sha256": "392d6917538ad1efa759e3f2ed961259a5ccc3167d85289b1eee3a296bad483a"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-EQ01-empty-retrieval-live.json",
-          "sha256": "025fef798dbce3201121eb5e8cee652e8d72c8e3643caa9ba94c11bfd802c884"
+          "sha256": "392d6917538ad1efa759e3f2ed961259a5ccc3167d85289b1eee3a296bad483a"
         }
       ]
     },
@@ -2902,13 +2902,13 @@
       "branchId": "facts",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "equipment_facts_match_mock",
@@ -2919,12 +2919,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -2933,13 +2933,13 @@
       "branchId": "recommendations",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "recommendation_is_present",
@@ -2950,12 +2950,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -2964,13 +2964,13 @@
       "branchId": "sources",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "source_matches_tool_evidence",
@@ -2981,12 +2981,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -2995,13 +2995,13 @@
       "branchId": "output-schema",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "structured_output_and_schema_assertion",
@@ -3012,12 +3012,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3026,13 +3026,13 @@
       "branchId": "clarification",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "asks_for_required_identifier",
@@ -3043,12 +3043,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3057,13 +3057,13 @@
       "branchId": "zero-tool-calls",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "no_external_business_call",
@@ -3074,12 +3074,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3088,13 +3088,13 @@
       "branchId": "refuse-zero-writes",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "rejected_action_has_zero_write",
@@ -3105,12 +3105,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3119,13 +3119,13 @@
       "branchId": "cancel-preserves-analysis",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "refusal_cancels_and_retains_analysis",
@@ -3136,12 +3136,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3150,13 +3150,13 @@
       "branchId": "write-response-lost",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "committed_write_response_pending_before_crash",
@@ -3167,12 +3167,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3181,13 +3181,13 @@
       "branchId": "reconcile-no-replay",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "idempotency_lookup_without_duplicate_write",
@@ -3198,12 +3198,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3212,13 +3212,13 @@
       "branchId": "read-timeout",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "timeout_report_has_no_invented_facts_or_writes",
@@ -3229,12 +3229,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3243,13 +3243,13 @@
       "branchId": "expired",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "expired_approval_cannot_write",
@@ -3260,12 +3260,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3274,13 +3274,13 @@
       "branchId": "changed-parameters",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "changed_approval_arguments_rejected",
@@ -3291,12 +3291,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-NF01-validation-branches.json",
-          "sha256": "e145cb9d154945ac3ff13c9e85b73a9ece278f63e5148c6c1b25e8149b894660"
+          "sha256": "9dcfddd0544c551980e30228c3419e84c8aeaafb7a36aceb7a2706a2345aac7e"
         }
       ]
     },
@@ -3305,13 +3305,13 @@
       "branchId": "sequential-duplicate",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "same_decision_id_and_single_action",
@@ -3322,12 +3322,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC11-duplicates-live.json",
-          "sha256": "e3b85e61bd7cfc2f9b30deae27d66e0d3756635de769b280d5db2318d946cf69"
+          "sha256": "3847075417878f6d4ab5c8536d73de73e0be498cbb7459391f5b57ccc76c91a4"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC11-duplicates-live.json",
-          "sha256": "e3b85e61bd7cfc2f9b30deae27d66e0d3756635de769b280d5db2318d946cf69"
+          "sha256": "3847075417878f6d4ab5c8536d73de73e0be498cbb7459391f5b57ccc76c91a4"
         }
       ]
     },
@@ -3336,13 +3336,13 @@
       "branchId": "concurrent-duplicate",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "all_retries_return_same_decision",
@@ -3353,12 +3353,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC11-duplicates-live.json",
-          "sha256": "e3b85e61bd7cfc2f9b30deae27d66e0d3756635de769b280d5db2318d946cf69"
+          "sha256": "3847075417878f6d4ab5c8536d73de73e0be498cbb7459391f5b57ccc76c91a4"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC11-duplicates-live.json",
-          "sha256": "e3b85e61bd7cfc2f9b30deae27d66e0d3756635de769b280d5db2318d946cf69"
+          "sha256": "3847075417878f6d4ab5c8536d73de73e0be498cbb7459391f5b57ccc76c91a4"
         }
       ]
     },
@@ -3367,13 +3367,13 @@
       "branchId": "trusted-local-visible",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "runtime_mode_and_sandbox_boundary_visible",
@@ -3384,12 +3384,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC42a-trusted-local-live.json",
-          "sha256": "53428e53ff9f81433b5f6d43423660f85fd51b7795f73d74f6d175f343bbebe3"
+          "sha256": "767c8b3147fe0a07113d7d277f7cd7286134a77b7096c1720ff19066832f7d73"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC42a-trusted-local-live.json",
-          "sha256": "53428e53ff9f81433b5f6d43423660f85fd51b7795f73d74f6d175f343bbebe3"
+          "sha256": "767c8b3147fe0a07113d7d277f7cd7286134a77b7096c1720ff19066832f7d73"
         }
       ]
     },
@@ -3398,13 +3398,13 @@
       "branchId": "production-connection-denied",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "production_connection_rejected_without_registration",
@@ -3415,12 +3415,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC42a-trusted-local-live.json",
-          "sha256": "53428e53ff9f81433b5f6d43423660f85fd51b7795f73d74f6d175f343bbebe3"
+          "sha256": "767c8b3147fe0a07113d7d277f7cd7286134a77b7096c1720ff19066832f7d73"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC42a-trusted-local-live.json",
-          "sha256": "53428e53ff9f81433b5f6d43423660f85fd51b7795f73d74f6d175f343bbebe3"
+          "sha256": "767c8b3147fe0a07113d7d277f7cd7286134a77b7096c1720ff19066832f7d73"
         }
       ]
     },
@@ -3429,13 +3429,13 @@
       "branchId": "old-run-pinned",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "old_run_retains_original_snapshot",
@@ -3446,12 +3446,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC14-snapshot-change-live.json",
-          "sha256": "a82f7a7db6a2703c3be709dcf942c364b89d50bd2ac71d1df23e194ffb1d98a4"
+          "sha256": "118a5a6b76512fb9d0bc16c31424e8c0194be7bead2940716d94a16ba416279c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC14-snapshot-change-live.json",
-          "sha256": "a82f7a7db6a2703c3be709dcf942c364b89d50bd2ac71d1df23e194ffb1d98a4"
+          "sha256": "118a5a6b76512fb9d0bc16c31424e8c0194be7bead2940716d94a16ba416279c"
         }
       ]
     },
@@ -3460,13 +3460,13 @@
       "branchId": "new-snapshot",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "new_revision_has_distinct_snapshot_and_run",
@@ -3477,12 +3477,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC14-snapshot-change-live.json",
-          "sha256": "a82f7a7db6a2703c3be709dcf942c364b89d50bd2ac71d1df23e194ffb1d98a4"
+          "sha256": "118a5a6b76512fb9d0bc16c31424e8c0194be7bead2940716d94a16ba416279c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC14-snapshot-change-live.json",
-          "sha256": "a82f7a7db6a2703c3be709dcf942c364b89d50bd2ac71d1df23e194ffb1d98a4"
+          "sha256": "118a5a6b76512fb9d0bc16c31424e8c0194be7bead2940716d94a16ba416279c"
         }
       ]
     },
@@ -3491,13 +3491,13 @@
       "branchId": "old-test-invalid",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "old_report_cannot_start_release_for_new_snapshot",
@@ -3508,12 +3508,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC14-snapshot-change-live.json",
-          "sha256": "a82f7a7db6a2703c3be709dcf942c364b89d50bd2ac71d1df23e194ffb1d98a4"
+          "sha256": "118a5a6b76512fb9d0bc16c31424e8c0194be7bead2940716d94a16ba416279c"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC14-snapshot-change-live.json",
-          "sha256": "a82f7a7db6a2703c3be709dcf942c364b89d50bd2ac71d1df23e194ffb1d98a4"
+          "sha256": "118a5a6b76512fb9d0bc16c31424e8c0194be7bead2940716d94a16ba416279c"
         }
       ]
     },
@@ -3522,13 +3522,13 @@
       "branchId": "new-request-rolled-back",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "new_request_targets_v1_candidate_after_rollback",
@@ -3539,12 +3539,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC16-rollback-live.json",
-          "sha256": "3173b6b8eb04cda990b71fae3d2bae79d0125bcfecc96fb8cde28d8deb6c9b7c"
+          "sha256": "bba5c57cac66589a7972594c0d12ed5da9f1edd6579f6a4c9dea2b6c32b4a55e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC16-rollback-live.json",
-          "sha256": "3173b6b8eb04cda990b71fae3d2bae79d0125bcfecc96fb8cde28d8deb6c9b7c"
+          "sha256": "bba5c57cac66589a7972594c0d12ed5da9f1edd6579f6a4c9dea2b6c32b4a55e"
         }
       ]
     },
@@ -3553,13 +3553,13 @@
       "branchId": "history-unchanged",
       "binding": {
         "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
-        "artifactDigest": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
-        "testSetDigest": "0f2c447c327a54fd8a12944c512965d8674f421aee3178b0ecf94e2a44e80d0c",
-        "compatibilityKey": "f4f8870f4f780d3a49bce28c7919a21d0d6e605eacd8cf2d0565e00ed279e57e"
+        "artifactDigest": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
+        "testSetDigest": "4fe25a6920e465889ece05f49600210ecdf977e52d96a4df94d85a2c41df85ce",
+        "compatibilityKey": "efa562a99a2a3463516740474850d731a415224f1de279d1a8e2f983980be2e4"
       },
       "executionMode": "live-mock",
       "status": "passed",
-      "artifactDigestAfter": "2a9184bac5043530a2bfce390ab699e2cae7e580deaf71b264bd7c798bc3c006",
+      "artifactDigestAfter": "dcef7ba17a43a30c30d0b5111f6c1e7fb14a05bc4a095a6641e8a92bd4529bd6",
       "assertions": [
         {
           "name": "prior_v1_v2_versions_retain_identity_and_binding",
@@ -3570,12 +3570,12 @@
         {
           "kind": "assertions",
           "path": "acceptance/evidence/TD15-AC16-rollback-live.json",
-          "sha256": "3173b6b8eb04cda990b71fae3d2bae79d0125bcfecc96fb8cde28d8deb6c9b7c"
+          "sha256": "bba5c57cac66589a7972594c0d12ed5da9f1edd6579f6a4c9dea2b6c32b4a55e"
         },
         {
           "kind": "execution-record",
           "path": "acceptance/evidence/TD15-AC16-rollback-live.json",
-          "sha256": "3173b6b8eb04cda990b71fae3d2bae79d0125bcfecc96fb8cde28d8deb6c9b7c"
+          "sha256": "bba5c57cac66589a7972594c0d12ed5da9f1edd6579f6a4c9dea2b6c32b4a55e"
         }
       ]
     }

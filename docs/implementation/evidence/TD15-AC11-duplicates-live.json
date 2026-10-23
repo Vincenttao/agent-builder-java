@@ -2,30 +2,30 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-11 sequential and concurrent duplicate approval",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T20:48:17.179Z",
+  "measuredAt": "2026-10-23T21:27:55.310Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:43330a859255b4b9b2fbef8218e1088664c91b2c049e9431e979f865486e9c5b"
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
-  "validationId": "408cdd29-ec32-4387-af5c-4f201e377dfe",
-  "candidateId": "c3ddc4d5-5204-4023-9004-382c57c0ae05",
-  "artifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f",
-  "runId": "9d74d425-7219-43cc-9888-0df5584b2604",
-  "actionId": "aef5fe4a-1e2e-4d53-a7ec-74c7e0a20fe3",
-  "approvalDecisionId": "9d74d425-7219-43cc-9888-0df5584b2604",
-  "sequentialDuplicateDecisionId": "9d74d425-7219-43cc-9888-0df5584b2604",
+  "validationId": "29807592-f5ca-4597-8cec-8c1f040f2fd6",
+  "candidateId": "73c2a502-5abf-4f54-8c51-4c38764f3890",
+  "artifactDigest": "ed8a9390746e1ad3faece4412a0a749c33fc23d6b070460b046a674be46c9658",
+  "runId": "4acba8eb-115d-4659-bf36-7a7963487712",
+  "actionId": "4d353dc2-2290-4fe6-b325-46aa6921585c",
+  "approvalDecisionId": "4acba8eb-115d-4659-bf36-7a7963487712",
+  "sequentialDuplicateDecisionId": "4acba8eb-115d-4659-bf36-7a7963487712",
   "concurrentDuplicateDecisionIds": [
-    "9d74d425-7219-43cc-9888-0df5584b2604",
-    "9d74d425-7219-43cc-9888-0df5584b2604",
-    "9d74d425-7219-43cc-9888-0df5584b2604"
+    "4acba8eb-115d-4659-bf36-7a7963487712",
+    "4acba8eb-115d-4659-bf36-7a7963487712",
+    "4acba8eb-115d-4659-bf36-7a7963487712"
   ],
   "externalEffect": {
     "createWorkOrderCalls": 1,
     "workOrderCount": 1,
     "basis": "persisted Run external evidence for fixed-candidate validation case TC-004; action remained one succeeded action with the original decisionId"
   },
-  "expectedInterruptedRun": "519ababb-1876-4a56-ae9e-98013b5179e6",
+  "expectedInterruptedRun": "163bedc3-28a3-4c7a-9aec-8ff8ffa9d959",
   "overallValidationVerdict": "failed",
   "branches": [
     {

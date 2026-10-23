@@ -2,27 +2,27 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-B AC-24 immutable candidate, tester write denial and digest change detection",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T17:50:33.399Z",
+  "measuredAt": "2026-10-23T21:59:04.176Z",
   "composeProject": "agent-builder-td15-nf01",
   "base": "http://127.0.0.1:18080",
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
-  "jobId": "c005fd30-5cf7-44a4-83fe-7f260a1eae6b",
-  "candidateId": "23a6d4f7-6d22-4d54-8a21-e1325c97cb9b",
-  "candidateArtifactDigestBefore": "09984a2b8ebfbf0516050b3ff14b0ebc7d42072a853b61908e55bb2c9b03e141",
-  "candidateBundleDigestBefore": "5baa99d1eb748b4bdc70d31872dc034e1724a48959580d2b48bbf2e86a844c0a",
-  "baselineId": "7257911a-b98a-4bbb-aaf3-6f7c9382af80",
+  "jobId": "653d0e0c-cf4b-40f7-bd5a-d27fdf009909",
+  "candidateId": "eb2c68c6-c455-4a5c-875b-5dbbf3b5ee1c",
+  "candidateArtifactDigestBefore": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
+  "candidateBundleDigestBefore": "b04c1231f18ba846f084617430577e638d8b4b20e90410e1e2f5747ff5016b52",
+  "baselineId": "43749938-ea3e-4f1a-81f4-982b01df64cf",
   "workingCopyMutation": {
-    "beforeDigest": "d8458f9919b7afb83084b90d094481d2fae96f69c12646cad28464e0c871e84d",
-    "afterDigest": "2f75c67b359cdf4ccf103a8f1c0b20db8219f9088eb53f4e2c5ca441db2551fb",
+    "beforeDigest": "046504c8fbe1046ad8036f97a2745781e044e302a89858c492b0642a7c29ad42",
+    "afterDigest": "815aee268acf8627264a3f2b762a9e7186b16dc7bc824a4182d098fa0b1b6378",
     "changed": true
   },
-  "fixedBundleDigestBefore": "d8458f9919b7afb83084b90d094481d2fae96f69c12646cad28464e0c871e84d",
-  "fixedBundleDigestAfter": "d8458f9919b7afb83084b90d094481d2fae96f69c12646cad28464e0c871e84d",
-  "candidateArtifactDigestAfterMutation": "09984a2b8ebfbf0516050b3ff14b0ebc7d42072a853b61908e55bb2c9b03e141",
-  "candidateBundleDigestAfterMutation": "5baa99d1eb748b4bdc70d31872dc034e1724a48959580d2b48bbf2e86a844c0a",
+  "fixedBundleDigestBefore": "046504c8fbe1046ad8036f97a2745781e044e302a89858c492b0642a7c29ad42",
+  "fixedBundleDigestAfter": "046504c8fbe1046ad8036f97a2745781e044e302a89858c492b0642a7c29ad42",
+  "candidateArtifactDigestAfterMutation": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
+  "candidateBundleDigestAfterMutation": "b04c1231f18ba846f084617430577e638d8b4b20e90410e1e2f5747ff5016b52",
   "testerWriteProbe": {
     "httpStatus": 200,
     "toolError": "FILE_OPERATION_NOT_ALLOWED",
@@ -31,14 +31,14 @@
     "sourceDigest": "72598841b7d919e7aae955bb2d1bffae68308b7008f20b004ecfb0334e04b39a"
   },
   "candidateTamperProbe": {
-    "candidateDigestBefore": "09984a2b8ebfbf0516050b3ff14b0ebc7d42072a853b61908e55bb2c9b03e141",
-    "candidateDigestAfterTamper": "9dd847ce57634a0a98890e94965d81a398fde9f5e9ca7d4f5d8015ed51af820d",
+    "candidateDigestBefore": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
+    "candidateDigestAfterTamper": "b6af9a1c05e1eea406c10c835f42f0ff7129eada000f71f14516b21dfe853884",
     "tamperRejected": true,
     "candidateReadableAfterRestore": true
   },
-  "runId": "dd914595-15a6-4b1a-9f1a-42d8ac452537",
+  "runId": "a13c1768-09f4-4436-b024-71117bb3c786",
   "runStatus": "succeeded",
-  "runArtifactDigest": "09984a2b8ebfbf0516050b3ff14b0ebc7d42072a853b61908e55bb2c9b03e141",
+  "runArtifactDigest": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
   "mockCalls": [
     {
       "operation": "equipment-status",
@@ -47,7 +47,7 @@
       "resultDigest": "7e8e588d642dfd68c01368db9a108be4ddc6aa97a99f686491d31d0720c07fba"
     }
   ],
-  "candidateArtifactDigestAfterRun": "09984a2b8ebfbf0516050b3ff14b0ebc7d42072a853b61908e55bb2c9b03e141",
+  "candidateArtifactDigestAfterRun": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
   "assertions": {
     "developmentCopyChanged": true,
     "fixedBundleUnaffected": true,

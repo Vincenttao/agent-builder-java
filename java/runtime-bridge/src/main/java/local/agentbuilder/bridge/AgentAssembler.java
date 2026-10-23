@@ -56,12 +56,20 @@ public final class AgentAssembler {
                 default -> new ToolAllowlistRail(allowedTools, events);
             });
         }
-        DeepAgentConfig config = DeepAgentConfig.builder().systemPrompt(spec.systemPrompt())
+        String systemPrompt = components.enabled() ? generatedSkillPrompt(spec.systemPrompt(), components.skillName()) : spec.systemPrompt();
+        DeepAgentConfig config = DeepAgentConfig.builder().systemPrompt(systemPrompt)
                 .workspacePath(workspace.toAbsolutePath().toString()).model(new SessionModel(model, executions)).maxIterations(spec.maxIterations())
                 .maxParallelToolCalls(1).rails(rails).tools(new ArrayList<>(tools))
                 .restrictToWorkDir(true).enableTaskLoop(true).enableTaskPlanning(false)
                 .enableSkillDiscovery(false).addGeneralPurposeAgent(false).build();
         return HarnessFactory.createDeepAgent(AgentCard.builder().id(spec.id()).name(spec.id()).description("Agent Builder managed candidate").build(), config, null);
+    }
+
+    static String generatedSkillPrompt(String systemPrompt, String skillName) {
+        if (systemPrompt == null || systemPrompt.isBlank() || skillName == null || !skillName.matches("[a-z][a-z0-9-]{0,63}"))
+            throw new IllegalArgumentException("GENERATED_SKILL_PROMPT_INVALID");
+        return systemPrompt + "\n\n平台生成的业务 Skill 是必需指令。调用任何生成业务 Tool 之前，必须先调用 skill_tool，参数 skill_name=\""
+                + skillName + "\"、relative_file_path=\"SKILL.md\"。读取成功后遵循 skill_content；读取成功前不得调用任何生成业务 Tool。";
     }
 
     private java.util.OptionalInt toolCallLimit(String id) {

@@ -5,34 +5,30 @@
   "sourceBase": "http://127.0.0.1:18080",
   "targetBase": "http://127.0.0.1:18081",
   "composeProject": "agent-builder-td15-nf05",
-  "startedAt": "2026-10-23T20:17:44.446Z",
-  "sourceDraftId": "08fc5cfe-1eda-418b-ba1b-f12b92c4bb2d",
-  "sourceDevelopmentJobId": "c005fd30-5cf7-44a4-83fe-7f260a1eae6b",
-  "sourceCandidateId": "23a6d4f7-6d22-4d54-8a21-e1325c97cb9b",
+  "startedAt": "2026-10-23T21:54:41.536Z",
+  "sourceDraftId": "4540f5fd-6a29-4f36-a08e-85a9e03d14bf",
+  "sourceDevelopmentJobId": "653d0e0c-cf4b-40f7-bd5a-d27fdf009909",
+  "sourceCandidateId": "eb2c68c6-c455-4a5c-875b-5dbbf3b5ee1c",
   "exportedGeneratedFiles": [
     {
       "path": "src/generated/EquipmentTool.java",
-      "digest": "d8458f9919b7afb83084b90d094481d2fae96f69c12646cad28464e0c871e84d"
+      "digest": "046504c8fbe1046ad8036f97a2745781e044e302a89858c492b0642a7c29ad42"
     },
     {
       "path": "test/generated/EquipmentToolTest.java",
-      "digest": "5d3303f2a4e7c7af72f8f313dbc592ecf669f3c6bcfcfe572284e62d73cea8d9"
+      "digest": "b08cf78f46f865a21d481171b39656cd68678c163044fbd40c547c11fb1b54b7"
     },
     {
       "path": "skills/equipment-query/SKILL.md",
-      "digest": "5634baf1ff9979bb123df008e282234ccf7469105b3172d0c403c84a3483cb43"
+      "digest": "7ff6f0f7d09493efc09a2242a95235700f1f6917c5de15350c1a52eb902128f2"
     },
     {
       "path": "rails/definition.json",
-      "digest": "28accb1232c3e6a332c1d14ffa82e2a04ffec9833f2d316c4fc5b7a55894ddb3"
-    },
-    {
-      "path": "test/generated/EquipmentRepair1Test.java",
-      "digest": "aab04938113c2f15c8b6c0003f2a60b502dd8817972cf1cd8d783427e567b846"
+      "digest": "db1314db9b614b7105a864fbb3c807783b0bd9ba8414a6423511a4d8bd2f99e3"
     },
     {
       "path": "test-plan.json",
-      "digest": "a5a9f7ff8ce331662c390efe2a291748f1310e7ad8f33fda683fee1fa8e08688"
+      "digest": "2ae83666df3aadefc8ab1f1cc841ad455f7574690eea4405a28e8c1034dccff1"
     }
   ],
   "exportedMockScene": {
@@ -44,7 +40,7 @@
     ]
   },
   "credentialsAbsent": true,
-  "projectPackageSha256": "aee302f9bd6676671c85ec2a10d29a3f7007c06ff581ced782c9d1c96c4177af",
+  "projectPackageSha256": "3d50c63aa5e28a2f2adc10313523b1ab580f546fbd3786c7882c0fed97cf276f",
   "sourceRunnerStatusBeforeTargetBuild": "running|healthy",
   "sourceRunnerPausedForTargetBuild": true,
   "targetComposeRunningServices": 4,
@@ -52,31 +48,26 @@
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
     "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a",
-    "sha256:43330a859255b4b9b2fbef8218e1088664c91b2c049e9431e979f865486e9c5b"
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
-  "importedDraftId": "bd5634aa-4943-40cf-82c6-7c43c509e2f4",
-  "importedSnapshotId": "629635b1-d9e5-4217-962a-b02014a1476b",
+  "importedDraftId": "47cf9af7-76e6-4105-8969-739256d6c75d",
+  "importedSnapshotId": "8cfc5338-86f3-46b5-b04b-4c0c3928e427",
   "needsRequirementConfirmation": false,
   "connectionRebindRequired": [
     "equipment-mock@1"
   ],
   "generatedArtifactsToRebuild": [
     {
-      "artifactDigest": "09984a2b8ebfbf0516050b3ff14b0ebc7d42072a853b61908e55bb2c9b03e141",
-      "sourceJobId": "c005fd30-5cf7-44a4-83fe-7f260a1eae6b",
-      "reason": "SOURCE_INCLUDED_BINARY_NOT_PACKAGED"
-    },
-    {
-      "artifactDigest": "1dc4c9ebb8a36222a46d73eece94361e438b308bc897d4507a9f3f5501828876",
-      "sourceJobId": "0b6048bb-af59-486d-b38f-4a45919e194b",
+      "artifactDigest": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
+      "sourceJobId": "653d0e0c-cf4b-40f7-bd5a-d27fdf009909",
       "reason": "SOURCE_INCLUDED_BINARY_NOT_PACKAGED"
     }
   ],
-  "restoredDevelopmentJobId": "7955a981-f0aa-48af-90ac-ea28e49c59b1",
-  "restoredBundleDigest": "aef0f64963721dc84376081c43131cc7eb51043f365273f9a3f702ed336138e9",
-  "restoredCandidateId": "d7d439ca-0cc9-4def-bb75-7bb7b8fdd049",
-  "restoredArtifactDigest": "8535685004185db0e706c4d8ad5378f2f961b2d37ba65c70e96a0a4808ba77d0",
-  "smokeRunId": "70ae2983-f3a3-46ad-ac8b-734334e8b2fa",
+  "restoredDevelopmentJobId": "94b0e68d-5437-44ba-a51a-b5b83a22fbbf",
+  "restoredBundleDigest": "0c1462f90bf780d2bd9647b48d0f01aadf822ee7943e1b5486154380c8ca57fd",
+  "restoredCandidateId": "c72ca11f-be4c-41c4-9f0b-01d17f72f190",
+  "restoredArtifactDigest": "f5984bef4cf6ea0d612d574e1bdde82588b1821ee190e2806c1cbec14063a64e",
+  "smokeRunId": "1cc5fc6c-4ba4-4a9e-82a2-e16133b40900",
   "mockOperations": [
     "equipment-status"
   ],
@@ -85,8 +76,9 @@
   "targetRestarted": true,
   "verdict": "passed",
   "targetStackRemoved": true,
-  "sourceRunnerRecoveryMs": 266386,
+  "sourceRunnerRecoveryMs": 221457,
   "sourceRunnerRestoredHealthy": true,
-  "finishedAt": "2026-10-23T20:22:13.390Z",
+  "finishedAt": "2026-10-23T21:58:24.876Z",
+  "evidencePath": "docs/implementation/evidence/TD15-NF05-workspace.json",
   "acceptanceResultsPath": "test-results/acceptance/td15-nf05-results.json"
 }

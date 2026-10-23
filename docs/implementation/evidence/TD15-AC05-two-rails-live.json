@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "requirement": "TD-15/AC-05 load and trigger two Rails in a live DeepAgent Run",
   "executionMode": "isolated-live-docker",
-  "measuredAt": "2026-10-23T17:20:40.427Z",
+  "measuredAt": "2026-10-23T21:35:16.235Z",
   "composeProject": "agent-builder-td15-nf01",
-  "draftId": "c3268a0d-bb2f-4b65-9ca7-c2e81ec7ab1b",
-  "snapshotId": "64dc8699-81ee-48e3-aca3-4fee1861a13e",
-  "runId": "0a550b12-103f-4a42-a952-02f655a0dfcb",
+  "draftId": "8686aec2-e561-4ad8-a12d-da91d152bd1f",
+  "snapshotId": "fd9468a5-761c-4403-b3b4-8e8774797f73",
+  "runId": "0641d1aa-8fd7-4d88-acae-051860aaf005",
   "runStatus": "succeeded",
   "agentType": "DeepAgent",
   "railIds": [
@@ -32,8 +32,8 @@
   ],
   "runtimeEventCount": 11,
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
   "verdict": "passed"
 }

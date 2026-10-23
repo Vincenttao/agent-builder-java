@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "benchmark": "TD-15/NF-03",
-  "measuredAt": "2026-10-23T17:21:55.948Z",
+  "measuredAt": "2026-10-23T21:35:58.851Z",
   "baseUrl": "http://127.0.0.1:18080",
   "runtime": {
     "platform": "win32",
@@ -9,7 +9,7 @@
     "cpuModel": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
     "logicalCpus": 8,
     "totalMemoryBytes": 16969424896,
-    "appImageId": "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab"
+    "appImageId": "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248"
   },
   "workload": {
     "sampleCount": 100,
@@ -20,15 +20,15 @@
   },
   "save": {
     "count": 100,
-    "p50Ms": 12.880599999999959,
-    "p95Ms": 26.282399999999996,
-    "maxMs": 63.020099999999985
+    "p50Ms": 11.599400000000003,
+    "p95Ms": 16.737799999999993,
+    "maxMs": 40.86489999999999
   },
   "list": {
     "count": 100,
-    "p50Ms": 13.411200000000008,
-    "p95Ms": 18.200400000000002,
-    "maxMs": 65.24749999999995
+    "p50Ms": 13.55189999999999,
+    "p95Ms": 19.91229999999996,
+    "maxMs": 64.08519999999993
   },
   "failures": 0,
   "failureStatuses": {},

@@ -2,37 +2,37 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A EQ-01 empty maintenance retrieval must not fabricate sources or repair conclusions",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T17:32:34.099Z",
+  "measuredAt": "2026-10-23T21:37:43.290Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab",
-    "sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9"
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
-  "draftId": "323ea29d-76d3-4323-ac9d-6138b6a81852",
-  "snapshotId": "9e94362c-d914-4f32-9b5c-bb4e1c31c046",
-  "runId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
-  "environmentId": "24410c62-348d-4508-ad69-5ceb966bfcd9",
+  "draftId": "d0f67e8d-41d2-4d4c-8e02-cb30023808fc",
+  "snapshotId": "99cb25ac-518e-4039-ad45-59a2940413df",
+  "runId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
+  "environmentId": "2148e25e-7fde-476d-90cc-5828e93be11a",
   "runStatus": "succeeded",
   "runtimeEvents": [
     {
       "rail": "audit",
       "tool": "",
       "event": "before_invoke",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     },
     {
       "rail": "audit",
       "tool": "",
       "event": "before_model_call",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     },
     {
       "rail": "audit",
       "tool": "",
       "event": "after_model_call",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     },
     {
@@ -40,13 +40,13 @@
       "tool": "search_maintenance_manuals",
       "event": "before_tool_call",
       "allowed": true,
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476"
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1"
     },
     {
       "rail": "audit",
       "tool": "search_maintenance_manuals",
       "event": "before_tool_call",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     },
     {
@@ -54,8 +54,8 @@
       "event": "tool_call",
       "status": "succeeded",
       "protocol": "http",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
-      "durationMs": 93,
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
+      "durationMs": 31,
       "toolVersion": "maintenance-search-http@1",
       "resultDigest": "f835f159a11560e79b1e5db48a5ddd79d8d5f292678d411b0302654e25e75102",
       "connectionRef": "enterprise-mock-http@1",
@@ -65,34 +65,34 @@
       "rail": "audit",
       "tool": "search_maintenance_manuals",
       "event": "after_tool_call",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     },
     {
       "rail": "audit",
       "tool": "",
       "event": "before_model_call",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     },
     {
       "rail": "audit",
       "tool": "",
       "event": "after_model_call",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     },
     {
       "rail": "audit",
       "event": "assistant_output",
       "content": "{\"kind\":\"evidence-insufficient\",\"equipmentId\":\"PUMP-001\",\"message\":\"没有检索到 PUMP-001 的维护资料，依据不足，不能据此判断故障原因或维修结论。\",\"sources\":[],\"repairDiagnosis\":null}",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476"
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1"
     },
     {
       "rail": "audit",
       "tool": "",
       "event": "after_invoke",
-      "sessionId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476",
+      "sessionId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1",
       "turnCount": 1
     }
   ],
@@ -109,7 +109,7 @@
         "resultCount": 0
       },
       "actorId": "U1001",
-      "runId": "e5260ac3-0ac3-42d3-96ec-f34b12fb2476"
+      "runId": "d447db7a-9b17-4faf-96b2-3b2d5afde3d1"
     }
   ],
   "answer": {

@@ -8,10 +8,10 @@ const base = (process.env.AC29A_BASE_URL ?? 'http://127.0.0.1:18084').replace(/\
 const origin = process.env.AC29A_ORIGIN ?? new URL(base).origin;
 const project = process.env.TD15_ACCEPTANCE_COMPOSE_PROJECT ?? 'agent-builder-td15-ac29a';
 const evidencePath = process.env.AC29A_EVIDENCE_PATH ?? 'docs/implementation/evidence/TD15-AC29a-budget-restart-live.json';
-const expectedImages = [
-  'sha256:8b5b659b612616c33504bea9f9c03c624dcd9afba2f76110eaa13a353b19c9ab',
-  'sha256:39720f36e29dbfc06f311fdfc11cc3febcc64bc1ce23a1b9d8d5a4beed2880b9'
-];
+const referenceProject = process.env.AC29A_REFERENCE_COMPOSE_PROJECT ?? 'agent-builder-td15-nf01';
+const referenceContainers = execFileSync('docker', ['compose', '--env-file', '.env.local', '-p', referenceProject, 'ps', '-q', 'app', 'runner'], { encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean);
+assert.equal(referenceContainers.length, 2, 'AC29A_FIXED_REFERENCE_REQUIRED');
+const expectedImages = execFileSync('docker', ['inspect', '--format', '{{.Image}}', ...referenceContainers], { encoding: 'utf8' }).trim().split(/\r?\n/);
 const compose = (...args) => execFileSync('docker', ['compose', '--env-file', '.env.local', '-p', project, ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 2 * 1024 * 1024
 }).trim();

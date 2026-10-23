@@ -2,22 +2,22 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-08/09/10/12 and EQ-03 branches from fixed-candidate work-order validation",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T20:47:05.696Z",
+  "measuredAt": "2026-10-23T21:27:50.849Z",
   "composeProject": "agent-builder-td15-nf01",
-  "validationId": "408cdd29-ec32-4387-af5c-4f201e377dfe",
-  "candidateId": "c3ddc4d5-5204-4023-9004-382c57c0ae05",
-  "artifactDigest": "e5b2db7a678abd6dbb9806d25e7ce7dbb283a7564d8009010e43e61f14a76e4f",
-  "reportDigest": "617ac14b2c9c358470bbe6de31aa1afccb19e22aa9282478ce66df886b1ec0ed",
+  "validationId": "29807592-f5ca-4597-8cec-8c1f040f2fd6",
+  "candidateId": "73c2a502-5abf-4f54-8c51-4c38764f3890",
+  "artifactDigest": "ed8a9390746e1ad3faece4412a0a749c33fc23d6b070460b046a674be46c9658",
+  "reportDigest": "181c224ea49815202717fdd0e548ceb72d9d9d191fdd9404195d700b714192bf",
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:43330a859255b4b9b2fbef8218e1088664c91b2c049e9431e979f865486e9c5b"
+    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
   ],
   "overallValidationVerdict": "failed",
-  "expectedInterruptedRun": "519ababb-1876-4a56-ae9e-98013b5179e6",
+  "expectedInterruptedRun": "163bedc3-28a3-4c7a-9aec-8ff8ffa9d959",
   "limitation": "TC-008 overall validation remains failed because SIGKILL correctly leaves the Run interrupted. Only response-loss reconciliation and no-duplicate-write assertions are recorded as passed.",
   "evidence": {
-    "equipmentRunId": "2401682b-4109-4942-8d37-b40cbd80b0cf",
-    "missingParameterRunId": "70ceada9-aae9-43f1-8832-b7e539678c07",
+    "equipmentRunId": "5476f68f-eb8b-40d6-844a-8bc78b665ff4",
+    "missingParameterRunId": "eaf4d80d-6bd2-4d77-a58d-d96d713a0ddf",
     "validationCaseStatuses": {
       "TC-001": "passed",
       "TC-002": "passed",
