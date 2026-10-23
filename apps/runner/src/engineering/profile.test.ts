@@ -1,6 +1,7 @@
 import {describe,expect,it} from 'vitest';
 import {validateGenerationRequest,checkFileAccess,checkCommand,generationProfile,generationProfileFor,profileRuntimeTools} from './profile.js';
 import {equipmentGenerationRequest,generationPolicyError,generationImplementationError,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
+import {wealthQueryEngineeringSkills,wealthQueryToolContract} from './templates.js';
 const request={profileVersion:generationProfile.version,scope:[...generationProfile.scope],dependencies:[...generationProfile.dependencies],connectionProfile:generationProfile.connectionProfile};
 describe('reviewed generation profile',()=>{
   it('selects profile-specific balance Tool and Skill paths without widening the equipment profile',()=>{
@@ -31,6 +32,14 @@ describe('reviewed generation profile',()=>{
     const profile=generationProfileFor(request.profileVersion);
     expect(profile).toMatchObject({toolClassName:'generated.WealthQueryTool',skillName:'wealth-query'});
     expect(profileRuntimeTools(profile)).toHaveLength(2);
+  });
+  it('pins a constructible Java null-response fixture and exact developer test path',()=>{
+    expect(wealthQueryEngineeringSkills.developer).toContain('test/generated/WealthQueryToolTest.java');
+    expect(wealthQueryEngineeringSkills.developer).toContain('Never place null in List.of');
+    expect(wealthQueryToolContract).toContain('test/generated/WealthQueryToolTest.java');
+    expect(wealthQueryToolContract).toContain('without placing null in List.of');
+    expect(wealthQueryToolContract).toContain('Arrays.asList');
+    expect(wealthQueryEngineeringSkills.developer).toContain('Arrays.asList');
   });
   it('rejects finance profile drift, extra scope, dependencies and production connections',()=>{
     const finance={...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]};
