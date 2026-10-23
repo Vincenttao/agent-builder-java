@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-19 accepted cancellation and uncertain Mock write reconciliation",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T21:54:26.175Z",
+  "measuredAt": "2026-10-23T23:22:54.162Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
+    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
   ],
-  "draftId": "34b75a15-b480-4325-b3a6-437bb9ca0f61",
-  "snapshotId": "b6faea37-4f87-4404-bb94-049039091c35",
-  "baselineId": "20615aab-a926-4499-b295-d8bcb223f28c",
-  "candidateId": "f4bdf074-f23c-4fef-a00d-9f63d74c78b5",
-  "validationId": "3efab759-50d5-45c9-bde5-00caa9d5de05",
-  "runId": "9b53ea53-9b0e-4d0c-937f-1b9df7697b48",
-  "testDeploymentId": "d3af9f3a-5f20-404f-9ae9-98916fc042a6",
+  "draftId": "54271846-0466-47cf-ae71-04d5a74d67d1",
+  "snapshotId": "3e4885ae-d766-4bdc-878d-26ca2e404ca2",
+  "baselineId": "c64f56f6-967b-4577-b3d6-3bf09c7cc8ec",
+  "candidateId": "8d7a4b4f-93fc-4b7a-8ca3-e8c1295b9052",
+  "validationId": "999c1bf5-5cc2-45ba-8d88-6c44c1d613bd",
+  "runId": "b961cb77-09ba-46d5-b679-ca17ded3d8d8",
+  "testDeploymentId": "7a24276c-59ea-4735-b535-b196e8790865",
   "beforeCancel": {
     "runStatus": "running",
     "actionStatuses": [
@@ -46,9 +46,9 @@
         "actorId": "U1001",
         "priority": "normal",
         "createdAt": "2026-10-21T08:00:00.000Z",
-        "description": "PUMP-001 状态为 warning，温度 86°C 偏高，申请检查工单进行现场检查与维护。",
+        "description": "PUMP-001 状态为 warning，温度 86°C 偏高，申请现场检查：确认润滑、冷却系统与负载情况，并持续监测温度趋势。",
         "equipmentId": "PUMP-001",
-        "workOrderId": "5dce7bca-d7d2-4895-a404-46267a820759"
+        "workOrderId": "46f7a711-f0fa-4fda-86b2-b0f6fcb9a9df"
       },
       "status": 200
     },
@@ -71,10 +71,11 @@
       "runtime.event",
       "runtime.event",
       "runtime.event",
+      "runtime.event",
       "action.prepared",
       "action.decided",
-      "runtime.event",
       "run.cancel_requested",
+      "runtime.event",
       "runtime.event",
       "runtime.event",
       "runtime.event",
@@ -90,7 +91,7 @@
     "mockWriteCalls": 1,
     "workOrders": [
       {
-        "workOrderId": "5dce7bca-d7d2-4895-a404-46267a820759",
+        "workOrderId": "46f7a711-f0fa-4fda-86b2-b0f6fcb9a9df",
         "status": "created",
         "actorId": "U1001"
       }

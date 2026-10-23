@@ -28,6 +28,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC14-snapshot-change-live.json','AC14'],
   ['docs/implementation/evidence/TD15-AC15-startup-failure-live.json','AC15'],
   ['docs/implementation/evidence/TD15-AC16-rollback-live.json','AC16'],
+  ['docs/implementation/evidence/TD15-AC19-cancel-unknown-write-live.json','AC19'],
   ['docs/implementation/evidence/TD15-NF01-validation-branches.json','NF01-validation'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
   ['docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json','AC25'],
@@ -38,7 +39,7 @@ const results=[];
 for(const [sourcePath,kind] of sources){
   const source=JSON.parse(await readFile(sourcePath,'utf8'));
   assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
-  if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='NF01-validation'){
+  if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='NF01-validation'){
     assert.ok(source.branches.length>0&&source.branches.every(branch=>branch.status==='passed'&&branch.assertions.every(item=>item.passed===true)),`${kind}_BRANCH_NOT_PASSED`);
   }else if(kind==='AC15'){
     assert.equal(source.verdict,'passed','AC15_NOT_PASSED');
@@ -74,7 +75,7 @@ for(const [sourcePath,kind] of sources){
       'two-rails-triggered':source.auditBeforeTool&&source.allowlistAllowed&&source.mockCalls?.some(call=>call.operation==='equipment-status'&&call.status===200)
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-05',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
-  }else if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='NF01-validation'){
+  }else if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='NF01-validation'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else if(kind==='AC15'){
     const passed=source.pointerUnchanged===true&&source.failedOperation?.status==='failed'&&source.runnerRecovered===true&&source.readOnlyRun?.status==='succeeded';
