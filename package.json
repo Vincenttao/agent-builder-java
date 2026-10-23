@@ -19,7 +19,7 @@
     "opencode:probe": "node --env-file-if-exists=.env.local scripts/probe-opencode.mjs",
     "java:probe": "node --env-file-if-exists=.env.local scripts/probe-java.mjs",
     "typecheck": "tsc --noEmit",
-    "build": "pnpm --filter @agent-builder/web build && tsc -p tsconfig.build.json",
+    "build": "corepack pnpm --filter @agent-builder/web build && tsc -p tsconfig.build.json",
     "dev": "node --env-file-if-exists=.env.local --import tsx apps/server/src/main.ts",
     "dev:web": "pnpm --filter @agent-builder/web dev",
     "db:migrate": "node --env-file-if-exists=.env.local --import tsx apps/server/src/migrate.ts",
