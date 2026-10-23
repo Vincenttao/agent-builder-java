@@ -20,6 +20,9 @@ Object.assign(binding,{artifactDigest,compatibilityKey});
 const targetPath='test-results/acceptance/td15-platform-target-current.json';
 await writeFile(targetPath,JSON.stringify({artifactPath,artifactDigest,compatibilityKey},null,2)+'\n');
 const sources=[
+  ['docs/implementation/evidence/TD15-AC04-invalid-assembly.json','AC04'],
+  ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
+  ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
   ['docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json','AC25'],
   ['docs/implementation/evidence/TD15-AC27-fixed-regression-live.json','AC27'],
@@ -36,7 +39,26 @@ for(const [sourcePath,kind] of sources){
     {kind:'assertions',path:evidencePath,sha256:createHash('sha256').update(bytes).digest('hex')},
     {kind:'execution-record',path:evidencePath,sha256:createHash('sha256').update(bytes).digest('hex')}
   ];
-  if(kind==='AC21-AC22'){
+  if(kind==='AC04'){
+    const checks={
+      'unknown-tool':source.unknownToolRejected&&source.unknownToolReasons.includes('UNKNOWN_TOOL:unknown-business-tool@1'),
+      'invalid-rail-parameter':source.invalidRailRejected&&source.invalidRailReasons.includes(`UNKNOWN_RAIL:${source.invalidRailId}`),
+      'invalid-change-not-applied':source.draftUnchanged&&source.snapshotCountAfterRejectedChanges===0
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-04',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC06'){
+    const checks={
+      'conflicting-rails':source.conflictingRailReasons.includes('CONFLICTING_RAILS'),
+      'unsupported-agent':source.unsupportedAgentReasons.includes('UNSUPPORTED_AGENT_TYPE')
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-06',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC07'){
+    const checks={
+      'http-tool':source.http.runStatus==='succeeded'&&source.http.httpCall?.status==='succeeded'&&source.http.mockCalls?.some(call=>call.operation==='equipment-status'&&call.status===200),
+      'mcp-tool':source.mcp.runStatus==='succeeded'&&source.mcp.mcpCall?.status==='succeeded'&&source.mcp.mockCalls?.some(call=>call.operation==='equipment-status'&&call.status===200)
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-07',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC21-AC22'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else if(kind==='AC25'||kind==='AC27'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
