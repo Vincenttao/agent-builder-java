@@ -175,3 +175,5 @@ TDD-089：为排查 AC-32 金融生成任务未收到 OpenCode 回复的问题�
 TDD-090：Windows 环境仅提供 Corepack 时，根 `build` 脚本内部调用裸 `pnpm` 导致入口失败。将脚本改为 `corepack pnpm` 后，原入口 `corepack pnpm build` 完成 Web 生产构建和 TypeScript 发布构建。本项不替代 Docker 构建或 TD-15 全栈回归。详见 [TDD-090](TDD-090.md)。
 
 TDD-091：推进 AC-32 单一理财 Agent，受限生成 `WealthQueryTool` 与统一 Skill，同时绑定余额和产品目录两个只读接口；扩展制品 `@2` 多 Tool 绑定、Java 数组响应契约和固定上下文产品查询代理，并增加装配模板和现场验收脚本。TypeScript 类型检查、36 个文件／135 项单元与契约测试、Java Runtime Bridge 全量测试、2 项生成适配器测试、装配页 Playwright 夹具和生产构建通过。Docker Engine 当前停止，AC-32 真实发布/App 调用三个分支仍未验证；GitHub CI 不纳入本地交付判据。详见 [TDD-091](TDD-091.md)。
+
+TDD-092：修复 AC-32 发布冒烟权限仅放行设备查询导致金融 Tool HTTP 403 的问题；余额与产品目录查询加入显式只读白名单。单元／契约 138 项、集成 113 项、类型检查及生产 App 构建通过；复用既有通过候选和验证报告完成本地发布及两项模拟 App 查询，AC-32 三个现场分支通过。四服务健康，Runner 未重建；失败尝试保留。P0-B 汇总尚未刷新，TD-15 仍未完成。详见 [TDD-092](TDD-092.md)。
