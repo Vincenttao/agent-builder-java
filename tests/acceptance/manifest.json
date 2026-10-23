@@ -922,7 +922,7 @@
       "requirementIds": [
         "FR-020"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac27-fixed-regression-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {

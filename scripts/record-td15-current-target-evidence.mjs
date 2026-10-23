@@ -22,6 +22,7 @@ await writeFile(targetPath,JSON.stringify({artifactPath,artifactDigest,compatibi
 const sources=[
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
   ['docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json','AC25'],
+  ['docs/implementation/evidence/TD15-AC27-fixed-regression-live.json','AC27'],
   ['docs/implementation/evidence/TD15-AC32-wealth-assistant-live.json','AC32']
 ];
 const results=[];
@@ -37,7 +38,7 @@ for(const [sourcePath,kind] of sources){
   ];
   if(kind==='AC21-AC22'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
-  }else if(kind==='AC25'){
+  }else if(kind==='AC25'||kind==='AC27'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else{
     for(const [branchId,passed] of Object.entries(source.branches)){

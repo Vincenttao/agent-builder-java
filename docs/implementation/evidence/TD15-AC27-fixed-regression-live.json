@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15 P0-B AC-27 rerun the frozen generated unit regression directly without model-driven test redesign",
+  "executionMode": "live-mock",
+  "measuredAt": "2026-10-23T22:47:22.528Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "targetImageIds": [
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+  ],
+  "jobId": "87ad0d88-5c6d-4c9c-a698-18dad58ff62b",
+  "candidateId": "beef7938-dbca-45df-be68-e64652d6e5d4",
+  "candidateArtifactDigest": "791b65655eb8ab330bb42d4d844b4f95d00cd3b77c33b28c61f48f108a5b4fdc",
+  "bundleDigest": "cea1ce69c83240e2a32e3db55c8aa4e55cb912c033dccc6c1b2dfbd239f78cc0",
+  "baselineId": "343fca9b-afc2-48f3-b3ea-104b001337af",
+  "baselineDigest": "98466a495504dbd1739e01aaed17f630c2c36e42d9be0bbd33ee3e9c6e87de0d",
+  "testPlanDigest": "351c749c256f3368638d3d6f926fdbd3bd5c5d3cfb95ac5942e8ede4a4fad095",
+  "verdict": "passed",
+  "branches": [
+    {
+      "caseId": "AC-27",
+      "branchId": "regression-without-model",
+      "status": "passed",
+      "assertions": [
+        {
+          "name": "frozen_source_and_test_digests_match_candidate",
+          "passed": true
+        },
+        {
+          "name": "regression_compiled_and_ran_directly",
+          "passed": true
+        },
+        {
+          "name": "no_model_driven_test_redesign_or_external_call",
+          "passed": true
+        }
+      ],
+      "execution": {
+        "sourceDigest": "70cef901a26b15520fda2cd4522918735fd996a3596d882f42b03cdde1d16394",
+        "testFileDigest": "2dd77612cdd912c76d459759f18e857fdbd462a5e96efe708c503f761f1376e9",
+        "testDigest": "d526df00bedb99882e5a075d7ba61299fa80ff1a90bdd9a2b4f829bc12d1a5c4",
+        "testPlanDigest": "351c749c256f3368638d3d6f926fdbd3bd5c5d3cfb95ac5942e8ede4a4fad095",
+        "compiled": true,
+        "compileArgs": [
+          "-encoding",
+          "UTF-8",
+          "--release",
+          "21",
+          "-cp",
+          "/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/control/sdk/BOOT-INF/lib/*",
+          "-d",
+          "/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/control/commands/ac27-4607",
+          "/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/developer/src/generated/EquipmentTool.java",
+          "/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/developer/test/generated/EquipmentToolTest.java"
+        ],
+        "runArgs": [
+          "-ea",
+          "-cp",
+          "/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/control/commands/ac27-4607:/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/control/sdk/BOOT-INF/classes:/data/engineering/tasks/87ad0d88-5c6d-4c9c-a698-18dad58ff62b/workspace/control/sdk/BOOT-INF/lib/*",
+          "generated.EquipmentToolTest"
+        ],
+        "exitCode": 0,
+        "output": "EQUIPMENT_TOOL_UNIT_OK",
+        "modelInvoked": false,
+        "externalNetworkUsed": false,
+        "originalUnitGreenId": "9294b834-9c7a-4571-b2bc-965afd81d8b8",
+        "originalBundleDigest": "cea1ce69c83240e2a32e3db55c8aa4e55cb912c033dccc6c1b2dfbd239f78cc0"
+      }
+    }
+  ]
+}
