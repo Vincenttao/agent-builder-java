@@ -21,6 +21,7 @@ export function registerToolProxy(app: FastifyInstance, options: ToolProxyOption
     return reply.code(response.status).send(response.result);
   });
   registerReadOperation('getAccountBalance', ['accountId']);
+  registerReadOperation('listWealthProducts', []);
   // Each exposed operation has a fixed schema and backend mapping; no arbitrary forwarding route.
   app.post<{ Body: { equipmentId: string } }>('/internal/tool-proxy/operations/equipment-status', { schema: { body: {
     type: 'object', additionalProperties: false, required: ['equipmentId'], properties: { equipmentId: { type: 'string', minLength: 1, maxLength: 80 } }

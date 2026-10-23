@@ -44,7 +44,7 @@ public final class AgentAssembler {
         List<Object> rails = new ArrayList<>();
         rails.add(new SessionCancellationRail(executions));
         if (components.enabled()) {
-            if (allowedTools.size()!=1 || !allowedTools.contains(components.toolName())) throw new IllegalArgumentException("GENERATED_TOOL_BINDING_INVALID");
+            if (!allowedTools.equals(components.toolNames())) throw new IllegalArgumentException("GENERATED_TOOL_BINDING_INVALID");
             allowedTools.add("skill_tool"); rails.add(new ManagedSkillRail(components, events));
         }
         for (String id : spec.rails()) {

@@ -3,7 +3,7 @@ import type {Snapshot} from '../../../packages/contracts/src/index.js';
 import type {AcceptanceBaseline} from '../../../packages/contracts/src/baselines.js';
 import type {DevelopmentInput,DevelopmentJob,EngineeringEvent,CommandResult} from '../../../packages/contracts/src/development.js';
 import type {ValidationReport} from '../../../packages/contracts/src/validations.js';
-import {equipmentGenerationRequest,wealthBalanceGenerationRequest} from '../../../packages/contracts/src/generation-profile.js';
+import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest} from '../../../packages/contracts/src/generation-profile.js';
 import type {Api} from './debug-run.js';
 const labels={queued:'排队中',running:'开发中',cancelling:'正在取消',cancelled:'已取消',failed:'开发失败',reconciling:'待核对',built:'构建完成'};
 const terminal=(job:DevelopmentJob)=>['built','failed','cancelled'].includes(job.status);
@@ -24,7 +24,7 @@ export function DevelopmentPanel({snapshot,baseline,repairReport,api,onError}:{s
  },[job?.id]);
  async function start(repairExecutionId?:string){
   if(!baseline||!['equipment-read@1','wealth-balance-read@1'].includes(baseline.content.templateId)||repairExecutionId&&baseline.content.templateId==='wealth-balance-read@1')return;setBusy(true);
-  const profile=baseline.content.templateId==='wealth-balance-read@1'?wealthBalanceGenerationRequest:equipmentGenerationRequest;
+  const profile=snapshot.content.assembly.generationProfileVersion==='wealth-assistant-java@1'?wealthAssistantGenerationRequest:baseline.content.templateId==='wealth-balance-read@1'?wealthBalanceGenerationRequest:equipmentGenerationRequest;
   if(!pending.current||pending.current.baselineId!==baseline.id||pending.current.repairExecutionId!==repairExecutionId)pending.current={clientRequestId:crypto.randomUUID(),baselineId:baseline.id,generation:{...profile,scope:[...profile.scope],dependencies:[...profile.dependencies]},maxSeconds:900,...(repairExecutionId?{repairExecutionId}:{})};
   try{const value=await api<DevelopmentJob>(`/api/snapshots/${snapshot.id}/development`,'POST',pending.current);pending.current=undefined;setJob(value);setHistory(previous=>[value,...previous.filter(item=>item.id!==value.id)]);}
   catch(error){onError(error);}finally{setBusy(false);}
@@ -35,8 +35,8 @@ export function DevelopmentPanel({snapshot,baseline,repairReport,api,onError}:{s
  const repairable=repairReport?.verdict==='failed'&&repairReport.baselineId===baseline?.id&&repairReport.binding.candidate?.provenance==='generated-component'&&repairReport.cases.every(c=>['passed','failed'].includes(c.status))&&repairReport.cases.some(c=>c.assertions.some(a=>a.status==='failed'));
  return <section className="development-panel baseline-review dev-workbench" data-testid={`development-${snapshot.id}`}>
   <div className="dev-workbench-head"><div><p className="eyebrow">开发 Agent · 双角色协作</p><h3>开发工作台</h3>
-   <p className="muted">测试 Agent 先准备验收方案，开发 Agent 再生成设备查询 Tool、Skill 和单元测试。平台依据构建与执行证据确定候选状态。</p></div>
-   <div className="dev-head-meta"><span className="dev-status-pill"><i className={`dev-status-dot ${job?.status==='built'?'is-ready':job?.status==='failed'?'is-failed':active?'is-running':''}`}/>{job?labels[job.status]:'等待启动'}</span><small>{baseline?.content.templateId==='wealth-balance-read@1'?'理财余额只读场景':'设备只读场景'} · 单任务最多 15 分钟</small></div>
+   <p className="muted">测试 Agent 先准备验收方案，开发 Agent 再按固定基线生成 Tool、Skill 和单元测试。平台依据构建与执行证据确定候选状态。</p></div>
+   <div className="dev-head-meta"><span className="dev-status-pill"><i className={`dev-status-dot ${job?.status==='built'?'is-ready':job?.status==='failed'?'is-failed':active?'is-running':''}`}/>{job?labels[job.status]:'等待启动'}</span><small>{snapshot.content.assembly.generationProfileVersion==='wealth-assistant-java@1'?'余额与产品只读场景':baseline?.content.templateId==='wealth-balance-read@1'?'理财余额只读场景':'设备只读场景'} · 单任务最多 15 分钟</small></div>
   </div>
   <div className="dev-pipeline" aria-label="开发任务阶段">{[
    {name:'验收基线',state:baseline&&['equipment-read@1','wealth-balance-read@1'].includes(baseline.content.templateId)?'done':'pending',detail:baseline&&['equipment-read@1','wealth-balance-read@1'].includes(baseline.content.templateId)?'已确认需求与场景':'等待确认只读基线'},
@@ -45,7 +45,7 @@ export function DevelopmentPanel({snapshot,baseline,repairReport,api,onError}:{s
    {name:'构建候选',state:job?.bundle?'done':job?.status==='failed'?'failed':'pending',detail:job?.bundle?'源码与制品已生成':job?.status==='failed'?'构建未完成':'等待单测、契约检查与构建'}
   ].map((step,index)=><div className={`dev-pipeline-step ${step.state}`} key={step.name}><span className="dev-step-index">{step.state==='done'?'✓':String(index+1).padStart(2,'0')}</span><div><strong>{step.name}</strong><small>{step.detail}</small></div>{index<3&&<span className="dev-step-connector"/>}</div>)}</div>
   <div className="dev-task-surface"><div className="dev-task-main"><div className="dev-section-heading"><div><span className="dev-section-kicker">TASK</span><h4>开发任务</h4></div>{job&&<span className="dev-task-id">{job.id.slice(0,8)}</span>}</div>
-   <p className="muted">基于固定需求和测试方案生成{baseline?.content.templateId==='wealth-balance-read@1'?'余额 Tool、Skill':'设备 Tool、Skill'}；完成后登记固定候选，进入独立验收。</p>
+   <p className="muted">基于固定需求和测试方案生成{snapshot.content.assembly.generationProfileVersion==='wealth-assistant-java@1'?'余额与产品查询 Tool、统一 Skill':'基线对应的 Tool 与 Skill'}；完成后登记固定候选，进入独立验收。</p>
   <button type="button" className="primary" disabled={busy||active||!baseline||!['equipment-read@1','wealth-balance-read@1'].includes(baseline.content.templateId)} onClick={()=>{void start();}}>{pending.current&&!pending.current.repairExecutionId?'重试开发请求':'启动双角色开发'}</button>
   {repairable&&baseline?.content.templateId==='equipment-read@1'&&<><p className="hint">修复当前失败报告对应的候选，保留原报告、旧单测与测试方案。先复现缺陷，再生成新候选并重新验收。每个初始开发任务最多修复 3 次，每次最多 15 分钟；失败和取消均计入次数。</p><button type="button" className="secondary" disabled={busy||active} onClick={()=>{void start(repairReport!.executionId);}}>按失败证据修复</button></>}
   {!baseline&&<p className="hint">请先确认与此版本匹配的验收基线。</p>}

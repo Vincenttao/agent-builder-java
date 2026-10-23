@@ -8,7 +8,7 @@ import { PostgresSnapshotRepository } from '../../apps/server/src/snapshots/adap
 import { SnapshotService } from '../../apps/server/src/snapshots/application/snapshot-service.js';
 import { draftInput } from '../support/fixtures.js';
 import { createApp } from '../../apps/server/src/app.js';
-import {wealthBalanceAssembly} from '../../packages/contracts/src/equipment-template.js';
+import {wealthBalanceAssembly,wealthAssistantAssembly} from '../../packages/contracts/src/equipment-template.js';
 
 const databaseUrl = process.env.TEST_DATABASE_URL ?? 'postgres://builder_test:local-test-only@127.0.0.1:15432/builder_test';
 const schema = `it_${randomUUID().replaceAll('-', '')}`;
@@ -46,6 +46,12 @@ describe('TD-02 不可变快照／真实数据库', () => {
     const draft=await drafts.create(confirmed());const snapshot=await snapshots().create(draft.id,{expectedRevision:1,assembly:wealthBalanceAssembly('查询账户可用余额')});
     expect(snapshot.content.connectionProfile).toBe('mock-finance@1');expect(snapshot.content.runtimeSpec.tools).toEqual([]);
     expect(snapshot.content.assembly.generationProfileVersion).toBe('wealth-balance-java@1');
+  });
+  it('freezes combined balance and product access as one Agent without preloading business Tools',async()=>{
+    const draft=await drafts.create(confirmed());const snapshot=await snapshots().create(draft.id,{expectedRevision:1,assembly:wealthAssistantAssembly('查询余额和产品目录')});
+    expect(snapshot.content.connectionProfile).toBe('mock-finance@1');expect(snapshot.content.runtimeSpec.tools).toEqual([]);
+    expect(snapshot.content.assembly.generationProfileVersion).toBe('wealth-assistant-java@1');
+    expect(snapshot.content.assembly.systemPrompt).toContain('list_wealth_products');
   });
   it('rejects stale revision, unknown component, unsupported type and duplicate Rails', async () => {
     const draft = await drafts.create(confirmed());

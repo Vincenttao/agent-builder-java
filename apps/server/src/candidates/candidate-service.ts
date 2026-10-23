@@ -7,7 +7,7 @@ import {contentDigest} from '../snapshots/domain/assembly.js';
 import {AppError} from '../shared/errors.js';
 import type {BaselineService} from '../acceptance/application/baseline-service.js';
 import type {DevelopmentJob,EngineeringTaskInput} from '../../../../packages/contracts/src/development.js';
-import {equipmentGenerationRequest,wealthBalanceGenerationRequest,generatedRuntimeTool} from '../../../../packages/contracts/src/generation-profile.js';
+import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,generatedRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
 import type {ValidationCandidate} from '../../../../packages/contracts/src/validations.js';
 import {effectiveRuntimeSpec,validateGeneratedRailDefinition} from '../../../../packages/contracts/src/rail-generation.js';
 export class CandidateService {
@@ -22,13 +22,13 @@ export class CandidateService {
       ||contentDigest(bundle.repair??null)!==contentDigest(row.task_input.context.repair?.reference??null)||row.task_input.context.repair&&bundle.planDigest!==row.task_input.context.repair.bundle.planDigest)
       throw new AppError('CANDIDATE_BUILD_MISMATCH','生成任务与需求、基线或构建包不匹配',409);
     if(bundle.profileVersion&&bundle.profileVersion!==row.task_input.generation.profileVersion)throw new AppError('CANDIDATE_BUILD_MISMATCH','构建包生成 Profile 与任务不匹配',409);
-    if(row.task_input.generation.profileVersion===equipmentGenerationRequest.profileVersion||row.task_input.generation.profileVersion===wealthBalanceGenerationRequest.profileVersion){
+    if(([equipmentGenerationRequest.profileVersion,wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion] as string[]).includes(row.task_input.generation.profileVersion)){
       let definition;try{definition=validateGeneratedRailDefinition(row.task_input.context.goal,bundle.railDefinition);}catch{throw new AppError('CANDIDATE_RAIL_INVALID','构建包缺少与确认需求相符的受限 Rail 定义',409);}
       const base=structuredClone(row.task_input.context.runtimeSpec??snapshot.content.runtimeSpec);
-      const generatedTool=generatedRuntimeTool(row.task_input.generation.profileVersion);
-      if(generatedTool){
-        if(base.tools.length===0)base.tools=[generatedTool];
-        else if(base.tools.length!==1||contentDigest(base.tools[0])!==contentDigest(generatedTool))throw new AppError('CANDIDATE_RUNTIME_SPEC_MISMATCH','快照中的 Tool 与生成 Profile 不一致',409);
+      const generatedTools=generatedRuntimeTools(row.task_input.generation.profileVersion);
+      if(generatedTools){
+        if(base.tools.length===0)base.tools=generatedTools;
+        else if(contentDigest(base.tools)!==contentDigest(generatedTools))throw new AppError('CANDIDATE_RUNTIME_SPEC_MISMATCH','快照中的 Tool 与生成 Profile 不一致',409);
       }
       const expected=effectiveRuntimeSpec(base,definition);
       if(!bundle.runtimeSpec||contentDigest(bundle.runtimeSpec)!==contentDigest(expected))throw new AppError('CANDIDATE_RUNTIME_SPEC_MISMATCH','构建包运行配置与需求不匹配',409);
@@ -44,8 +44,8 @@ export class CandidateService {
       const{job,bundle,goal,generation}=await this.builtJob(developmentJobId,snapshotId);
       if(bundle.railDefinition){
         let railDefinition;try{railDefinition=validateGeneratedRailDefinition(goal,bundle.railDefinition);}catch{throw new AppError('CANDIDATE_RAIL_INVALID','候选 Rail 定义与确认需求不匹配',409);}
-        const base=structuredClone(snapshot.content.runtimeSpec);const generatedTool=generatedRuntimeTool(generation.profileVersion);
-        if(generatedTool){if(base.tools.length===0)base.tools=[generatedTool];else if(base.tools.length!==1||contentDigest(base.tools[0])!==contentDigest(generatedTool))throw new AppError('CANDIDATE_RUNTIME_SPEC_MISMATCH','快照中的 Tool 与生成 Profile 不一致',409);}
+        const base=structuredClone(snapshot.content.runtimeSpec);const generatedTools=generatedRuntimeTools(generation.profileVersion);
+        if(generatedTools){if(base.tools.length===0)base.tools=generatedTools;else if(contentDigest(base.tools)!==contentDigest(generatedTools))throw new AppError('CANDIDATE_RUNTIME_SPEC_MISMATCH','快照中的 Tool 与生成 Profile 不一致',409);}
         const expected=effectiveRuntimeSpec(base,railDefinition);
         if(!bundle.runtimeSpec||contentDigest(bundle.runtimeSpec)!==contentDigest(expected))throw new AppError('CANDIDATE_RUNTIME_SPEC_MISMATCH','候选运行配置与 Rail 定义不匹配',409);
         Object.assign(content,{runtimeSpec:expected,specDigest:contentDigest(expected)});
@@ -56,7 +56,8 @@ export class CandidateService {
       if(artifact.kind!=='generated-component'||!/^[a-f0-9]{64}$/.test(artifact.artifactDigest)||artifact.sdkArtifactDigest!==runtime.artifactDigest||artifact.sdkArtifactDigest!==bundle.sdkArtifactDigest
         ||artifact.generated.developmentBundleDigest!==bundle.digest||artifact.generated.snapshotId!==snapshotId||artifact.generated.specDigest!==content.specDigest
         ||artifact.generated.sdkArtifactDigest!==bundle.sdkArtifactDigest||artifact.generated.componentDigest!==bundle.artifactDigest
-        ||artifact.generated.operationId!==undefined&&artifact.generated.operationId!==generatedRuntimeTool(generation.profileVersion)?.operationId
+        ||artifact.generated.operationId!==undefined&&artifact.generated.operationId!==generatedRuntimeTools(generation.profileVersion)?.[0]?.operationId
+        ||artifact.generated.toolBindings!==undefined&&contentDigest(artifact.generated.toolBindings.map(binding=>[binding.toolName,binding.operationId]))!==contentDigest((generatedRuntimeTools(generation.profileVersion)??[]).map(tool=>[tool.name,tool.operationId]))
         ||artifact.generated.skillDigest!==bundle.files.find(file=>file.path===(artifact.generated.skillPath??'skills/equipment-query/SKILL.md'))?.digest)
         throw new AppError('CANDIDATE_ARTIFACT_MISMATCH','Runner 实际制品与生成任务不匹配',409);
       content.artifactDigest=artifact.artifactDigest;content.provenance='generated-component';

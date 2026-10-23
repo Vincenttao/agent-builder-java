@@ -173,3 +173,5 @@ TDD-088：在与 NF-01 固定镜像相同的隔离 Compose 栈中验证 AC-29a �
 TDD-089：为排查 AC-32 金融生成任务未收到 OpenCode 回复的问题，先以单测证明 OpenCode API 超时原先固定为 15 秒，再改为可配置、默认 60 秒；2 项定向单测、36 个单元／契约测试文件共 132 项（`--maxWorkers=2`）和全仓类型检查通过。并行运行时 6 项契约测试超出 5 秒限时，降低并发后全绿。独立 AC-32 栈生成仍未产出候选；Runner 镜像构建卡在 Maven Runtime Bridge，Docker Desktop 服务停止且 API 返回 500，当前用户无法启动服务。超时修复尚未部署，不能计作运行态修复；AC-32 余额发布、产品查询、版本关联三个分支仍未验证。详见 [TDD-089](TDD-089.md) 与 [AC-32 失败记录](evidence/TD15-AC32-finance-published-live.json)。
 
 TDD-090：Windows 环境仅提供 Corepack 时，根 `build` 脚本内部调用裸 `pnpm` 导致入口失败。将脚本改为 `corepack pnpm` 后，原入口 `corepack pnpm build` 完成 Web 生产构建和 TypeScript 发布构建。本项不替代 Docker 构建或 TD-15 全栈回归。详见 [TDD-090](TDD-090.md)。
+
+TDD-091：推进 AC-32 单一理财 Agent，受限生成 `WealthQueryTool` 与统一 Skill，同时绑定余额和产品目录两个只读接口；扩展制品 `@2` 多 Tool 绑定、Java 数组响应契约和固定上下文产品查询代理，并增加装配模板和现场验收脚本。TypeScript 类型检查、36 个文件／135 项单元与契约测试、Java Runtime Bridge 全量测试、2 项生成适配器测试、装配页 Playwright 夹具和生产构建通过。Docker Engine 当前停止，AC-32 真实发布/App 调用三个分支仍未验证；GitHub CI 不纳入本地交付判据。详见 [TDD-091](TDD-091.md)。

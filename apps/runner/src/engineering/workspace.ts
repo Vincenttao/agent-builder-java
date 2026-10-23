@@ -5,7 +5,7 @@ import type {AcceptanceBaseline} from '../../../../packages/contracts/src/baseli
 import type {EngineeringRole,EngineeringEvent,GeneratedBundle,CommandResult,EngineeringContext,GenerationRequest} from '../../../../packages/contracts/src/development.js';
 import {canonicalJson} from '../../../../packages/contracts/src/canonical.js';
 import {effectiveRuntimeSpec,resolveGeneratedRailDefinition} from '../../../../packages/contracts/src/rail-generation.js';
-import {generationProfile,generationProfileFor,type GenerationProfile,PolicyError,checkFileAccess,checkCommand} from './profile.js';
+import {generationProfile,generationProfileFor,profileRuntimeTools,type GenerationProfile,PolicyError,checkFileAccess,checkCommand} from './profile.js';
 import {equipmentGenerationRequest} from '../../../../packages/contracts/src/generation-profile.js';
 import {EngineeringCommands} from './commands.js';
 import {isValidRedExecution} from './unit-test-policy.js';
@@ -137,8 +137,9 @@ export class EngineeringWorkspace {
       }
       if(!this.context.runtimeSpec)throw new PolicyError('RUNTIME_SPEC_REQUIRED');
       const baseRuntimeSpec=structuredClone(this.context.runtimeSpec);
-      if(baseRuntimeSpec.tools.length===0)baseRuntimeSpec.tools=[structuredClone(this.profile.runtimeTool)];
-      else if(baseRuntimeSpec.tools.length!==1||baseRuntimeSpec.tools[0]!.name!==this.profile.runtimeTool.name||baseRuntimeSpec.tools[0]!.operationId!==this.profile.runtimeTool.operationId)
+      const generatedTools=profileRuntimeTools(this.profile);
+      if(baseRuntimeSpec.tools.length===0)baseRuntimeSpec.tools=structuredClone(generatedTools);
+      else if(canonicalJson(baseRuntimeSpec.tools)!==canonicalJson(generatedTools))
         throw new PolicyError('GENERATED_TOOL_BINDING_INVALID');
       const runtimeSpec=effectiveRuntimeSpec(baseRuntimeSpec,railDefinition);
       const artifact=await readFile(jar);contents.set('component.jar',artifact);files.push({path:'component.jar',digest:digest(artifact),size:artifact.length});

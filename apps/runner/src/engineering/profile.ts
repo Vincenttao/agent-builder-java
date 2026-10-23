@@ -1,7 +1,7 @@
 import type {EngineeringRole,GenerationRequest} from '../../../../packages/contracts/src/development.js';
-import {equipmentGenerationRequest,wealthBalanceGenerationRequest,generationImplementationError,equipmentRuntimeTool,wealthBalanceRuntimeTool} from '../../../../packages/contracts/src/generation-profile.js';
+import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,generationImplementationError,equipmentRuntimeTool,wealthBalanceRuntimeTool,wealthAssistantRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
 import {createHash} from 'node:crypto';
-import {toolStub,toolContract,repairContract,engineeringSkills,platformContractTest,balanceToolStub,balanceToolContract,balancePlatformContractTest,balanceEngineeringSkills} from './templates.js';
+import {toolStub,toolContract,repairContract,engineeringSkills,platformContractTest,balanceToolStub,balanceToolContract,balancePlatformContractTest,balanceEngineeringSkills,wealthQueryToolStub,wealthQueryToolContract,wealthQueryPlatformContractTest,wealthQueryEngineeringSkills} from './templates.js';
 export class PolicyError extends Error {constructor(public readonly code:string){super(code);}}
 const hashTemplates=(entries:Record<string,string>)=>Object.fromEntries(Object.entries(entries).map(([name,source])=>[name,createHash('sha256').update(source).digest('hex')]));
 const limits={executionMode:'trusted-local',engineVersion:'1.19.3',model:'deepseek-local/deepseek-v4-flash',maxSteps:16,maxTaskSeconds:900,maxCommandSeconds:60,maxFileBytes:32768,maxOutputBytes:262144,commands:['unit-test','build'] as const,testerFiles:['tests/plan.json','tests/proposal.json'] as const};
@@ -23,10 +23,21 @@ export const wealthBalanceProfile={...generationProfile,version:wealthBalanceGen
   sourceStub:balanceToolStub,implementationContract:balanceToolContract,repairContract:'',platformContractTest:balancePlatformContractTest,engineeringSkills:balanceEngineeringSkills,
   templates:hashTemplates({toolStub:balanceToolStub,toolContract:balanceToolContract,platformContractTest:balancePlatformContractTest,...balanceEngineeringSkills})
 } as const;
-export type GenerationProfile=typeof generationProfile|typeof wealthBalanceProfile;
+export const wealthAssistantProfile={...wealthBalanceProfile,version:wealthAssistantGenerationRequest.profileVersion,scope:wealthAssistantGenerationRequest.scope,
+  dependencies:wealthAssistantGenerationRequest.dependencies,connectionProfile:wealthAssistantGenerationRequest.connectionProfile,
+  runtimeTools:wealthAssistantRuntimeTools,
+  developerFiles:['src/generated/WealthQueryTool.java','test/generated/WealthQueryToolTest.java','skills/wealth-query/SKILL.md','rails/definition.json'],
+  repair:{maxAttempts:3,regressionFiles:['test/generated/WealthQueryRepair1Test.java','test/generated/WealthQueryRepair2Test.java','test/generated/WealthQueryRepair3Test.java']},
+  toolClassName:'generated.WealthQueryTool',toolName:'get_account_balance',operationId:'getAccountBalance',skillName:'wealth-query',skillPath:'skills/wealth-query/SKILL.md',contractClass:'WealthQueryContract',
+  sourceStub:wealthQueryToolStub,implementationContract:wealthQueryToolContract,repairContract:'',platformContractTest:wealthQueryPlatformContractTest,engineeringSkills:wealthQueryEngineeringSkills,
+  templates:hashTemplates({toolStub:wealthQueryToolStub,toolContract:wealthQueryToolContract,platformContractTest:wealthQueryPlatformContractTest,...wealthQueryEngineeringSkills})
+} as const;
+export type GenerationProfile=typeof generationProfile|typeof wealthBalanceProfile|typeof wealthAssistantProfile;
+export const profileRuntimeTools=(profile:GenerationProfile)=>'runtimeTools' in profile?[...profile.runtimeTools]:[profile.runtimeTool];
 export function generationProfileFor(version:string):GenerationProfile{
   if(version===generationProfile.version)return generationProfile;
   if(version===wealthBalanceProfile.version)return wealthBalanceProfile;
+  if(version===wealthAssistantProfile.version)return wealthAssistantProfile;
   throw new PolicyError('GENERATION_PROFILE_UNSUPPORTED');
 }
 export function validateGenerationRequest(request:GenerationRequest):void{

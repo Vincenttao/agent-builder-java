@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest';
-import {validateGenerationRequest,checkFileAccess,checkCommand,generationProfile,generationProfileFor} from './profile.js';
-import {equipmentGenerationRequest,generationPolicyError,generationImplementationError,wealthBalanceGenerationRequest} from '../../../../packages/contracts/src/generation-profile.js';
+import {validateGenerationRequest,checkFileAccess,checkCommand,generationProfile,generationProfileFor,profileRuntimeTools} from './profile.js';
+import {equipmentGenerationRequest,generationPolicyError,generationImplementationError,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
 const request={profileVersion:generationProfile.version,scope:[...generationProfile.scope],dependencies:[...generationProfile.dependencies],connectionProfile:generationProfile.connectionProfile};
 describe('reviewed generation profile',()=>{
   it('selects profile-specific balance Tool and Skill paths without widening the equipment profile',()=>{
@@ -18,6 +18,19 @@ describe('reviewed generation profile',()=>{
     expect(generationImplementationError({...equipmentGenerationRequest,scope:[...equipmentGenerationRequest.scope],dependencies:[...equipmentGenerationRequest.dependencies]})).toBeUndefined();
     expect(()=>validateGenerationRequest({...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]})).not.toThrow();
     expect(wealthBalanceGenerationRequest).toMatchObject({profileVersion:'wealth-balance-java@1',scope:['tool','skill'],connectionProfile:'mock-finance@1'});
+  });
+  it('admits one finance profile that binds both balance and wealth-product operations',()=>{
+    const request={...wealthAssistantGenerationRequest,scope:[...wealthAssistantGenerationRequest.scope],dependencies:[...wealthAssistantGenerationRequest.dependencies]};
+    expect(generationPolicyError(request)).toBeUndefined();
+    expect(generationImplementationError(request)).toBeUndefined();
+    expect(()=>validateGenerationRequest(request)).not.toThrow();
+    expect(wealthAssistantGenerationRequest.profileVersion).toBe('wealth-assistant-java@1');
+    expect(wealthAssistantRuntimeTools.map(tool=>[tool.name,tool.operationId])).toEqual([
+      ['get_account_balance','getAccountBalance'],['list_wealth_products','listWealthProducts']
+    ]);
+    const profile=generationProfileFor(request.profileVersion);
+    expect(profile).toMatchObject({toolClassName:'generated.WealthQueryTool',skillName:'wealth-query'});
+    expect(profileRuntimeTools(profile)).toHaveLength(2);
   });
   it('rejects finance profile drift, extra scope, dependencies and production connections',()=>{
     const finance={...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]};

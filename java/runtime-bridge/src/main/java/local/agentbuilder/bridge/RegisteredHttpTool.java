@@ -115,7 +115,7 @@ public final class RegisteredHttpTool extends Tool {
         return Map.of("type", "object", "properties", properties, "required", List.copyOf(fields.keySet()), "additionalProperties", false);
     }
     private static void validateType(String type) {
-        if (!List.of("string", "integer", "boolean").contains(type)) throw new IllegalArgumentException("UNSUPPORTED_CONTRACT_TYPE");
+        if (!List.of("string", "integer", "boolean", "array").contains(type)) throw new IllegalArgumentException("UNSUPPORTED_CONTRACT_TYPE");
     }
     private static boolean valid(Map<String, Object> data, Map<String, String> fields, boolean exact) {
         if (data == null || exact && !data.keySet().equals(fields.keySet())) return false;
@@ -125,6 +125,7 @@ public final class RegisteredHttpTool extends Tool {
                 case "string" -> value instanceof String;
                 case "integer" -> value instanceof Integer || value instanceof Long;
                 case "boolean" -> value instanceof Boolean;
+                case "array" -> value instanceof List<?>;
                 default -> false;
             };
             if (!matches) return false;

@@ -105,3 +105,52 @@ export const balanceEngineeringSkills={
   tester:engineeringSkills.tester,
   developer:`# OpenJiuwen balance Tool and Skill development @1\nUse only builder MCP tools. Read context.json and follow its fixed contract. First save tests/generated/AccountBalanceToolTest.java, then run unit-test and inspect valid red from the unchanged stub. The platform freezes the compiling test digest after valid red. Implement AccountBalanceTool and skills/balance-query/SKILL.md only after valid red. Preserve transport ToolCard and trusted kwargs; accept only accountId and the exact balance response fields. Never invent a balance or accept caller-supplied endpoint, actor, credentials or approval. Do not write executable Rail code. Leave rails/definition.json empty because this generation scope is tool + skill. Rerun unit-test, then build. Build independently checks the component contract and binds the generated Tool into the candidate RuntimeSpec. Never report model claims as command or acceptance success; inspect actual command results.`
 };
+
+export const wealthQueryToolStub=`package generated;
+import com.openjiuwen.core.foundation.tool.Tool;
+import java.util.Map;
+public final class WealthQueryTool extends Tool {
+  private final Tool transport;
+  public WealthQueryTool(Tool transport) { super(transport.getCard()); this.transport=transport; }
+  @Override protected Object invokeInternal(Map<String,Object> inputs,Map<String,Object> kwargs) throws Exception {
+    throw new UnsupportedOperationException("IMPLEMENTATION_REQUIRED");
+  }
+}
+`;
+export const wealthQueryToolContract=`Implement generated.WealthQueryTool as a Java adapter for exactly two pinned Mock operations. Keep transport.getCard() and trusted kwargs.
+For get_account_balance accept exactly accountId:string with a nonblank value. For list_wealth_products accept an empty input map. Reject unknown ToolCard names, missing/extra arguments and malformed results; never accept identity, endpoint, credentials or approval as arguments. Invoke only the provided transport.
+Balance response: require accountId, currency, availableBalanceFen (Integer or Long) and asOf; return exactly these fields and preserve the original values. Product response: require items as a list and version as a string; each item must be a map containing productId, name, status, minimumAmountFen (Integer or Long) and description with their contract types; return only items and version. Propagate transport exceptions unchanged; never fabricate facts or retry.
+Use only java.util.* and the pinned SDK Tool/ToolCard imports. Generate generated.WealthQueryToolTest with public static void main(String[] args) and explicit assertions for both operations. The first valid invocation must compile and fail with IMPLEMENTATION_REQUIRED. The platform freezes this test digest after valid red. Preserve both operation contracts in all later runs.
+Write skills/wealth-query/SKILL.md with frontmatter name wealth-query. Describe when to use get_account_balance and list_wealth_products, their exact arguments and returned fields. Require the Agent to report only returned facts, explain paused product status as returned, and never infer profit, availability, rates or terms.
+`;
+export const wealthQueryPlatformContractTest=`package verification;
+import generated.WealthQueryTool;
+import com.openjiuwen.core.foundation.tool.Tool;
+import com.openjiuwen.core.foundation.tool.ToolCard;
+import java.util.Map;
+import java.util.List;
+public final class WealthQueryContract {
+ static final class Recording extends Tool {
+  Object response;Map<String,Object> input,kwargs;int calls;
+  Recording(String name){super(new ToolCard("finance@1",name,"fixture",Map.of()));}
+  protected Object invokeInternal(Map<String,Object> input,Map<String,Object> kwargs){this.input=input;this.kwargs=kwargs;calls++;if(response instanceof RuntimeException e)throw e;return response;}
+ }
+ static void check(boolean value){if(!value)throw new AssertionError("PLATFORM_CONTRACT_FAILED");}
+ static void invalid(WealthQueryTool tool,Map<String,Object> input,String expected)throws Exception{try{tool.invoke(input,Map.of());throw new AssertionError("EXPECTED_CONTRACT_ERROR");}catch(IllegalArgumentException|IllegalStateException e){check(expected.equals(e.getMessage()));}}
+ public static void main(String[] ignored)throws Exception{
+  Map<String,Object> balance=Map.of("accountId","A1001","currency","CNY","availableBalanceFen",1000000,"asOf","2026-10-21T08:00:00.000Z");
+  Recording b=new Recording("get_account_balance");b.response=balance;WealthQueryTool bt=new WealthQueryTool(b);Map<String,Object> trusted=Map.of("session","trusted");
+  check(bt.getCard()==b.getCard());check(bt.invoke(Map.of("accountId","A1001"),trusted).equals(balance));check(b.calls==1&&b.kwargs.equals(trusted));
+  for(Map<String,Object> bad:List.<Map<String,Object>>of(Map.of(),Map.of("accountId"," "),Map.of("accountId","A1001","actorId","U1002")))invalid(bt,bad,"TOOL_INPUT_CONTRACT_INVALID");check(b.calls==1);
+  Map<String,Object> item=Map.of("productId","SIM-W001","name","稳健理财","status","active","minimumAmountFen",10000,"description","虚构数据");
+  Map<String,Object> products=Map.of("items",List.of(item),"version","seed-finance-001@1");Recording p=new Recording("list_wealth_products");p.response=products;WealthQueryTool pt=new WealthQueryTool(p);
+  check(pt.invoke(Map.of(),trusted).equals(products));check(p.calls==1&&p.kwargs.equals(trusted));
+  p.response=Map.of("items",List.of(Map.of("productId","SIM-W001")),"version","v1");invalid(pt,Map.of(),"TOOL_RESPONSE_CONTRACT_INVALID");
+  System.out.println("PLATFORM_CONTRACT_OK");
+ }
+}
+`;
+export const wealthQueryEngineeringSkills={
+ tester:engineeringSkills.tester,
+ developer:`# OpenJiuwen balance and wealth product Tool and Skill development @1\nUse only builder MCP tools. Read context.json and follow its fixed contracts. First save tests/generated/WealthQueryToolTest.java, then run unit-test and inspect valid red from the unchanged stub. The platform freezes the compiling test digest after valid red. Implement the WealthQueryTool adapter and wealth-query Skill only after valid red. Preserve transport ToolCards and trusted kwargs for both balance and product-list operations. Keep inputs, response fields and read-only behavior separate per operation. Never invent account or product facts, accept caller-supplied endpoint, actor, credentials or approval, or write executable Rail code. Leave rails/definition.json empty because this generation scope is tool + skill. Rerun unit-test, then build. Build checks both operation contracts and binds both Tools to the candidate RuntimeSpec. Never report model claims as command or acceptance success; inspect actual command results.`
+};

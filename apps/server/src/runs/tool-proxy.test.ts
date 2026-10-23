@@ -22,6 +22,16 @@ describe('business proxy uses trusted runtime context', () => {
     expect((await app.inject({ method: 'POST', url, headers, payload: { accountId: 'A1001' } })).statusCode).toBe(403);
     expect((await app.inject({ method: 'POST', url, headers, payload: { accountId: 'A1001', actorId: 'U1002' } })).statusCode).toBe(400);
   });
+  it('invokes the pinned wealth product listing with empty model arguments and trusted context',async()=>{
+    const app=Fastify({ajv:{customOptions:{removeAdditional:false,coerceTypes:false}}});apps.push(app);const runId=randomUUID();let seen:unknown;
+    registerToolProxy(app,{token:'proxy-012345678901234567890123456789',context:async id=>({runId:id,environmentId:'finance-env',actorId:'U1001',operations:['listWealthProducts']}),
+      invoke:async(context,operation,input)=>{seen={context,operation,input};return{status:200,result:{items:[{productId:'SIM-W001'}],version:'seed-finance-001@1'}};}});
+    const headers={authorization:'Bearer proxy-012345678901234567890123456789','x-builder-session-id':runId};
+    const response=await app.inject({method:'POST',url:'/internal/tool-proxy/operations/listWealthProducts',headers,payload:{}});
+    expect(response.statusCode).toBe(200);expect(response.json()).toEqual({items:[{productId:'SIM-W001'}],version:'seed-finance-001@1'});
+    expect(seen).toEqual({context:{runId,environmentId:'finance-env',actorId:'U1001',operations:['listWealthProducts']},operation:'listWealthProducts',input:{}});
+    expect((await app.inject({method:'POST',url:'/internal/tool-proxy/operations/listWealthProducts',headers,payload:{accountId:'A1001'}})).statusCode).toBe(400);
+  });
   it('only invokes the pinned maintenance search with trusted run context', async () => {
     const app = Fastify({ ajv: { customOptions: { removeAdditional: false, coerceTypes: false } } }); apps.push(app);
     const runId = randomUUID(); let bound = true; let seen: unknown;

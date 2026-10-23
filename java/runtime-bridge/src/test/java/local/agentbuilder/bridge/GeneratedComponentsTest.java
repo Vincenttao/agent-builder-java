@@ -62,6 +62,39 @@ class GeneratedComponentsTest {
         Files.writeString(classes.resolve("generated/agent-builder-component.json"),new ObjectMapper().writeValueAsString(manifest));
         return new URLClassLoader(new java.net.URL[]{classes.toUri().toURL()},Tool.class.getClassLoader());
     }
+    private URLClassLoader wealthAssistantComponent() throws Exception {
+        Path classes=directory.resolve("wealth-assistant-classes");Files.createDirectories(classes.resolve("generated"));
+        Path source=directory.resolve("WealthQueryTool.java");Files.writeString(source,"""
+            package generated;
+            import com.openjiuwen.core.foundation.tool.Tool;
+            import java.util.Map;
+            public final class WealthQueryTool extends Tool {
+              private final Tool transport;
+              public WealthQueryTool(Tool transport){super(transport.getCard());this.transport=transport;}
+              protected Object invokeInternal(Map<String,Object> input,Map<String,Object> kwargs)throws Exception{return transport.invoke(input,kwargs);}
+            }
+            """);
+        assertThat(ToolProvider.getSystemJavaCompiler().run(null,null,null,"-encoding","UTF-8","--release","21","-cp",System.getProperty("java.class.path"),"-d",classes.toString(),source.toString())).isZero();
+        Path skill=classes.resolve("skills/wealth-query/SKILL.md");Files.createDirectories(skill.getParent());Files.writeString(skill,"---\nname: wealth-query\ndescription: Generated wealth query fixture\n---\nUse get_account_balance or list_wealth_products and report only returned facts.\n");
+        var manifest=Map.ofEntries(Map.entry("kind","generated-tool-skill@2"),Map.entry("developmentBundleDigest","b".repeat(64)),Map.entry("sdkArtifactDigest","c".repeat(64)),Map.entry("snapshotId","00000000-0000-0000-0000-000000000001"),Map.entry("specDigest",SPEC),Map.entry("componentDigest","d".repeat(64)),Map.entry("skillDigest",hash(Files.readAllBytes(skill))),Map.entry("toolClassName","generated.WealthQueryTool"),Map.entry("toolName","get_account_balance"),Map.entry("operationId","getAccountBalance"),Map.entry("skillName","wealth-query"),Map.entry("skillPath","skills/wealth-query/SKILL.md"),Map.entry("toolBindings",List.of(Map.of("toolClassName","generated.WealthQueryTool","toolName","get_account_balance","operationId","getAccountBalance"),Map.of("toolClassName","generated.WealthQueryTool","toolName","list_wealth_products","operationId","listWealthProducts"))),Map.entry("classes",Map.of("generated/WealthQueryTool.class",hash(Files.readAllBytes(classes.resolve("generated/WealthQueryTool.class"))))));
+        Files.writeString(classes.resolve("generated/agent-builder-component.json"),new ObjectMapper().writeValueAsString(manifest));
+        return new URLClassLoader(new java.net.URL[]{classes.toUri().toURL()},Tool.class.getClassLoader());
+    }
+    @Test void loadsCombinedWealthToolsAndBindsBothOperationsToOneGeneratedSkill() throws Exception {
+        try(var loader=wealthAssistantComponent()) {
+            var components=GeneratedComponents.load(loader,directory.resolve("wealth-workspace"),SPEC);
+            assertThat(components.toolNames()).containsExactlyInAnyOrder("get_account_balance","list_wealth_products");
+            assertThat(components.binds("get_account_balance","getAccountBalance")).isTrue();
+            assertThat(components.binds("list_wealth_products","listWealthProducts")).isTrue();
+            assertThat(components.binds("list_wealth_products","getAccountBalance")).isFalse();
+            for(String name:components.toolNames()) {
+                Tool transport=new Tool(new ToolCard("finance@1",name,"fixture",Map.of())) {
+                    protected Object invokeInternal(Map<String,Object> inputs,Map<String,Object> kwargs){return Map.of("tool",name);}
+                };
+                assertThat(components.wrap(transport,event->{}).invoke(Map.of(),Map.of())).isEqualTo(Map.of("tool",name));
+            }
+        }
+    }
     @Test void loadsGeneratedFinanceToolAndItsProfileSpecificSkill() throws Exception {
         try(var loader=financeComponent()) {
             var components=GeneratedComponents.load(loader,directory.resolve("finance-workspace"),SPEC);

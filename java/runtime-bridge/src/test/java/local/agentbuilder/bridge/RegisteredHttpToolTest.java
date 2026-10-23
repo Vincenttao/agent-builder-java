@@ -12,6 +12,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.*;
 
 class RegisteredHttpToolTest {
+    @Test void supportsArrayResponseFieldsForPinnedProductDirectoryReads() throws Exception {
+        HttpServer server=HttpServer.create(new InetSocketAddress("127.0.0.1",0),0);
+        server.createContext("/products",exchange->{byte[] body="{\"items\":[{\"productId\":\"SIM-W001\"}],\"version\":\"seed-finance-001@1\"}".getBytes();exchange.getResponseHeaders().set("Content-Type","application/json");exchange.sendResponseHeaders(200,body.length);exchange.getResponseBody().write(body);exchange.close();});server.start();
+        try {
+            var tool=new RegisteredHttpTool("list_wealth_products","products",URI.create("http://127.0.0.1:"+server.getAddress().getPort()+"/products"),"test-token",Map.of(),Map.of("items","array","version","string"),Duration.ofSeconds(2));
+            assertThat(tool.invoke(Map.of()).toString()).contains("SIM-W001","seed-finance-001@1");
+        } finally {server.stop(0);}
+    }
     @Test void readOnlyFailureIsReturnedToTheModelButWritesStillFailWithoutRetry() throws Exception {
         AtomicInteger calls = new AtomicInteger();
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);

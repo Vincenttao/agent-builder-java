@@ -5,7 +5,7 @@ import {createReadStream} from 'node:fs';
 import {mkdir,readFile,writeFile,copyFile,lstat,appendFile} from 'node:fs/promises';
 import {join,resolve,dirname} from 'node:path';
 import {canonicalJson} from '../../../../packages/contracts/src/canonical.js';
-import {PolicyError,generationProfile,generationProfileFor} from '../engineering/profile.js';
+import {PolicyError,generationProfile,generationProfileFor,profileRuntimeTools} from '../engineering/profile.js';
 import {EngineeringCommands} from '../engineering/commands.js';
 const sha=/^[a-f0-9]{64}$/;
 const hash=(value:string|Buffer)=>createHash('sha256').update(value).digest('hex');
@@ -106,8 +106,8 @@ export class RuntimeArtifactRegistry {
     const componentPath=join(work,'component.jar');await writeFile(componentPath,component,{flag:'wx'});
     const classSources=bundle.files.filter(file=>/^src\/generated\/[A-Z][A-Za-z0-9]*Tool\.java$/.test(file.path));
     const skillFiles=bundle.files.filter(file=>/^skills\/[a-z][a-z0-9-]{0,63}\/SKILL\.md$/.test(file.path));
-    const runtimeTools=bundle.runtimeSpec?.tools??[];
-    if(classSources.length!==1||skillFiles.length!==1||runtimeTools.length!==1)throw new PolicyError('GENERATED_COMPONENT_BINDING_INVALID');
+    const runtimeTools=bundle.runtimeSpec?.tools??[];const expectedTools=profileRuntimeTools(profile);
+    if(classSources.length!==1||skillFiles.length!==1||contentHash(runtimeTools)!==contentHash(expectedTools))throw new PolicyError('GENERATED_COMPONENT_BINDING_INVALID');
     const toolClassName=`generated.${classSources[0]!.path.split('/').at(-1)!.replace(/\.java$/,'')}`;
     const classPath=`${toolClassName.replaceAll('.','/')}.class`;
     const skillPath=skillFiles[0]!.path;
@@ -119,7 +119,10 @@ export class RuntimeArtifactRegistry {
     for(const entry of entries){const bytes=await readFile(join(extracted,entry));if(bytes.length>262144)throw new PolicyError('COMPONENT_ARCHIVE_INVALID');await immutable(join(stage,'BOOT-INF/classes',entry),bytes);if(entry.endsWith('.class'))classes[entry]=hash(bytes);}
     const skillDigest=hash(await readFile(join(extracted,skillPath)));
     if(skillDigest!==bundle.files.find(file=>file.path===skillPath)?.digest)throw new PolicyError('GENERATED_SKILL_MISMATCH');
-    const generated:GeneratedComponentManifest={kind:'generated-tool-skill@1',developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath};
+    const generated:GeneratedComponentManifest=runtimeTools.length===1
+      ?{kind:'generated-tool-skill@1',developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath}
+      :{kind:'generated-tool-skill@2',developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath,
+        toolBindings:runtimeTools.map(tool=>({toolClassName,toolName:tool.name,operationId:tool.operationId}))};
     await immutable(join(stage,'BOOT-INF/classes/generated/agent-builder-component.json'),canonicalJson(generated));
     const jarPath=join(work,'candidate.jar');await copyFile(this.path(this.defaultDigest),jarPath,1);
     await jar('compose-candidate',['--update','--file',jarPath,'--date=2026-01-01T00:00:00Z','-C',stage,'BOOT-INF/classes']);

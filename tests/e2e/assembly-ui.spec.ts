@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { draftInput } from '../support/fixtures.js';
 import { assemble } from '../../apps/server/src/snapshots/domain/assembly.js';
 import { equipmentBaseline } from '../../apps/server/src/acceptance/application/equipment-baseline.js';
+import { wealthBalanceBaseline } from '../../apps/server/src/acceptance/application/wealth-balance-baseline.js';
 import type { AssemblyInput } from '../../packages/contracts/src/index.js';
 
 test('catalog selections submit executable assembly and distinguish generated skills (API fixtures)', async ({ page }) => {
@@ -16,7 +17,7 @@ test('catalog selections submit executable assembly and distinguish generated sk
     if (path === '/api/auth/session') body = { csrfToken: 'fixture' };
     else if (path === '/api/environment') body = { database: 'ready', model: 'configured_unverified', runtime: 'ready', canRun: true };
     else if (path === '/api/drafts') body = { items: [draft] };
-    else if (path.includes('baseline-preview')) body = { content: equipmentBaseline(draft, url.searchParams.get('templateId') === 'equipment-workorder@1' ? 'equipment-workorder@1' : 'equipment-read@1'), digest: 'a'.repeat(64) };
+    else if (path.includes('baseline-preview')) body = { content: url.searchParams.get('templateId') === 'wealth-balance-read@1'?wealthBalanceBaseline(draft):equipmentBaseline(draft, url.searchParams.get('templateId') === 'equipment-workorder@1' ? 'equipment-workorder@1' : 'equipment-read@1'), digest: 'a'.repeat(64) };
     else if (path.endsWith('/releases')) body = { pointer: null, versions: [], operations: [], cleanupPending: [] };
     else if (path.endsWith('/snapshots') && route.request().method() === 'POST') {
       submitted = route.request().postDataJSON().assembly;
@@ -63,4 +64,8 @@ test('catalog selections submit executable assembly and distinguish generated sk
   await expect(library.getByRole('heading', { name: '设备查询 Skill' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await library.screenshot({ path: 'test-results/assembly-catalog-mobile.png' });
+  await page.getByLabel('能力模板').selectOption('wealth-assistant');
+  await expect(page.getByText('余额与产品能力由双角色生成')).toBeVisible();
+  await expect(page.getByLabel('Agent 指令')).toHaveValue(/list_wealth_products/);
+  await expect(page.getByTestId('baseline-review')).toContainText('BR-BAL-003');
 });

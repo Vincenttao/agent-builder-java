@@ -4,6 +4,7 @@ import type { Clock, IdGenerator } from '../../drafts/domain/ports.js';
 import type { SnapshotRepository } from '../domain/ports.js';
 import { assemble, contentDigest } from '../domain/assembly.js';
 import { AppError } from '../../shared/errors.js';
+import {wealthAssistantGenerationRequest} from '../../../../../packages/contracts/src/generation-profile.js';
 
 export class SnapshotService {
   constructor(private readonly drafts: DraftService, private readonly repository: SnapshotRepository,
@@ -15,7 +16,7 @@ export class SnapshotService {
     const id = this.ids.next();
     const content: Snapshot['content'] = { draft: structuredClone(draft), assembly: structuredClone(input.assembly),
       runtimeSpec: assemble(id, input.assembly), executionMode: 'trusted-local', sdk: { core: '0.1.17', runtime: '0.1.4' },
-      modelProfile: 'deepseek-v4-flash@1', connectionProfile: input.assembly.generationProfileVersion==='wealth-balance-java@1'?'mock-finance@1':'equipment-mock@1' };
+      modelProfile: 'deepseek-v4-flash@1', connectionProfile: ['wealth-balance-java@1',wealthAssistantGenerationRequest.profileVersion].includes(input.assembly.generationProfileVersion??'')?'mock-finance@1':'equipment-mock@1' };
     return this.repository.create({ id, draftId, draftRevision: draft.revision, content, digest: contentDigest(content), createdAt: this.clock.now() });
   }
   async get(id: string) {

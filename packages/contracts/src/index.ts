@@ -46,7 +46,7 @@ export const assemblyInputSchema = {
     maxIterations: { type: 'integer', minimum: 1, maximum: 20 },
     railIds: { type: 'array', items: { type: 'string', maxLength: 80 }, maxItems: 10 },
     toolIds: { type: 'array', items: { type: 'string', maxLength: 80 }, maxItems: 20 },
-    generationProfileVersion: { enum: ['equipment-java@3','wealth-balance-java@1'] }
+    generationProfileVersion: { enum: ['equipment-java@3','wealth-balance-java@1','wealth-assistant-java@1'] }
   }
 } as const;
 export const snapshotInputSchema = {

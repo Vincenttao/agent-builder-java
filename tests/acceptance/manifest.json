@@ -1113,7 +1113,7 @@
         "FR-022",
         "FR-023"
       ],
-      "testFile": null,
+      "testFile": "scripts/verify-td15-ac32-wealth-assistant-live.mjs",
       "executionMode": "live-mock",
       "branches": [
         {

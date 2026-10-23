@@ -5,7 +5,7 @@ import type {DevelopmentInput,DevelopmentJob,EngineeringTaskInput,EngineeringTas
 import {randomUUID} from 'node:crypto';
 import {contentDigest} from '../snapshots/domain/assembly.js';
 import {AppError} from '../shared/errors.js';
-import {wealthBalanceGenerationRequest,generationImplementationError} from '../../../../packages/contracts/src/generation-profile.js';
+import {wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,generationImplementationError} from '../../../../packages/contracts/src/generation-profile.js';
 import {DependencyError} from '../runs/http-ports.js';
 import {prepareRepair,type RepairSources} from './repair-input.js';
 import type {PortableDevelopmentJob} from '../../../../packages/contracts/src/project-package.js';
@@ -31,7 +31,7 @@ export class DevelopmentService {
   };
   const existing=await findExisting(this.pool);if(existing)return existing;
   const snapshot=await this.snapshots.get(snapshotId);const baseline=await this.baselines.assertTarget(input.baselineId,snapshot);
-  const requiredBaseline=input.generation.profileVersion===wealthBalanceGenerationRequest.profileVersion?'wealth-balance-read@1':'equipment-read@1';
+  const requiredBaseline=([wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion] as string[]).includes(input.generation.profileVersion)?'wealth-balance-read@1':'equipment-read@1';
   if(baseline.content.templateId!==requiredBaseline)throw new AppError('GENERATION_BASELINE_UNSUPPORTED',`当前生成规格需要 ${requiredBaseline} 验收基线`,422);
   const task:EngineeringTaskInput={context:{snapshotId,baseline,goal:snapshot.content.draft.brief.goal.value,runtimeSpec:snapshot.content.runtimeSpec},generation:input.generation,maxSeconds:input.maxSeconds};
   const policy=generationImplementationError(input.generation);
