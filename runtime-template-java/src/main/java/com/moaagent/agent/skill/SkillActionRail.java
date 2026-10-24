@@ -704,6 +704,9 @@ public final class SkillActionRail extends BaseInterruptRail {
         request.setPayloadSchema(Map.of("type", "string"));
         request.putExtraField("tool_call_id", call.getId());
         request.putExtraField("tool_name", call.getName());
+        if ("confirm_action".equals(call.getName())) {
+            request.putExtraField("confirmation", Map.of("operation", Json.object(call.getArguments()).get("operation"), "arguments", data));
+        }
         return interrupt(request);
     }
 

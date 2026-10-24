@@ -96,6 +96,9 @@ public final class TaskShelf {
         current.state=current.submittedCall!=null?State.WAITING_RECEIPT:State.NEEDS_REVIEW;
         event("task_resumed",current,Map.of("state",current.state.name()));
     }
+    public synchronized void requireReview(String id){
+        Task task=active(id);if(task.submittedCall!=null)throw error("RECEIPT_REQUIRED");task.inputToken=null;task.state=State.NEEDS_REVIEW;event("review_required",task,Map.of());
+    }
     public synchronized void review(String id,boolean passed){
         Task task=active(id);if(task.state!=State.NEEDS_REVIEW)throw error("REVIEW_NOT_REQUIRED");
         event("resume_review",task,Map.of("passed",Boolean.toString(passed)));if(passed)task.state=State.ACTIVE;

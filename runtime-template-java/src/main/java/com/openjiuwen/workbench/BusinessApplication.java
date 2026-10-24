@@ -28,20 +28,27 @@ public class BusinessApplication {
         var request=ModelRequestConfig.builder().modelName("deepseek-flash").maxTokens(4096).build();request.setExtraField("thinking",Map.of("type","disabled"));
         return new Model(client,request);
     }
-    @Bean SkillExecutionService skillExecutionService(BusinessAssets assets,Model model){
+    @Bean BusinessHost businessHost(BusinessAssets assets,Model model){
         var config=OtelTracerConfig.builder().exporterType("otlp").protocol("http").exporterEndpoint(System.getenv().getOrDefault("OTEL_EXPORTER_OTLP_ENDPOINT","http://127.0.0.1:14318")).serviceName("moa-business-application").isRedactionEnabled(true).scheduleDelayMillis(100).build();
         var tracer=OtelTracerSetup.initOtelTracer(config);TracerHandlerRegistry.registerHandler("workbench_otel",new OtelAgentHandler(tracer,config));
-        return new SkillExecutionService(assets,model,Path.of(System.getenv().getOrDefault("WORKBENCH_STATE_DIR",".runtime-state")));
+        return new BusinessHost(assets,model,model,Path.of(System.getenv().getOrDefault("WORKBENCH_STATE_DIR",".runtime-state")),tracer);
     }
     @Bean(destroyMethod="close") AutoCloseable telemetryShutdown(){return ()->{OtelTracerSetup.forceFlushOtelTracer();TracerHandlerRegistry.unregisterHandler("workbench_otel");OtelTracerSetup.shutdownOtelTracer();};}
     @RestController
     static class ExecutionController {
-        private final SkillExecutionService service;private final BusinessAssets assets;
-        ExecutionController(SkillExecutionService service,BusinessAssets assets){this.service=service;this.assets=assets;}
-        record Input(String executionId,String skillId,String query,String interruptId,Object answer){}
-        @GetMapping("/workbench/application") Map<String,Object> application(){return Map.of("definition",assets.definition(),"mode","live-java","surface","low-level Skill execution; application task host is still under development");}
-        @PostMapping("/workbench/turns") Map<String,Object> turn(@RequestBody Input input){return service.turn(input.executionId,input.skillId,input.query,input.interruptId,input.answer);}
-        @GetMapping("/workbench/executions/{id}") Map<String,Object> view(@PathVariable String id){return service.view(id);}
+        private final BusinessHost service;private final BusinessAssets assets;
+        ExecutionController(BusinessHost service,BusinessAssets assets){this.service=service;this.assets=assets;}
+        record Message(String conversationId,String query){}
+        record Reply(String taskId,String token,String answer){}
+        record Decision(String requestId,String choice){}
+        record TaskInput(String taskId){}
+        @GetMapping("/workbench/application") Map<String,Object> application(){return Map.of("definition",assets.definition(),"mode","live-java","recovery","same-process, two tasks; restart interrupts unfinished conversations");}
+        @PostMapping("/workbench/messages") BusinessHost.View message(@RequestBody Message input){return service.message(input.conversationId,input.query);}
+        @GetMapping("/workbench/conversations/{id}") BusinessHost.View view(@PathVariable String id){return service.view(id);}
+        @PostMapping("/workbench/conversations/{id}/reply") BusinessHost.View reply(@PathVariable String id,@RequestBody Reply input){return service.reply(id,input.taskId,input.token,input.answer);}
+        @PostMapping("/workbench/conversations/{id}/decide") BusinessHost.View decide(@PathVariable String id,@RequestBody Decision input){return service.decide(id,input.requestId,input.choice);}
+        @PostMapping("/workbench/conversations/{id}/resume") BusinessHost.View resume(@PathVariable String id,@RequestBody TaskInput input){return service.resume(id,input.taskId);}
+        @PostMapping("/workbench/conversations/{id}/receipt") BusinessHost.View receipt(@PathVariable String id,@RequestBody TaskInput input){return service.receipt(id,input.taskId);}
         @ExceptionHandler({IllegalArgumentException.class,IllegalStateException.class}) ResponseEntity<Map<String,Object>> error(RuntimeException error){String message=error.getMessage();String code=message!=null&&message.matches("[A-Z][A-Z0-9_]{1,100}")?message:"EXECUTION_FAILED";return ResponseEntity.badRequest().body(Map.of("error",code));}
     }
 }

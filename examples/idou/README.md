@@ -6,4 +6,4 @@
 
 部署时在 `application.json` 配置独立 Mock URL。模型 Key 由运行 Java 的环境提供，不写进这些资产。`redeem` 的员工固定为 demo，必须确认；这只是演示规则，不是企业用户鉴权。
 
-构建后，指定 `WORKBENCH_APP_DIR` 为此资产目录，并指定 `WORKBENCH_STATE_DIR` 为运行状态目录，执行 `java -jar runtime-template-java/target/moa-business-application-2.0.0.jar`。默认 Java 监听 8780；需独立 Mock 和模型网络，Trace 需本机 Jaeger。`/workbench/turns` 是底层 Skill 执行接口，尚不代表应用级自动路由与两层恢复完成。
+构建后，指定 `WORKBENCH_APP_DIR` 为此资产目录，并指定 `WORKBENCH_STATE_DIR` 为运行状态目录，执行 `java -jar runtime-template-java/target/moa-business-application-2.0.0.jar`。默认 Java 监听 8780；需独立 Mock 和模型网络，Trace 需本机 Jaeger。`/workbench/messages` 是应用级路由入口；回复、切换决定、恢复和原键查单按 `runtime-template-java/README.md` 的接口执行。当前已验证同进程两层业务，不支持跨重启自动恢复。

@@ -241,7 +241,7 @@
       "path": "com/moaagent/agent/skill/SkillActionRail.java",
       "source_sha256": "611bfeb91a8ee8269c8ceb76bb3f9a29860898729424681e95b7ee44f70ef04d",
       "adapted": true,
-      "local_sha256": "86bee3b7ca32c4818d7ca87ecf1cb09f5fc5131c1be15d27383b486fa348a64e"
+      "local_sha256": "4507cc6471d6f4376deab7927688f54fa8717b3c5ad26a7a24e19e5a46ecd775"
     },
     {
       "path": "com/moaagent/agent/skill/SkillAssets.java",
