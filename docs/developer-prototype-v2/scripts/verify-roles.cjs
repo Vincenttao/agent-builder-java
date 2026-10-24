@@ -1,0 +1,70 @@
+const {chromium,expect}=require('@playwright/test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const root=path.resolve(__dirname,'..');
+const out=path.resolve(process.env.DEMO_CHECK_OUTPUT||'test-results/prototype-v2-role-review/checks');
+fs.mkdirSync(out,{recursive:true});
+const key='openjiuwen-workbench-v2-demo-3';
+(async()=>{
+ const browser=await chromium.launch({executablePath:process.env.DEMO_BROWSER_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});page.setDefaultTimeout(5000);
+ const checks=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const click=async(action,attrs='')=>{const selector=`[data-action="${action}"]${attrs}`;const modal=page.locator(`#dialog[open] ${selector}`);return (await modal.count()?modal:page.locator(selector+':visible')).first().click();};
+ const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
+ const close=()=>page.locator('#dialog [data-action="close"]').first().click();
+ const role=async value=>{await click('identity-switcher');await click('role',`[data-role="${value}"]`);};
+ const tab=id=>click('tab',`[data-id="${id}"]`);
+ const dev=async id=>{await tab('develop');await click('dev-section',`[data-id="${id}"]`);};
+ const platform=id=>click('platform-tab',`[data-id="${id}"]`);
+ const shot=async name=>{await page.evaluate(()=>scrollTo(0,0));await expect(page.locator('#toast')).not.toHaveClass(/visible/);await page.screenshot({path:path.join(out,name+'.png'),fullPage:!name.startsWith('pc-')});};
+ const noOverflow=async()=>assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ try{
+  await page.goto(process.env.DEMO_URL||pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
+  await click('create-app');await page.locator('#new-app-name').fill('员工福利助手');await page.locator('#new-app-goal').fill('为员工查询 i豆余额、礼品目录，确认兑换并核对结果');await click('create-confirm');
+  await click('suggest','[data-kind="plan"]');await click('review-proposal');await click('apply-proposal');
+  const originalTemplate=(await state()).app.template,revision=(await state()).app.rev;
+  await page.locator('#agent-prompt').fill('新增仓储系统的库存 API，包装一个新的查询工具');await click('ask-agent');
+  assert.equal((await state()).coding.scene.proposal,null,'新增 API 不能变成余额映射或资格校验建议');
+  assert.equal((await state()).app.rev,revision);await expect(page.locator('.copilot')).toContainText('平台');
+  checks.push('新增 API 需求不误改余额映射或资格规则，保留真实能力边界');
+  await dev('tools');await expect(page.locator('.canvas-main')).toContainText('平台维护');await expect(page.locator('.canvas-main')).toContainText('应用方可修改');
+  await click('tool-guidance');await expect(page.locator('#dialog')).toContainText('应用专用工具');await expect(page.locator('#dialog')).toContainText('新系统');
+  await page.locator('#tool-need').fill('新增查询库存 API：需要确认授权范围和接口契约');await click('tool-draft');await expect(page.locator('#agent-prompt')).toHaveValue(/新增查询库存/);await click('ask-agent');assert.equal((await state()).app.rev,revision);
+  await shot('application-tools');await dev('skills');await expect(page.locator('.canvas-main')).toContainText('应用开发者维护');await click('edit-business-skill');const business=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill(business+'\n回答时先说明查询结果。\n');await click('save-code');
+  await dev('connections');await expect(page.locator('.canvas-main')).toContainText('业务权限');await page.locator('#connection').selectOption('enterprise');await click('save-connection');await tab('debug');await expect(page.locator('[data-action="run"]')).toHaveCount(0);
+  await dev('connections');await page.locator('#connection').selectOption('mock');await click('save-connection');
+  checks.push('应用方查看公共工具与修改边界，维护业务 Skill；企业环境未接通时不模拟成功');
+  await tab('debug');await click('run');assert.equal((await state()).runs.at(-1).status,'succeeded');await page.locator('#response-shape').selectOption('nested');await click('run');assert.equal((await state()).runs.at(-1).status,'failed');
+  const failed=JSON.stringify((await state()).runs.at(-1));await click('trace');await click('replay-next');await shot('application-failed-trace');await close();await click('debug-fix');await click('review-proposal');await click('apply-proposal');await click('run');assert.equal((await state()).runs.at(-1).status,'succeeded');assert.equal(JSON.stringify((await state()).runs.find(r=>r.status==='failed')),failed);
+  await click('preset-query','[data-query="redeem"]');await click('run');await click('reject');assert.equal((await state()).business.orders.length,0);await click('preset-query','[data-query="timeout"]');await click('run');await click('confirm');assert.equal((await state()).runs.at(-1).status,'unknown');await click('reconcile');assert.equal((await state()).business.orders.length,1);
+  await click('test-mode','[data-id="checks"]');await click('test');assert.equal((await state()).report.passed,true);await tab('delivery');await click('candidate');await click('package');const event=page.waitForEvent('download');await click('download');await (await event).saveAs(path.join(out,'handoff.json'));await close();await click('ci');await shot('application-delivery');
+  const handoff=JSON.parse(fs.readFileSync(path.join(out,'handoff.json')));assert.equal(handoff.runnable,false);assert.equal(handoff.simulation,true);
+  checks.push('应用完整路线：映射失败、Trace、修复、拒绝、超时核对、检查、固定候选及设计清单交接');
+  await dev('skills');await click('edit-business-skill');const saved=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill(saved+'\n尚未完成的下一版');await role('platform');
+  await expect(page.locator('.sidebar')).toContainText('模板开发');await platform('engineering');await shot('template-overview');
+  await platform('capabilities');await click('capability-detail','[data-id="enterprise"]');await expect(page.locator('#dialog')).toContainText('平台');await expect(page.locator('#dialog')).toContainText('业务权限');await close();await shot('platform-capabilities');
+  await platform('knowledge');await click('preview-application-skill');await expect(page.locator('#dialog')).toContainText('应用开发者');await expect(page.locator('#dialog pre')).toContainText('moa-application-development');await close();
+  await click('edit-dev-skill');await expect(page.locator('.sidebar nav .active')).toHaveCount(1);await expect(page.locator('.sidebar nav .active')).toContainText('开发 Skill');
+  const guidance=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill(guidance+'\n应用专用业务 Skill 由应用开发者维护；新系统接入由平台牵头。\n');await click('save-code');
+  await click('platform-code');await expect(page.locator('.sidebar nav .active')).toHaveCount(1);await click('file','[data-id="platform-skill"]');const platformSkill=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill('# 临时不完整指导');await click('save-code');await click('platform-check');await platform('publish');await expect(page.locator('[data-action="publish"]')).toBeDisabled();await expect(page.locator('.platform-checks')).toContainText('未通过');
+  await click('platform-code');await click('file','[data-id="platform-skill"]');await page.locator('#code-editor').fill(platformSkill+'\n检查公共 Tool 与应用映射的契约。');await click('save-code');await click('platform-check');await platform('publish');await click('template-preview');await expect(page.locator('#dialog')).toContainText('发行后');await close();await click('publish');
+  const newTemplate=(await state()).platform.templateVersion;assert.notEqual(newTemplate,originalTemplate);await expect(page.locator('[data-action="publish"]')).toBeDisabled();await shot('template-release');await click('release-detail');await expect(page.locator('#dialog')).toContainText(newTemplate);await close();
+  await platform('activity');await expect(page.locator('.canvas-main')).toContainText('发行模板');await platform('diagnostics');await expect(page.locator('.stage-banner')).toHaveCount(0);await expect(page.locator('[data-action="platform-check"]')).toHaveCount(0);await click('trace');await expect(page.locator('#dialog')).toContainText('parent_span_id');await close();
+  checks.push('模板开发完整路线：公共能力、应用开发指导、代码导航、失败修复、预览、发行、工程活动与应用诊断');
+  await role('scene');await expect(page.locator('#code-editor')).toHaveValue(saved+'\n尚未完成的下一版');await click('restore-code');assert.equal((await state()).app.template,originalTemplate);await click('view','[data-id="apps"]');await click('create-app');await expect(page.locator('#dialog')).toContainText(newTemplate);await page.locator('#new-app-name').fill('采购协同助手');await page.locator('#new-app-goal').fill('查询采购申请，等待补充企业采购 API');await click('create-confirm');await click('suggest','[data-kind="plan"]');await click('apply-proposal');assert.equal((await state()).app.businessProfile,'custom');await tab('debug');await expect(page.locator('[data-action="run"]')).toHaveCount(0);
+  await click('app-switcher');await click('switch-app','[data-id="app-001"]');await tab('runs');const beforeReplay=JSON.stringify(await state());await click('trace');await click('replay-next');await close();assert.equal(JSON.stringify(await state()),beforeReplay);
+  checks.push('模板交接保留旧应用、草稿与候选，新应用引用新版；多应用切换和只读回放不污染上下文');
+  for(const [width,height] of [[1280,800],[1440,900],[1920,1080]]){
+   await page.setViewportSize({width,height});
+   for(const id of ['overview','develop','debug','runs','delivery']){await tab(id);await noOverflow();}
+   await dev('files');await click('file','[data-id="mapping"]');await page.evaluate(()=>scrollTo(0,0));await expect(page.locator('#agent-prompt')).toBeInViewport();await expect(page.locator('[data-action="ask-agent"]')).toBeInViewport();
+   await page.locator('#agent-prompt').fill('PC 未发送目标');await shot(`pc-application-${width}`);await page.reload();await expect(page.locator('#agent-prompt')).toHaveValue('PC 未发送目标');
+   await role('platform');for(const id of ['engineering','capabilities','knowledge','publish','activity','diagnostics']){await platform(id);await noOverflow();}await shot(`pc-diagnostics-${width}`);await platform('knowledge');await page.evaluate(()=>scrollTo(0,0));await expect(page.locator('#agent-prompt')).toBeInViewport();await click('edit-dev-skill');await expect(page.locator('.sidebar nav .active')).toContainText('开发 Skill');await shot(`pc-template-${width}`);await role('scene');
+  }
+  checks.push('PC 1280/1440/1920 三种窗口的导航、代码与助手并列，无横向溢出；输入和发送可见，未发送目标可恢复');
+  assert.deepEqual(errors,[]);
+  fs.writeFileSync(path.join(out,'result.json'),JSON.stringify({kind:'simulated-role-journey-and-usability',passed:checks.length,checks,errors,businessE2E:false},null,2));console.log(JSON.stringify({passed:checks.length,checks,output:out},null,2));
+ }catch(e){await page.screenshot({path:path.join(out,'failure.png'),fullPage:true});fs.writeFileSync(path.join(out,'failure.json'),JSON.stringify({checks,error:e.message},null,2));throw e;}finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

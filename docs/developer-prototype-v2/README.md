@@ -17,17 +17,19 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 ## 现在怎样找功能
 
 - **右上角：切换用户身份。** 默认是“陈晓 · 应用开发者”，可切换为“林知远 · 平台开发者”。页面始终显示当前姓名与身份，导航、工作内容和 Coding Agent 上下文随身份变化；编辑位置和未保存内容保留。这是模拟用户视角，不是登录或权限管理。
-- **应用用户左栏：应用。** 应用列表显示各应用的状态、模板、修订和上次位置。模板选择放进“新建应用”表单，不占独立导航；平台用户保留范式工程、公共能力、开发 Skill、模板发行、工程活动和应用运行诊断。
+- **应用用户左栏：应用。** 应用列表显示各应用的状态、模板、修订和上次位置。模板选择放进“新建应用”表单，不占独立导航；平台用户以“模板开发 · MOA”和“记录与诊断”分组，进入代码页仍保留所属导航。
 - **应用标题：名称及切换器。** 点击名称可搜索并切换应用，也可返回列表或新建。最多保存 10 个应用；达到上限会阻止创建，不覆盖已有内容。
 - **应用内横向页签：概览、开发、测试、运行记录、版本与发布。** 内容和右侧 Coding Agent 均属于当前应用。
 
 | 开发页中的对象 | 在这里做什么 |
 | --- | --- |
 | 应用指令 | 定义职责、回答方式和限制，选择模型；也可查看、修改 `instructions.md` |
-| 业务技能 | 查看和编辑业务 Skill，维护模板开放的资格校验、兑换数量等规则 |
-| 工具 | 查看外部接口的输入、输出、使用规则和返回映射；示例提供查询余额、礼品目录、提交兑换、查询回执四个工具 |
-| 连接 | 为工具选择系统环境，查看地址与授权方式；当前只有本地 Mock 可运行 |
+| 业务技能 | 应用开发者维护本应用的业务 Skill、资格校验和兑换数量等开放规则 |
+| 工具 | 查看平台维护的四个预置工具、连接及应用可修改范围；可修改余额映射，“需要新工具？”说明分工并保留需求 |
+| 连接 | 选择平台提供的环境，区分调用身份、凭据来源与业务权限；当前只有本地 Mock 可运行 |
 | 文件 | 查看和简单修改配置、指令、业务 Skill、映射脚本；连接文件为只读配置视图 |
+
+本轮面向 PC 使用。主工作区与 Coding Agent 并列，助手输入与发送保持可见，指导和对话可独立滚动。已检查 1280、1440、1920px 窗口；未新增手机专用功能。
 
 资格校验和用户确认属于业务规则，不作为外部接口工具展示。右侧开发 Skill 指导 Coding Agent，业务 Skill 随应用执行；二者用途不同。
 
@@ -41,7 +43,18 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 6. 在“测试 → 测试检查”运行示例检查。失败项可定位到对应配置、文件或未完成测试。“版本与发布”引用报告，通过后固定候选、预览交付包、下载设计 JSON、预演企业 CI/CD。
 7. 返回应用列表再创建“采购协同助手”，目标描述采购系统需求。它只生成待补充接口的通用草稿，不误跑 i豆。再从标题切回福利应用，查看原草稿、对话、订单、运行和候选仍然保留。
 
-从右上角切换为林知远后，单独演示范式工程、公共能力、开发 Skill 和模板发行。初始 MOA 模板已可使用，应用开发者不必先扮演平台维护者。新模板只影响之后创建的应用，不覆盖已有应用。应用标题下“基于 MOA · 版本”提供只读来源说明；平台发行页查看已发行说明不会自动切换用户。平台的“应用运行诊断”汇总所有应用，可按应用和结果筛选；回放不会改变应用开发者当前打开的应用。“工程活动”另记保存、检查、发行等页面操作。
+模板开发者路线（身份仍为平台开发者）：
+
+1. 从右上角切换为林知远，工程首页按维护范式、准备公共能力、编写开发指导、检查与发行进入。
+2. 查看公共能力卡片的职责和扩展范围。公共工具由平台维护，业务 Skill 和已开放的应用适配由应用方维护；当前不登记任意 API。
+3. 进入开发 Skill，编辑应用开发指导；预览应用开发者将收到的内容。这个预览与右侧平台任务自身的指导分开。
+4. 检查开放契约。可把平台指导改成不完整内容，观察检查失败和发行阻断，再恢复 `service/` 工程分层内容并重新检查。
+5. 在模板发行页预览当前草稿的应用方创建体验，检查后发行新版本，查看只读发行快照与工程活动。预览不创建应用、不切换用户。
+6. 切回应用用户，确认旧应用继续固定旧模板；新建应用使用新版本。平台还可查看应用运行诊断与只读 Trace，不显示无关工程检查或发行待办。
+
+初始 MOA 模板已可使用，应用开发者不必先扮演平台维护者。新模板只影响之后创建的应用，不覆盖已有应用。应用标题下“基于 MOA · 版本”提供只读来源说明；平台发行页查看已发行说明不会自动切换用户。平台的“应用运行诊断”汇总所有应用，可按应用和结果筛选；回放不会改变应用开发者当前打开的应用。“工程活动”另记保存、检查、发行等页面操作。
+
+新增 API 的演示边界：应用方可通过“需要新工具？”把需求带到 Coding Agent。当前仅记录需求与责任说明，不生成新工具、不提交审批，也不把库存 API 等需求误套成余额映射或资格校验。真实接入和完整权限管理后续实现。
 
 ## 中途恢复与数据范围
 
@@ -67,15 +80,16 @@ Java/Python 只保存文本，映射预演只识别两份预置脚本。指令�
 ```bash
 node --check docs/developer-prototype-v2/src/app.js
 node docs/developer-prototype-v2/scripts/build.cjs
-DEMO_URL=http://127.0.0.1:8768/ DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/green node docs/developer-prototype-v2/scripts/verify-identity.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify-multiapp node docs/developer-prototype-v2/scripts/verify-multiapp.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify-stages node docs/developer-prototype-v2/scripts/verify-stages.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify-journey node docs/developer-prototype-v2/scripts/verify-journey.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify node docs/developer-prototype-v2/scripts/verify.cjs
+DEMO_URL=http://127.0.0.1:8768/ DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-final-2 node docs/developer-prototype-v2/scripts/verify-roles.cjs
+DEMO_URL=http://127.0.0.1:8768/ DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-identity node docs/developer-prototype-v2/scripts/verify-identity.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-multiapp node docs/developer-prototype-v2/scripts/verify-multiapp.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-stages node docs/developer-prototype-v2/scripts/verify-stages.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-journey node docs/developer-prototype-v2/scripts/verify-journey.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify node docs/developer-prototype-v2/scripts/verify.cjs
 ```
 
 浏览器检查使用已有 `@playwright/test` 和 `/opt/google/chrome/chrome`，可通过 `DEMO_BROWSER_PATH` 更换。身份检查的 HTTP 入口需先启动预览服务；省略 `DEMO_URL` 则直接检查单文件。`verify-template.cjs` 是旅程检查的兼容入口，不重复运行。上述为本批实际证据路径；后续批次应另设目录，避免覆盖。
 
-本批新增 5 组用户身份检查，并运行受影响的 8 组多应用、4 组应用旅程、7 组角色阶段及 7 组交互检查。结果、截图及证明边界见[用户身份与模板入口走查](用户身份与模板入口走查.md)。上一批[多应用导航走查](多应用导航走查.md)保留原结果。此前[应用开发者走查](应用开发者走查.md)及[双角色阶段走查](双角色阶段走查.md)保留原结果。
+本批新增 6 组应用与模板完整路线检查，并通过既有 5 组身份、8 组多应用、4 组应用旅程、7 组角色阶段及 7 组交互检查。页面问题、修正、截图与证明边界见[双角色完整流程与页面评审](双角色完整流程与页面评审.md)。此前[用户身份与模板入口走查](用户身份与模板入口走查.md)保留原结果。上一批[多应用导航走查](多应用导航走查.md)保留原结果。此前[应用开发者走查](应用开发者走查.md)及[双角色阶段走查](双角色阶段走查.md)保留原结果。
 
 [PRD 2.0](../Agent开发工作台_PRD_v2.0.md)、[交互设计](../Agent开发工作台_交互设计_v2.0.md)、[推进计划](../后续推进计划与执行要求.md)同步当前结构。第二、三阶段先讨论技术方案，本批不开发真实前后端。
