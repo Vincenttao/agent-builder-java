@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "requirement": "TD-15/AC-03 Write intent adds confirmation and resource requirements while retaining unrelated requirement fields",
   "executionMode": "live-browser-isolated-docker",
-  "measuredAt": "2026-10-23T23:24:03.224Z",
+  "measuredAt": "2026-10-24T01:37:47.361Z",
   "base": "http://127.0.0.1:18082",
   "composeProject": "agent-builder-td15-nf01",
   "browserComposeProject": "agent-builder-td15-ac01",
   "servedAppImageId": "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+    "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
   ],
   "assertions": {
     "confirmationRequirementShown": true,
