@@ -106,6 +106,17 @@ export const balanceEngineeringSkills={
   developer:`# OpenJiuwen balance Tool and Skill development @1\nUse only builder MCP tools. Read context.json and follow its fixed contract. First save tests/generated/AccountBalanceToolTest.java, then run unit-test and inspect valid red from the unchanged stub. The platform freezes the compiling test digest after valid red. Implement AccountBalanceTool and skills/balance-query/SKILL.md only after valid red. Preserve transport ToolCard and trusted kwargs; accept only accountId and the exact balance response fields. Never invent a balance or accept caller-supplied endpoint, actor, credentials or approval. Do not write executable Rail code. Leave rails/definition.json empty because this generation scope is tool + skill. Rerun unit-test, then build. Build independently checks the component contract and binds the generated Tool into the candidate RuntimeSpec. Never report model claims as command or acceptance success; inspect actual command results.`
 };
 
+export const wealthBalanceReviewedSkill=`---
+name: balance-query
+description: Read an account balance through the approved get_account_balance Tool and report only returned facts.
+---
+Use get_account_balance with the confirmed accountId. Treat availableBalanceFen as integer fen and asOf as the Mock clock time. Report only fields returned by the Tool. If the interface is unavailable, timed out, or returns invalid data, state that the balance could not be confirmed. Never infer a balance, income, risk level, or investment recommendation.
+`;
+export const wealthToolEngineeringSkills={
+  tester:balanceEngineeringSkills.tester,
+  developer:`# OpenJiuwen standalone balance Tool development @1\nUse only builder MCP tools. Read context.json and follow the fixed Java Tool contract. First save test/generated/AccountBalanceToolTest.java, then run unit-test and observe valid red from the unchanged stub. The approved balance-query Skill is a fixed dependency supplied by the platform; do not try to write it. Implement only AccountBalanceTool.java after valid red. Preserve transport ToolCard and trusted kwargs; accept only accountId and exact balance response fields. Never invent data or accept caller-supplied endpoint, actor, credentials or approval. Do not write executable Rail code. Rerun unit-test, then build. The platform checks the Java contract and packages the generated Tool with the pinned reviewed Skill dependency. Inspect actual command results.`
+};
+
 export const wealthQueryToolStub=`package generated;
 import com.openjiuwen.core.foundation.tool.Tool;
 import java.util.Map;

@@ -3,7 +3,7 @@ import {resolve,join} from 'node:path';
 import {expect,it} from 'vitest';
 import {EngineeringWorkspace} from '../../apps/runner/src/engineering/workspace.js';
 import {RuntimeArtifactRegistry} from '../../apps/runner/src/runtime/artifact-registry.js';
-import {wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools} from '../../packages/contracts/src/generation-profile.js';
+import {wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools,wealthToolGenerationRequest} from '../../packages/contracts/src/generation-profile.js';
 import type {AcceptanceBaseline} from '../../packages/contracts/src/baselines.js';
 import {generatedBalanceTool,generatedBalanceUnit,generatedBalanceSkill} from '../support/generated-balance.js';
 
@@ -54,3 +54,29 @@ it('builds one generated WealthQuery component with both pinned runtime Tools',a
     expect(artifact.kind).toBe('generated-component');if(artifact.kind==='generated-component')expect(artifact.generated).toMatchObject({kind:'generated-tool-skill@2',toolBindings:wealthAssistantRuntimeTools.map(tool=>({toolClassName:'generated.WealthQueryTool',toolName:tool.name,operationId:tool.operationId}))});
   }finally{await ws.cancel();}
 },120000);
+it('generates a finance Tool independently and packages only a reviewed, immutable Skill dependency',async()=>{
+  const root=resolve('test-results',`wealth-tool-only-${randomUUID()}`),sdk=resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'),snapshotId=randomUUID();
+  const runtimeSpec={agent:{id:'balance-agent',type:'DeepAgent' as const,systemPrompt:'Read the approved balance-query Skill and query account balance.',maxIterations:5,rails:['tool-allowlist']},tools:[]};
+  const request={...wealthToolGenerationRequest,scope:[...wealthToolGenerationRequest.scope],dependencies:[...wealthToolGenerationRequest.dependencies]};
+  const ws=new EngineeringWorkspace(root,sdk,{baseline,goal:'Generate only the read-only account balance Tool',snapshotId,runtimeSpec},undefined,request);
+  await ws.initialize();
+  try{
+    const fixedSkill=await ws.read('developer','skills/balance-query/SKILL.md');
+    expect(fixedSkill).toContain('name: balance-query');
+    await expect(ws.write('developer','skills/balance-query/SKILL.md','changed')).rejects.toMatchObject({code:'FILE_OPERATION_NOT_ALLOWED'});
+    await ws.write('tester','tests/plan.json',JSON.stringify({baselineDigest:baseline.digest,cases:baseline.content.cases.map(item=>({caseId:item.id,requirementIds:item.requirementIds,assertions:item.assertions,steps:['Call the pinned balance Tool with account A1001','Verify the response and Mock account state']}))}));
+    await ws.write('developer','test/generated/AccountBalanceToolTest.java',generatedBalanceUnit);
+    const red=await ws.run('developer','unit-test');expect(red.status).toBe('failed');expect(red.output).toContain('IMPLEMENTATION_REQUIRED');
+    await ws.write('developer','src/generated/AccountBalanceTool.java',generatedBalanceTool);
+    expect((await ws.run('developer','unit-test')).status).toBe('passed');
+    expect((await ws.run('developer','build')).status).toBe('passed');
+    const bundle=ws.inspect().bundle!;
+    expect(bundle.profileVersion).toBe(wealthToolGenerationRequest.profileVersion);
+    expect(bundle.files.map(file=>file.path)).toContain('skills/balance-query/SKILL.md');
+    expect(bundle.runtimeSpec?.tools).toEqual([expect.objectContaining({name:'get_account_balance',operationId:'getAccountBalance'})]);
+    const registry=new RuntimeArtifactRegistry(join(root,'runtime'),sdk);await registry.initialize();
+    const artifact=await registry.compose(bundle,join(root,'bundles',bundle.digest),'c'.repeat(64));
+    expect(artifact.kind).toBe('generated-component');
+    if(artifact.kind==='generated-component')expect(artifact.generated).toMatchObject({kind:'generated-tool-skill@1',toolClassName:'generated.AccountBalanceTool',toolName:'get_account_balance',operationId:'getAccountBalance',skillName:'balance-query'});
+  }finally{await ws.cancel();}
+},90000);

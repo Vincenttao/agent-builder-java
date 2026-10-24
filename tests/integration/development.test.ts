@@ -10,7 +10,7 @@ import {BaselineService} from '../../apps/server/src/acceptance/application/base
 import {DevelopmentService,type EngineeringPort} from '../../apps/server/src/development/development-service.js';
 import {EngineeringTaskManager} from '../../apps/runner/src/engineering/task-manager.js';
 import {generationProfile} from '../../apps/runner/src/engineering/profile.js';
-import {wealthBalanceGenerationRequest} from '../../packages/contracts/src/generation-profile.js';
+import {wealthBalanceGenerationRequest,wealthToolGenerationRequest} from '../../packages/contracts/src/generation-profile.js';
 import {equipmentAssembly,wealthBalanceAssembly} from '../../packages/contracts/src/equipment-template.js';
 import type {EngineeringTaskRecord,GenerationRequest} from '../../packages/contracts/src/development.js';
 import {draftInput} from '../support/fixtures.js';
@@ -97,6 +97,14 @@ it('admits the bounded finance balance profile and submits that exact profile to
  const h=await setup(true);let submitted:GenerationRequest|undefined;
  const service=new DevelopmentService(pool,snapshots,baselines,{...h.port,submit:async(id,input)=>{submitted=input.generation;return h.manager.submit(id,input);}});
  const input={...h.input,clientRequestId:randomUUID(),generation:{...wealthBalanceGenerationRequest,scope:[...wealthBalanceGenerationRequest.scope],dependencies:[...wealthBalanceGenerationRequest.dependencies]}};
+ const job=await service.start(h.snapshot.id,input);expect(job.status).toBe('queued');await service.tick();
+ expect(submitted).toEqual(input.generation);expect((await service.get(job.id)).diagnostic).not.toBe('GENERATION_PROFILE_NOT_IMPLEMENTED');
+ await h.manager.close();
+});
+it('admits a standalone finance Tool request and preserves its tool-only scope through admission',async()=>{
+ const h=await setup(true);let submitted:GenerationRequest|undefined;
+ const service=new DevelopmentService(pool,snapshots,baselines,{...h.port,submit:async(id,input)=>{submitted=input.generation;return h.manager.submit(id,input);}});
+ const input={...h.input,clientRequestId:randomUUID(),generation:{...wealthToolGenerationRequest,scope:[...wealthToolGenerationRequest.scope],dependencies:[...wealthToolGenerationRequest.dependencies]}};
  const job=await service.start(h.snapshot.id,input);expect(job.status).toBe('queued');await service.tick();
  expect(submitted).toEqual(input.generation);expect((await service.get(job.id)).diagnostic).not.toBe('GENERATION_PROFILE_NOT_IMPLEMENTED');
  await h.manager.close();

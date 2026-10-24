@@ -2,6 +2,8 @@
 
 目标：完成 TDD 计划至 TD-15，包括 P0-A/B/C 累积必测集及 NF-01～NF-06。状态：开发中，尚未完成阶段验收。
 
+TDD-113：接通 `wealth-balance-tool-java@1` Tool-only admission 与 Runner 工作区：只开放 Tool 源码／单测写入，平台物化固定审阅 Skill，实际 Java 红绿测试、余额契约检查、JAR 打包和制品注册均通过。3 项 Adapter、8 项 Development 集成、11 项 Profile 测试、类型检查通过。尚未运行真实 OpenCode Tool-only 任务、部署候选或调用 Mock，AC-22a 未关闭；本轮未重建 Docker。详见 [TDD-113](TDD-113.md)。
+
 TDD-112：开始实现 AC-22a/b 独立 Tool／Skill 生成。增加 Tool-only 与 Skill-only 固定金融 Profile，并把 Developer 可写路径按 scope 收窄；对应 11 项 Profile 单测、全仓类型检查和 diff 检查通过。服务端仍明确拒绝这两个尚未接通工作区与制品链路的 Profile，本项不计为 AC-22 通过；未重建或部署镜像。详见 [TDD-112](TDD-112.md)。
 
 TDD-111：在当前本地固定目标上复核 AC-21：Tester 与 Developer 使用独立且完成的会话，共用同一确认需求基线。两个分支通过；证据已纳入当前目标记录器。门禁为 P0-A 70/70、P0-B 89/170、P0-C 89/235，失败均为 0。未重建镜像；独立 Tool／Skill 生成仍是下一项产品缺口。GitHub CI 不作为本地推进门禁。详见 [TDD-111](TDD-111.md)。

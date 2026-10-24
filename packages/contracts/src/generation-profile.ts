@@ -11,7 +11,7 @@ export const wealthProductsRuntimeTool={name:'list_wealth_products',description:
 export const wealthAssistantRuntimeTools=[wealthBalanceRuntimeTool,wealthProductsRuntimeTool] as const;
 export function generatedRuntimeTool(profileVersion:string):RuntimeSpec['tools'][number]|undefined{
  if(profileVersion===equipmentGenerationRequest.profileVersion)return structuredClone(equipmentRuntimeTool);
- if(profileVersion===wealthBalanceGenerationRequest.profileVersion)return structuredClone(wealthBalanceRuntimeTool);
+ if(profileVersion===wealthBalanceGenerationRequest.profileVersion||profileVersion===wealthToolGenerationRequest.profileVersion||profileVersion===wealthSkillGenerationRequest.profileVersion)return structuredClone(wealthBalanceRuntimeTool);
  if(profileVersion===wealthAssistantGenerationRequest.profileVersion)return structuredClone(wealthBalanceRuntimeTool);
  return undefined;
 }
@@ -20,7 +20,7 @@ export function generatedRuntimeTools(profileVersion:string):RuntimeSpec['tools'
  const tool=generatedRuntimeTool(profileVersion);return tool?[tool]:undefined;
 }
 const reviewedProfiles=[equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthToolGenerationRequest,wealthSkillGenerationRequest] as const;
-const implementedProfileVersions:readonly string[]=[equipmentGenerationRequest.profileVersion,wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion];
+const implementedProfileVersions:readonly string[]=[equipmentGenerationRequest.profileVersion,wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion,wealthToolGenerationRequest.profileVersion];
 export function generationPolicyError(request:GenerationRequest):string|undefined {
  const profile=reviewedProfiles.find(item=>item.profileVersion===request.profileVersion);
  if(!profile)return 'GENERATION_PROFILE_UNSUPPORTED';

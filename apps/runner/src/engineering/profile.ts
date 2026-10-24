@@ -1,7 +1,7 @@
 import type {EngineeringRole,GenerationRequest} from '../../../../packages/contracts/src/development.js';
 import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthToolGenerationRequest,wealthSkillGenerationRequest,generationImplementationError,equipmentRuntimeTool,wealthBalanceRuntimeTool,wealthAssistantRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
 import {createHash} from 'node:crypto';
-import {toolStub,toolContract,repairContract,engineeringSkills,platformContractTest,balanceToolStub,balanceToolContract,balancePlatformContractTest,balanceEngineeringSkills,wealthQueryToolStub,wealthQueryToolContract,wealthQueryPlatformContractTest,wealthQueryEngineeringSkills} from './templates.js';
+import {toolStub,toolContract,repairContract,engineeringSkills,platformContractTest,balanceToolStub,balanceToolContract,balancePlatformContractTest,balanceEngineeringSkills,wealthBalanceReviewedSkill,wealthToolEngineeringSkills,wealthQueryToolStub,wealthQueryToolContract,wealthQueryPlatformContractTest,wealthQueryEngineeringSkills} from './templates.js';
 export class PolicyError extends Error {constructor(public readonly code:string){super(code);}}
 const hashTemplates=(entries:Record<string,string>)=>Object.fromEntries(Object.entries(entries).map(([name,source])=>[name,createHash('sha256').update(source).digest('hex')]));
 const limits={executionMode:'trusted-local',engineVersion:'1.19.3',model:'deepseek-local/deepseek-v4-flash',maxSteps:16,maxTaskSeconds:900,maxCommandSeconds:60,maxFileBytes:32768,maxOutputBytes:262144,commands:['unit-test','build'] as const,testerFiles:['tests/plan.json','tests/proposal.json'] as const};
@@ -34,7 +34,10 @@ export const wealthAssistantProfile={...wealthBalanceProfile,version:wealthAssis
 } as const;
 export const wealthToolProfile={...wealthBalanceProfile,version:wealthToolGenerationRequest.profileVersion,scope:wealthToolGenerationRequest.scope,
   dependencies:wealthToolGenerationRequest.dependencies,connectionProfile:wealthToolGenerationRequest.connectionProfile,
-  developerWritableFiles:['src/generated/AccountBalanceTool.java','test/generated/AccountBalanceToolTest.java']
+  developerWritableFiles:['src/generated/AccountBalanceTool.java','test/generated/AccountBalanceToolTest.java'],
+  materializedAssets:{'skills/balance-query/SKILL.md':wealthBalanceReviewedSkill},
+  engineeringSkills:wealthToolEngineeringSkills,
+  templates:hashTemplates({toolStub:balanceToolStub,toolContract:balanceToolContract,platformContractTest:balancePlatformContractTest,reviewedSkill:wealthBalanceReviewedSkill,...wealthToolEngineeringSkills})
 } as const;
 export const wealthSkillProfile={...wealthBalanceProfile,version:wealthSkillGenerationRequest.profileVersion,scope:wealthSkillGenerationRequest.scope,
   dependencies:wealthSkillGenerationRequest.dependencies,connectionProfile:wealthSkillGenerationRequest.connectionProfile,

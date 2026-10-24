@@ -31,7 +31,11 @@ export class EngineeringWorkspace {
         if(this.context.repair.bundle.sdkArtifactDigest!==this.state.sdkArtifactDigest)throw new PolicyError('SDK_ARTIFACT_CHANGED');
         for(const file of this.context.repair.files)await writeFile(join(this.root,file.path==='test-plan.json'?'tester/tests/plan.json':`developer/${file.path}`),file.content,{flag:'wx'});
         this.state.planDigest=this.context.repair.bundle.planDigest;
-      }else {await writeFile(join(this.root,'developer',this.profile.developerFiles[0]),this.profile.sourceStub,{flag:'wx'});await writeFile(join(this.root,'developer',this.profile.developerFiles[3]),'{"schemaVersion":1,"rails":[]}',{flag:'wx'});}
+      }else {
+        await writeFile(join(this.root,'developer',this.profile.developerFiles[0]),this.profile.sourceStub,{flag:'wx'});
+        await writeFile(join(this.root,'developer',this.profile.developerFiles[3]),'{"schemaVersion":1,"rails":[]}',{flag:'wx'});
+        if('materializedAssets' in this.profile)for(const[path,content]of Object.entries(this.profile.materializedAssets))await writeFile(join(this.root,'developer',path),content,{flag:'wx'});
+      }
       await this.persist();}
     await this.assertSdk();
   }
