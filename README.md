@@ -1,6 +1,6 @@
 # Agent Builder
 
-面向企业 AI 平台开发者与场景 Agent 开发者的开发工作台。产品目标是：平台方交付可复用范式和开发模板，场景方通过配置、装配与少量开发完成应用，再交给企业 CI/CD 发布为服务。完整方向见 [PRD 2.0](docs/Agent开发工作台_PRD_v2.0.md)，以 MOA 类范式和 i豆应用贯穿设计。
+面向企业 AI 平台开发者与应用开发者的开发工作台。产品目标是：平台方交付可复用范式和开发模板，应用方通过配置、装配与少量开发完成应用，再交给企业 CI/CD 发布为服务。完整方向见 [PRD 2.0](docs/Agent开发工作台_PRD_v2.0.md)，以 MOA 类范式和 i豆应用贯穿设计。
 
 当前可走通 **设备查询 Tool／Skill 自动开发 → 固定候选 → 独立验收 → 同一 JAR 发布 → 模拟企业 App 调用**。平台使用 TypeScript，业务 Agent 运行在 openJiuwen Java 上，工程开发使用 OpenCode 与 DeepSeek。
 
@@ -24,7 +24,7 @@
 node docs/developer-prototype-v2/scripts/serve.cjs
 ```
 
-访问 **http://127.0.0.1:8768/**，点击“演示路线”从平台开发者开始。也可直接打开 [单文件设计稿](docs/developer-prototype-v2/开发工作台2.0.html)。全部为模拟数据，不需要完整后端。
+访问 **http://127.0.0.1:8768/**，从 MOA 模板创建应用，以应用开发者身份完成需求、开发、调试和交付；平台维护可单独演示。也可直接打开 [单文件设计稿](docs/developer-prototype-v2/开发工作台2.0.html)。全部为模拟数据，不需要完整后端。
 
 ## 既有产品启动：Docker Compose
 
