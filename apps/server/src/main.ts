@@ -31,8 +31,9 @@ import {PostgresProjectPackageStore} from './projects/project-package-store.js';
 import {RunEventRetention} from './runs/event-retention.js';
 
 const databaseUrl = process.env.DATABASE_URL;
-const bootstrapToken = process.env.LOCAL_BOOTSTRAP_TOKEN;
-if (!databaseUrl || !bootstrapToken) throw new Error('DATABASE_URL and LOCAL_BOOTSTRAP_TOKEN are required');
+const localDebugAuth = process.env.LOCAL_DEBUG_AUTH === 'true';
+const bootstrapToken = process.env.LOCAL_BOOTSTRAP_TOKEN ?? '';
+if (!databaseUrl || (!localDebugAuth && !bootstrapToken)) throw new Error('DATABASE_URL and LOCAL_BOOTSTRAP_TOKEN are required');
 const pool = new Pool({ connectionString: databaseUrl, connectionTimeoutMillis: 3000, statement_timeout: 5000 });
 pool.on('error', () => console.error(JSON.stringify({ code: 'DATABASE_CONNECTION_ERROR' })));
 const clock = { now: () => new Date().toISOString() };
@@ -67,7 +68,7 @@ const app = createApp({
   ...(candidates&&testDeployments?{candidates,testDeployments}:{}),
   ...(runs && mock && validationWrites ? { runs, actions, toolProxy: { token: process.env.TOOL_PROXY_TOKEN!, context: (id: string) => runs.context(id), invoke: mock.invoke.bind(mock), mcp: mock.mcp.bind(mock), write: validationWrites.invoke.bind(validationWrites) } } : {}),
   databaseReady: async () => { await pool.query('SELECT id FROM drafts LIMIT 0'); await pool.query('SELECT id FROM snapshots LIMIT 0'); return true; },
-  now: clock.now, bootstrapToken, origin: process.env.APP_ORIGIN ?? 'http://127.0.0.1:8080',
+  now: clock.now, bootstrapToken, localDebugAuth, origin: process.env.APP_ORIGIN ?? 'http://127.0.0.1:8080',
   modelConfigured: Boolean(process.env.DEEPSEEK_API_KEY)
 });
 const worker = runs ? setInterval(() => { void runs.tick().catch(() => console.error(JSON.stringify({ code: 'RUN_WORKER_UNAVAILABLE' }))); }, 750) : undefined;

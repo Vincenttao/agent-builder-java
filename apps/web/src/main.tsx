@@ -39,6 +39,7 @@ function App() {
   const [sampleMode,setSampleMode]=useState(()=>new URLSearchParams(location.search).get('demo')==='equipment');
   function openSample(enabled:boolean){const url=new URL(location.href);if(enabled)url.searchParams.set('demo','equipment');else url.searchParams.delete('demo');history.replaceState(null,'',url);setSampleMode(enabled);}
   const [authenticated, setAuthenticated] = useState(false);
+  const [localDebugAuth, setLocalDebugAuth] = useState(false);
   const [checking, setChecking] = useState(true);
   const [token, setToken] = useState('');
   const [csrf, setCsrf] = useState('');
@@ -85,8 +86,8 @@ function App() {
     setDrafts(list.items); setEnvironment(status);
   }
   useEffect(() => {
-    void api<{ csrfToken: string }>('/api/auth/session').then(async session => {
-      setCsrf(session.csrfToken); setAuthenticated(true); await refresh();
+    void api<{ csrfToken: string; localDebugAuth?: boolean }>('/api/auth/session').then(async session => {
+      setLocalDebugAuth(Boolean(session.localDebugAuth)); setCsrf(session.csrfToken); setAuthenticated(true); await refresh();
     }).catch(e => { if (!(e instanceof RequestError && e.body.code === 'UNAUTHENTICATED')) showError(e); }).finally(() => setChecking(false));
   }, []);
   useEffect(() => {
@@ -159,7 +160,7 @@ function App() {
       <div className="nav-bottom"><span className="dot"/> 本地开发原型<br/><small>trusted-local · 未启用任务沙箱</small></div>
     </aside>
     <main className="workspace"><header><div><p className="eyebrow">需求 → 开发 → 测试 → 交付</p><h1>需求工作台</h1><p className="muted">定义需求，选择可用组件，装配并验证你的业务 Agent。</p></div>
-      <button className="secondary" onClick={() => { void api('/api/auth/session', 'DELETE').then(() => { setAuthenticated(false); setCsrf(''); }).catch(showError); }}>退出</button></header>
+      {localDebugAuth ? <span className="muted">本地调试模式</span> : <button className="secondary" onClick={() => { void api('/api/auth/session', 'DELETE').then(() => { setAuthenticated(false); setCsrf(''); }).catch(showError); }}>退出</button>}</header>
       <section className="panel sample-origin"><strong>先体验一个可运行的 Agent</strong><p>复用已构建的设备查询样例，查看 Tool / Skill / Rail，完成验收、发布和业务对话。</p><button className="primary" onClick={()=>openSample(true)}>体验预构建样例</button></section>
       <nav className="workflow-tabs" role="tablist" aria-label="Agent 开发流程">
         {([

@@ -41,7 +41,8 @@ services:
       dockerfile: deploy/Dockerfile
     environment:
       DATABASE_URL: postgres://builder:${POSTGRES_PASSWORD}@postgres:5432/builder
-      LOCAL_BOOTSTRAP_TOKEN: ${LOCAL_BOOTSTRAP_TOKEN:?Set LOCAL_BOOTSTRAP_TOKEN}
+      LOCAL_BOOTSTRAP_TOKEN: ${LOCAL_BOOTSTRAP_TOKEN:-}
+      LOCAL_DEBUG_AUTH: ${LOCAL_DEBUG_AUTH:-false}
       APP_ORIGIN: ${APP_ORIGIN:-http://127.0.0.1:8080}
       RUN_EVENT_RETENTION_DAYS: ${RUN_EVENT_RETENTION_DAYS:-90}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}

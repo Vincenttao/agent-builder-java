@@ -1,4 +1,4 @@
-import Fastify, { type FastifyRequest } from 'fastify';
+import Fastify, { type FastifyRequest, type FastifyReply } from 'fastify';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { ServerResponse } from 'node:http';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -31,6 +31,7 @@ import type {ProjectPackageStore} from './projects/project-package-store.js';
 import type {MockScenePackage} from '../../../packages/contracts/src/mock-scene.js';
 export interface AppOptions {
   drafts: DraftService; databaseReady: () => Promise<boolean>; now: () => string;
+  localDebugAuth?: boolean;
   bootstrapToken: string; origin: string; modelConfigured: boolean;
   snapshots?: SnapshotService;
   runs?: RunService;
@@ -48,7 +49,7 @@ export interface AppOptions {
   toolProxy?: ToolProxyOptions;
 }
 export function createApp(options: AppOptions) {
-  if (options.bootstrapToken.length < 24) throw new Error('LOCAL_BOOTSTRAP_TOKEN must contain at least 24 characters');
+  if (!options.localDebugAuth && options.bootstrapToken.length < 24) throw new Error('LOCAL_BOOTSTRAP_TOKEN must contain at least 24 characters');
   const app = Fastify({ bodyLimit: 2 * 1024 * 1024,
     logger: { level: 'info', redact: { paths: ['req.url', 'req.headers.authorization', 'req.headers.cookie', 'req.headers["x-csrf-token"]'], censor: '[REDACTED]' } },
     ajv: { customOptions: { removeAdditional: false, coerceTypes: false, useDefaults: false } } });
@@ -83,16 +84,13 @@ export function createApp(options: AppOptions) {
     reply.header('Cache-Control', 'no-store');
     const writing = !['GET', 'HEAD', 'OPTIONS'].includes(request.method);
     if (writing && request.headers.origin !== options.origin) throw new AppError('ORIGIN_REJECTED', '请求来源不受信任', 403);
-    if (request.method === 'POST' && request.url === '/api/auth/session') return;
+    if (request.url === '/api/auth/session' && (request.method === 'POST' || (request.method === 'GET' && options.localDebugAuth))) return;
     const session = requireSession(request);
     if (writing && (typeof request.headers['x-csrf-token'] !== 'string' || !equal(session.csrfToken, request.headers['x-csrf-token']))) {
       throw new AppError('CSRF_REJECTED', '请求校验失败，请刷新工作台', 403);
     }
   });
-  app.post<{ Body: { token: string } }>('/api/auth/session', { schema: { body: {
-    type: 'object', additionalProperties: false, required: ['token'], properties: { token: { type: 'string', maxLength: 256 } }
-  } } }, async (request, reply) => {
-    if (!equal(request.body.token, options.bootstrapToken)) throw new AppError('UNAUTHENTICATED', '本地访问令牌无效', 401);
+  const openSession = (request: FastifyRequest, reply: FastifyReply) => {
     for (const [id, session] of sessions) if (session.expiresAt <= Date.parse(options.now())) sessions.delete(id);
     if (sessions.size >= 64) throw new AppError('SESSION_LIMIT', '本地会话数量已达上限', 429);
     const oldId = cookieId(request); if (oldId) sessions.delete(oldId);
@@ -101,9 +99,21 @@ export function createApp(options: AppOptions) {
     sessions.set(id, session);
     const secure = options.origin.startsWith('https:') ? '; Secure' : '';
     reply.header('Set-Cookie', `builder_session=${id}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${secure}`);
-    return { csrfToken: session.csrfToken };
+    return { csrfToken: session.csrfToken, localDebugAuth: Boolean(options.localDebugAuth) };
+  };
+  app.post<{ Body: { token: string } }>('/api/auth/session', { schema: { body: {
+    type: 'object', additionalProperties: false, required: ['token'], properties: { token: { type: 'string', maxLength: 256 } }
+  } } }, async (request, reply) => {
+    if (!options.localDebugAuth && !equal(request.body.token, options.bootstrapToken)) throw new AppError('UNAUTHENTICATED', '本地访问令牌无效', 401);
+    return openSession(request, reply);
   });
-  app.get('/api/auth/session', async request => ({ csrfToken: requireSession(request).csrfToken }));
+  app.get('/api/auth/session', async (request, reply) => {
+    if (options.localDebugAuth) {
+      try { return { csrfToken: requireSession(request).csrfToken, localDebugAuth: true }; }
+      catch { return openSession(request, reply); }
+    }
+    return { csrfToken: requireSession(request).csrfToken, localDebugAuth: false };
+  });
   app.delete('/api/auth/session', async (request, reply) => {
     const id = cookieId(request); if (id) sessions.delete(id);
     reply.header('Set-Cookie', 'builder_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0').code(204).send();
