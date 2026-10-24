@@ -10,9 +10,24 @@
     "demo": "node docs/developer-prototype-v2/scripts/serve.cjs",
     "build": "node docs/developer-prototype-v2/scripts/build.cjs",
     "test:demo": "node docs/developer-prototype-v2/scripts/verify-identity.cjs",
-    "test:flow": "node docs/developer-prototype-v2/scripts/verify-flow-map.cjs"
+    "test:flow": "node docs/developer-prototype-v2/scripts/verify-flow-map.cjs",
+    "dev": "tsx watch workbench-server/index.ts",
+    "start:workbench": "node --import tsx workbench-server/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test verification/*.test.ts"
   },
   "devDependencies": {
-    "@playwright/test": "1.61.1"
-  }
+    "@playwright/test": "1.61.1",
+    "typescript": "5.9.3",
+    "tsx": "4.20.6",
+    "@types/node": "22.18.8",
+    "@types/express": "5.0.3",
+    "@types/better-sqlite3": "7.6.13"
+  },
+  "dependencies": {
+    "express": "5.1.0",
+    "better-sqlite3": "12.4.1",
+    "ajv": "8.17.1"
+  },
+  "type": "module"
 }

@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "strict": true, "esModuleInterop": true, "skipLibCheck": true,
+    "outDir": "dist", "types": ["node"], "resolveJsonModule": true
+  },
+  "include": ["workbench-server/**/*.ts", "verification/**/*.ts", "scripts/**/*.ts"]
+}

@@ -17,7 +17,7 @@
 | agent-core-java | origin/develop，0.1.17 | `0b58282ce66412a26160939d8e4d9ab4417d2f5b` | Core API、会话/恢复、模型与观测 |
 | agent-runtime-java | origin/develop，0.1.4 | `765f133dea2cec69f7f18c5b60f6b1dcfdd557ae` | 与 Core 0.1.17 对齐的服务/适配器 |
 | agent-solution | upstream/common | `089822db38f23f2458abc804e0818d2194414ca4` | 最新公共能力与开发指导 |
-| MOA 专属来源 | upstream/0.1.1 | `552294d01`（实施时记录完整 SHA） | 最新 MOA 模块；其 POM 仍是 Core 0.1.15/Runtime 0.1.2，须验证适配 |
+| MOA 专属来源 | upstream/0.1.1 | `552294d013b28a79d912a5bda9f627237e826e6b` | 最新 MOA 模块；其 POM 仍是 Core 0.1.15/Runtime 0.1.2，须验证适配 |
 
 PRD 中旧快照保留为历史源码证据，不自动覆盖。新实现记录实际源码、依赖树和运行版本；最新源码不等于本机旧 JAR 已更新。外部仓库不写入本项目业务改动，适配在本分支实现。
 
@@ -45,4 +45,7 @@ PRD 中旧快照保留为历史源码证据，不自动覆盖。新实现记录�
 ## 5 当前执行记录
 
 - 2026-10-25：工作区干净，创建开发分支；三仓已更新到上述远端提交。Node 22.19.0、OpenCode 1.18.9、JDK 17/21 可用；Maven 当前来自 Windows 路径，需为本项目准备 Linux 工具入口；本机暂无 Jaeger。
-- P0：进行中。其余批次尚未开始，RD 项尚无新项目的实现通过结论。
+- P0：最新 Core 0.1.17 与 Runtime 0.1.4 所需服务/适配器已从固定源码构建成功；Linux Maven 3.9.11、Jaeger 2.22.0 已下载。MOA NativeSkillAgent 依赖闭包正在适配验证，实际模型/Trace 探测尚未完成。
+- P1 基础：已实现 SQLite 工程索引、Git/worktree 保存、模板版本发行/引用、应用隔离、表单/文件同源及 HTTP API。5 组工程约束 + 1 组真实 HTTP 集成通过，TypeScript 检查通过；UI、Java 模板和可运行导出尚待后续批次，不能将本次计为 RD 全项通过。
+- TDD：新增“应用不得修改固定构建/运行文件”断言先报 Missing expected exception，补开放文件范围后通过。最初 tsx CLI/沙箱 Git 子进程权限错误是环境失败，未计为业务红灯；改为 node --import tsx 并在允许的本机执行上下文跑测试，保留原失败日志。
+- P2～P5：待完成。当前目标继续推进至 RD-01～06 可实际演示。

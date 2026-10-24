@@ -1,0 +1,34 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtempSync,rmSync,readFileSync,readdirSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {createWorkbench} from '../workbench-server/app.js';
+
+test('HTTP workbench persists real role/template/application revisions and blocks unsafe requests',async t=>{
+  const root=mkdtempSync(join(tmpdir(),'workbench-api-'));
+  const {app,store}=createWorkbench({root});
+  const server=app.listen(0,'127.0.0.1');await new Promise<void>(resolve=>server.once('listening',resolve));
+  t.after(async()=>{await new Promise<void>(resolve=>server.close(()=>resolve()));store.close();rmSync(root,{recursive:true,force:true});});
+  const address=server.address();assert.ok(address&&typeof address!=='string');
+  const base=`http://127.0.0.1:${address.port}`;
+  async function call(path:string,role='application',method='GET',body?:unknown){const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json','x-workbench-role':role},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,body:await r.json() as any};}
+  assert.equal((await call('/api/context')).body.identity.role,'application');
+  assert.equal((await call('/api/context','admin')).status,400);
+  assert.equal((await call('/api/projects')).body.projects.length,0);
+  assert.equal((await call('/api/projects/moa-platform')).status,403);
+  const template=(await call('/api/projects/moa-platform','platform')).body.project;
+  const forbidden=await call('/api/templates/moa-platform/releases','application','POST',{version:'1.0.0'});assert.equal(forbidden.status,403);
+  const publish=await call('/api/templates/moa-platform/releases','platform','POST',{version:'1.0.0'});assert.equal(publish.status,201);
+  const releases=await call('/api/templates');assert.equal(releases.body.releases.length,1);
+  const created=await call('/api/projects','application','POST',{releaseId:publish.body.release.id,name:'新的福利应用'});assert.equal(created.status,201);
+  const id=created.body.project.id;
+  const a=await call('/api/projects/'+id);assert.equal(a.body.definition.name,'新的福利应用');assert.deepEqual(a.body.definition.scope.own,[]);
+  const saved=await call('/api/projects/'+id+'/files','application','PUT',{baseHead:created.body.project.head,changes:{'instructions.md':'新增业务指令'}});assert.equal(saved.status,200);
+  assert.equal((await call('/api/projects/'+id)).body.files['instructions.md'],'新增业务指令');
+  const stale=await call('/api/projects/'+id+'/files','application','PUT',{baseHead:created.body.project.head,changes:{'instructions.md':'过期修改'}});assert.equal(stale.status,409);
+  const invalid=await call('/api/projects/'+id+'/files','application','PUT',{baseHead:saved.body.project.head,changes:{'../secret':'no'}});assert.equal(invalid.status,400);
+  assert.equal((await call('/api/projects/moa-platform','platform')).body.project.head,template.head);
+  const privateFile=await fetch(base+'/.env.local');assert.equal(privateFile.status,404);
+  assert.equal((await call('/api/projects')).body.projects.length,1);
+});

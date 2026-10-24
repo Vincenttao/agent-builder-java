@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "name": "MOA 应用",
+  "description": "",
+  "scope": {"own": [], "delegated": [], "outside": []},
+  "skills": [],
+  "capabilities": [],
+  "handoff": {"enabled": false, "target": "", "unfinished": "ask", "resume": "prompt", "maxTasks": 2},
+  "connections": {},
+  "mapping": {"balancePath": "data.points.available"}
+}
