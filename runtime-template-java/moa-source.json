@@ -235,7 +235,7 @@
       "path": "com/moaagent/agent/skill/NativeSkillAgent.java",
       "source_sha256": "493fc1b1b4860bfafe135871729f59dd2ff04a4013b90c0192501baa4d951598",
       "adapted": true,
-      "local_sha256": "bfac91f3bf5dd519da425a99e1e779b29e86bf5a86abacfefe292b64e0b9ff8e"
+      "local_sha256": "8c4d806b8e3455ddb5d56d51abcc79225d42c6783702a25373320509a7f4aaaa"
     },
     {
       "path": "com/moaagent/agent/skill/SkillActionRail.java",
@@ -421,6 +421,15 @@
       "local_sha256": "06a6019f97be37292f7d9519e419e8a1ef8a19d0156a964c08107d6a2941bf01",
       "origin": "common/agent-runtime-ext-java/agent-service-adapters/agent-service-adapters-agentcore-ext/src/main/java/com/openjiuwen/service/adapters/agentcore/ext/context/ResponseMetadataAccessor.java",
       "source_sha256": "0d1eda0fe88c020009b10b81d95bc9ffdcdeca14c7116ec030bf6735e6efa901",
+      "adapted": true
+    }
+  ],
+  "resources": [
+    {
+      "path": "prompts/native-skill.md",
+      "origin": "common/agents/moa-agent/src/main/resources/prompts/native-skill.md",
+      "source_sha256": "e55b51dc1544c009c5ff036d1dc81a1bd8924649914949be4e7e6aaf5f7d25de",
+      "local_sha256": "94fbc9b5bef687c8d76af362aeb15c81ced2200d4b02fb52c8375b974311ffd3",
       "adapted": true
     }
   ]

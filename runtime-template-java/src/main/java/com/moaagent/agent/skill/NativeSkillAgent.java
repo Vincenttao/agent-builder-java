@@ -98,7 +98,7 @@ public final class NativeSkillAgent {
                 operation.type() == SkillOperation.Type.A2A ? "call_versatile" : "call_mcp",
                 "input", SkillSchema.publicContract(operation.modelInputSchema()),
                 "summary", SkillSchema.publicContract(operation.summarySchema()),
-                "confirmation_required", operation.confirmationRequired()));
+                "confirmation_required", operation.confirmationRequired(), "terminal", operation.terminal()));
         });
         return systemPrompt.stripTrailing() + "\n本次部署工具契约：\n" + Json.write(contracts)
                 + "\n入口 Skill：\n" + assets.entry();

@@ -103,4 +103,15 @@ class BusinessHostTest {
   var started=host.message(reserved.conversationId(),"兑换1张咖啡券");assertEquals(reserved.conversationId(),started.conversationId());assertNotNull(current(started).prompt());assertEquals(1,routeCalls.get());assertEquals(1,modelCalls.get());
  }
 
+ @Test void readFinalizerCannotInventACompletedBusinessResult(){
+  host.stop();skillModel=new Model((messages,a,b,c)->{int n=modelCalls.incrementAndGet();var answer=AssistantMessage.builder().content(n==1?"":"已结束");if(n==1)answer.toolCalls(List.of(ToolCall.builder().id("finish-without-read").name("call_mcp").arguments("{\"operation\":\"finish\",\"arguments\":{}}").build()));return CompletableFuture.completedFuture(answer.build());});
+  host=new BusinessHost(new BusinessAssets(root.resolve("assets")),routeModel,skillModel,root.resolve("state"));host.start();
+  var result=host.message(null,"查询余额");assertEquals(TaskShelf.State.FAILED,result.stack().current().state());assertEquals(0,reads.get());assertEquals(0,writes.get());
+ }
+ @Test void verifiedConfirmationRejectionMayFinishWithoutAnyBusinessWrite(){
+  host.stop();skillModel=new Model((messages,a,b,c)->{int n=modelCalls.incrementAndGet();return CompletableFuture.completedFuture(AssistantMessage.builder().content("").toolCalls(List.of(ToolCall.builder().id("decision-"+n).name(n==1?"confirm_action":"call_mcp").arguments(n==1?"{\"operation\":\"redeem\",\"arguments\":{\"giftId\":\"coffee\",\"quantity\":1}}":"{\"operation\":\"finish\",\"arguments\":{}}").build())).build());});
+  host=new BusinessHost(new BusinessAssets(root.resolve("assets")),routeModel,skillModel,root.resolve("state"));host.start();
+  var a=startA();var result=host.reply(a.conversationId(),current(a).id(),current(a).prompt().token(),"拒绝");assertEquals(TaskShelf.State.COMPLETED,result.stack().current().state());assertEquals("rejected",current(result).output().get("userDecision"));assertEquals(0,writes.get());
+ }
+
 }

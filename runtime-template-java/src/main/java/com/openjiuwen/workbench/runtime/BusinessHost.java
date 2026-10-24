@@ -104,6 +104,14 @@ public final class BusinessHost implements AgentHandler {
             if(frame.kind.equals("skill")){
                 var entry=assets.skill(target);SkillScriptRunner scripts=assets.scripts(target);
                 SkillScriptRunner guarded=(session,source,input)->{
+                    var finisher=entry.operations().get("finish");
+                    if(finisher!=null&&finisher.resultScript()!=null&&entry.assets().script(finisher.resultScript()).equals(source)){
+                        var execution=SkillSession.load(session).orElseThrow(()->error("SKILL_STATE_MISSING"));
+                        boolean verified=!execution.getResults().isEmpty();
+                        boolean rejected=execution.getReceipts().values().stream().map(Json::object)
+                                .anyMatch(receipt->"confirm_action".equals(receipt.get("tool"))&&Boolean.FALSE.equals(Json.object(receipt.get("response")).get("approved")));
+                        if(!verified&&!rejected)throw error("VERIFIED_RESULT_REQUIRED");
+                    }
                     String operation=entry.operations().entrySet().stream().filter(e->e.getValue().resultScript()!=null&&e.getValue().confirmationRequired()&&entry.assets().script(e.getValue().resultScript()).equals(source)).map(Map.Entry::getKey).findFirst().orElse(null);
                     if(operation==null)return scripts.run(session,source,input);
                     if(!operation.equals("redeem"))throw error("WRITE_ADAPTER_NOT_SUPPORTED");
