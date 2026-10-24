@@ -23,11 +23,12 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 
 | 开发页中的对象 | 在这里做什么 |
 | --- | --- |
+| 能力装配 | 默认入口；添加 Agent／工作流、业务 Skill 或工具。工具第二步选择 HTTP API、MCP 或 Python；草稿可编辑、移除、查看清单并交给 Coding Agent |
 | 应用指令 | 定义职责、回答方式和限制，选择模型；也可查看、修改 `instructions.md` |
 | 业务技能 | 应用开发者维护本应用的业务 Skill、资格校验和兑换数量等开放规则 |
 | 工具 | 查看平台维护的四个预置工具、连接及应用可修改范围；可修改余额映射，“需要新工具？”说明分工并保留需求 |
 | 连接 | 选择平台提供的环境，区分调用身份、凭据来源与业务权限；当前只有本地 Mock 可运行 |
-| 文件 | 查看和简单修改配置、指令、业务 Skill、映射脚本；连接文件为只读配置视图 |
+| 文件 | 查看和简单修改配置、指令、业务 Skill、映射脚本；连接与 `capabilities/assembly.json` 为只读配置视图 |
 
 本轮面向 PC 使用。主工作区与 Coding Agent 并列，助手输入与发送保持可见，指导和对话可独立滚动。已检查 1280、1440、1920px 窗口；未新增手机专用功能。
 
@@ -37,7 +38,7 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 
 1. 在应用列表新建，选择 MOA 模板；可展开“模板提供什么？”查看工程骨架、开发指导和开放范围，填写内容不会丢失。名称填“员工福利助手”，目标填“为员工查询 i豆余额、查询礼品目录、提交兑换并核对结果，接入企业福利系统”。创建表单没有业务示例选择器。
 2. 向 Coding Agent 发送需求，或点击“根据目标制定开发方案”。查看差异后应用到当前应用。建议明确标注为预设内容，不是模型生成。
-3. 进入“开发”：在工具中查看接口，在连接中选择“本地 Mock”并保存，在业务技能中查看规则，在文件中编辑代码。企业环境尚未接通，选它会阻止运行。
+3. 进入“开发”：能力装配展示三类入口；在工具中查看接口，在连接中选择“本地 Mock”并保存，在业务技能中查看规则，在文件中编辑代码。企业环境尚未接通，选它会阻止运行。
 4. 进入“测试 → 交互调试”。先查询余额，再切换“嵌套余额返回”使旧映射失败，查看 Trace、交给 Agent 修复并重新运行。原失败快照保留。
 5. 在终端用户模拟器中选择礼品并确认兑换。可体验更换礼品使旧确认失效、拒绝零写入，以及写后超时后按原交易核对、不重复提交。测试输入不改变应用修订。
 6. 在“测试 → 测试检查”运行示例检查。失败项可定位到对应配置、文件或未完成测试。“版本与发布”引用报告，通过后固定候选、预览交付包、下载设计 JSON、预演企业 CI/CD。
@@ -46,7 +47,7 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 模板开发者路线（身份仍为平台开发者）：
 
 1. 从右上角切换为林知远，工程首页按维护范式、准备公共能力、编写开发指导、检查与发行进入。
-2. 查看公共能力卡片的职责和扩展范围。公共工具由平台维护，业务 Skill 和已开放的应用适配由应用方维护；当前不登记任意 API。
+2. 在公共能力中选择模板开放的 Agent／工作流、业务 Skill、工具入口，保存范围后检查与发行；新应用使用新版范围，旧应用不变。再查看公共能力卡片的职责和扩展范围。公共工具由平台维护，业务 Skill 和已开放的应用适配由应用方维护；当前不登记任意 API。
 3. 进入开发 Skill，编辑应用开发指导；预览应用开发者将收到的内容。这个预览与右侧平台任务自身的指导分开。
 4. 检查开放契约。可把平台指导改成不完整内容，观察检查失败和发行阻断，再恢复 `service/` 工程分层内容并重新检查。
 5. 在模板发行页预览当前草稿的应用方创建体验，检查后发行新版本，查看只读发行快照与工程活动。预览不创建应用、不切换用户。
@@ -54,7 +55,7 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 
 初始 MOA 模板已可使用，应用开发者不必先扮演平台维护者。新模板只影响之后创建的应用，不覆盖已有应用。应用标题下“基于 MOA · 版本”提供只读来源说明；平台发行页查看已发行说明不会自动切换用户。平台的“应用运行诊断”汇总所有应用，可按应用和结果筛选；回放不会改变应用开发者当前打开的应用。“工程活动”另记保存、检查、发行等页面操作。
 
-新增 API 的演示边界：应用方可通过“需要新工具？”把需求带到 Coding Agent。当前仅记录需求与责任说明，不生成新工具、不提交审批，也不把库存 API 等需求误套成余额映射或资格校验。真实接入和完整权限管理后续实现。
+新增能力的演示边界：应用方通过“开发 → 能力装配 → 添加能力”选择三类对象，保存为待实现草稿。支持 API/MCP/脚本方式、Skill/脚本内容编辑、刷新恢复和多应用隔离；不会发现服务、访问接口、执行脚本或获得新权限。草稿可交给 Coding Agent 讨论，不误套为余额映射或资格校验。待实现项阻止完整候选检查通过；原有 i豆 Mock 可继续调试，移除草稿后重新检查。真实接入和完整权限管理后续实现。
 
 ## 中途恢复与数据范围
 
@@ -80,16 +81,14 @@ Java/Python 只保存文本，映射预演只识别两份预置脚本。指令�
 ```bash
 node --check docs/developer-prototype-v2/src/app.js
 node docs/developer-prototype-v2/scripts/build.cjs
-DEMO_URL=http://127.0.0.1:8768/ DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-final-2 node docs/developer-prototype-v2/scripts/verify-roles.cjs
-DEMO_URL=http://127.0.0.1:8768/ DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-identity node docs/developer-prototype-v2/scripts/verify-identity.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-multiapp node docs/developer-prototype-v2/scripts/verify-multiapp.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-stages node docs/developer-prototype-v2/scripts/verify-stages.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify-journey node docs/developer-prototype-v2/scripts/verify-journey.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-review/pc-regression/verify node docs/developer-prototype-v2/scripts/verify.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-assembly/final node docs/developer-prototype-v2/scripts/verify-assembly.cjs
+# 受影响的回归：分别设置独立 DEMO_CHECK_OUTPUT，再运行已有 verify-roles、
+# verify-multiapp、verify-identity、verify-journey、verify-stages、verify.cjs。
+# 新批次请更换输出目录，不覆盖上述证据。
 ```
 
-浏览器检查使用已有 `@playwright/test` 和 `/opt/google/chrome/chrome`，可通过 `DEMO_BROWSER_PATH` 更换。身份检查的 HTTP 入口需先启动预览服务；省略 `DEMO_URL` 则直接检查单文件。`verify-template.cjs` 是旅程检查的兼容入口，不重复运行。上述为本批实际证据路径；后续批次应另设目录，避免覆盖。
+浏览器检查使用已有 `@playwright/test` 和 `/opt/google/chrome/chrome`，可通过 `DEMO_BROWSER_PATH` 更换。身份检查的 HTTP 入口需先启动预览服务；省略 `DEMO_URL` 则直接检查单文件。`verify-template.cjs` 是旅程检查的兼容入口，不重复运行。装配与回归证据位于 `test-results/prototype-v2-assembly/`；上述为本批证据路径；后续批次应另设目录，避免覆盖。
 
-本批新增 6 组应用与模板完整路线检查，并通过既有 5 组身份、8 组多应用、4 组应用旅程、7 组角色阶段及 7 组交互检查。页面问题、修正、截图与证明边界见[双角色完整流程与页面评审](双角色完整流程与页面评审.md)。此前[用户身份与模板入口走查](用户身份与模板入口走查.md)保留原结果。上一批[多应用导航走查](多应用导航走查.md)保留原结果。此前[应用开发者走查](应用开发者走查.md)及[双角色阶段走查](双角色阶段走查.md)保留原结果。
+三类装配的本批记录见[三类能力装配走查](三类能力装配走查.md)。前一批新增 6 组应用与模板完整路线检查，并通过当时的 5 组身份、8 组多应用、4 组应用旅程、7 组角色阶段及 7 组交互检查。页面问题、修正、截图与证明边界见[双角色完整流程与页面评审](双角色完整流程与页面评审.md)。此前[用户身份与模板入口走查](用户身份与模板入口走查.md)保留原结果。上一批[多应用导航走查](多应用导航走查.md)保留原结果。此前[应用开发者走查](应用开发者走查.md)及[双角色阶段走查](双角色阶段走查.md)保留原结果。
 
 [PRD 2.0](../Agent开发工作台_PRD_v2.0.md)、[交互设计](../Agent开发工作台_交互设计_v2.0.md)、[推进计划](../后续推进计划与执行要求.md)同步当前结构。第二、三阶段先讨论技术方案，本批不开发真实前后端。

@@ -39,3 +39,11 @@ dialog{border:1px solid #e6e8ed;border-radius:10px;box-shadow:0 25px 80px #16223
 /* PC editor actions stay above long files; wide canvases align to the top. */
 .file-btn{min-width:0}.file-btn span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(min-width:1700px){.canvas-main{margin:0 auto}}
+
+/* Capability object types and execution methods remain separate on PC. */
+.assembly-types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.assembly-type{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;padding:17px 15px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left;color:inherit;line-height:1.7}
+button.assembly-type:hover{border-color:#ce8c99;background:#fff8fa;box-shadow:0 3px 12px #77263809}
+.assembly-type strong{font-size:14px}.assembly-type>span:not(.capability-icon){font-size:12px;color:#657083}.assembly-type small{font-size:11px;color:#657083;margin-top:auto}.assembly-type b{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--red);font-weight:500}.assembly-type b svg{width:14px;height:14px}
+.assembly-type input{accent-color:var(--red);width:16px;height:16px}.assembly-draft{margin-top:12px;overflow-wrap:anywhere}.assembly-draft>p{font-size:13px}.assembly-scope{margin-bottom:24px}
+#capability-content{font-family:Consolas,monospace;line-height:1.7;font-size:12px}.assembly-scope .scope-details{background:#f9fafc}
