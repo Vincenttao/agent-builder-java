@@ -1,0 +1,63 @@
+const {chromium,expect}=require('@playwright/test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const root=path.resolve(__dirname,'..'),out=path.resolve(process.env.DEMO_CHECK_OUTPUT||'test-results/prototype-v2-role-stages/checks');
+fs.mkdirSync(out,{recursive:true});
+const key='openjiuwen-workbench-v2-demo-3';
+(async()=>{
+ const browser=await chromium.launch({executablePath:process.env.DEMO_BROWSER_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});page.setDefaultTimeout(6000);
+ const errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
+ const click=(a,attrs='')=>page.locator(`[data-action="${a}"]${attrs}`).first().click();
+ const tab=id=>click('tab',`[data-id="${id}"]`),platformTab=id=>click('platform-tab',`[data-id="${id}"]`);
+ const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
+ const close=()=>page.locator('#dialog [data-action="close"]').first().click();
+ try{
+  await page.goto(pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
+  await click('role','[data-role="platform"]');await platformTab('diagnostics');await expect(page.locator('.canvas-main')).toContainText('没有运行记录');await platformTab('activity');await expect(page.locator('.canvas-main')).toContainText('暂无工程活动');await click('role','[data-role="scene"]');
+  await click('create-app');await page.locator('#new-app-name').fill('阶段走查应用');await page.locator('#new-app-goal').fill('查询 i豆余额并确认兑换，接入企业福利系统');await click('create-confirm');
+  await click('suggest','[data-kind="plan"]');await page.reload();await click('view','[data-id="apps"]');await expect(page.locator('.app-card')).toContainText('待审阅开发方案');await expect(page.locator('.copilot')).toContainText('阶段走查应用');await expect(page.locator('.copilot [data-action="create-app"]')).toHaveCount(0);
+  await click('resume-app');await expect(page.locator('.proposal')).toBeVisible();await click('apply-proposal');
+  const savedName=(await state()).app.name;await page.locator('#app-name').fill('尚未保存的名称');await page.reload();await expect(page.locator('#app-name')).toHaveValue('尚未保存的名称');assert.equal((await state()).app.name,savedName);await click('discard-form','[data-id="meta"]');await expect(page.locator('#app-name')).toHaveValue(savedName);
+  await tab('operations');await page.locator('#connection').selectOption('enterprise');await page.reload();await expect(page.locator('#connection')).toHaveValue('enterprise');assert.equal((await state()).app.connection,'未绑定');await click('discard-form','[data-id="connection"]');
+  await tab('operations');await page.locator('#connection').selectOption('mock');await click('save-connection');
+  await tab('extensions');await click('file','[data-id="mapping"]');const original=await page.locator('#code-editor').inputValue(),rev=(await state()).app.rev;
+  await page.locator('#code-editor').fill(original+'\n# 尚未完成');await page.reload();await expect(page.locator('#code-editor')).toHaveValue(original+'\n# 尚未完成');assert.equal((await state()).app.rev,rev);
+  await click('restore-code');await click('view','[data-id="apps"]');await click('resume-app');assert.equal((await state()).tab,'extensions');assert.equal((await state()).file,'mapping');
+  checks.push('A01-A03 待审阅方案、未保存代码与配置刷新恢复、继续上次文件');
+  await tab('debug');await click('run');const first=JSON.stringify((await state()).runs[0]);
+  await tab('operations');await page.locator('#connection').selectOption('enterprise');await click('save-connection');await tab('runs');
+  await click('trace');await expect(page.locator('#dialog')).toContainText('只读回放');await close();await click('run-snapshot');await expect(page.locator('#dialog')).toContainText('application');await close();
+  assert.equal(JSON.stringify((await state()).runs[0]),first);checks.push('A04 连接失效后历史 Trace 与执行快照仍可只读查看');
+  await tab('operations');await page.locator('#connection').selectOption('mock');await click('save-connection');await tab('debug');await click('preset-query','[data-query="redeem"]');await click('run');
+  await click('run-history','[data-id="demo-run-001"]');await click('resume-pending');await expect(page.locator('[data-action="confirm"]')).toBeVisible();await click('reject');assert.equal((await state()).business.orders.length,0);
+  checks.push('A05 查看旧轨迹后可回到待确认任务，拒绝无写入');
+  await tab('delivery');await click('test');assert.equal((await state()).report.passed,false);await expect(page.locator('[data-action="candidate"]')).toBeDisabled();await expect(page.locator('[data-action="fix-check"]')).toHaveCount(1);await click('fix-check');await expect(page.locator('#code-editor')).toBeVisible();
+  await click('suggest','[data-kind="mapping"]');await click('apply-proposal');await tab('delivery');await click('test');await click('candidate');await click('ci');
+  const oldCandidate=JSON.stringify((await state()).candidate),oldId=(await state()).candidate.id;
+  await click('suggest','[data-kind="wording"]');await click('apply-proposal');await expect(page.locator('[data-testid="delivery-state"]')).toContainText('历史交接');await expect(page.locator('[data-action="ci"]')).toBeDisabled();
+  await click('test');await click('candidate');const newId=(await state()).candidate.id;assert.notEqual(newId,oldId);assert.equal(JSON.stringify((await state()).candidateHistory.find(c=>c.id===oldId)),oldCandidate);
+  await click('package',`[data-id="${oldId}"]`);const downloadEvent=page.waitForEvent('download');await click('download');const download=await downloadEvent;await download.saveAs(path.join(out,'old-candidate.json'));assert.equal(JSON.stringify(JSON.parse(fs.readFileSync(path.join(out,'old-candidate.json'))).candidate),oldCandidate);await close();
+  checks.push('A06-A08 失败项有修复入口，交付后修改显示旧结果，旧候选可单独下载');
+  await click('role','[data-role="platform"]');await platformTab('diagnostics');await expect(page.locator('.canvas-main')).toContainText('阶段走查应用');await click('trace');await expect(page.locator('#dialog')).toContainText('parent_span_id');await close();
+  await platformTab('engineering');await click('platform-code');const platformCode=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill(platformCode+'\n待完成的范式指导');await page.reload();await expect(page.locator('#code-editor')).toHaveValue(platformCode+'\n待完成的范式指导');await click('restore-code');
+  await platformTab('publish');await expect(page.locator('[data-action="publish"]')).toBeDisabled();
+  await click('suggest','[data-kind="guide"]');await click('apply-proposal');await click('platform-code');await page.locator('#code-editor').fill('# 暂缺工程分层指导');await click('save-code');await click('platform-check');await platformTab('publish');await expect(page.locator('.platform-checks')).toContainText('未通过');await expect(page.locator('[data-action="publish"]')).toBeDisabled();
+  checks.push('P01-P04 平台查看应用诊断、恢复未保存代码、无变更不发行、检查失败可定位');
+  await click('platform-code');await page.locator('#code-editor').fill(platformCode+'\n本次补充 service/ 装配检查');await click('save-code');await click('platform-check');await platformTab('publish');await click('publish');
+  const s=await state(),release=JSON.stringify(s.platform.releases.at(-1)),version=s.platform.templateVersion,appTemplate=s.app.template;
+  await expect(page.locator('[data-action="publish"]')).toBeDisabled();await page.reload();assert.equal((await state()).platform.templateVersion,version);
+  await click('platform-code');await page.locator('#code-editor').fill((await page.locator('#code-editor').inputValue())+'\n下一版修改');await click('save-code');await platformTab('publish');await expect(page.locator('.canvas-main')).toContainText('未发行修改');assert.equal(JSON.stringify((await state()).platform.releases.at(-1)),release);
+  await click('release-detail');await expect(page.locator('#dialog')).toContainText(version);await close();await platformTab('activity');await expect(page.locator('.canvas-main')).toContainText('保存代码');await expect(page.locator('.canvas-main')).toContainText('发行模板');await page.screenshot({path:path.join(out,'platform-activity.png'),fullPage:true});
+  await click('role','[data-role="scene"]');assert.equal((await state()).app.template,appTemplate);await tab('overview');await expect(page.locator('.canvas-main')).toContainText('新模板');
+  checks.push('P05-P07 模板单次发行、历史冻结、工程活动可追溯，新版不覆盖已有应用');
+  await click('role','[data-role="platform"]');await platformTab('diagnostics');await expect(page.locator('.canvas-main')).toContainText('应用运行');await click('role','[data-role="scene"]');await tab('runs');
+  const beforeReplay=JSON.stringify(await state());await click('trace');await click('replay-next');await close();assert.equal(JSON.stringify(await state()),beforeReplay);
+  await page.setViewportSize({width:390,height:844});for(const id of ['overview','runs','delivery']){await tab(id);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,id);}
+  await click('role','[data-role="platform"]');for(const id of ['engineering','publish','activity','diagnostics']){await platformTab(id);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,id);}
+  assert.deepEqual(errors,[]);checks.push('X01-X03 双角色上下文隔离、历史只读、手机中间状态无溢出');
+  fs.writeFileSync(path.join(out,'result.json'),JSON.stringify({kind:'simulated-role-stage-check',checks,passed:checks.length,businessE2E:false},null,2));console.log(JSON.stringify({passed:checks.length,checks,output:out},null,2));
+ }catch(e){console.error(e.message);await page.screenshot({path:path.join(out,'failure.png'),fullPage:true});throw e;}finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -19,7 +19,7 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 1. **选择 MOA 并创建应用。** 填写名称“员工福利助手”，目标“为员工提供 i豆余额查询、礼品目录、确认兑换和结果核对，接入企业福利系统”。创建表单没有业务示例选择器。
 2. **向 Coding Agent 提出需求。** 输入框带入刚填写的目标，可补充后发送；也可点击“根据目标制定开发方案”。查看方案与文件差异，再应用。名称与目标保留，继续在同一工程开发。当前明确标注预设内容，不是模型生成。
 3. **接入系统。** “能力与系统接入”显示余额、目录、兑换、结果核对的接口契约和运行规则。选择“本地 Mock”并保存连接；企业测试环境尚未接通，选择它会阻止运行。
-4. **查看和修改代码。** 编辑应用配置、业务 Skill、映射脚本；连接文件为只读视图，由接入页维护。未保存内容受保护；手工保存后，旧 Agent 建议不能覆盖新修订。
+4. **查看和修改代码。** 编辑应用配置、业务 Skill、映射脚本；连接文件为只读视图，由接入页维护。未保存内容在本浏览器暂存，刷新后继续编辑，保存后才进入修订；手工保存后，旧 Agent 建议不能覆盖新修订。
 5. **调试应用。** 进入“调试与评测”，在标明身份的“终端用户模拟器”发送查询。切换“嵌套余额返回”使旧映射失败，查看 Trace 并交给 Agent 修复，再运行通过。
 6. **验证用户体验。** 礼品选择、兑换确认只在模拟器中进行。待确认时更换礼品，旧确认失效；应用修订不变。可体验拒绝零写入、写后超时、按原交易核对且不新增订单。
 7. **评测与交付。** 在“版本与交付”运行示例检查，固定候选、预览包结构、下载设计 JSON、预演企业 CI/CD。代码或连接变化使旧检查失效；修改测试礼品不会改变候选。
@@ -27,6 +27,21 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 平台角色可单独演示范式工程、公共能力、开发 Skill 和模板发行。初始 MOA 模板已可使用，不要求应用开发者先扮演平台维护者。平台发行新版本不会覆盖已有应用；下次创建才固定新版本。
 
 其他需求可以生成通用需求草稿，接口实现和执行器仍待补充，不会被套入 i豆业务。Demo 只保留一个活动应用，创建另一个前明确提示替换。旧运行快照不随草稿改动而重写；运行列表最多保留 20 条。文件直开与 HTTP 入口使用各自的浏览器存储。
+
+## 从不同阶段进入
+
+| 要做的事 | 应用开发者入口 | 平台开发者入口 |
+| --- | --- | --- |
+| 继续上次工作 | 我的应用 → 继续开发，保留上次页签、文件、目标和待审阅方案 | 切回平台后保留工程位置、目标和待审阅方案 |
+| 恢复未保存编辑 | 代码与配置；应用概览/系统接入中的配置暂存也可恢复 | 范式工程代码，恢复本角色暂存文件 |
+| 修改已有内容 | 保存形成新修订；状态提示重新检查，历史候选保持原样 | 工程修改标为未发行；已有模板和应用固定版本不变 |
+| 看轨迹或未完成测试 | 运行与轨迹 → 筛选、Trace/回放、执行快照；当前连接不可用也能查看；状态提示可回到未完成测试 | 应用运行诊断查看应用 Trace；工程活动查看本页面实际发生的保存、检查和发行 |
+| 准备交付/发行 | 版本与交付 → 检查失败项修复 → 固定候选 → 交接预演 | 模板发行 → 检查当前工程 → 单次发行该修订 |
+| 查看历史版本 | 历史候选与交接 → 查看或下载指定候选 | 已发行版本 → 查看固定发行快照 |
+
+两种角色各暂存一个未保存文件。配置暂存与执行使用的已保存版本分开，基础修订变化时需放弃旧暂存并重新编辑。代码未保存时仍需保存或恢复才能导航。候选、交接及发行快照各保留最近 10 条，平台活动保留 30 条；这些均是本浏览器数据，没有后端保存或多用户协作。已有应用的模板升级流程尚未实现。
+
+按角色与阶段的实际走查、问题及截图见 [双角色阶段走查](双角色阶段走查.md)。
 
 ## 演示与真实能力的边界
 
@@ -46,12 +61,13 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 ```bash
 node --check docs/developer-prototype-v2/src/app.js
 node docs/developer-prototype-v2/scripts/build.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-app-journey/final-journey node docs/developer-prototype-v2/scripts/verify-journey.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-app-journey/final-regression node docs/developer-prototype-v2/scripts/verify.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-stages/final-checks node docs/developer-prototype-v2/scripts/verify-stages.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-stages/final-journey node docs/developer-prototype-v2/scripts/verify-journey.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-role-stages/final-regression node docs/developer-prototype-v2/scripts/verify.cjs
 ```
 
-浏览器检查使用仓库已有 `@playwright/test` 和 `/opt/google/chrome/chrome`，可通过 `DEMO_BROWSER_PATH` 更换。`verify-template.cjs` 保留为新旅程检查的兼容入口，不必重复运行。本批输出在忽略的 `test-results/prototype-v2-app-journey/`；首版及上次模板修正的证据目录保留。
+浏览器检查使用仓库已有 `@playwright/test` 和 `/opt/google/chrome/chrome`，可通过 `DEMO_BROWSER_PATH` 更换。`verify-template.cjs` 保留为新旅程检查的兼容入口，不必重复运行。本批输出在忽略的 `test-results/prototype-v2-role-stages/`；后续新批次改用新的输出目录，不覆盖已有证据。
 
-本批 4 组应用旅程检查、7 组交互回归通过。先在旧设计复现“入口已有 i豆应用”；测试第一次跑新页面时因未从“我的应用”导航就查找新建按钮而失败，修正定位后通过，失败截图保留。既有确认、写入、回放和候选断言保留，补充测试输入不改变应用修订/候选的检查。详见 [应用开发者走查](应用开发者走查.md)。
+本批增加 7 组角色/阶段组合检查，并运行既有 4 组应用旅程与 7 组交互回归。检查结果、红灯记录和真实能力边界见 [双角色阶段走查](双角色阶段走查.md)。既有确认、写入、回放和候选断言未削弱。上一批的新用户入口修正见 [应用开发者走查](应用开发者走查.md)，对应证据和原结果保留。
 
 [PRD 2.0](../Agent开发工作台_PRD_v2.0.md)、[交互设计](../Agent开发工作台_交互设计_v2.0.md)、[推进计划](../后续推进计划与执行要求.md)已同步。第二、三阶段先讨论技术方案，本批不开发真实前后端。
