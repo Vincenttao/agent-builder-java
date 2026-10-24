@@ -99,3 +99,5 @@ PRD 中旧快照保留为历史源码证据，不自动覆盖。新实现记录�
 - RD-03 映射修复准备：发现“连接与映射”配置页未提供映射入口；新增浏览器断言先因缺少“余额结果字段路径”失败，再接入 `application.json.mapping.balancePath` 的同源草稿/保存。独立适配器测试执行原 Python 脚本及本机 HTTP Mock：错误路径报错，修正路径读取 1280，写入计数为零。PC 配置与适配器两项、TypeScript、JS 语法及 diff 检查通过。未修改 Java 或 Python 实现、未构建 Java、未调用模型；这里只证明映射配置与底层适配，不证明最终 Java/模型开发者重试路线，RD-03 保持未完成。
 
 - RD-03 Java 映射链证据：补充现有资产装载测试，执行真实 BusinessAssets→LocalSkillRunner→登记 Python→本机 HTTP。错误路径失败；磁盘修正后旧资产实例仍失败，调用方传入 configuration 不能覆盖宿主注入配置；新资产实例读取 1280，HTTP 总读取 3 次。模板发行/空业务检查另 1 项通过，diff 检查通过。离线仅执行 BusinessAssetsTest，4 项通过，记录 `p3/mapping-java-20261025/`。未改 Java 生产逻辑，不为既有行为制造失败测试，未调用模型/路由或生成新 JAR；最终 RD-03 的模型、PC 新运行及修订归属仍待验证。
+
+- RD-02 开发指导补齐：应用开发 Skill 原先主要引用固定上游指南，未明确本机适配的完整资产契约。新增 `references/workbench-runtime-contract.md`，说明操作目录/脚本相对路径、固定注入配置、结果结构、映射修复、新旧运行边界、确认/幂等/终结及当前禁止 Bash 的真实检查边界；平台指导同步引用维护责任，明确本地适配与上游原文分别标识。对照 BusinessAssets/LocalSkillRunner/操作目录及收束保护核对，实际 moaTemplateFiles 已包含引用；6 项模板/Coding 本地契约检查与 diff 检查通过。未调用实际 OpenCode/模型、未构建 Java，不能把指导补齐计为真实多文件生成通过。
