@@ -18,12 +18,12 @@ const key='openjiuwen-workbench-v2-demo-3';
  const shot=async name=>{await page.evaluate(()=>scrollTo(0,0));await expect(page.locator('#toast')).not.toHaveClass(/visible/);await page.screenshot({path:path.join(out,name+'.png')});};
  try{
   await page.goto(pathToFileURL(path.resolve(__dirname,'../开发工作台2.0.html')).href);await create('员工福利助手');await dev('capabilities');
-  await expect(page.locator('[aria-label="开发内容"] button')).toHaveText(['应用设置','能力','文件']);
+  await expect(page.locator('[aria-label="开发内容"] button')).toHaveText(['应用设置','能力','编排','文件']);
   await expect(page.locator('.capability-row')).toHaveCount(0);
   await click('tab','[data-id="overview"]');await click('suggest','[data-kind="plan"]');await click('apply-proposal');await dev('capabilities');
   await expect(page.locator('.capability-row')).toHaveCount(5);await choose('builtin-skill');await expect(page.locator('.capability-detail')).toContainText('查询本人可用 i豆');
   await click('edit-business-skill');const original=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill(original+'\n优先解释可兑换范围。\n');await click('save-code');await dev('capabilities');await choose('builtin-skill');await expect(page.locator('.capability-detail')).toContainText('优先解释可兑换范围');
-  checks.push('开发仅有三个入口；预置 Skill 与四个工具在同一列表，编辑文件后详情同步');
+  checks.push('开发有四个入口；预置 Skill 与四个工具在同一列表，编辑文件后详情同步');
   await click('add-capability');await click('choose-capability','[data-type="skill"]');await page.locator('#capability-name').fill('采购协同');await page.locator('#capability-purpose').fill('整理采购需求');await page.locator('#capability-content').fill('# 采购协同\n先明确预算。');await click('save-capability');
   await expect(page.locator('.capability-row')).toHaveCount(6);await expect(page.locator('.capability-detail')).toContainText('先明确预算');
   await click('capability-file','[data-id="cap-001"]');await page.locator('#code-editor').fill('# 采购协同\n先核对预算，再提交。');await click('save-code');await dev('capabilities');await choose('cap-001');await expect(page.locator('.capability-detail')).toContainText('先核对预算，再提交');
