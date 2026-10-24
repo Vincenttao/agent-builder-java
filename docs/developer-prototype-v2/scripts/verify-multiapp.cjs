@@ -10,7 +10,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const browser=await chromium.launch({executablePath:process.env.DEMO_BROWSER_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});page.setDefaultTimeout(6000);
  const errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
- const click=(a,attrs='')=>page.locator(`[data-action="${a}"]${attrs}`).first().click();
+ const click=async(a,attrs='')=>{if(a==='role')await page.locator('[data-action="identity-switcher"]').click();return page.locator(`[data-action="${a}"]${attrs}`).first().click();};
  const tab=id=>click('tab',`[data-id="${id}"]`),section=id=>click('dev-section',`[data-id="${id}"]`);
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  const close=()=>page.locator('#dialog [data-action="close"]').first().click();
@@ -19,7 +19,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const bind=async()=>{await tab('develop');await section('connections');await page.locator('#connection').selectOption('mock');await click('save-connection');};
  try{
   await page.goto(pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
-  assert.equal((await state()).view,'apps','新用户应进入应用列表');await expect(page.locator('.sidebar nav')).toHaveText(/应用.*开发模板/);await expect(page.locator('.app-card')).toHaveCount(0);await expect(page.locator('.app-tabs')).toHaveCount(0);await expect(page.locator('#root')).not.toContainText('i豆');
+  assert.equal((await state()).view,'apps','新用户应进入应用列表');await expect(page.locator('.sidebar nav')).toHaveText('应用');await expect(page.locator('.app-card')).toHaveCount(0);await expect(page.locator('.app-tabs')).toHaveCount(0);await expect(page.locator('#root')).not.toContainText('i豆');
   const a=await create('员工福利助手');await expect(page.locator('.sidebar [data-action="tab"]')).toHaveCount(0);await expect(page.locator('.app-tabs')).toContainText('概览开发测试运行记录版本与发布');
   const boxes=await page.locator('.app-tabs button').evaluateAll(es=>es.map(e=>({x:e.getBoundingClientRect().x,y:e.getBoundingClientRect().y})));assert.equal(new Set(boxes.map(b=>b.y)).size,1);assert.ok(boxes[1].x>boxes[0].x);
   await tab('develop');await expect(page.locator('.development-tabs')).toContainText('应用指令业务技能工具连接文件');await section('tools');await expect(page.locator('.op-row')).toHaveCount(4);await section('skills');await expect(page.locator('.canvas-main')).toContainText('兑换前资格校验');

@@ -10,20 +10,18 @@ const key='openjiuwen-workbench-v2-demo-3';
 (async()=>{
  const browser=await chromium.launch({executablePath:process.env.DEMO_BROWSER_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(8000);const errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
- const click=(a,attrs='')=>page.locator(`[data-action="${a}"]${attrs}`).first().click();
+ const click=async(a,attrs='')=>{if(a==='role')await page.locator('[data-action="identity-switcher"]').click();return page.locator(`[data-action="${a}"]${attrs}`).first().click();};
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  // Historical task aliases now navigate through the application's development objects.
  const tab=async id=>{if(['operations','extensions'].includes(id)){await click('tab','[data-id="develop"]');await click('dev-section',`[data-id="${id==='operations'?'connections':'files'}"]`);}else await click('tab',`[data-id="${id}"]`);};
  try{
   await page.goto(pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
- await click('view','[data-id="templates"]');
-  await expect(page.locator('.template-hero h2')).toHaveText('MOA 开发模板');
   await expect(page.locator('#root')).not.toContainText('i豆');
   await expect(page.locator('#root')).not.toContainText('场景开发者');
   await expect(page.locator('[data-action="tab"]')).toHaveCount(0);
   assert.equal((await state()).hasApplication,false);
   await click('view','[data-id="apps"]');await expect(page.locator('.app-card')).toHaveCount(0);
-  await click('create-app');await expect(page.locator('#dialog')).not.toContainText('i豆');
+  await click('create-app');await expect(page.locator('#dialog')).toContainText('MOA 开发模板');await expect(page.locator('#dialog')).not.toContainText('i豆');
   await expect(page.locator('#new-app-example')).toHaveCount(0);
   await page.locator('#new-app-name').fill('员工福利助手');
   await page.locator('#new-app-goal').fill('为员工查询 i豆余额、查询礼品目录、提交兑换并核对结果，接入企业福利系统。');

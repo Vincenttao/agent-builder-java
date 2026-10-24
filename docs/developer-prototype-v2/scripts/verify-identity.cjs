@@ -1,0 +1,43 @@
+const {chromium,expect}=require('@playwright/test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const root=path.resolve(__dirname,'..'),out=path.resolve(process.env.DEMO_CHECK_OUTPUT||'test-results/prototype-v2-identity/checks');
+fs.mkdirSync(out,{recursive:true});
+const key='openjiuwen-workbench-v2-demo-3';
+(async()=>{
+ const browser=await chromium.launch({executablePath:process.env.DEMO_BROWSER_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);
+ const errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
+ const click=(a,attrs='')=>page.locator(`[data-action="${a}"]${attrs}`).first().click();
+ const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
+ const close=()=>page.locator('#dialog [data-action="close"]').first().click();
+ const identity=async role=>{await click('identity-switcher');await click('role',`[data-role="${role}"]`);};
+ try{
+  await page.goto(process.env.DEMO_URL||pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
+  await expect(page.locator('[data-action="identity-switcher"]')).toHaveCount(1);
+  await expect(page.locator('.identity-switch')).toContainText('陈晓');await expect(page.locator('.identity-switch')).toContainText('应用开发者');
+  await expect(page.locator('.sidebar nav button')).toHaveCount(1);await expect(page.locator('.sidebar nav')).toHaveText('应用');await expect(page.locator('.role-switch')).toHaveCount(0);
+  await page.screenshot({path:path.join(out,'application-user.png'),fullPage:true});await click('identity-switcher');await expect(page.locator('#dialog')).toContainText('林知远');await expect(page.locator('#dialog')).toContainText('模拟');await page.screenshot({path:path.join(out,'identity-picker.png'),fullPage:true});await close();assert.equal((await state()).role,'scene');
+  checks.push('单一用户身份入口展示姓名与角色；应用用户仅有应用导航；取消切换不改变身份');
+  await click('create-app');await expect(page.locator('#dialog input[name="development-template"]')).toBeChecked();await expect(page.locator('#dialog')).not.toContainText('i豆');
+  await page.locator('#new-app-name').fill('身份走查应用');await page.locator('#new-app-goal').fill('为员工查询 i豆余额并完成确认兑换');await page.locator('#dialog summary').click();await expect(page.locator('#dialog')).toContainText('MOA 机制与工程骨架');await expect(page.locator('#new-app-name')).toHaveValue('身份走查应用');await page.screenshot({path:path.join(out,'create-with-template.png'),fullPage:true});await click('create-confirm');
+  const originalTemplate=(await state()).app.template;await click('template-detail');await expect(page.locator('#dialog')).toContainText(originalTemplate);await expect(page.locator('#dialog')).toContainText('只读');await close();
+  await click('suggest','[data-kind="plan"]');await click('apply-proposal');await click('open-code');const code=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill(code+'\n ');await page.locator('#agent-prompt').fill('保留应用方未发送的目标');
+  const appBefore=(await state()).applications;checks.push('MOA 在新建流程选择，说明展开不丢表单；应用中只读查看固定模板来源');
+  await identity('platform');await expect(page.locator('#dialog')).not.toBeVisible();await expect(page.locator('.identity-switch')).toContainText('林知远');await expect(page.locator('.identity-switch')).toContainText('平台开发者');await expect(page.locator('.sidebar nav')).toContainText('模板发行');await expect(page.locator('.app-tabs')).toHaveCount(0);await expect(page.locator('.copilot')).toContainText('moa-platform-dev');assert.deepEqual((await state()).applications,appBefore);
+  await click('platform-tab','[data-id="publish"]');await expect(page.locator('[data-action="handoff"]')).toHaveCount(0);await click('template-detail');await expect(page.locator('#dialog')).toContainText('已发行模板');await close();assert.equal((await state()).role,'platform');await page.screenshot({path:path.join(out,'platform-user.png'),fullPage:true});
+  await page.reload();await expect(page.locator('.identity-switch')).toContainText('林知远');await click('platform-code');const platformCode=await page.locator('#code-editor').inputValue();await page.locator('#code-editor').fill(platformCode+'\n平台暂存');
+  await identity('scene');await expect(page.locator('#code-editor')).toHaveValue(code+'\n ');await expect(page.locator('#agent-prompt')).toHaveValue('保留应用方未发送的目标');await expect(page.locator('.copilot')).toContainText('moa-application-dev');await click('restore-code');
+  await identity('platform');await expect(page.locator('#code-editor')).toHaveValue(platformCode+'\n平台暂存');await click('restore-code');
+  checks.push('身份决定导航与 Coding Agent 上下文；刷新保持身份；切回恢复各自代码、目标和位置');
+  await click('suggest','[data-kind="guide"]');await click('apply-proposal');await click('platform-check');await click('platform-tab','[data-id="publish"]');await click('publish');const published=(await state()).platform.templateVersion;assert.notEqual(published,originalTemplate);
+  await identity('scene');assert.equal((await state()).app.template,originalTemplate);await click('template-detail');await expect(page.locator('#dialog')).toContainText(`MOA ${originalTemplate}`);await close();await click('view','[data-id="apps"]');await click('create-app');await expect(page.locator('#dialog')).toContainText(`版本 ${published}`);await close();
+  checks.push('平台发行不覆盖原应用模板；应用来源仍为旧版，新建使用新发行版本');
+  await page.evaluate(k=>{const s=JSON.parse(localStorage.getItem(k));s.view='templates';localStorage.setItem(k,JSON.stringify(s));},key);await page.reload();assert.equal((await state()).view,'apps');await expect(page.locator('.app-card')).toHaveCount(1);
+  await page.setViewportSize({width:390,height:844});await click('identity-switcher');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.querySelector('#dialog').scrollWidth<=innerWidth),true);await page.screenshot({path:path.join(out,'mobile-identity.png'),fullPage:true});await click('role','[data-role="platform"]');await expect(page.locator('.identity-switch')).toContainText('林知远');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(errors,[]);checks.push('旧模板页位置迁回应用列表；手机可切身份，无横向溢出或脚本异常');
+  fs.writeFileSync(path.join(out,'result.json'),JSON.stringify({kind:'simulated-user-identity-check',checks,passed:checks.length,businessE2E:false},null,2));console.log(JSON.stringify({passed:checks.length,checks,output:out},null,2));
+ }catch(e){await page.screenshot({path:path.join(out,'failure.png'),fullPage:true});throw e;}finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

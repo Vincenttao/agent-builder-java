@@ -12,18 +12,16 @@ const key='openjiuwen-workbench-v2-demo-3';
  const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true});
  const page=await context.newPage();page.setDefaultTimeout(8000);const errors=[];const requests=[];const checks=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});
- const click=async(a,attrs='')=>page.locator(`[data-action="${a}"]${attrs}`).first().click();
+ const click=async(a,attrs='')=>{if(a==='role')await page.locator('[data-action="identity-switcher"]').click();return page.locator(`[data-action="${a}"]${attrs}`).first().click();};
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  const scene=()=>click('role','[data-role="scene"]');const platform=()=>click('role','[data-role="platform"]');
  // Historical task aliases now navigate through the application's development objects.
  const tab=async id=>{if(['operations','extensions'].includes(id)){await click('tab','[data-id="develop"]');await click('dev-section',`[data-id="${id==='operations'?'connections':'files'}"]`);}else await click('tab',`[data-id="${id}"]`);};
  try{
  await page.goto(pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
- await click('view','[data-id="templates"]');
- await expect(page.getByRole('heading',{name:'MOA 开发模板',exact:true})).toBeVisible();
  await click('create-app');await page.locator('#new-app-name').fill('员工福利助手');await page.locator('#new-app-goal').fill('为员工提供 i豆查询与兑换服务，接入企业福利系统');await click('create-confirm');
  await click('suggest','[data-kind="plan"]');await click('apply-proposal');await tab('operations');await page.locator('#connection').selectOption('mock');await click('save-connection');
- await expect(page.locator('.sidebar nav')).toContainText('应用开发模板');await expect(page.locator('.app-tabs')).toContainText('开发');
+ await expect(page.locator('.sidebar nav')).toHaveText('应用');await expect(page.locator('.app-tabs')).toContainText('开发');
  await platform();await expect(page.locator('.sidebar nav')).toContainText('范式工程');await expect(page.locator('.sidebar nav')).not.toContainText('我的应用');
  await page.screenshot({path:path.join(out,'platform.png'),fullPage:true});
  const priorPlatform=JSON.stringify((await state()).platform);await click('suggest','[data-kind="guide"]');assert.equal(JSON.stringify((await state()).platform),priorPlatform);

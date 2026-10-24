@@ -10,7 +10,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const browser=await chromium.launch({executablePath:process.env.DEMO_BROWSER_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});page.setDefaultTimeout(6000);
  const errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
- const click=(a,attrs='')=>page.locator(`[data-action="${a}"]${attrs}`).first().click();
+ const click=async(a,attrs='')=>{if(a==='role')await page.locator('[data-action="identity-switcher"]').click();return page.locator(`[data-action="${a}"]${attrs}`).first().click();};
  // Historical task aliases now navigate through the application's development objects.
  const tab=async id=>{if(['operations','extensions'].includes(id)){await click('tab','[data-id="develop"]');await click('dev-section',`[data-id="${id==='operations'?'connections':'files'}"]`);}else await click('tab',`[data-id="${id}"]`);},platformTab=id=>click('platform-tab',`[data-id="${id}"]`);
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);

@@ -16,7 +16,8 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 
 ## 现在怎样找功能
 
-- **全局左栏：应用、开发模板。** 应用列表显示各应用的状态、模板、修订和上次位置，没有某个应用的二级导航或助手。
+- **右上角：切换用户身份。** 默认是“陈晓 · 应用开发者”，可切换为“林知远 · 平台开发者”。页面始终显示当前姓名与身份，导航、工作内容和 Coding Agent 上下文随身份变化；编辑位置和未保存内容保留。这是模拟用户视角，不是登录或权限管理。
+- **应用用户左栏：应用。** 应用列表显示各应用的状态、模板、修订和上次位置。模板选择放进“新建应用”表单，不占独立导航；平台用户保留范式工程、公共能力、开发 Skill、模板发行、工程活动和应用运行诊断。
 - **应用标题：名称及切换器。** 点击名称可搜索并切换应用，也可返回列表或新建。最多保存 10 个应用；达到上限会阻止创建，不覆盖已有内容。
 - **应用内横向页签：概览、开发、测试、运行记录、版本与发布。** 内容和右侧 Coding Agent 均属于当前应用。
 
@@ -32,7 +33,7 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 
 ## 可点击路线
 
-1. 在应用列表新建，确认模板为 MOA。名称填“员工福利助手”，目标填“为员工查询 i豆余额、查询礼品目录、提交兑换并核对结果，接入企业福利系统”。创建表单没有业务示例选择器。
+1. 在应用列表新建，选择 MOA 模板；可展开“模板提供什么？”查看工程骨架、开发指导和开放范围，填写内容不会丢失。名称填“员工福利助手”，目标填“为员工查询 i豆余额、查询礼品目录、提交兑换并核对结果，接入企业福利系统”。创建表单没有业务示例选择器。
 2. 向 Coding Agent 发送需求，或点击“根据目标制定开发方案”。查看差异后应用到当前应用。建议明确标注为预设内容，不是模型生成。
 3. 进入“开发”：在工具中查看接口，在连接中选择“本地 Mock”并保存，在业务技能中查看规则，在文件中编辑代码。企业环境尚未接通，选它会阻止运行。
 4. 进入“测试 → 交互调试”。先查询余额，再切换“嵌套余额返回”使旧映射失败，查看 Trace、交给 Agent 修复并重新运行。原失败快照保留。
@@ -40,7 +41,7 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 6. 在“测试 → 测试检查”运行示例检查。失败项可定位到对应配置、文件或未完成测试。“版本与发布”引用报告，通过后固定候选、预览交付包、下载设计 JSON、预演企业 CI/CD。
 7. 返回应用列表再创建“采购协同助手”，目标描述采购系统需求。它只生成待补充接口的通用草稿，不误跑 i豆。再从标题切回福利应用，查看原草稿、对话、订单、运行和候选仍然保留。
 
-平台角色单独演示范式工程、公共能力、开发 Skill 和模板发行。初始 MOA 模板已可使用，应用开发者不必先扮演平台维护者。新模板只影响之后创建的应用，不覆盖已有应用。平台的“应用运行诊断”汇总所有应用，可按应用和结果筛选；回放不会改变应用开发者当前打开的应用。“工程活动”另记保存、检查、发行等页面操作。
+从右上角切换为林知远后，单独演示范式工程、公共能力、开发 Skill 和模板发行。初始 MOA 模板已可使用，应用开发者不必先扮演平台维护者。新模板只影响之后创建的应用，不覆盖已有应用。应用标题下“基于 MOA · 版本”提供只读来源说明；平台发行页查看已发行说明不会自动切换用户。平台的“应用运行诊断”汇总所有应用，可按应用和结果筛选；回放不会改变应用开发者当前打开的应用。“工程活动”另记保存、检查、发行等页面操作。
 
 ## 中途恢复与数据范围
 
@@ -66,14 +67,15 @@ Java/Python 只保存文本，映射预演只识别两份预置脚本。指令�
 ```bash
 node --check docs/developer-prototype-v2/src/app.js
 node docs/developer-prototype-v2/scripts/build.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-multiapp/multiapp-final node docs/developer-prototype-v2/scripts/verify-multiapp.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-multiapp/verify-stages node docs/developer-prototype-v2/scripts/verify-stages.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-multiapp/verify-journey node docs/developer-prototype-v2/scripts/verify-journey.cjs
-DEMO_CHECK_OUTPUT=test-results/prototype-v2-multiapp/verify-final node docs/developer-prototype-v2/scripts/verify.cjs
+DEMO_URL=http://127.0.0.1:8768/ DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/green node docs/developer-prototype-v2/scripts/verify-identity.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify-multiapp node docs/developer-prototype-v2/scripts/verify-multiapp.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify-stages node docs/developer-prototype-v2/scripts/verify-stages.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify-journey node docs/developer-prototype-v2/scripts/verify-journey.cjs
+DEMO_CHECK_OUTPUT=test-results/prototype-v2-identity/verify node docs/developer-prototype-v2/scripts/verify.cjs
 ```
 
-浏览器检查使用已有 `@playwright/test` 和 `/opt/google/chrome/chrome`，可通过 `DEMO_BROWSER_PATH` 更换。`verify-template.cjs` 是旅程检查的兼容入口，不重复运行。上述为本批实际证据路径；后续批次应另设目录，避免覆盖。
+浏览器检查使用已有 `@playwright/test` 和 `/opt/google/chrome/chrome`，可通过 `DEMO_BROWSER_PATH` 更换。身份检查的 HTTP 入口需先启动预览服务；省略 `DEMO_URL` 则直接检查单文件。`verify-template.cjs` 是旅程检查的兼容入口，不重复运行。上述为本批实际证据路径；后续批次应另设目录，避免覆盖。
 
-本批新增 8 组多应用检查，原有 4 组应用旅程、7 组角色阶段、7 组交互回归通过。实际走查、失败记录及导航定位调整见[多应用导航走查](多应用导航走查.md)。此前[应用开发者走查](应用开发者走查.md)及[双角色阶段走查](双角色阶段走查.md)保留原结果。
+本批新增 5 组用户身份检查，并运行受影响的 8 组多应用、4 组应用旅程、7 组角色阶段及 7 组交互检查。结果、截图及证明边界见[用户身份与模板入口走查](用户身份与模板入口走查.md)。上一批[多应用导航走查](多应用导航走查.md)保留原结果。此前[应用开发者走查](应用开发者走查.md)及[双角色阶段走查](双角色阶段走查.md)保留原结果。
 
 [PRD 2.0](../Agent开发工作台_PRD_v2.0.md)、[交互设计](../Agent开发工作台_交互设计_v2.0.md)、[推进计划](../后续推进计划与执行要求.md)同步当前结构。第二、三阶段先讨论技术方案，本批不开发真实前后端。
