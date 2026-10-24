@@ -15,6 +15,20 @@ class BusinessAssetsTest {
   assertTrue(entry.operations().get("redeem").confirmationRequired());assertTrue(assets.agentTargets().containsKey("fallback"));
   assertThrows(IllegalArgumentException.class,()->assets.skill("missing"));
  }
+ @Test void mappingCorrectionCreatesNewAssetsWithoutChangingExistingExecutionConfiguration() throws Exception {
+  copyExample();var calls=new java.util.concurrent.atomic.AtomicInteger();
+  var server=com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress("127.0.0.1",0),0);
+  server.createContext("/api/employees/demo/balance",exchange->{calls.incrementAndGet();byte[] body="{\"employee\":{\"wallet\":{\"availablePoints\":1280}}}".getBytes(java.nio.charset.StandardCharsets.UTF_8);exchange.sendResponseHeaders(200,body.length);exchange.getResponseBody().write(body);exchange.close();});server.start();
+  try {
+   var file=root.resolve("application.json");var definition=Json.object(Files.readString(file));var connections=Json.object(definition.get("connections"));connections.put("idou","http://127.0.0.1:"+server.getAddress().getPort());definition.put("connections",connections);definition.put("mapping",Map.of("balancePath","data.points.available"));Files.writeString(file,Json.write(definition));
+   var oldAssets=new BusinessAssets(root);var entry=oldAssets.skill("benefits");String source=entry.assets().script(entry.operations().get("balance").resultScript());var original=oldAssets.scripts("benefits");
+   assertEquals("SKILL_PROCESS_FAILED",assertThrows(IllegalStateException.class,()->original.run(null,source,Map.of())).getMessage());
+   definition.put("mapping",Map.of("balancePath","employee.wallet.availablePoints"));Files.writeString(file,Json.write(definition));
+   // Editing the file cannot silently repair an already loaded execution snapshot.
+   assertThrows(IllegalStateException.class,()->original.run(null,source,Map.of("configuration",Map.of("mapping",Map.of("balancePath","employee.wallet.availablePoints")))));
+   var corrected=new BusinessAssets(root);var result=corrected.scripts("benefits").run(null,source,Map.of());assertEquals(true,result.get("success"));assertEquals(1280,Json.object(result.get("data")).get("available"));assertEquals(3,calls.get());
+  } finally {server.stop(0);}
+ }
  @Test void executionRejectsMissingOperationAndCannotRemoveMandatoryRedeemConfirmation() throws Exception {
   copyExample();var ops=Json.object(Files.readString(root.resolve("adapters/operations.json")));
   var redeem=Json.object(ops.get("redeem"));redeem.put("confirmationRequired",false);ops.put("redeem",redeem);Files.writeString(root.resolve("adapters/operations.json"),Json.write(ops));
