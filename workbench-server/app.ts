@@ -1,19 +1,15 @@
 import express,{type Request,type Response,type NextFunction} from 'express';
-import {readFileSync,readdirSync} from 'node:fs';
 import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {moaTemplateFiles} from './template.js';
 import {CodingJobs,type CodingEngine} from './coding.js';
 import {OpenCodeEngine} from './opencode.js';
 import {ProjectStore,WorkbenchError,applicationEditable,type Role,type Files} from './projects.js';
 const repository=resolve(dirname(fileURLToPath(import.meta.url)),'..');
-export function readTree(root:string):Files{
-  const result:Files={};
-  function visit(dir:string,prefix=''){for(const entry of readdirSync(dir,{withFileTypes:true})){if(entry.isSymbolicLink())throw new WorkbenchError('INVALID_PATH','模板不允许符号链接');const name=prefix+entry.name;entry.isDirectory()?visit(join(dir,entry.name),name+'/'):result[name]=readFileSync(join(dir,entry.name),'utf8');}}
-  visit(root);return result;
-}
+export {readTree} from './files.js';
 export function createWorkbench(options:{root:string;templateFiles?:Files;codingEngine?:CodingEngine}){
   const store=new ProjectStore(options.root);
-  store.seedTemplate(options.templateFiles??readTree(join(repository,'templates/moa')));
+  store.seedTemplate(options.templateFiles??moaTemplateFiles());
   const jobs=new CodingJobs(store,options.codingEngine??new OpenCodeEngine(repository));
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   app.use('/api',(req,res,next)=>{
