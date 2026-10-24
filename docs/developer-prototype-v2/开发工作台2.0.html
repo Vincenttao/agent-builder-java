@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
+  <meta name="demo-build" content="553bce32d0cd746e9a164e97d1d2e4cff875f91086fe93858360c7731e9cd140">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>openJiuwen · Agent 开发工作台 2.0</title>
@@ -103,6 +104,8 @@ button.assembly-type:hover{border-color:#ce8c99;background:#fff8fa;box-shadow:0 
 (() => {
   'use strict';
   const KEY = 'openjiuwen-workbench-v2-demo-3';
+  const BUILD_KEY='openjiuwen-workbench-v2-build';
+  const DEMO_BUILD=document.querySelector('meta[name="demo-build"]')?.content||'source-unbuilt';
   const TEMPLATE = {id:'moa',name:'MOA 开发模板'};
   const DEMO_USERS=[
     {role:'scene',name:'陈晓',avatar:'陈',title:'应用开发者',team:'应用开发团队',scope:'创建和维护业务应用，测试、查看运行并交付。'},
@@ -158,9 +161,18 @@ button.assembly-type:hover{border-color:#ce8c99;background:#fff8fa;box-shadow:0 
     coding:{scene:{messages:[],proposal:null},platform:{messages:[],proposal:null}},
     debugGift:'cup',responseShape:'standard',query:'',runs:[],activeRun:null,approval:null,business:{balance:null,orders:[]},report:null,candidate:null,delivery:null,undo:null
   };
-  let state, storageUnavailable=false;
-  try { const parsed=JSON.parse(localStorage.getItem(KEY)); state=parsed?.schema===3&&parsed.app&&parsed.platform&&parsed.coding?parsed:clone(DEFAULT); }
-  catch { state=clone(DEFAULT); storageUnavailable=true; }
+  let state, storageUnavailable=false, demoDataReset=false, outdatedDemo=false;
+  try {
+    let parsed,corrupt=false;try{parsed=JSON.parse(localStorage.getItem(KEY));}catch{corrupt=true;}
+    const versioned=/^[a-f0-9]{64}$/.test(DEMO_BUILD);
+    if(corrupt||!versioned||localStorage.getItem(BUILD_KEY)!==DEMO_BUILD||parsed&&parsed.demoBuild!==DEMO_BUILD){
+      const owned=Object.keys(localStorage).filter(key=>/^openjiuwen-workbench-v2-demo-\d+$/.test(key));
+      demoDataReset=owned.length>0;
+      for(const key of owned)localStorage.removeItem(key);
+      localStorage.setItem(BUILD_KEY,DEMO_BUILD);parsed=null;
+    }
+    state=parsed?.schema===3&&parsed.app&&parsed.platform&&parsed.coding?parsed:clone(DEFAULT);
+  } catch { state=clone(DEFAULT);storageUnavailable=true; }
   // Annotate only legacy active drafts; never rewrite historical snapshots or candidates.
   if(!('templateId' in state.app))state.app.templateId=TEMPLATE.id;
   if(!('templateName' in state.app))state.app.templateName=TEMPLATE.name;
@@ -190,7 +202,7 @@ button.assembly-type:hover{border-color:#ce8c99;background:#fff8fa;box-shadow:0 
   const gifts={cup:{name:'简约马克杯',cost:200},bag:{name:'帆布通勤袋',cost:350}};
   const sceneNav=[['overview','grid','概览'],['develop','code','开发'],['debug','play','测试'],['runs','search','运行记录'],['delivery','box','版本与发布']];
   const platformNav=[['engineering','code','范式工程'],['capabilities','layers','公共能力'],['knowledge','book','开发 Skill'],['publish','box','模板发行'],['activity','clock','工程活动'],['diagnostics','search','应用运行诊断']];
-  function persist(){ stashApplication();try{localStorage.setItem(KEY,JSON.stringify(state));}catch{storageUnavailable=true;} }
+  function persist(){ stashApplication();state.demoBuild=DEMO_BUILD;try{if(localStorage.getItem(BUILD_KEY)!==DEMO_BUILD){if(!outdatedDemo){outdatedDemo=true;toast('Demo 已有新版，请刷新页面；旧页面不再保存数据。');}return;}localStorage.setItem(KEY,JSON.stringify(state));}catch{storageUnavailable=true;} }
   function toast(text){const el=document.querySelector('#toast');el.textContent=text;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),4200);}
   function revision(){return state.role==='scene'?state.app.rev:state.platform.rev;}
   function currentCoding(){return state.coding[state.role];}
@@ -922,6 +934,7 @@ button.assembly-type:hover{border-color:#ce8c99;background:#fff8fa;box-shadow:0 
   document.addEventListener('change',event=>{if(event.target.id==='handoff-target'||event.target.name?.startsWith('handoff-'))captureHandoffDraft();if(event.target.id==='handoff-case'){state.handoffCase=event.target.value;state.handoffPreview=null;render();}if(event.target.id==='flow-context'){state.flowContext=event.target.value;render();}if(event.target.id==='flow-skill-select'){if(state.formDrafts.flow){toast('请先保存或放弃当前 Skill 的暂存。');event.target.value=state.formDrafts.flow.skillId;}else{state.flowSkillId=event.target.value;render();}}if(event.target.closest('.flow-operation'))captureFlowDraft();if(event.target.id==='capability-method')updateCapabilityFields();if(['eligibility-rule','max-quantity'].includes(event.target.id)){state.formDrafts.rules={eligibility:document.querySelector('#eligibility-rule').value==='true',maxQuantity:Number(document.querySelector('#max-quantity').value),baseRevision:state.formDrafts.rules?.baseRevision??state.app.rev};persist();}if(event.target.id==='instruction-model'){state.formDrafts.instructions={value:document.querySelector('#app-instructions').value,model:event.target.value,baseRevision:state.formDrafts.instructions?.baseRevision??state.app.rev};persist();}if(event.target.id==='diagnostic-app'){state.platform.appFilter=event.target.value;render();}if(event.target.id==='run-filter'){if(state.role==='platform')state.platform.runFilter=event.target.value;else state.runFilter=event.target.value;render();}if(event.target.id==='connection'){state.formDrafts.connection={value:event.target.value,baseRevision:state.app.rev};persist();}if(event.target.id==='model'){state.formDrafts.meta={name:document.querySelector('#app-name').value,model:event.target.value,baseRevision:state.app.rev};persist();}if(event.target.id==='response-shape'){state.responseShape=event.target.value;persist();}if(event.target.id==='gift-choice'){state.debugGift=event.target.value;if(state.approval){state.approval.invalid=true;const run=state.runs.find(r=>r.id===state.approval.runId);if(run?.status==='waiting'){run.status='invalidated';run.answer='模拟用户更换礼品，原确认失效。请重新发起测试。';addEvent(run,'确认失效','invalidated','测试输入变化，应用修订不变',{}, {writeCount:0});}}render();}});
   document.querySelector('#dialog').addEventListener('cancel',stopPlayback);
   render();
+  if(demoDataReset)toast('Demo 已更新，旧应用、草稿和演示记录已清空。');
 })();
 
 </script>

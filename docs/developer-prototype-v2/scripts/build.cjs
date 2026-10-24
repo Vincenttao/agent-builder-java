@@ -2,7 +2,9 @@ const fs=require('node:fs');
 const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const source=path.join(root,'src');
+const version=require('./build-version.cjs')(root);
 const html=fs.readFileSync(path.join(source,'index.html'),'utf8')
+  .replace('__DEMO_BUILD__',version)
   .replace('<link rel="stylesheet" href="style.css">',()=>`<style>\n${fs.readFileSync(path.join(source,'style.css'),'utf8')}\n</style>`)
   .replace('<script src="app.js"></script>',()=>`<script>\n${fs.readFileSync(path.join(source,'app.js'),'utf8')}\n</script>`);
 fs.writeFileSync(path.join(root,'开发工作台2.0.html'),html);
