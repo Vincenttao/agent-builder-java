@@ -15,3 +15,7 @@
 真实查询探测：先启动已配置的本机 Jaeger（HTTP 查询 16686、OTLP HTTP 14318），再运行 `node --import tsx verification/live-moa-http.ts`。脚本读取私有模型配置，自行启动并停止独立 Mock、编译 Java、执行真实 Flash/MOA/HTTP 查询，核对外部调用数和按 ID 取回 Trace。需 Linux Maven、已安装的固定 Core/Runtime 依赖和可用模型网络；失败记录保留，不自动重试模型。此探测仅覆盖查询，不覆盖确认、双层任务和发布。
 
 服务验证：`mvn -f runtime-template-java/pom.xml package` 后运行 `node --import tsx verification/live-java-service.ts`。脚本把手写参考资产复制到独立目录，启动真实 JAR 和独立 Mock；覆盖查询、原确认回复、外来/重复回复拒绝、拒绝零新增写入和写后超时原键核对。入口不支持任意外部返回覆盖，通用应用任务路由在后续宿主集成中完成。
+
+`LlmRouter` 使用 Core Model 对下层业务范围做一次结构化仲裁，代码校验枚举、挂载目标和原任务引用；澄清/冲突不派发。`ControlledA2aClient` 复用 Runtime 所用官方 A2A SDK 1.0，仅支持受控非流式 Task 应答，校验远端 task/context 且不做自动业务重试。两者已通过确定性/实际 HTTP 测试，但尚未接入应用任务宿主。
+
+消费方必须 import `agent-runtime-java:0.1.4` BOM，否则近路径传递依赖可能将 Protobuf 降到 3.x，导致 A2A 1.0 在发送前无法初始化。当前有效版本为 Protobuf 4.33.2（包含 util），来源和依赖树记录在本批测试日志；不能仅检查 POM 中 Core/Runtime 版本号。

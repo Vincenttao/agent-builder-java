@@ -33,3 +33,11 @@ test('controlled A2A target preserves task/context on input-required continuatio
  const stale=await send({message:{role:'user',messageId:'m3',taskId:'unknown',contextId,parts:[{kind:'text',text:'确认'}]}});assert.equal(stale.error.code,-32001);
  const state=await (await fetch(base+'/__mock/state')).json() as any;assert.equal(state.a2aCalls.length,3);assert.equal(state.a2aTasks.length,1);
 });
+
+test('Mock supports Runtime-pinned A2A 1.0 SendMessage wire format',async t=>{
+ const server=createBusinessMock().listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));t.after(()=>new Promise<void>(r=>server.close(()=>r())));
+ const address=server.address();assert.ok(address&&typeof address!=='string');const base=`http://127.0.0.1:${address.port}`;
+ const send=async(taskId?:string)=>await (await fetch(base+'/a2a/procurement',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:'v1-request',method:'SendMessage',params:{message:{role:'ROLE_USER',messageId:'v1-message',contextId:'v1-context',...(taskId?{taskId}:{}),parts:[{text:taskId?'确认':'申请采购'}]}}})})).json() as any;
+ const first=await send();assert.equal(first.result.task.status.state,'TASK_STATE_INPUT_REQUIRED');assert.equal(first.result.task.contextId,'v1-context');assert.equal(first.result.task.status.message.role,'ROLE_AGENT');
+ const second=await send(first.result.task.id);assert.equal(second.result.task.status.state,'TASK_STATE_COMPLETED');assert.equal(second.result.task.id,first.result.task.id);assert.equal(second.result.task.artifacts[0].parts[0].kind,undefined);
+});
