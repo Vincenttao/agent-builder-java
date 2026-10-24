@@ -52,3 +52,4 @@ PRD 中旧快照保留为历史源码证据，不自动覆盖。新实现记录�
 - P2 失败留证：首次真实编码因 OpenCode 自动生成 `.opencode/.gitignore` 被固定文件保护拒绝；现把该文件固定为平台模板内容，不放宽应用文件白名单。异步澄清测试的等待助手修正为同时等待 running/awaiting_input 结束，最终状态断言未降低。
 - P3～P5：待完成。当前目标继续推进至 RD-01～06 可实际演示。
 - P0 兼容探测完成：本项目导入 MOA NativeSkillAgent 依赖闭包并适配 Core 0.1.17；5 项兼容测试通过。真实 Flash 模型循环记录 `p0/live-moa-20261025-024310/`，操作仍为固定数据；随后确定性模型探测 `p0/live-moa-20261025-025441/` 证实 Core OTel Span 有效，Jaeger v3 服务查询已出现 `workbench-moa-probe`。两者证据分别记录，不合并声称真实业务端到端通过。原生生命周期和 DeepAgentSession 观测差异均在本项目适配，未修改外部源码。
+- P3 第一切片：限定本机 Skill 适配器从 4 个失败用例实现到全套 9 项 Java 测试通过；独立 i豆/A2A Mock 从 404 契约失败实现到 2 项真实 HTTP 测试通过。已验证 Mock 幂等、变参拒绝、写后超时原键查单及 A2A 等待/续接关联；尚未计为 Java 接入、双层任务或 RD-03/04 完成。类型检查通过，红/绿记录位于 `p0/local-skill-runner-*`、`p0/business-mock-*`。

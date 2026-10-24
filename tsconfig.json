@@ -4,5 +4,5 @@
     "strict": true, "esModuleInterop": true, "skipLibCheck": true,
     "outDir": "dist", "types": ["node"], "resolveJsonModule": true
   },
-  "include": ["workbench-server/**/*.ts", "verification/**/*.ts", "scripts/**/*.ts"]
+  "include": ["workbench-server/**/*.ts", "verification/**/*.ts", "scripts/**/*.ts", "mock-business/**/*.ts"]
 }

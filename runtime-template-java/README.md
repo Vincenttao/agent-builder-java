@@ -7,3 +7,5 @@
 当前是已编译及探测通过的执行基础，尚不是完整业务服务：`BusinessApplication` 入口、HTTP 业务接口和独立导出待实现。不要将此目录的构建成功视为 RD-01～06 完成。
 
 验证：`mvn -f runtime-template-java/pom.xml test`。前提是固定版本 Core/Runtime 已安装。`LiveMoaProbe` 是显式运行的集成探测，不属于默认单元测试；其 fixture 模式不调用模型，操作使用声明的固定数据。真实模型和固定模型记录分别保留在 `test-results/dev-workbench-v2/p0/`。
+
+`LocalSkillRunner` 是针对本 Demo 的受信任本机适配：只接受启动时登记的脚本文本，使用 `/usr/bin/python3 -I`，结构化 `SKILL_INPUT`，清空继承环境、限定超时和输出。它不提供远端 Sandbox 隔离，不支持任意 shell 命令或通用配置凭据绑定。企业脚本执行隔离仍属于后置能力。
