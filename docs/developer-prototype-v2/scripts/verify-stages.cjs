@@ -1,3 +1,4 @@
+const navigateDevelopment=require('./navigate-development.cjs');
 const {chromium,expect}=require('@playwright/test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -12,7 +13,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
  const click=async(a,attrs='')=>{if(a==='role')await page.locator('[data-action="identity-switcher"]').click();return page.locator(`[data-action="${a}"]${attrs}`).first().click();};
  // Historical task aliases now navigate through the application's development objects.
- const tab=async id=>{if(['operations','extensions'].includes(id)){await click('tab','[data-id="develop"]');await click('dev-section',`[data-id="${id==='operations'?'connections':'files'}"]`);}else await click('tab',`[data-id="${id}"]`);},platformTab=id=>click('platform-tab',`[data-id="${id}"]`);
+ const tab=async id=>{if(['operations','extensions'].includes(id)){await click('tab','[data-id="develop"]');await navigateDevelopment(click,id==='operations'?'connections':'files');}else await click('tab',`[data-id="${id}"]`);},platformTab=id=>click('platform-tab',`[data-id="${id}"]`);
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  const close=()=>page.locator('#dialog [data-action="close"]').first().click();
  try{

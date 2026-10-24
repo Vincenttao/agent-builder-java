@@ -1,3 +1,4 @@
+const navigateDevelopment=require('./navigate-development.cjs');
 const {chromium,expect}=require('@playwright/test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -16,7 +17,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  const scene=()=>click('role','[data-role="scene"]');const platform=()=>click('role','[data-role="platform"]');
  // Historical task aliases now navigate through the application's development objects.
- const tab=async id=>{if(['operations','extensions'].includes(id)){await click('tab','[data-id="develop"]');await click('dev-section',`[data-id="${id==='operations'?'connections':'files'}"]`);}else await click('tab',`[data-id="${id}"]`);};
+ const tab=async id=>{if(['operations','extensions'].includes(id)){await click('tab','[data-id="develop"]');await navigateDevelopment(click,id==='operations'?'connections':'files');}else await click('tab',`[data-id="${id}"]`);};
  try{
  await page.goto(pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
  await click('create-app');await page.locator('#new-app-name').fill('员工福利助手');await page.locator('#new-app-goal').fill('为员工提供 i豆查询与兑换服务，接入企业福利系统');await click('create-confirm');
@@ -34,7 +35,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  await click('open-code');let config=JSON.parse(await page.locator('#code-editor').inputValue());config.name='i豆员工助手';
  await page.locator('#code-editor').fill(JSON.stringify(config,null,2));await click('tab','[data-id="overview"]');await expect(page.locator('#code-editor')).toBeVisible();
  await click('save-code');await click('apply-proposal');assert.equal((await state()).app.eligibility,false);assert.equal((await state()).app.name,'i豆员工助手');
- await click('suggest','[data-kind="eligibility"]');await click('apply-proposal');assert.equal((await state()).app.eligibility,true);await tab('overview');await tab('develop');await click('dev-section','[data-id="tools"]');await expect(page.locator('.op-row')).toHaveCount(4);await click('dev-section','[data-id="skills"]');await expect(page.locator('#eligibility-rule')).toHaveValue('true');await expect(page.locator('.canvas-main')).toContainText('写入前用户确认');await tab('overview');
+ await click('suggest','[data-kind="eligibility"]');await click('apply-proposal');assert.equal((await state()).app.eligibility,true);await tab('overview');await tab('develop');await navigateDevelopment(click,'tools');await expect(page.locator('.capability-row')).toHaveCount(4);await navigateDevelopment(click,'skills');await expect(page.locator('#eligibility-rule')).toHaveValue('true');await expect(page.locator('.canvas-main')).toContainText('写入前用户确认');await tab('overview');
  await page.screenshot({path:path.join(out,'scene.png'),fullPage:true});
  checks.push('代码可编辑，未保存修改受保护，陈旧建议不能覆盖，代码与编排同步');
  await tab('debug');await click('run');s=await state();assert.equal(s.runs.at(-1).status,'succeeded');assert.match(s.runs.at(-1).answer,/1280/);

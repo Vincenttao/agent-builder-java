@@ -1,3 +1,4 @@
+const navigateDevelopment=require('./navigate-development.cjs');
 const {chromium,expect}=require('@playwright/test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -16,7 +17,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const close=()=>page.locator('#dialog [data-action="close"]').first().click();
  const role=async value=>{await click('identity-switcher');await click('role',`[data-role="${value}"]`);};
  const tab=id=>click('tab',`[data-id="${id}"]`);
- const dev=async id=>{await tab('develop');await click('dev-section',`[data-id="${id}"]`);};
+ const dev=async id=>{await tab('develop');await navigateDevelopment(click,id);};
  const platform=id=>click('platform-tab',`[data-id="${id}"]`);
  const shot=async name=>{await page.evaluate(()=>scrollTo(0,0));await expect(page.locator('#toast')).not.toHaveClass(/visible/);await page.screenshot({path:path.join(out,name+'.png'),fullPage:!name.startsWith('pc-')});};
  const noOverflow=async()=>assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);

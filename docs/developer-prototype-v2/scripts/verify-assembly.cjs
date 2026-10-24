@@ -1,3 +1,4 @@
+const navigateDevelopment=require('./navigate-development.cjs');
 const {chromium,expect}=require('@playwright/test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -14,7 +15,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  const click=async(action,attrs='')=>{const selector=`[data-action="${action}"]${attrs}`;const modal=page.locator(`#dialog[open] ${selector}`);await (await modal.count()?modal:page.locator(selector+':visible')).first().click();};
  const role=async value=>{await click('identity-switcher');await click('role',`[data-role="${value}"]`);};
- const dev=async id=>{await click('tab','[data-id="develop"]');await click('dev-section',`[data-id="${id}"]`);};
+ const dev=async id=>{await click('tab','[data-id="develop"]');await navigateDevelopment(click,id);};
  const create=async name=>{await click('create-app');await page.locator('#new-app-name').fill(name);await page.locator('#new-app-goal').fill('为员工查询 i豆并完成福利兑换');await click('create-confirm');};
  const shot=async name=>{await page.evaluate(()=>scrollTo(0,0));await expect(page.locator('#toast')).not.toHaveClass(/visible/);await page.screenshot({path:path.join(out,name+'.png')});};
  try{
@@ -50,10 +51,10 @@ const key='openjiuwen-workbench-v2-demo-3';
   await dev('assembly');
   for(const [width,height] of [[1280,800],[1440,900],[1920,1080]]){
    await page.setViewportSize({width,height});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await shot('assembly-'+width);
-   await click('edit-capability','[data-id="cap-003"]');await shot('tool-editor-'+width);await expect(page.locator('#dialog [data-action="save-capability"]')).toBeInViewport();await click('close');
+   await click('select-capability','[data-id="cap-003"]');await click('edit-capability','[data-id="cap-003"]');await shot('tool-editor-'+width);await expect(page.locator('#dialog [data-action="save-capability"]')).toBeInViewport();await click('close');
   }
   await page.locator('.assembly-draft').first().scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,'assembly-drafts.png')});
-  for(const id of ['cap-001','cap-002','cap-003']){await click('remove-capability',`[data-id="${id}"]`);await click('remove-capability-confirm');}
+  for(const id of ['cap-001','cap-002','cap-003']){await click('select-capability',`[data-id="${id}"]`);await click('remove-capability',`[data-id="${id}"]`);await click('remove-capability-confirm');}
   assert.equal((await state()).app.capabilityDrafts.length,0);assert.equal(JSON.stringify((await state()).runs.at(-1)),oldRun);
   await click('test-mode','[data-id="checks"]');await click('test');assert.equal((await state()).report.passed,true);await click('tab','[data-id="delivery"]');await click('candidate');assert.equal((await state()).candidate.revision,(await state()).app.rev);
   checks.push('待实现能力阻断完整候选检查；移除后原 Mock 可交付，旧运行快照不变');
