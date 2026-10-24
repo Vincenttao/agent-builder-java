@@ -1,0 +1,2009 @@
+{
+  "startedAt": "2026-10-24T05:07:18.964Z",
+  "sample": {
+    "draftId": "e89f3b00-9460-41cf-ac0e-cfa779000bb7",
+    "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+    "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+    "baselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e",
+    "baselineDigest": "da8ec25ba40f0cc0afe633934729d2666cb9ad7eddb00d909951be9dde48e39d",
+    "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+    "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+    "source": "TDD-115 / AC21-AC22-live.json"
+  },
+  "status": "running",
+  "beforeCandidate": {
+    "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+    "agentId": "e89f3b00-9460-41cf-ac0e-cfa779000bb7",
+    "createdAt": "2026-10-24T02:36:42.471Z",
+    "generated": {
+      "baselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e",
+      "sourceDigest": "edb1721ee625eb935315a4ad15705cef01489d8b9f5ba16ddb655d25d59cd53f",
+      "baselineDigest": "da8ec25ba40f0cc0afe633934729d2666cb9ad7eddb00d909951be9dde48e39d",
+      "runtimeArtifact": {
+        "kind": "generated-component",
+        "generated": {
+          "kind": "generated-tool-skill@1",
+          "classes": {
+            "generated/EquipmentTool.class": "9561f7f7c886d68f68ed132a9dcfe77fd0b4414d91e1b90cf6da3c373cde690b"
+          },
+          "toolName": "get_equipment",
+          "skillName": "equipment-query",
+          "skillPath": "skills/equipment-query/SKILL.md",
+          "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+          "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+          "operationId": "equipment-status",
+          "skillDigest": "31f66ac81c6560e6535e0d85d7cbc5322aa431c699c3e537787c68b168232809",
+          "toolClassName": "generated.EquipmentTool",
+          "componentDigest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+          "sdkArtifactDigest": "34d73b50b1b8e63dcac93c925eaeebeccf8c2ffdc2fb96d87e9a14ebf0e4b1f2",
+          "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+        },
+        "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+        "sdkArtifactDigest": "34d73b50b1b8e63dcac93c925eaeebeccf8c2ffdc2fb96d87e9a14ebf0e4b1f2"
+      },
+      "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e",
+      "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+    },
+    "provenance": "generated-component",
+    "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+    "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+    "runtimeSpec": {
+      "agent": {
+        "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+        "type": "DeepAgent",
+        "rails": [
+          "audit",
+          "tool-allowlist",
+          "tool-call-limit@1:3"
+        ],
+        "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+        "maxIterations": 4
+      },
+      "tools": [
+        {
+          "name": "get_equipment",
+          "protocol": "http",
+          "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+          "inputFields": {
+            "equipmentId": "string"
+          },
+          "operationId": "equipment-status",
+          "toolVersion": "equipment-status-http@1",
+          "connectionRef": "enterprise-mock-http@1",
+          "responseFields": {
+            "source": "string",
+            "status": "string",
+            "equipmentId": "string",
+            "temperatureCelsius": "integer"
+          }
+        }
+      ]
+    },
+    "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+    "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+    "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02"
+  },
+  "publishBeforeReviewBlocked": true,
+  "validationId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd",
+  "report": {
+    "cases": [
+      {
+        "caseId": "TC-001",
+        "status": "failed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": null,
+            "ruleId": "equipment-report-schema",
+            "status": "failed",
+            "expected": "equipment-report@1"
+          },
+          {
+            "actual": null,
+            "ruleId": "equipment-facts",
+            "status": "failed",
+            "expected": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            }
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "74517abc-d71e-4e8a-a166-304753a604eb",
+        "evidenceDigest": "c291b8760f15b0da798cb2b7ba3fd36e669efce465f48d67ecf8fbc39781ac5e"
+      },
+      {
+        "caseId": "TC-002",
+        "status": "failed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": false,
+            "ruleId": "asks-for-equipment-id",
+            "status": "failed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "all-business-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "08d70a58-9cf5-4277-b2a1-f8c48ebe4dfc",
+        "evidenceDigest": "647a208fd956897a3c106e5025976f1f3dd5bb2c9209009fb189b19de13a39d4"
+      },
+      {
+        "caseId": "TC-003",
+        "status": "passed",
+        "reasons": [],
+        "assertions": [
+          {
+            "actual": true,
+            "ruleId": "run-succeeded",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "tool-error-evidence",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": true,
+            "ruleId": "failure-output-no-facts",
+            "status": "passed",
+            "expected": true
+          },
+          {
+            "actual": 0,
+            "ruleId": "write-call-count",
+            "status": "passed",
+            "expected": 0
+          }
+        ],
+        "evidenceId": "5b44dc9e-9a13-4f33-8969-b58d9345a6bf",
+        "evidenceDigest": "e8cfa61d104b88cc223cb8dcce7f9b11975c880f17dab44020b85f1c72b6ce6c"
+      }
+    ],
+    "binding": {
+      "candidate": {
+        "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+        "provenance": "generated-component",
+        "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+        "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+        "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+        "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e"
+      },
+      "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+      "modelProfile": {
+        "model": {
+          "name": "deepseek-v4-flash",
+          "baseUrl": "https://api.deepseek.com/v1",
+          "provider": "OpenAI",
+          "thinking": "disabled",
+          "maxTokens": 1024,
+          "temperature": 0
+        },
+        "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+        "executionMode": "live-mock"
+      },
+      "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
+      "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+      "baselineDigest": "da8ec25ba40f0cc0afe633934729d2666cb9ad7eddb00d909951be9dde48e39d",
+      "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02",
+      "compatibilityKey": "647047c7829e10c75437ebf8e2336d6539009d6c93b76e6e2796100063608646"
+    },
+    "reasons": [],
+    "verdict": "failed",
+    "createdAt": "2026-10-24T05:09:13.504Z",
+    "baselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e",
+    "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+    "executionId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd"
+  },
+  "caseEvidence": [
+    {
+      "run": {
+        "id": "37aa7267-19eb-4977-888c-6c8274f57861",
+        "input": "查询 PUMP-001 的状态、温度、来源并提供建议。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "**设备查询结果（PUMP-001）**\n\n| 字段 | 值 |\n|---|---|\n| 设备编号 | PUMP-001 |\n| 状态 | warning（告警） |\n| 温度 | 86 °C |\n| 数据来源 | seed-equipment-001@1 |\n\n**建议**\n\n- 该设备当前处于告警状态，温度为 86 °C，建议尽快安排现场巡检，确认散热、润滑与负载情况。\n- 建议核对设备铭牌上的温度上限与告警阈值，判断 86 °C 是否已接近或超出允许范围。\n- 建议持续观察温度趋势，若继续上升，请按现场规程降载或停机检查。\n\n说明：以上建议基于工具返回的状态与温度事实；工具未返回阈值、历史趋势等信息，因此具体处置请以现场规程和厂家参数为准。"
+          },
+          "conversation_id": "37aa7267-19eb-4977-888c-6c8274f57861"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-24T05:07:49.308Z",
+        "updatedAt": "2026-10-24T05:08:01.358Z",
+        "diagnostic": "",
+        "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+        "inputDigest": "a4421482d5321393fa821c2c881bde151cca1d42f7f43a8064731f41757ca045",
+        "runtimeSpec": {
+          "agent": {
+            "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "type": "DeepAgent",
+            "rails": [
+              "audit",
+              "tool-allowlist",
+              "tool-call-limit@1:3"
+            ],
+            "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+            "maxIterations": 4
+          },
+          "tools": [
+            {
+              "name": "get_equipment",
+              "protocol": "http",
+              "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+              "inputFields": {
+                "equipmentId": "string"
+              },
+              "operationId": "equipment-status",
+              "toolVersion": "equipment-status-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "responseFields": {
+                "source": "string",
+                "status": "string",
+                "equipmentId": "string",
+                "temperatureCelsius": "integer"
+              }
+            }
+          ]
+        },
+        "deploymentId": "5920bf43-83c4-46fb-823a-f631de020022",
+        "invocationId": "08c05d07-6a68-4bf1-b08f-eb1893543ea0",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "https://api.deepseek.com/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+          "executionMode": "live-mock"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "testDeploymentId": "b3bc50cd-18c7-4ef8-8ad6-6b206638594d"
+        },
+        "validationId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd",
+        "environmentId": "8486b068-2b2b-4f03-b974-b4b8b27974aa",
+        "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+        "conversationId": "a6ac8939-9693-4992-80db-3ee316f7df73",
+        "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02",
+        "cancelRequested": false,
+        "clientRequestId": "37aa7267-19eb-4977-888c-6c8274f57861",
+        "externalEvidence": [
+          {
+            "seq": 892,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-24T05:07:57.211Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 892,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-24T05:07:57.211Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-24T05:07:49.308Z",
+          "seq": 346763,
+          "data": {
+            "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+            "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02"
+          },
+          "type": "run.queued",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-24T05:07:51.936Z",
+          "seq": 346764,
+          "data": {
+            "deploymentId": "5920bf43-83c4-46fb-823a-f631de020022"
+          },
+          "type": "run.running",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-24T05:07:54.399Z",
+          "seq": 346765,
+          "data": {
+            "time": "2026-10-24T05:07:53.893649668Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:54.407Z",
+          "seq": 346766,
+          "data": {
+            "time": "2026-10-24T05:07:53.968297675Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.765Z",
+          "seq": 346773,
+          "data": {
+            "time": "2026-10-24T05:07:56.283289720Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.770Z",
+          "seq": 346774,
+          "data": {
+            "time": "2026-10-24T05:07:56.285410105Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "我先读取业务 Skill，再查询设备。",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.785Z",
+          "seq": 346775,
+          "data": {
+            "time": "2026-10-24T05:07:56.306913303Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.791Z",
+          "seq": 346776,
+          "data": {
+            "time": "2026-10-24T05:07:56.310176749Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.796Z",
+          "seq": 346777,
+          "data": {
+            "time": "2026-10-24T05:07:56.312164968Z",
+            "event": {
+              "rail": "tool-call-limit",
+              "tool": "skill_tool",
+              "count": 1,
+              "event": "call_allowed",
+              "limit": 3,
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.800Z",
+          "seq": 346778,
+          "data": {
+            "time": "2026-10-24T05:07:56.329872841Z",
+            "event": {
+              "event": "skill_loaded",
+              "skill": "equipment-query",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "skillDigest": "31f66ac81c6560e6535e0d85d7cbc5322aa431c699c3e537787c68b168232809",
+              "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.805Z",
+          "seq": 346779,
+          "data": {
+            "time": "2026-10-24T05:07:56.354093231Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "after_tool_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:56.810Z",
+          "seq": 346780,
+          "data": {
+            "time": "2026-10-24T05:07:56.420657883Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.393Z",
+          "seq": 346791,
+          "data": {
+            "time": "2026-10-24T05:07:57.153768458Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.397Z",
+          "seq": 346792,
+          "data": {
+            "time": "2026-10-24T05:07:57.157711645Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.402Z",
+          "seq": 346793,
+          "data": {
+            "time": "2026-10-24T05:07:57.172286057Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.408Z",
+          "seq": 346794,
+          "data": {
+            "time": "2026-10-24T05:07:57.173540202Z",
+            "event": {
+              "rail": "tool-call-limit",
+              "tool": "get_equipment",
+              "count": 2,
+              "event": "call_allowed",
+              "limit": 3,
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.413Z",
+          "seq": 346795,
+          "data": {
+            "time": "2026-10-24T05:07:57.175227947Z",
+            "event": {
+              "event": "generated_tool_invoked",
+              "className": "generated.EquipmentTool",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "componentDigest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+              "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.419Z",
+          "seq": 346796,
+          "data": {
+            "time": "2026-10-24T05:07:57.240790326Z",
+            "event": {
+              "tool": "get_equipment",
+              "event": "tool_call",
+              "status": "succeeded",
+              "protocol": "http",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "durationMs": 64,
+              "toolVersion": "equipment-status-http@1",
+              "resultDigest": "5826cb5a757c7867d9b5153c8ffe1980e76c51ed857a6434864576117718e1f4",
+              "connectionRef": "enterprise-mock-http@1",
+              "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.425Z",
+          "seq": 346797,
+          "data": {
+            "time": "2026-10-24T05:07:57.242561719Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:57.435Z",
+          "seq": 346798,
+          "data": {
+            "time": "2026-10-24T05:07:57.248777857Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:59.751Z",
+          "seq": 346853,
+          "data": {
+            "time": "2026-10-24T05:07:59.114432287Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:59.754Z",
+          "seq": 346854,
+          "data": {
+            "time": "2026-10-24T05:07:59.115740668Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "**设备查询结果（PUMP-001）**\n\n| 字段 | 值 |\n|---|---|\n| 设备编号 | PUMP-001 |\n| 状态 | warning（告警） |\n| 温度 | 86 °C |\n| 数据来源 | seed-equipment-001@1 |\n\n**建议**\n\n- 该设备当前处于告警状态，温度为 86 °C，建议尽快安排现场巡检，确认散热、润滑与负载情况。\n- 建议核对设备铭牌上的温度上限与告警阈值，判断 86 °C 是否已接近或超出允许范围。\n- 建议持续观察温度趋势，若继续上升，请按现场规程降载或停机检查。\n\n说明：以上建议基于工具返回的状态与温度事实；工具未返回阈值、历史趋势等信息，因此具体处置请以现场规程和厂家参数为准。",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:07:59.757Z",
+          "seq": 346855,
+          "data": {
+            "time": "2026-10-24T05:07:59.120038839Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "37aa7267-19eb-4977-888c-6c8274f57861",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:08:01.356Z",
+          "seq": 346898,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.succeeded",
+          "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/b3bc50cd-18c7-4ef8-8ad6-6b206638594d",
+        "candidate": {
+          "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "provenance": "generated-component",
+          "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+          "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+          "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+          "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e"
+        },
+        "requestId": "08c05d07-6a68-4bf1-b08f-eb1893543ea0",
+        "loadedManifest": {
+          "id": "5920bf43-83c4-46fb-823a-f631de020022",
+          "port": 41183,
+          "bootId": "98946c46-64b5-4ff3-9c8e-edd27740d269",
+          "status": "stopped",
+          "createdAt": "2026-10-24T05:07:31.010Z",
+          "generated": {
+            "kind": "generated-tool-skill@1",
+            "classes": {
+              "generated/EquipmentTool.class": "9561f7f7c886d68f68ed132a9dcfe77fd0b4414d91e1b90cf6da3c373cde690b"
+            },
+            "toolName": "get_equipment",
+            "skillName": "equipment-query",
+            "skillPath": "skills/equipment-query/SKILL.md",
+            "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+            "operationId": "equipment-status",
+            "skillDigest": "31f66ac81c6560e6535e0d85d7cbc5322aa431c699c3e537787c68b168232809",
+            "toolClassName": "generated.EquipmentTool",
+            "componentDigest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+            "sdkArtifactDigest": "34d73b50b1b8e63dcac93c925eaeebeccf8c2ffdc2fb96d87e9a14ebf0e4b1f2",
+            "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+          },
+          "processId": 16615,
+          "updatedAt": "2026-10-24T05:08:01.733Z",
+          "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "https://api.deepseek.com/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+            "executionMode": "live-mock"
+          },
+          "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3"
+        },
+        "testDeployment": {
+          "id": "b3bc50cd-18c7-4ef8-8ad6-6b206638594d",
+          "status": "stopped",
+          "agentId": "e89f3b00-9460-41cf-ac0e-cfa779000bb7",
+          "binding": {
+            "candidate": {
+              "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+              "provenance": "generated-component",
+              "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+              "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+              "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+              "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
+            "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+            "baselineDigest": "da8ec25ba40f0cc0afe633934729d2666cb9ad7eddb00d909951be9dde48e39d",
+            "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02",
+            "compatibilityKey": "647047c7829e10c75437ebf8e2336d6539009d6c93b76e6e2796100063608646"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-24T05:07:28.266Z",
+          "expiresAt": "2026-10-24T05:22:28.266Z",
+          "updatedAt": "2026-10-24T05:08:01.741Z",
+          "diagnostic": "",
+          "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+          "validation": {
+            "input": "查询 PUMP-001 的状态、温度、来源并提供建议。",
+            "runId": "37aa7267-19eb-4977-888c-6c8274f57861",
+            "caseId": "TC-001",
+            "actorId": "U1001",
+            "executionId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd"
+          },
+          "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "inputDigest": "44f97d30d275cb48fe6672418e67a1a24e3df4717eef9570051a835ab77caa8d",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist",
+                "tool-call-limit@1:3"
+              ],
+              "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+              "maxIterations": 4
+            },
+            "tools": [
+              {
+                "name": "get_equipment",
+                "protocol": "http",
+                "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+                "inputFields": {
+                  "equipmentId": "string"
+                },
+                "operationId": "equipment-status",
+                "toolVersion": "equipment-status-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "source": "string",
+                  "status": "string",
+                  "equipmentId": "string",
+                  "temperatureCelsius": "integer"
+                }
+              }
+            ]
+          },
+          "deploymentId": "5920bf43-83c4-46fb-823a-f631de020022",
+          "environmentId": "8486b068-2b2b-4f03-b974-b4b8b27974aa",
+          "clientRequestId": "37aa7267-19eb-4977-888c-6c8274f57861",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e"
+        },
+        "completionChecks": {
+          "runTerminal": true,
+          "specMatches": true,
+          "loadedStopped": true,
+          "artifactMatches": true,
+          "deploymentHealthy": true,
+          "deploymentStopped": true,
+          "validationMatches": true,
+          "runArtifactMatches": true,
+          "modelProfileMatches": true,
+          "environmentIdMatches": true,
+          "environmentConfigMatches": true,
+          "environmentRevisionValid": true
+        }
+      }
+    },
+    {
+      "run": {
+        "id": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+        "input": "请查询设备状态。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "请提供需要查询的设备编号（例如 PUMP-001），我会为您查询该设备的状态。"
+          },
+          "conversation_id": "5622ac5a-438f-4c6e-842f-335457da4c0a"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-24T05:08:25.980Z",
+        "updatedAt": "2026-10-24T05:08:33.665Z",
+        "diagnostic": "",
+        "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+        "inputDigest": "2d66cb47574da3f8a26b0c85ba3628cb7ff11f6db26e71a2fd071cc34a67060d",
+        "runtimeSpec": {
+          "agent": {
+            "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "type": "DeepAgent",
+            "rails": [
+              "audit",
+              "tool-allowlist",
+              "tool-call-limit@1:3"
+            ],
+            "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+            "maxIterations": 4
+          },
+          "tools": [
+            {
+              "name": "get_equipment",
+              "protocol": "http",
+              "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+              "inputFields": {
+                "equipmentId": "string"
+              },
+              "operationId": "equipment-status",
+              "toolVersion": "equipment-status-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "responseFields": {
+                "source": "string",
+                "status": "string",
+                "equipmentId": "string",
+                "temperatureCelsius": "integer"
+              }
+            }
+          ]
+        },
+        "deploymentId": "0fe668e0-8b50-41bc-9ba1-a9bf53396240",
+        "invocationId": "6dc29e13-836a-4c61-bbd2-4b40653c75c4",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "https://api.deepseek.com/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+          "executionMode": "live-mock"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "testDeploymentId": "30c042bc-ce47-47fe-b7de-c1a90e61fc51"
+        },
+        "validationId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd",
+        "environmentId": "e0ee526c-1fb3-47f5-8685-42b6c9eee5f7",
+        "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+        "conversationId": "f123bb11-1c16-4bba-a177-b09d10612820",
+        "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02",
+        "cancelRequested": false,
+        "clientRequestId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+        "externalEvidence": [],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "normal"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [],
+      "events": [
+        {
+          "at": "2026-10-24T05:08:25.981Z",
+          "seq": 346899,
+          "data": {
+            "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+            "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02"
+          },
+          "type": "run.queued",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-24T05:08:28.376Z",
+          "seq": 346900,
+          "data": {
+            "deploymentId": "0fe668e0-8b50-41bc-9ba1-a9bf53396240"
+          },
+          "type": "run.running",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-24T05:08:30.570Z",
+          "seq": 346901,
+          "data": {
+            "time": "2026-10-24T05:08:30.112750412Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:08:30.573Z",
+          "seq": 346902,
+          "data": {
+            "time": "2026-10-24T05:08:30.222446655Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:08:32.104Z",
+          "seq": 346907,
+          "data": {
+            "time": "2026-10-24T05:08:31.881516695Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:08:32.111Z",
+          "seq": 346908,
+          "data": {
+            "time": "2026-10-24T05:08:31.889208933Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "请提供需要查询的设备编号（例如 PUMP-001），我会为您查询该设备的状态。",
+              "sessionId": "5622ac5a-438f-4c6e-842f-335457da4c0a"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:08:32.115Z",
+          "seq": 346909,
+          "data": {
+            "time": "2026-10-24T05:08:31.892587417Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:08:33.664Z",
+          "seq": 346920,
+          "data": {
+            "externalCallCount": 0
+          },
+          "type": "run.succeeded",
+          "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/30c042bc-ce47-47fe-b7de-c1a90e61fc51",
+        "candidate": {
+          "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "provenance": "generated-component",
+          "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+          "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+          "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+          "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e"
+        },
+        "requestId": "6dc29e13-836a-4c61-bbd2-4b40653c75c4",
+        "loadedManifest": {
+          "id": "0fe668e0-8b50-41bc-9ba1-a9bf53396240",
+          "port": 37863,
+          "bootId": "98946c46-64b5-4ff3-9c8e-edd27740d269",
+          "status": "stopped",
+          "createdAt": "2026-10-24T05:08:09.339Z",
+          "generated": {
+            "kind": "generated-tool-skill@1",
+            "classes": {
+              "generated/EquipmentTool.class": "9561f7f7c886d68f68ed132a9dcfe77fd0b4414d91e1b90cf6da3c373cde690b"
+            },
+            "toolName": "get_equipment",
+            "skillName": "equipment-query",
+            "skillPath": "skills/equipment-query/SKILL.md",
+            "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+            "operationId": "equipment-status",
+            "skillDigest": "31f66ac81c6560e6535e0d85d7cbc5322aa431c699c3e537787c68b168232809",
+            "toolClassName": "generated.EquipmentTool",
+            "componentDigest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+            "sdkArtifactDigest": "34d73b50b1b8e63dcac93c925eaeebeccf8c2ffdc2fb96d87e9a14ebf0e4b1f2",
+            "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+          },
+          "processId": 16749,
+          "updatedAt": "2026-10-24T05:08:34.856Z",
+          "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "https://api.deepseek.com/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+            "executionMode": "live-mock"
+          },
+          "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3"
+        },
+        "testDeployment": {
+          "id": "30c042bc-ce47-47fe-b7de-c1a90e61fc51",
+          "status": "stopped",
+          "agentId": "e89f3b00-9460-41cf-ac0e-cfa779000bb7",
+          "binding": {
+            "candidate": {
+              "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+              "provenance": "generated-component",
+              "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+              "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+              "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+              "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
+            "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+            "baselineDigest": "da8ec25ba40f0cc0afe633934729d2666cb9ad7eddb00d909951be9dde48e39d",
+            "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02",
+            "compatibilityKey": "647047c7829e10c75437ebf8e2336d6539009d6c93b76e6e2796100063608646"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-24T05:08:05.563Z",
+          "expiresAt": "2026-10-24T05:23:05.563Z",
+          "updatedAt": "2026-10-24T05:08:34.864Z",
+          "diagnostic": "",
+          "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+          "validation": {
+            "input": "请查询设备状态。",
+            "runId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+            "caseId": "TC-002",
+            "actorId": "U1001",
+            "executionId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd"
+          },
+          "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "inputDigest": "3d294255480ed9a2cb32100ddd31d9ee4fd0402141e26817d9ae76e3ef8c34f1",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist",
+                "tool-call-limit@1:3"
+              ],
+              "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+              "maxIterations": 4
+            },
+            "tools": [
+              {
+                "name": "get_equipment",
+                "protocol": "http",
+                "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+                "inputFields": {
+                  "equipmentId": "string"
+                },
+                "operationId": "equipment-status",
+                "toolVersion": "equipment-status-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "source": "string",
+                  "status": "string",
+                  "equipmentId": "string",
+                  "temperatureCelsius": "integer"
+                }
+              }
+            ]
+          },
+          "deploymentId": "0fe668e0-8b50-41bc-9ba1-a9bf53396240",
+          "environmentId": "e0ee526c-1fb3-47f5-8685-42b6c9eee5f7",
+          "clientRequestId": "5622ac5a-438f-4c6e-842f-335457da4c0a",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "normal"
+          },
+          "requirementBaselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e"
+        },
+        "completionChecks": {
+          "runTerminal": true,
+          "specMatches": true,
+          "loadedStopped": true,
+          "artifactMatches": true,
+          "deploymentHealthy": true,
+          "deploymentStopped": true,
+          "validationMatches": true,
+          "runArtifactMatches": true,
+          "modelProfileMatches": true,
+          "environmentIdMatches": true,
+          "environmentConfigMatches": true,
+          "environmentRevisionValid": true
+        }
+      }
+    },
+    {
+      "run": {
+        "id": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+        "input": "查询 PUMP-001 的状态。",
+        "result": {
+          "result": {
+            "role": "assistant",
+            "content": "查询失败，未取得可信数据。\n\n**失败原因**：调用 `get_equipment` 查询 PUMP-001 时工具超时（`TOOL_TIMEOUT`），工具未返回有效结果，业务事实未知。\n\n因此我无法提供 PUMP-001 的状态、温度或数据来源，也不会进行推测。\n\n**建议**：\n1. 稍后重试一次查询（本次运行已用 2 次工具调用，仍在 3 次上限内）。\n2. 若持续超时，请确认设备编号是否正确、设备是否在线，或联系平台侧检查 `get_equipment` 服务可用性。\n\n需要我现在重试一次吗？"
+          },
+          "conversation_id": "ebf4fd39-3717-426a-884e-fe28cc50d075"
+        },
+        "status": "succeeded",
+        "actorId": "U1001",
+        "started": true,
+        "createdAt": "2026-10-24T05:08:55.526Z",
+        "updatedAt": "2026-10-24T05:09:11.386Z",
+        "diagnostic": "",
+        "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+        "inputDigest": "da815e4557d0dbfb9e770a20ad2cc81d96c26295a722491d388b74f6130b6fe9",
+        "runtimeSpec": {
+          "agent": {
+            "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "type": "DeepAgent",
+            "rails": [
+              "audit",
+              "tool-allowlist",
+              "tool-call-limit@1:3"
+            ],
+            "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+            "maxIterations": 4
+          },
+          "tools": [
+            {
+              "name": "get_equipment",
+              "protocol": "http",
+              "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+              "inputFields": {
+                "equipmentId": "string"
+              },
+              "operationId": "equipment-status",
+              "toolVersion": "equipment-status-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "responseFields": {
+                "source": "string",
+                "status": "string",
+                "equipmentId": "string",
+                "temperatureCelsius": "integer"
+              }
+            }
+          ]
+        },
+        "deploymentId": "40453ebd-c6d3-4a79-9514-2b14fa408ff0",
+        "invocationId": "b43b5ca8-4076-4292-88dc-4ecd90e0b3de",
+        "modelProfile": {
+          "model": {
+            "name": "deepseek-v4-flash",
+            "baseUrl": "https://api.deepseek.com/v1",
+            "provider": "OpenAI",
+            "thinking": "disabled",
+            "maxTokens": 1024,
+            "temperature": 0
+          },
+          "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+          "executionMode": "live-mock"
+        },
+        "sharedTarget": {
+          "kind": "test",
+          "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "testDeploymentId": "78aa9f6a-95f4-497d-8a08-a87d02588f4a"
+        },
+        "validationId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd",
+        "environmentId": "9bd6ffd6-a732-44aa-b231-84c209111ec4",
+        "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+        "conversationId": "44a1189a-9a27-41e0-8944-67e535534c80",
+        "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02",
+        "cancelRequested": false,
+        "clientRequestId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+        "externalEvidence": [
+          {
+            "seq": 893,
+            "input": {
+              "equipmentId": "PUMP-001"
+            },
+            "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+            "result": {
+              "source": "seed-equipment-001@1",
+              "status": "warning",
+              "equipmentId": "PUMP-001",
+              "temperatureCelsius": 86
+            },
+            "status": 200,
+            "actorId": "U1001",
+            "createdAt": "2026-10-24T05:09:02.184Z",
+            "operation": "equipment-status",
+            "stateRevision": 1
+          }
+        ],
+        "environmentConfig": {
+          "seed": "enterprise-default@1",
+          "clock": "2026-10-21T08:00:00.000Z",
+          "fault": "read-timeout"
+        },
+        "dependencyFailures": 0
+      },
+      "calls": [
+        {
+          "seq": 893,
+          "input": {
+            "equipmentId": "PUMP-001"
+          },
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "result": {
+            "source": "seed-equipment-001@1",
+            "status": "warning",
+            "equipmentId": "PUMP-001",
+            "temperatureCelsius": 86
+          },
+          "status": 200,
+          "actorId": "U1001",
+          "createdAt": "2026-10-24T05:09:02.184Z",
+          "operation": "equipment-status",
+          "stateRevision": 1
+        }
+      ],
+      "events": [
+        {
+          "at": "2026-10-24T05:08:55.526Z",
+          "seq": 346921,
+          "data": {
+            "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+            "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02"
+          },
+          "type": "run.queued",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-24T05:08:57.941Z",
+          "seq": 346922,
+          "data": {
+            "deploymentId": "40453ebd-c6d3-4a79-9514-2b14fa408ff0"
+          },
+          "type": "run.running",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "platform"
+        },
+        {
+          "at": "2026-10-24T05:08:59.959Z",
+          "seq": 346923,
+          "data": {
+            "time": "2026-10-24T05:08:59.758265652Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_invoke",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:08:59.963Z",
+          "seq": 346924,
+          "data": {
+            "time": "2026-10-24T05:08:59.826273349Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.454Z",
+          "seq": 346929,
+          "data": {
+            "time": "2026-10-24T05:09:01.377183051Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.457Z",
+          "seq": 346930,
+          "data": {
+            "time": "2026-10-24T05:09:01.378234343Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "我先读取业务 Skill，再查询设备状态。",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.461Z",
+          "seq": 346931,
+          "data": {
+            "time": "2026-10-24T05:09:01.385868693Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.464Z",
+          "seq": 346932,
+          "data": {
+            "time": "2026-10-24T05:09:01.386966746Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "before_tool_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.469Z",
+          "seq": 346933,
+          "data": {
+            "time": "2026-10-24T05:09:01.387925580Z",
+            "event": {
+              "rail": "tool-call-limit",
+              "tool": "skill_tool",
+              "count": 1,
+              "event": "call_allowed",
+              "limit": 3,
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.472Z",
+          "seq": 346934,
+          "data": {
+            "time": "2026-10-24T05:09:01.396514634Z",
+            "event": {
+              "event": "skill_loaded",
+              "skill": "equipment-query",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "skillDigest": "31f66ac81c6560e6535e0d85d7cbc5322aa431c699c3e537787c68b168232809",
+              "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.475Z",
+          "seq": 346935,
+          "data": {
+            "time": "2026-10-24T05:09:01.410973467Z",
+            "event": {
+              "rail": "audit",
+              "tool": "skill_tool",
+              "event": "after_tool_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:01.477Z",
+          "seq": 346936,
+          "data": {
+            "time": "2026-10-24T05:09:01.421965162Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:02.219Z",
+          "seq": 346947,
+          "data": {
+            "time": "2026-10-24T05:09:02.163229024Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:02.221Z",
+          "seq": 346948,
+          "data": {
+            "time": "2026-10-24T05:09:02.164524218Z",
+            "event": {
+              "rail": "tool-allowlist",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "allowed": true,
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:02.224Z",
+          "seq": 346949,
+          "data": {
+            "time": "2026-10-24T05:09:02.165359561Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "before_tool_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:02.227Z",
+          "seq": 346950,
+          "data": {
+            "time": "2026-10-24T05:09:02.166002490Z",
+            "event": {
+              "rail": "tool-call-limit",
+              "tool": "get_equipment",
+              "count": 2,
+              "event": "call_allowed",
+              "limit": 3,
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:02.229Z",
+          "seq": 346951,
+          "data": {
+            "time": "2026-10-24T05:09:02.166938143Z",
+            "event": {
+              "event": "generated_tool_invoked",
+              "className": "generated.EquipmentTool",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "componentDigest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+              "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:07.503Z",
+          "seq": 347057,
+          "data": {
+            "time": "2026-10-24T05:09:07.175342496Z",
+            "event": {
+              "tool": "get_equipment",
+              "event": "tool_call",
+              "status": "failed",
+              "protocol": "http",
+              "errorCode": "TOOL_TIMEOUT",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "durationMs": 5007,
+              "toolVersion": "equipment-status-http@1",
+              "connectionRef": "enterprise-mock-http@1",
+              "parameterDigest": "10e7915bdd760f54c3a0be9179fd178181eb1ff0f43e1bda7517661670c67f1e"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:07.506Z",
+          "seq": 347058,
+          "data": {
+            "time": "2026-10-24T05:09:07.184052368Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "tool_error",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:07.510Z",
+          "seq": 347059,
+          "data": {
+            "time": "2026-10-24T05:09:07.185652463Z",
+            "event": {
+              "rail": "audit",
+              "tool": "get_equipment",
+              "event": "after_tool_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:07.515Z",
+          "seq": 347060,
+          "data": {
+            "time": "2026-10-24T05:09:07.197441422Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "before_model_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:09.042Z",
+          "seq": 347099,
+          "data": {
+            "time": "2026-10-24T05:09:08.807559385Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_model_call",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:09.046Z",
+          "seq": 347100,
+          "data": {
+            "time": "2026-10-24T05:09:08.810265580Z",
+            "event": {
+              "rail": "audit",
+              "event": "assistant_output",
+              "content": "查询失败，未取得可信数据。\n\n**失败原因**：调用 `get_equipment` 查询 PUMP-001 时工具超时（`TOOL_TIMEOUT`），工具未返回有效结果，业务事实未知。\n\n因此我无法提供 PUMP-001 的状态、温度或数据来源，也不会进行推测。\n\n**建议**：\n1. 稍后重试一次查询（本次运行已用 2 次工具调用，仍在 3 次上限内）。\n2. 若持续超时，请确认设备编号是否正确、设备是否在线，或联系平台侧检查 `get_equipment` 服务可用性。\n\n需要我现在重试一次吗？",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075"
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:09.051Z",
+          "seq": 347101,
+          "data": {
+            "time": "2026-10-24T05:09:08.814597345Z",
+            "event": {
+              "rail": "audit",
+              "tool": "",
+              "event": "after_invoke",
+              "sessionId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+              "turnCount": 1
+            }
+          },
+          "type": "runtime.event",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "runtime"
+        },
+        {
+          "at": "2026-10-24T05:09:11.383Z",
+          "seq": 347168,
+          "data": {
+            "externalCallCount": 1
+          },
+          "type": "run.succeeded",
+          "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "source": "platform"
+        }
+      ],
+      "actions": [],
+      "attempts": [],
+      "complete": true,
+      "businessState": {
+        "keys": {},
+        "orders": {},
+        "balances": {
+          "A1001": 1000000,
+          "A1002": 500000
+        },
+        "holdings": {
+          "A1001": {},
+          "A1002": {}
+        }
+      },
+      "candidateEvidence": {
+        "ingress": "/test-api/deployments/78aa9f6a-95f4-497d-8a08-a87d02588f4a",
+        "candidate": {
+          "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "provenance": "generated-component",
+          "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+          "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+          "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+          "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e"
+        },
+        "requestId": "b43b5ca8-4076-4292-88dc-4ecd90e0b3de",
+        "loadedManifest": {
+          "id": "40453ebd-c6d3-4a79-9514-2b14fa408ff0",
+          "port": 39869,
+          "bootId": "98946c46-64b5-4ff3-9c8e-edd27740d269",
+          "status": "stopped",
+          "createdAt": "2026-10-24T05:08:41.005Z",
+          "generated": {
+            "kind": "generated-tool-skill@1",
+            "classes": {
+              "generated/EquipmentTool.class": "9561f7f7c886d68f68ed132a9dcfe77fd0b4414d91e1b90cf6da3c373cde690b"
+            },
+            "toolName": "get_equipment",
+            "skillName": "equipment-query",
+            "skillPath": "skills/equipment-query/SKILL.md",
+            "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+            "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+            "operationId": "equipment-status",
+            "skillDigest": "31f66ac81c6560e6535e0d85d7cbc5322aa431c699c3e537787c68b168232809",
+            "toolClassName": "generated.EquipmentTool",
+            "componentDigest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+            "sdkArtifactDigest": "34d73b50b1b8e63dcac93c925eaeebeccf8c2ffdc2fb96d87e9a14ebf0e4b1f2",
+            "developmentBundleDigest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7"
+          },
+          "processId": 16882,
+          "updatedAt": "2026-10-24T05:09:11.976Z",
+          "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+          "modelProfile": {
+            "model": {
+              "name": "deepseek-v4-flash",
+              "baseUrl": "https://api.deepseek.com/v1",
+              "provider": "OpenAI",
+              "thinking": "disabled",
+              "maxTokens": 1024,
+              "temperature": 0
+            },
+            "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+            "executionMode": "live-mock"
+          },
+          "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3"
+        },
+        "testDeployment": {
+          "id": "78aa9f6a-95f4-497d-8a08-a87d02588f4a",
+          "status": "stopped",
+          "agentId": "e89f3b00-9460-41cf-ac0e-cfa779000bb7",
+          "binding": {
+            "candidate": {
+              "id": "e622e061-e192-4953-8870-ffed0af13a2a",
+              "provenance": "generated-component",
+              "specDigest": "bd5499a7e0f219c01d31040ff12ab4274eb44aa062ead9caa3b8c8b748366e64",
+              "bundleDigest": "d493f447748f19342dc1a475a485cc64fd6d51b75c6e3cedf5563bbcb42af722",
+              "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+              "developmentJobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e"
+            },
+            "mockDigest": "fb9b85274a1f4b14d2524406be09ce3ae9bda950cc5f849fd9e6f5a26cb3d98b",
+            "modelProfile": {
+              "model": {
+                "name": "deepseek-v4-flash",
+                "baseUrl": "https://api.deepseek.com/v1",
+                "provider": "OpenAI",
+                "thinking": "disabled",
+                "maxTokens": 1024,
+                "temperature": 0
+              },
+              "digest": "7cbff9c46974d0d1df175c83f9ff4d23a4f549f8575566de7642ace2b341ad3a",
+              "executionMode": "live-mock"
+            },
+            "testSetDigest": "1b6a736f21a2300192133d95fd27bf7b91d2756d7dec6b3b68dbc04b3b23804c",
+            "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
+            "baselineDigest": "da8ec25ba40f0cc0afe633934729d2666cb9ad7eddb00d909951be9dde48e39d",
+            "snapshotDigest": "37da9b8d612e553eeee27820cd026049d4409c2c62448d1a8c5219a393089c02",
+            "compatibilityKey": "647047c7829e10c75437ebf8e2336d6539009d6c93b76e6e2796100063608646"
+          },
+          "failure": false,
+          "purpose": "test",
+          "createdAt": "2026-10-24T05:08:37.061Z",
+          "expiresAt": "2026-10-24T05:23:37.061Z",
+          "updatedAt": "2026-10-24T05:09:11.985Z",
+          "diagnostic": "",
+          "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+          "validation": {
+            "input": "查询 PUMP-001 的状态。",
+            "runId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+            "caseId": "TC-003",
+            "actorId": "U1001",
+            "executionId": "a1566c84-1b27-4c08-b84a-3fd0b7f465bd"
+          },
+          "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+          "inputDigest": "44d4b4ba73b0085de874ec0cb901e8ec97cb4eaa659a96686f2ddae747ea17f3",
+          "runtimeSpec": {
+            "agent": {
+              "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+              "type": "DeepAgent",
+              "rails": [
+                "audit",
+                "tool-allowlist",
+                "tool-call-limit@1:3"
+              ],
+              "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+              "maxIterations": 4
+            },
+            "tools": [
+              {
+                "name": "get_equipment",
+                "protocol": "http",
+                "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+                "inputFields": {
+                  "equipmentId": "string"
+                },
+                "operationId": "equipment-status",
+                "toolVersion": "equipment-status-http@1",
+                "connectionRef": "enterprise-mock-http@1",
+                "responseFields": {
+                  "source": "string",
+                  "status": "string",
+                  "equipmentId": "string",
+                  "temperatureCelsius": "integer"
+                }
+              }
+            ]
+          },
+          "deploymentId": "40453ebd-c6d3-4a79-9514-2b14fa408ff0",
+          "environmentId": "9bd6ffd6-a732-44aa-b231-84c209111ec4",
+          "clientRequestId": "ebf4fd39-3717-426a-884e-fe28cc50d075",
+          "environmentConfig": {
+            "seed": "enterprise-default@1",
+            "clock": "2026-10-21T08:00:00.000Z",
+            "fault": "read-timeout"
+          },
+          "requirementBaselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e"
+        },
+        "completionChecks": {
+          "runTerminal": true,
+          "specMatches": true,
+          "loadedStopped": true,
+          "artifactMatches": true,
+          "deploymentHealthy": true,
+          "deploymentStopped": true,
+          "validationMatches": true,
+          "runArtifactMatches": true,
+          "modelProfileMatches": true,
+          "environmentIdMatches": true,
+          "environmentConfigMatches": true,
+          "environmentRevisionValid": true
+        }
+      }
+    }
+  ],
+  "mutations": [
+    "/api/auth/session",
+    "/api/snapshots/baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc/validations"
+  ],
+  "pageErrors": [],
+  "finishedAt": "2026-10-24T05:09:15.348Z"
+}

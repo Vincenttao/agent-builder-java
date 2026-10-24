@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import type { ApiError, AssemblyInput, Blocker, Draft, DraftInput, EnvironmentStatus, Snapshot } from '../../../packages/contracts/src/index.js';
 import type { ValidationReport } from '../../../packages/contracts/src/validations.js';
 import './style.css';
+import {SampleDemo} from './sample-demo.js';
 import { DebugRun } from './debug-run.js';
 import { equipmentAssembly, workOrderAssembly,wealthBalanceAssembly,wealthAssistantAssembly,wealthToolAssembly,wealthSkillAssembly } from '../../../packages/contracts/src/equipment-template.js';
 import { BaselineReview, ProjectValidation } from './project-validation.js';
@@ -35,6 +36,8 @@ function assemblyForTemplate(key:string,goal:string):AssemblyInput{
 }
 class RequestError extends Error { constructor(public readonly body: ApiError) { super(body.message); } }
 function App() {
+  const [sampleMode,setSampleMode]=useState(()=>new URLSearchParams(location.search).get('demo')==='equipment');
+  function openSample(enabled:boolean){const url=new URL(location.href);if(enabled)url.searchParams.set('demo','equipment');else url.searchParams.delete('demo');history.replaceState(null,'',url);setSampleMode(enabled);}
   const [authenticated, setAuthenticated] = useState(false);
   const [checking, setChecking] = useState(true);
   const [token, setToken] = useState('');
@@ -149,6 +152,7 @@ function App() {
     <button className="primary" disabled={busy}>进入工作台</button></form>{error && <p role="alert" className="error">{error}</p>}
     <p className="footnote">令牌位于本地配置的 LOCAL_BOOTSTRAP_TOKEN；不会保存在浏览器本地存储中。</p>
   </section></main>;
+  if(sampleMode)return <SampleDemo api={api} onClose={()=>openSample(false)}/>;
   return <div className="shell">
     <aside className="nav"><div className="brand"><span className="mark">AB</span><strong>Agent Builder</strong></div>
       <div className="nav-label">开发工作区</div><div className="nav-active">需求与草稿</div><a className="nav-muted" href="#component-library">组件目录 · Skill / Rail / Tool</a><div className="nav-muted">自动开发 · Tool / Skill</div><div className="nav-muted">候选预览与项目验收</div>
@@ -156,6 +160,7 @@ function App() {
     </aside>
     <main className="workspace"><header><div><p className="eyebrow">需求 → 开发 → 测试 → 交付</p><h1>需求工作台</h1><p className="muted">定义需求，选择可用组件，装配并验证你的业务 Agent。</p></div>
       <button className="secondary" onClick={() => { void api('/api/auth/session', 'DELETE').then(() => { setAuthenticated(false); setCsrf(''); }).catch(showError); }}>退出</button></header>
+      <section className="panel sample-origin"><strong>先体验一个可运行的 Agent</strong><p>复用已构建的设备查询样例，查看 Tool / Skill / Rail，完成验收、发布和业务对话。</p><button className="primary" onClick={()=>openSample(true)}>体验预构建样例</button></section>
       <nav className="workflow-tabs" role="tablist" aria-label="Agent 开发流程">
         {([
           ['requirements','01','需求录入',current?'需求草稿':'填写业务目标'],

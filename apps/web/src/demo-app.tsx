@@ -50,7 +50,7 @@ export function DemoApp({agentId,testDeploymentId,api,onError}:{agentId:string;t
     <p className="muted">{testDeploymentId?'当前请求固定使用此候选和独立预览数据。':'发布后可在此调用 Agent。新会话使用现行版本，已有会话固定原版本；'}当前每条消息须包含完整问题。</p>
     <label>模拟业务身份<select value={actorId} disabled={busy} onChange={e=>{current.current++;setActorId(e.target.value as typeof actorId);setGrant(undefined);setView(undefined);setSaved({});savedRef.current={};}}><option value="U1001">U1001</option><option value="U1002">U1002</option></select></label>
     <button type="button" className="secondary" disabled={busy} onClick={()=>{void login();}}>{testDeploymentId?'进入候选预览':'进入模拟 App'}</button>
-    {grant&&<><p className="hint">当前身份：{grant.actorId} · 模拟环境</p><label>业务请求<textarea value={input} disabled={busy||active||Boolean(saved.pending)} onChange={e=>setInput(e.target.value)}/></label>
+    {grant&&<><p className="hint">当前身份：{grant.actorId} · 模拟环境</p><label>业务请求<textarea aria-label="业务请求" value={input} disabled={busy||active||Boolean(saved.pending)} onChange={e=>setInput(e.target.value)}/></label>
       <button type="button" disabled={busy||active||!input.trim()} onClick={()=>{void send();}}>{saved.pending?'重试原请求':'发送业务请求'}</button>
       <button type="button" className="secondary" disabled={busy||active||Boolean(saved.pending)} onClick={()=>{save(grant,{});setView(undefined);}}>新建业务会话</button>
       {view&&<><p role="status" data-testid="demo-request-status">{labels[status??'']??status}</p>

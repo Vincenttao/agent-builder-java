@@ -18,6 +18,8 @@
 
 ## 快速上手：Docker Compose
 
+已有本地主环境时，优先使用 [RP-01 样例演示指南](docs/RP-01样例演示指南.md)：在仓库根目录运行 `corepack pnpm demo`，访问 `http://127.0.0.1:5173/?demo=equipment`。此入口复用已有候选，提供需求、装配、验收、发布对话四页签；不重新生成、不构建 Docker。它依赖当前本机主环境已有数据，空环境安装仍按下文进行。
+
 在仓库根目录执行命令。需要 **Docker Engine／Docker Desktop（Linux 容器）及 Compose v2、Node.js ≥ 22.12**；建议本机使用 Node.js 24。首次构建需要访问镜像仓库、npm、GitHub 和 Maven 仓库。Docker 路径无需在宿主机安装 JDK、Maven 或 pnpm。
 
 ### 1. 生成本地配置

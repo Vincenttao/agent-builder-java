@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-10-24T05:20:15.027Z",
+  "artifactKiBDelta": 0,
+  "engineeringKiBDelta": 0,
+  "newDeploymentDirectories": [
+    {
+      "path": "/data/deployments/5920bf43-83c4-46fb-823a-f631de020022",
+      "KiB": 112
+    },
+    {
+      "path": "/data/deployments/0fe668e0-8b50-41bc-9ba1-a9bf53396240",
+      "KiB": 108
+    },
+    {
+      "path": "/data/deployments/40453ebd-c6d3-4a79-9514-2b14fa408ff0",
+      "KiB": 112
+    },
+    {
+      "path": "/data/deployments/ae43a21a-a175-44e6-bd57-d396cea14e63",
+      "KiB": 100
+    },
+    {
+      "path": "/data/deployments/a608f4ac-6f55-4f67-8724-51d09baee582",
+      "KiB": 100
+    },
+    {
+      "path": "/data/deployments/35d1e376-fe99-4981-8b9c-6f5a178b6fa8",
+      "KiB": 100
+    },
+    {
+      "path": "/data/deployments/8464b239-bc31-4900-9d28-2a8e463c54e0",
+      "KiB": 104
+    }
+  ],
+  "newDeploymentKiB": 736,
+  "testDeployments": [
+    {
+      "id": "b3bc50cd-18c7-4ef8-8ad6-6b206638594d",
+      "status": "stopped"
+    },
+    {
+      "id": "30c042bc-ce47-47fe-b7de-c1a90e61fc51",
+      "status": "stopped"
+    },
+    {
+      "id": "78aa9f6a-95f4-497d-8a08-a87d02588f4a",
+      "status": "stopped"
+    },
+    {
+      "id": "21365b67-7801-44f3-aedf-9c6b15d109af",
+      "status": "stopped"
+    },
+    {
+      "id": "daf0e5ad-9ddb-4665-b0fd-7389d7ed2f65",
+      "status": "stopped"
+    },
+    {
+      "id": "67bd6d85-d717-4714-bdc4-3855ab593326",
+      "status": "stopped"
+    }
+  ],
+  "publishedDeploymentRetained": "8464b239-bc31-4900-9d28-2a8e463c54e0",
+  "testOutputBytes": 1261607,
+  "frontendStatus": 200,
+  "backendHealthStatus": 200,
+  "notes": [
+    "Deployment directories are newly created runtime records, not copied JARs",
+    "Historical data and unrelated stacks retained; database/WAL disk delta not measured",
+    "Bounded RP-01 output directory; six stopped test deployments and one published instance"
+  ]
+}
