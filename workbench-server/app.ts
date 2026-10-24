@@ -72,7 +72,8 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   app.get('/api/projects/:id/exports',(req,res)=>res.json({exports:exports.list(req.params.id,res.locals.role)}));
   app.post('/api/projects/:id/exports',async(req,res)=>{const result=await exports.create(req.params.id,res.locals.role,req.body?.runId);res.status(result.reused?200:201).json({export:result.record});});
   app.get('/api/exports/:id/manifest',async(req,res)=>res.json({manifest:await exports.manifest(req.params.id,res.locals.role)}));
-  app.get('/api/exports/:id/files/:kind',async(req,res,next)=>{const file=await exports.file(req.params.id,res.locals.role,req.params.kind);res.set('X-Content-SHA256',file.artifact.sha256);res.download(file.path,req.params.id+'-'+file.artifact.filename,error=>{if(error)next(error);});});
+  // ExportManager already restricts this to owned, hash-checked archives; .workbench is a hidden parent directory.
+  app.get('/api/exports/:id/files/:kind',async(req,res,next)=>{const file=await exports.file(req.params.id,res.locals.role,req.params.kind);res.set('X-Content-SHA256',file.artifact.sha256);res.download(file.path,req.params.id+'-'+file.artifact.filename,{dotfiles:'allow'},error=>{if(error)next(error);});});
   app.delete('/api/exports/:id',async(req,res)=>{await exports.remove(req.params.id,res.locals.role);res.status(204).end();});
   app.use('/api',(_req,_res,next)=>next(new WorkbenchError('NOT_FOUND','接口不存在',404)));
   app.use((error:unknown,_req:Request,res:Response,_next:NextFunction)=>{

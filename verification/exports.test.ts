@@ -9,7 +9,7 @@ import {pcRunFixture} from './fixtures/pc-run-engine.js';
 
 test('technical exports pin run source/JAR, exclude local state, detect changes and retain run references',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-exports-')),fixture=pcRunFixture();
- const wb=createWorkbench({root,runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
+ const wb=createWorkbench({root:join(root,'.workbench'),runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
  const release=wb.store.publish('moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'导出测试应用','application');
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));
  t.after(async()=>{await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
