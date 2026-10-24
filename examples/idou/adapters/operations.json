@@ -1,0 +1,333 @@
+{
+  "balance": {
+    "type": "SCRIPT",
+    "title": "查询余额",
+    "resultScript": "benefits/balance.py",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "integer"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "available",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "summarySchema": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "integer"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "available",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "confirmationRequired": false,
+    "terminal": false,
+    "maxCalls": 3
+  },
+  "gifts": {
+    "type": "SCRIPT",
+    "title": "查询礼品",
+    "resultScript": "benefits/gifts.py",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "gifts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "points": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "points"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "gifts"
+      ],
+      "additionalProperties": false
+    },
+    "summarySchema": {
+      "type": "object",
+      "properties": {
+        "gifts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "points": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "points"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "gifts"
+      ],
+      "additionalProperties": false
+    },
+    "confirmationRequired": false,
+    "terminal": false,
+    "maxCalls": 3
+  },
+  "redeem": {
+    "type": "SCRIPT",
+    "title": "兑换礼品",
+    "resultScript": "benefits/redeem.py",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "employeeId": {
+          "type": "string"
+        },
+        "giftId": {
+          "type": "string",
+          "enum": [
+            "coffee",
+            "book"
+          ]
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        }
+      },
+      "required": [
+        "employeeId",
+        "giftId",
+        "quantity"
+      ],
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string"
+        },
+        "orderId": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "idempotencyKey",
+        "orderId"
+      ],
+      "additionalProperties": false
+    },
+    "summarySchema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string"
+        },
+        "orderId": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "idempotencyKey",
+        "orderId"
+      ],
+      "additionalProperties": false
+    },
+    "confirmationRequired": true,
+    "terminal": true,
+    "maxCalls": 3,
+    "fixedArguments": {
+      "employeeId": "demo"
+    }
+  },
+  "receipt": {
+    "type": "SCRIPT",
+    "title": "核对原兑换结果",
+    "resultScript": "benefits/receipt.py",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "idempotencyKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotencyKey"
+      ],
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string"
+        },
+        "orderId": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "idempotencyKey",
+        "orderId"
+      ],
+      "additionalProperties": false
+    },
+    "summarySchema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string"
+        },
+        "orderId": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "idempotencyKey",
+        "orderId"
+      ],
+      "additionalProperties": false
+    },
+    "confirmationRequired": false,
+    "terminal": true,
+    "maxCalls": 3
+  },
+  "finish": {
+    "type": "SCRIPT",
+    "title": "结束只读查询",
+    "resultScript": "benefits/finish.py",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "summary"
+      ],
+      "additionalProperties": false
+    },
+    "summarySchema": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "summary"
+      ],
+      "additionalProperties": false
+    },
+    "confirmationRequired": false,
+    "terminal": true,
+    "maxCalls": 3
+  }
+}

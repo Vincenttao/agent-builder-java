@@ -13,3 +13,5 @@ coverage/
 .tools/
 **/target/
 dist/
+
+.runtime-state/

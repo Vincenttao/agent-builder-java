@@ -8,6 +8,7 @@
     <dependency><groupId>com.openjiuwen</groupId><artifactId>agent-core-java</artifactId><version>0.1.17</version></dependency>
     <dependency><groupId>com.openjiuwen</groupId><artifactId>agent-service-app</artifactId><version>0.1.4</version></dependency>
     <dependency><groupId>com.openjiuwen</groupId><artifactId>agent-service-adapters-agentcore</artifactId><version>0.1.4</version></dependency>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-tomcat</artifactId></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
   </dependencies>
   <build><plugins><plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId><configuration><mainClass>com.openjiuwen.workbench.BusinessApplication</mainClass></configuration></plugin></plugins></build>

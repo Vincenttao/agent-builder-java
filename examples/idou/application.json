@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "name": "i豆员工福利",
+  "description": "MOA 空模板装配出的员工福利应用示例；业务系统为独立 Mock。",
+  "scope": {"own": ["员工i豆余额、礼品目录与兑换"], "delegated": ["采购申请交给 procurement"], "outside": ["人事政策等非福利问题交给 fallback"]},
+  "skills": [{"id": "benefits", "file": "skills/benefits/SKILL.md", "operations": ["balance", "gifts", "redeem", "receipt", "finish"]}],
+  "capabilities": [{"id": "procurement", "type": "agent", "connection": "procurement", "description": "采购申请"}, {"id": "fallback", "type": "agent", "connection": "fallback", "description": "福利范围外问题"}],
+  "handoff": {"enabled": true, "target": "fallback", "unfinished": "ask", "resume": "prompt", "maxTasks": 2},
+  "connections": {"idou": "http://127.0.0.1:8770", "procurement": "http://127.0.0.1:8770/a2a/procurement", "fallback": "http://127.0.0.1:8770/a2a/fallback"},
+  "mapping": {"balancePath": "employee.wallet.availablePoints"}
+}
