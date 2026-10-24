@@ -12,6 +12,12 @@ test('HTTP workbench persists real role/template/application revisions and block
   t.after(async()=>{await new Promise<void>(resolve=>server.close(()=>resolve()));store.close();rmSync(root,{recursive:true,force:true});});
   const address=server.address();assert.ok(address&&typeof address!=='string');
   const base=`http://127.0.0.1:${address.port}`;
+  const page=await fetch(base+'/');assert.equal(page.status,200);
+  assert.match(await page.text(),/workbench-ui\/app.js/);
+  const script=await fetch(base+'/workbench-ui/app.js');assert.equal(script.status,200);
+  assert.match(script.headers.get('content-type')??'',/javascript/);
+  assert.equal(script.headers.get('cache-control'),'no-store');
+  for(const path of ['/workbench-ui/../.env.local','/workbench-ui/package.json','/workbench-ui/app.ts'])assert.equal((await fetch(base+path)).status,404);
   async function call(path:string,role='application',method='GET',body?:unknown){const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json','x-workbench-role':role},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,body:await r.json() as any};}
   assert.equal((await call('/api/context')).body.identity.role,'application');
   assert.equal((await call('/api/context','admin')).status,400);
