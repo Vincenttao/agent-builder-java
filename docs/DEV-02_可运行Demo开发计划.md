@@ -48,4 +48,6 @@ PRD 中旧快照保留为历史源码证据，不自动覆盖。新实现记录�
 - P0：最新 Core 0.1.17 与 Runtime 0.1.4 所需服务/适配器已从固定源码构建成功；Linux Maven 3.9.11、Jaeger 2.22.0 已下载。MOA NativeSkillAgent 依赖闭包正在适配验证，实际模型/Trace 探测尚未完成。
 - P1 基础：已实现 SQLite 工程索引、Git/worktree 保存、模板版本发行/引用、应用隔离、表单/文件同源及 HTTP API。5 组工程约束 + 1 组真实 HTTP 集成通过，TypeScript 检查通过；UI、Java 模板和可运行导出尚待后续批次，不能将本次计为 RD 全项通过。
 - TDD：新增“应用不得修改固定构建/运行文件”断言先报 Missing expected exception，补开放文件范围后通过。最初 tsx CLI/沙箱 Git 子进程权限错误是环境失败，未计为业务红灯；改为 node --import tsx 并在允许的本机执行上下文跑测试，保留原失败日志。
-- P2～P5：待完成。当前目标继续推进至 RD-01～06 可实际演示。
+- P2 主链：编码任务副本、差异审阅/拒绝/应用、过期保护、指导读取证据、取消和原问题澄清已实现；11 组 Node 工程/API/编码测试通过。真实 OpenCode 1.18.9 + deepseek-flash 通过单文件修订/审阅/应用，记录在 `test-results/dev-workbench-v2/p2/2026-10-24T18-50-21-669Z/`。i豆多文件方案、冲突修订和页面完整路线仍待后续验证。
+- P2 失败留证：首次真实编码因 OpenCode 自动生成 `.opencode/.gitignore` 被固定文件保护拒绝；现把该文件固定为平台模板内容，不放宽应用文件白名单。异步澄清测试的等待助手修正为同时等待 running/awaiting_input 结束，最终状态断言未降低。
+- P3～P5：待完成。当前目标继续推进至 RD-01～06 可实际演示。

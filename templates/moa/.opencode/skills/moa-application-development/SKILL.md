@@ -25,3 +25,5 @@ description: 基于 MOA 范式装配应用，统一修改业务范围、System P
 ## 交付前核对
 
 JSON 可解析，schemaVersion=1，handoff.maxTasks=2。每个 Skill 的 file 引用存在；各入口描述一致。对自己修改的内容运行适用检查。最后返回简短变更说明；不要输出密钥、完整上下文或无关文件。
+
+完整机制参考本 Skill 的 references/native-skill-agent.md、request-routing.md、rail-extension.md 和 intent-switch.md，均固定到 SOURCE.md 声明的来源提交。涉及旧 Core API 的部分以本工程兼容适配和实际测试为准。

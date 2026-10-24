@@ -65,7 +65,7 @@ export class ProjectStore{
     validateFiles(files);const path=this.path(id);mkdirSync(path,{recursive:true});mkdirSync(join(path,'skills'),{recursive:true});
     for(const [f,content]of Object.entries(files)){mkdirSync(dirname(join(path,f)),{recursive:true});writeFileSync(join(path,f),content);}
     this.git(id,['init','-b','main']);this.git(id,['config','user.name','Agent Workbench']);this.git(id,['config','user.email','workbench@localhost']);this.git(id,['config','core.hooksPath','/dev/null']);this.git(id,['config','commit.gpgsign','false']);
-    this.git(id,['add','--',...Object.keys(files)]);this.git(id,['commit','-m','Create '+kind+' from fixed template']);const head=this.git(id,['rev-parse','HEAD']);
+    this.git(id,['add','-f','--',...Object.keys(files)]);this.git(id,['commit','-m','Create '+kind+' from fixed template']);const head=this.git(id,['rev-parse','HEAD']);
     const p:Project={id,kind,name,head,sourceReleaseId,createdAt:new Date().toISOString()};this.db.prepare('INSERT INTO projects VALUES(@id,@kind,@name,@head,@sourceReleaseId,@createdAt)').run(p);return p;
   }
   seedTemplate(files:Files){const existing=this.db.prepare("SELECT * FROM projects WHERE id='moa-platform'").get() as Project|undefined;return existing??this.init('moa-platform','template','MOA 开发模板',files,null);}
@@ -106,7 +106,7 @@ export class ProjectStore{
     try{
       this.git(id,['worktree','add','--detach',worktree,baseHead]);
       for(const [name,content]of Object.entries(changes)){const dest=join(worktree,name);if(content===null){rmSync(dest,{force:true});}else{mkdirSync(dirname(dest),{recursive:true});writeFileSync(dest,content);}}
-      run(['add','--',...Object.keys(changes)]);
+      run(['add','-f','--',...Object.keys(changes)]);
       if(!run(['diff','--cached','--name-only']))return p;
       run(['commit','-m','Save reviewed workbench revision']);commit=run(['rev-parse','HEAD']);
       this.git(id,['merge','--ff-only',commit]);
