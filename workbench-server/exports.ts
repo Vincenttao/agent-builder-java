@@ -8,9 +8,9 @@ import {promisify} from 'node:util';
 import {ProjectStore,WorkbenchError,validatePath,type Files,type Role} from './projects.js';
 import {RunManager,type RunRecord} from './runs.js';
 const execute=promisify(execFile),hash=(value:string|Buffer)=>createHash('sha256').update(value).digest('hex');
-const MAX_FILE=400_000_000;
+const MAX_FILE=400_000_000,FORMAT_VERSION=2;
 export type ExportKind='application'|'source';
-export type ExportRecord={id:string;projectId:string;runId:string;role:Role;head:string;sourceReleaseId:string|null;createdAt:string;engine:string;manifestSha256:string;verification:{build:'maven-package-passed'|'fixture';standalone:'not-verified';business:'not-verified'};artifacts:Record<ExportKind,{filename:string;sha256:string;bytes:number}>};
+export type ExportRecord={formatVersion:number;id:string;projectId:string;runId:string;role:Role;head:string;sourceReleaseId:string|null;createdAt:string;engine:string;manifestSha256:string;verification:{build:'maven-package-passed'|'fixture';standalone:'not-verified';business:'not-verified'};artifacts:Record<ExportKind,{filename:string;sha256:string;bytes:number}>};
 function fail(code:string,message:string,status=409):never{throw new WorkbenchError(code,message,status);}
 async function digestFile(path:string){const stat=lstatSync(path);if(stat.isSymbolicLink()||!stat.isFile()||stat.size>MAX_FILE)fail('EXPORT_FILE_INVALID','文件类型或大小不符合交付范围');const digest=createHash('sha256');for await(const part of createReadStream(path))digest.update(part);return digest.digest('hex');}
 const reserved=new Set(['manifest.json','SHA256SUMS','verify.sh','start.sh','build.sh','runtime.env.example','DELIVERY.md']);
@@ -40,9 +40,19 @@ exec "\${MAVEN_BIN:-mvn}" -B -ntp package "$@"
 `;
 export class ExportManager{
  private execution?:Promise<ExportRecord>;private closed=false;
- constructor(private store:ProjectStore,private runs:RunManager){store.db.exec('CREATE TABLE IF NOT EXISTS exports(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,runId TEXT NOT NULL REFERENCES runs(id) ON DELETE RESTRICT,record TEXT NOT NULL,UNIQUE(projectId,runId))');}
+ constructor(private store:ProjectStore,private runs:RunManager){
+  const schema="(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,runId TEXT NOT NULL REFERENCES runs(id) ON DELETE RESTRICT,formatVersion INTEGER NOT NULL,record TEXT NOT NULL,UNIQUE(projectId,runId,formatVersion))";
+  store.db.exec('CREATE TABLE IF NOT EXISTS exports '+schema);
+  const columns=store.db.prepare('PRAGMA table_info(exports)').all() as {name:string}[];
+  if(!columns.some(c=>c.name==='formatVersion'))store.db.transaction(()=>{
+   store.db.exec('CREATE TABLE exports_format_migration '+schema);
+   store.db.exec('INSERT INTO exports_format_migration SELECT id,projectId,runId,1,record FROM exports');
+   store.db.exec('DROP TABLE exports');store.db.exec('ALTER TABLE exports_format_migration RENAME TO exports');
+  })();
+ }
+
  directory(id:string){if(!/^[a-f0-9-]{36}$/.test(id))fail('NOT_FOUND','交付包不存在',404);return join(this.store.root,'exports',id);}
- get(id:string,role:Role){const row=this.store.db.prepare('SELECT record FROM exports WHERE id=?').get(id) as {record:string}|undefined;if(!row)fail('NOT_FOUND','交付包不存在',404);const record=JSON.parse(row.record) as ExportRecord;this.store.get(record.projectId,role);return record;}
+ get(id:string,role:Role){const row=this.store.db.prepare('SELECT record,formatVersion FROM exports WHERE id=?').get(id) as {record:string;formatVersion:number}|undefined;if(!row)fail('NOT_FOUND','交付包不存在',404);const record={...JSON.parse(row.record),formatVersion:row.formatVersion} as ExportRecord;this.store.get(record.projectId,role);return record;}
  list(id:string,role:Role){this.store.get(id,role);return (this.store.db.prepare('SELECT id FROM exports WHERE projectId=? ORDER BY rowid DESC').all(id) as {id:string}[]).map(row=>this.get(row.id,role));}
  private owned(record:ExportRecord){const root=this.directory(record.id);if(!existsSync(root)||lstatSync(root).isSymbolicLink()||realpathSync(root)!==resolve(root))fail('EXPORT_OWNERSHIP_MISMATCH','交付目录归属不匹配');const owner=JSON.parse(readFileSync(join(root,'owner.json'),'utf8'));if(owner.kind!=='workbench-export'||owner.id!==record.id||owner.projectId!==record.projectId)fail('EXPORT_OWNERSHIP_MISMATCH','交付目录归属不匹配');return root;}
  private owner(record:ExportRecord,role:Role){if(record.role!==role)fail('FORBIDDEN','请使用导出应用的身份操作',403);}
@@ -53,7 +63,7 @@ export class ExportManager{
   if(typeof runId!=='string'||!/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/.test(runId))fail('INVALID_RUN','请选择一个已有运行',400);
   const project=this.store.get(projectId,role);if(project.kind!=='application'||role!=='application')fail('FORBIDDEN','应用导出由应用开发者发起',403);
   const run=this.runs.get(runId,role);if(run.projectId!==projectId||run.role!==role)fail('RUN_NOT_OWNED','运行不属于当前应用',404);
-  const existing=(this.store.db.prepare('SELECT id FROM exports WHERE projectId=? AND runId=?').get(projectId,runId) as {id:string}|undefined);if(existing){const record=this.get(existing.id,role);await this.manifest(record.id,role);for(const kind of ['application','source'])await this.file(record.id,role,kind);return {record,reused:true};}
+  const existing=(this.store.db.prepare('SELECT id FROM exports WHERE projectId=? AND runId=? AND formatVersion=?').get(projectId,runId,FORMAT_VERSION) as {id:string}|undefined);if(existing){const record=this.get(existing.id,role);await this.manifest(record.id,role);for(const kind of ['application','source'])await this.file(record.id,role,kind);return {record,reused:true};}
   if(this.execution)fail('EXPORT_BUSY','已有交付打包正在进行，请等待原操作');
   if(!run.artifact||!run.origin||!['running','stopped','interrupted'].includes(run.status))fail('NO_BUILD_ARTIFACT','请选择已成功构建并启动过的运行；不会自动重新构建');
   const exportRoot=join(this.store.root,'exports');
@@ -75,7 +85,7 @@ export class ExportManager{
   try{
    const verification:ExportRecord['verification']={build:run.engine==='local-java'?'maven-package-passed':'fixture',standalone:'not-verified',business:'not-verified'};
    const spec=JSON.parse(files['application.json']);
-   const manifest={schemaVersion:1,purpose:'technical-export',exportId:id,projectId:run.projectId,runId:run.id,sourceHead:run.head,sourceReleaseId:run.sourceReleaseId,createdAt:new Date().toISOString(),engine:run.engine,verification,jar:{sha256:run.artifact!.sha256,bytes:run.artifact!.bytes},buildInputFiles:hashes,dependencyFiles:['pom.xml',...(files['runtime-source.json']?['runtime-source.json']:[])],runtime:{modelBaseline:'deepseek-flash',configuration:'external environment; not exported from the workbench',assets:'application/assets or source root',state:'external WORKBENCH_STATE_DIR or package-local .runtime-state',connections:spec.connections,taskRecovery:'same process; current A plus B; no automatic recovery after restart'},exclusions:['.git','.opencode','.env.local','workbench database','runtime events and conversations','build workspace paths'],publication:'not-published'};
+   const manifest={schemaVersion:1,formatVersion:FORMAT_VERSION,purpose:'technical-export',exportId:id,projectId:run.projectId,runId:run.id,sourceHead:run.head,sourceReleaseId:run.sourceReleaseId,createdAt:new Date().toISOString(),engine:run.engine,verification,jar:{sha256:run.artifact!.sha256,bytes:run.artifact!.bytes},buildInputFiles:hashes,dependencyFiles:['pom.xml',...(files['runtime-source.json']?['runtime-source.json']:[])],runtime:{modelBaseline:'deepseek-flash',configuration:'external environment; not exported from the workbench',assets:'application/assets or source root',state:'external WORKBENCH_STATE_DIR or package-local .runtime-state',connections:spec.connections,taskRecovery:'same process; current A plus B; no automatic recovery after restart'},exclusions:['.git','.opencode','.env.local','workbench database','runtime events and conversations','build workspace paths'],publication:'not-published'};
    const text=JSON.stringify(manifest,null,2)+'\n';writeFileSync(join(root,'manifest.json'),text);
    const artifacts={} as ExportRecord['artifacts'];
    for(const kind of ['application','source'] as ExportKind[]){
@@ -96,12 +106,13 @@ export class ExportManager{
     }
     writeFileSync(join(packageRoot,'SHA256SUMS'),Object.entries(sums).sort(([a],[b])=>a.localeCompare(b)).map(([name,digest])=>digest+'  '+name+'\n').join(''));
     const filename=kind+'.tar.gz',archive=join(root,filename);
-    try{await execute('tar',['--sort=name','--mtime=@0','--owner=0','--group=0','--numeric-owner','-czf',archive,'-C',stage,kind],{timeout:90000,maxBuffer:1_000_000});}catch{fail('ARCHIVE_FAILED','交付打包未完成，请核对本机 tar 与磁盘空间');}
+    // Epoch zero makes Maven resources treat absent target files as up to date; use the nonzero ZIP epoch.
+    try{await execute('tar',['--sort=name','--mtime=@315532800','--owner=0','--group=0','--numeric-owner','-czf',archive,'-C',stage,kind],{timeout:90000,maxBuffer:1_000_000});}catch{fail('ARCHIVE_FAILED','交付打包未完成，请核对本机 tar 与磁盘空间');}
     artifacts[kind]={filename,sha256:await digestFile(archive),bytes:statSync(archive).size};rmSync(packageRoot,{recursive:true,force:true});
    }
    rmSync(stage,{recursive:true,force:true});
-   const record:ExportRecord={id,projectId:run.projectId,runId:run.id,role:run.role,head:run.head,sourceReleaseId:run.sourceReleaseId,createdAt:manifest.createdAt,engine:run.engine,verification,manifestSha256:hash(text),artifacts};
-   this.store.db.prepare('INSERT INTO exports VALUES(?,?,?,?)').run(id,run.projectId,run.id,JSON.stringify(record));return record;
+   const record:ExportRecord={formatVersion:FORMAT_VERSION,id,projectId:run.projectId,runId:run.id,role:run.role,head:run.head,sourceReleaseId:run.sourceReleaseId,createdAt:manifest.createdAt,engine:run.engine,verification,manifestSha256:hash(text),artifacts};
+   this.store.db.prepare('INSERT INTO exports VALUES(?,?,?,?,?)').run(id,run.projectId,run.id,FORMAT_VERSION,JSON.stringify(record));return record;
   }catch(error){rmSync(root,{recursive:true,force:true});throw error;}
  }
  private instructions(kind:ExportKind,engine:string){return `# 固定版本技术交付包\n\n来源引擎：${engine}。本包只表明固定版本已导出；独立运行、业务验收、CI 和发布均未由导出操作验证。${engine==='local-java'?'':'这是契约测试包，start.sh 会拒绝把它当作真实 Java 服务启动。'}\n\n## 环境\n\n使用 Linux/WSL、sh、GNU tar、sha256sum、Java 17+。业务脚本使用 /usr/bin/python3。实际依赖以本包 POM、Runtime BOM 和 JAR 为准；本 Demo 基线为 Core 0.1.17/Runtime 0.1.4。${kind==='source'?'源码构建还需要 Maven，以及已在声明的 Maven 仓库安装的 Core/Runtime 依赖；包内不复制开发机 Maven 缓存。':''}\n\n模型 Key 通过外部 DEEPSEEK_API_KEY 注入，不写入文件或命令参数。默认使用 deepseek-flash；DEEPSEEK_BASE_URL 默认 https://api.deepseek.com。服务连接见 manifest.json 和 ${kind==='application'?'assets/':''}application.json；本机 Mock 地址需要在目标环境实际可达。本包不包含 Mock、工作台代理、OpenCode、数据库或运行事件。Jaeger OTLP HTTP 默认 http://127.0.0.1:14318，Trace 查看依赖独立 Jaeger。\n\n## 校验与启动\n\n解压后进入 ${kind}/，执行 sh verify.sh。${kind==='source'?'然后执行 sh build.sh（可用 MAVEN_BIN 指定 Maven），生成 target 下唯一可执行 JAR；重建后的 JAR 摘要需要重新记录，不能冒用原二进制验收。':''}在目标环境注入 Key 后，执行 sh start.sh。APP_PORT 默认 8780，监听 127.0.0.1；JAVA_BIN 可指定 Java。脚本显式设置资产目录，WORKBENCH_STATE_DIR 可指定独立目录。停止工作台/OpenCode后本包不需要它们存活，但仍需要模型、业务 HTTP/A2A 服务及本机 Python。\n\n健康/定义：GET http://127.0.0.1:8780/workbench/application。业务：POST /workbench/messages，JSON 为 {"query":"业务请求"}。原任务回复 POST /workbench/conversations/:id/reply，使用响应里的 taskId/token/answer；切换/复核/原键查单接口为 decide/resume/receipt。业务确认不能跳过。\n\n首期同进程最多 A→B，只恢复 A。重启不会自动恢复未完成会话；事件文件不等于 Core 检查点。start.sh 首先校验 SHA256SUMS；它检测已列文件的缺失或变化，不是数字签名。归档 SHA-256 从工作台导出记录另行取得，用于核对整个下载包。\n`;}

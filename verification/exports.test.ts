@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync,rmSync,readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
+import {mkdtempSync,rmSync,readFileSync,writeFileSync,mkdirSync,existsSync,statSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
@@ -27,7 +27,7 @@ test('technical exports pin run source/JAR, exclude local state, detect changes 
  const repeated=await call('/projects/'+app.id+'/exports','POST',{runId:run.id});assert.equal(repeated.status,200);assert.equal(repeated.body.export.id,record.id);
  for(const kind of ['application','source']){
   const response=await fetch(base+'/api/exports/'+record.id+'/files/'+kind);assert.equal(response.status,200);const archive=join(root,kind+'.tar.gz');writeFileSync(archive,Buffer.from(await response.arrayBuffer()));
-  const directory=join(root,'unpack '+kind);mkdirSync(directory);execFileSync('tar',['-xzf',archive,'-C',directory]);const packageRoot=join(directory,kind);
+  const directory=join(root,'unpack '+kind);mkdirSync(directory);execFileSync('tar',['-xzf',archive,'-C',directory]);const packageRoot=join(directory,kind);assert.equal(statSync(join(packageRoot,'manifest.json')).mtimeMs,315532800000);
   assert.equal(JSON.parse(readFileSync(join(packageRoot,'manifest.json'),'utf8')).sourceHead,app.head);
   assert.equal(readFileSync(join(packageRoot,kind==='application'?'assets/instructions.md':'instructions.md'),'utf8').includes('新草稿版本'),false);
   const names=execFileSync('tar',['-tzf',archive],{encoding:'utf8'});assert.equal(/(?:\.env\.local|index\.sqlite|workbench\.lock|events\.jsonl|\.git\/|\.opencode\/)/.test(names),false);assert.equal(names.includes('/home/vincent'),false);
@@ -53,4 +53,21 @@ test('export rejects altered frozen source or JAR and leaves no ready package',a
  const path=join(wb.runs.directory(run.id),'project/instructions.md'),original=readFileSync(path,'utf8');writeFileSync(path,'改动构建输入');await assert.rejects(exports.create(app.id,'application',run.id),(e:any)=>e.code==='RUN_SOURCE_CHANGED');
  rmSync(path);await assert.rejects(exports.create(app.id,'application',run.id),(e:any)=>e.code==='RUN_SOURCE_CHANGED');
  writeFileSync(path,original);const ready=wb.runs.get(run.id,'application');writeFileSync(join(wb.runs.directory(run.id),ready.artifact!.path),'changed binary');await assert.rejects(exports.create(app.id,'application',run.id),(e:any)=>e.code==='ARTIFACT_CHANGED');assert.equal(exports.list(app.id,'application').length,0);
+});
+
+test('legacy export index preserves original bytes and permits a new package format without rebuilding',async t=>{
+ const {createHash,randomUUID}=await import('node:crypto');const {ExportManager}=await import('../workbench-server/exports.js');
+ const root=mkdtempSync(join(tmpdir(),'workbench-export-format-')),fixture=pcRunFixture();const wb=createWorkbench({root,runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
+ t.after(async()=>{await wb.close();wb.store.close();rmSync(root,{recursive:true,force:true});});
+ const release=wb.store.publish('moa-platform','platform','1.0.0'),app=wb.store.createApplication(release.id,'格式迁移测试','application'),run=await wb.runs.start(app.id,'application',app.head);
+ for(let n=0;n<100&&wb.runs.get(run.id,'application').status!=='running';n++)await new Promise(r=>setTimeout(r,10));
+ // Opaque legacy fixture files test index/byte preservation, not a runnable package.
+ const id=randomUUID(),directory=wb.exports.directory(id);mkdirSync(directory,{recursive:true});writeFileSync(join(directory,'owner.json'),JSON.stringify({kind:'workbench-export',id,projectId:app.id}));
+ const sha=(s:string)=>createHash('sha256').update(s).digest('hex'),manifest=JSON.stringify({schemaVersion:1,legacyFixture:true,sourceHead:app.head});writeFileSync(join(directory,'manifest.json'),manifest);
+ const artifacts:any={};for(const kind of ['application','source']){const text='legacy fixture '+kind,filename=kind+'.tar.gz';writeFileSync(join(directory,filename),text);artifacts[kind]={filename,sha256:sha(text),bytes:Buffer.byteLength(text)};}
+ const legacyJson=JSON.stringify({id,projectId:app.id,runId:run.id,role:'application',head:app.head,engine:'contract-fixture',manifestSha256:sha(manifest),artifacts,verification:{build:'fixture',standalone:'not-verified',business:'not-verified'}});
+ wb.store.db.exec('DROP TABLE exports;CREATE TABLE exports(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,runId TEXT NOT NULL REFERENCES runs(id) ON DELETE RESTRICT,record TEXT NOT NULL,UNIQUE(projectId,runId))');wb.store.db.prepare('INSERT INTO exports VALUES(?,?,?,?)').run(id,app.id,run.id,legacyJson);
+ const migrated=new ExportManager(wb.store,wb.runs);assert.equal(migrated.get(id,'application').formatVersion,1);assert.equal((wb.store.db.prepare('SELECT record FROM exports WHERE id=?').get(id) as any).record,legacyJson);
+ const result=await migrated.create(app.id,'application',run.id);assert.equal(result.reused,false);assert.equal(result.record.formatVersion,2);assert.notEqual(result.record.id,id);assert.equal(result.record.runId,run.id);assert.equal(fixture.counters.builds,1);
+ assert.equal(readFileSync(join(directory,'application.tar.gz'),'utf8'),'legacy fixture application');assert.equal(await migrated.manifest(id,'application').then(x=>x.legacyFixture),true);assert.equal(migrated.list(app.id,'application').length,2);assert.deepEqual(wb.store.db.prepare('PRAGMA foreign_key_check').all(),[]);
 });
