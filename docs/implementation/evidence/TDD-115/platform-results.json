@@ -1,0 +1,633 @@
+{
+  "binding": {
+    "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+    "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+    "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+    "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+  },
+  "results": [
+    {
+      "caseId": "AC-21",
+      "branchId": "independent-role-records",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "tester_and_developer_have_distinct_completed_sessions",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-21",
+      "branchId": "shared-confirmed-baseline",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "both_roles_use_one_confirmed_baseline",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "empty-tool-source",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "implementation_written_after_red_test",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "build",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "unit_contract_package_and_candidate_build_pass",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22a",
+      "branchId": "actual-http-mapping",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "generated_http_tool_calls_pinned_mock_operation_once",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "empty-skill-source",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "skill_created_during_developer_role_after_red",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "loaded",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "runtime_loaded_exact_generated_skill_digest",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22b",
+      "branchId": "model-trigger",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "model_invoked_generated_tool_and_mock_received_request",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22d",
+      "branchId": "rail-source",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "developer_generated_registered_rail_definition",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22d",
+      "branchId": "loaded-hook",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "generated_rail_is_bound_and_hook_emits_scoped_events",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    },
+    {
+      "caseId": "AC-22d",
+      "branchId": "below-limit",
+      "binding": {
+        "baselineDigest": "8dabf65d372ff056f7d60e5bfd0cada032b254ba428dcf18ef4c38da0edaa92b",
+        "testSetDigest": "3c9bc8394631c642ca5c0e37f2169641db5c15888ebee5fd8eb6294cf6fda9f0",
+        "artifactDigest": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+        "compatibilityKey": "bb8b15bdf8e61d643d6d0d748f5998d9a15ea5bee4008749df98afa2a766d295"
+      },
+      "executionMode": "live-mock",
+      "status": "passed",
+      "artifactDigestAfter": "7c2931c4026664f61d9db1255f60b672a5f6feebfaac934a228854005701f050",
+      "assertions": [
+        {
+          "name": "real_candidate_allows_calls_below_generated_limit",
+          "passed": true
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "assertions",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        },
+        {
+          "kind": "execution-record",
+          "path": "acceptance/evidence/TD15-AC21-AC22-generation-live.json",
+          "sha256": "d626a209452ab0cb90dc38c979220197247a66296918793e022b1467f04360c7"
+        }
+      ]
+    }
+  ],
+  "skippedSources": [
+    {
+      "kind": "AC01",
+      "sourcePath": "docs/implementation/evidence/TD15-AC01-no-model.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
+      ]
+    },
+    {
+      "kind": "AC02",
+      "sourcePath": "docs/implementation/evidence/TD15-AC02-mode-switch.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC03",
+      "sourcePath": "docs/implementation/evidence/TD15-AC03-requirement-impact.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC13-NF01",
+      "sourcePath": "docs/implementation/evidence/TD15-NF01-sse-reconnect.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF01-two-sessions",
+      "sourcePath": "docs/implementation/evidence/TD15-NF01-two-sessions.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF02",
+      "sourcePath": "docs/implementation/evidence/TD15-NF02-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248"
+      ]
+    },
+    {
+      "kind": "AC18-NF05",
+      "sourcePath": "docs/implementation/evidence/TD15-NF05-workspace.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC04",
+      "sourcePath": "docs/implementation/evidence/TD15-AC04-invalid-assembly.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC06",
+      "sourcePath": "docs/implementation/evidence/TD15-AC06-incompatible-assembly.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC07",
+      "sourcePath": "docs/implementation/evidence/TD15-AC07-http-mcp-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC05",
+      "sourcePath": "docs/implementation/evidence/TD15-AC05-two-rails-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC11",
+      "sourcePath": "docs/implementation/evidence/TD15-AC11-duplicates-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC14",
+      "sourcePath": "docs/implementation/evidence/TD15-AC14-snapshot-change-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC15",
+      "sourcePath": "docs/implementation/evidence/TD15-AC15-startup-failure-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC16",
+      "sourcePath": "docs/implementation/evidence/TD15-AC16-rollback-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC19",
+      "sourcePath": "docs/implementation/evidence/TD15-AC19-cancel-unknown-write-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC20",
+      "sourcePath": "docs/implementation/evidence/TD15-AC20-simulation-not-publishable.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "EQ01",
+      "sourcePath": "docs/implementation/evidence/TD15-EQ01-empty-retrieval-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "EQ02",
+      "sourcePath": "docs/implementation/evidence/TD15-EQ02-tool-unavailable-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF01-restart",
+      "sourcePath": "docs/implementation/evidence/TD15-NF01-restart-snapshot-events.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF03",
+      "sourcePath": "docs/implementation/evidence/TD15-NF03-benchmark.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248"
+      ]
+    },
+    {
+      "kind": "NF04-iterations",
+      "sourcePath": "docs/implementation/evidence/TD15-NF04-iterations-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF04-budget",
+      "sourcePath": "docs/implementation/evidence/TD15-NF04-budget-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF04-errors",
+      "sourcePath": "docs/implementation/evidence/TD15-NF04-errors-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF04-retention",
+      "sourcePath": "docs/implementation/evidence/TD15-NF04-event-retention-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC23",
+      "sourcePath": "docs/implementation/evidence/TD15-AC23-policy-audit-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC24",
+      "sourcePath": "docs/implementation/evidence/TD15-AC24-candidate-integrity-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC30",
+      "sourcePath": "docs/implementation/evidence/TD15-AC30-mock-isolation-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC26",
+      "sourcePath": "docs/implementation/evidence/TD15-AC26-docker-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC42a",
+      "sourcePath": "docs/implementation/evidence/TD15-AC42a-trusted-local-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "NF01-validation",
+      "sourcePath": "docs/implementation/evidence/TD15-NF01-validation-branches.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC21-current",
+      "sourcePath": "docs/implementation/evidence/TD15-AC21-current-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
+      ]
+    },
+    {
+      "kind": "AC25",
+      "sourcePath": "docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+      ]
+    },
+    {
+      "kind": "AC27",
+      "sourcePath": "docs/implementation/evidence/TD15-AC27-fixed-regression-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+      ]
+    },
+    {
+      "kind": "AC32",
+      "sourcePath": "docs/implementation/evidence/TD15-AC32-wealth-assistant-live.json",
+      "targetImageIds": [
+        "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+        "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+      ]
+    }
+  ]
+}

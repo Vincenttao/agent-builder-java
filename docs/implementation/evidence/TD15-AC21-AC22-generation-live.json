@@ -2,20 +2,20 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-B AC-21/22 generated Tool and Skill with shared Rail-aware build and live Mock execution",
   "executionMode": "live-mock",
-  "measuredAt": "2026-10-23T22:41:36.602Z",
+  "measuredAt": "2026-10-24T02:37:03.116Z",
   "composeProject": "agent-builder-td15-nf01",
   "targetImageIds": [
-    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+    "sha256:76102baabd35608a22a570e6750d2a7842d90b864b1f2c8566e375258ec8580d",
+    "sha256:7f77f099bf59c660535604893cab9048287a9015529bddaa1eadaab9e361fd8e"
   ],
-  "generationEvidence": "docs/implementation/evidence/TDD-023-live-rail-generation-87ad0d88-5c6d-4c9c-a698-18dad58ff62b.json",
-  "jobId": "87ad0d88-5c6d-4c9c-a698-18dad58ff62b",
-  "draftId": "6241aa2a-28b8-4c50-b80d-0e5bad12d25d",
-  "snapshotId": "c688d356-0b3a-42e9-99a8-4b72e6747c80",
-  "baselineId": "343fca9b-afc2-48f3-b3ea-104b001337af",
-  "baselineDigest": "98466a495504dbd1739e01aaed17f630c2c36e42d9be0bbd33ee3e9c6e87de0d",
-  "candidateId": "beef7938-dbca-45df-be68-e64652d6e5d4",
-  "artifactDigest": "791b65655eb8ab330bb42d4d844b4f95d00cd3b77c33b28c61f48f108a5b4fdc",
+  "generationEvidence": "docs/implementation/evidence/TDD-023-live-rail-generation-e6df479e-c121-4b82-9c9a-f0262df82e3e.json",
+  "jobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e",
+  "draftId": "e89f3b00-9460-41cf-ac0e-cfa779000bb7",
+  "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+  "baselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e",
+  "baselineDigest": "da8ec25ba40f0cc0afe633934729d2666cb9ad7eddb00d909951be9dde48e39d",
+  "candidateId": "e622e061-e192-4953-8870-ffed0af13a2a",
+  "artifactDigest": "1939186034da7f1bf25d523628fb4874e13d16c9612452054ca417ec96df53b3",
   "developmentEvents": [
     {
       "sequence": 1,
@@ -27,6 +27,14 @@
     },
     {
       "sequence": 2,
+      "type": "policy.rejected",
+      "role": "tester",
+      "commandId": null,
+      "status": null,
+      "path": "tests/plan.json"
+    },
+    {
+      "sequence": 3,
       "type": "file.written",
       "role": "developer",
       "commandId": null,
@@ -34,7 +42,7 @@
       "path": "test/generated/EquipmentToolTest.java"
     },
     {
-      "sequence": 3,
+      "sequence": 4,
       "type": "command.completed",
       "role": null,
       "commandId": "prepare-sdk",
@@ -42,7 +50,7 @@
       "path": null
     },
     {
-      "sequence": 4,
+      "sequence": 5,
       "type": "command.completed",
       "role": null,
       "commandId": "compile-unit",
@@ -50,7 +58,7 @@
       "path": null
     },
     {
-      "sequence": 5,
+      "sequence": 6,
       "type": "command.completed",
       "role": null,
       "commandId": "unit-test",
@@ -58,7 +66,7 @@
       "path": null
     },
     {
-      "sequence": 6,
+      "sequence": 7,
       "type": "file.written",
       "role": "developer",
       "commandId": null,
@@ -66,7 +74,7 @@
       "path": "src/generated/EquipmentTool.java"
     },
     {
-      "sequence": 7,
+      "sequence": 8,
       "type": "file.written",
       "role": "developer",
       "commandId": null,
@@ -74,7 +82,7 @@
       "path": "skills/equipment-query/SKILL.md"
     },
     {
-      "sequence": 8,
+      "sequence": 9,
       "type": "file.written",
       "role": "developer",
       "commandId": null,
@@ -82,7 +90,7 @@
       "path": "rails/definition.json"
     },
     {
-      "sequence": 9,
+      "sequence": 10,
       "type": "command.completed",
       "role": null,
       "commandId": "compile-unit",
@@ -90,7 +98,7 @@
       "path": null
     },
     {
-      "sequence": 10,
+      "sequence": 11,
       "type": "command.completed",
       "role": null,
       "commandId": "unit-test",
@@ -98,7 +106,7 @@
       "path": null
     },
     {
-      "sequence": 11,
+      "sequence": 12,
       "type": "command.completed",
       "role": null,
       "commandId": "compile-contract",
@@ -106,7 +114,7 @@
       "path": null
     },
     {
-      "sequence": 12,
+      "sequence": 13,
       "type": "command.completed",
       "role": null,
       "commandId": "platform-contract",
@@ -114,7 +122,7 @@
       "path": null
     },
     {
-      "sequence": 13,
+      "sequence": 14,
       "type": "command.completed",
       "role": null,
       "commandId": "package-component",
@@ -122,7 +130,7 @@
       "path": null
     },
     {
-      "sequence": 14,
+      "sequence": 15,
       "type": "bundle.created",
       "role": "developer",
       "commandId": null,
@@ -134,12 +142,12 @@
     {
       "role": "tester",
       "status": "completed",
-      "sessionId": "ses_e951412c0ffeqY9d4FUOC0Xt26"
+      "sessionId": "ses_e943d671dffexnrrftg4ZoZBWt"
     },
     {
       "role": "developer",
       "status": "completed",
-      "sessionId": "ses_e9513d2f9ffeK0myQinuGzHSVI"
+      "sessionId": "ses_e943ce998ffe1x7RLtOxYam2RB"
     }
   ],
   "toolBinding": {
@@ -164,7 +172,7 @@
     "tool-allowlist",
     "tool-call-limit@1:3"
   ],
-  "runId": "3e91a3f0-fa3b-4e80-972b-2a3e90f61984",
+  "runId": "8f1f239a-9c4d-4cce-a10f-5cc7eef2daa3",
   "runStatus": "succeeded",
   "skillLoaded": true,
   "generatedToolInvoked": true,
@@ -190,7 +198,7 @@
         "count": 1,
         "event": "call_allowed",
         "limit": 3,
-        "sessionId": "3e91a3f0-fa3b-4e80-972b-2a3e90f61984"
+        "sessionId": "8f1f239a-9c4d-4cce-a10f-5cc7eef2daa3"
       },
       {
         "rail": "tool-call-limit",
@@ -198,7 +206,7 @@
         "count": 2,
         "event": "call_allowed",
         "limit": 3,
-        "sessionId": "3e91a3f0-fa3b-4e80-972b-2a3e90f61984"
+        "sessionId": "8f1f239a-9c4d-4cce-a10f-5cc7eef2daa3"
       }
     ]
   },

@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-24T02:36:34.168Z",
+  "baseUrl": "http://127.0.0.1:18080",
+  "composeProject": "agent-builder-td15-nf01",
+  "targetImageIds": [
+    "sha256:76102baabd35608a22a570e6750d2a7842d90b864b1f2c8566e375258ec8580d",
+    "sha256:7f77f099bf59c660535604893cab9048287a9015529bddaa1eadaab9e361fd8e"
+  ],
+  "goal": "查询设备状态，并要求每次运行最多 3 次工具调用。",
+  "snapshotId": "baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+  "baselineId": "94bac04a-24a1-4fc8-a31b-07906c9cf24e",
+  "jobId": "e6df479e-c121-4b82-9c9a-f0262df82e3e",
+  "taskStatus": "built",
+  "diagnostic": null,
+  "roles": [
+    {
+      "role": "tester",
+      "status": "completed",
+      "sessionId": "ses_e943d671dffexnrrftg4ZoZBWt"
+    },
+    {
+      "role": "developer",
+      "status": "completed",
+      "sessionId": "ses_e943ce998ffe1x7RLtOxYam2RB"
+    }
+  ],
+  "bundle": {
+    "digest": "952ff272b850ea759411e477ed52aa290e48c760fda89619a1851802dd0b70f7",
+    "artifactDigest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+    "profileDigest": "0f8c18308eb2299d5867664dce08023a8aa4375d6cb9630582c20b4583a20b1f",
+    "planDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+    "railDefinition": {
+      "rails": [
+        {
+          "parameters": {
+            "maximum": 3
+          },
+          "templateId": "tool-call-limit@1"
+        }
+      ],
+      "schemaVersion": 1
+    },
+    "runtimeSpec": {
+      "agent": {
+        "id": "snapshot-baeb1cfb-1b5f-4f26-bf3f-f289e81fb6fc",
+        "type": "DeepAgent",
+        "rails": [
+          "audit",
+          "tool-allowlist",
+          "tool-call-limit@1:3"
+        ],
+        "systemPrompt": "你是设备运维助手。查询设备状态，并要求每次运行最多 3 次工具调用。 缺少设备编号时追问；有编号时通过 get_equipment 查询，不得编造事实。",
+        "maxIterations": 4
+      },
+      "tools": [
+        {
+          "name": "get_equipment",
+          "protocol": "http",
+          "description": "按设备编号查询 Mock 设备状态；equipmentId 必填，例如 PUMP-001。",
+          "inputFields": {
+            "equipmentId": "string"
+          },
+          "operationId": "equipment-status",
+          "toolVersion": "equipment-status-http@1",
+          "connectionRef": "enterprise-mock-http@1",
+          "responseFields": {
+            "source": "string",
+            "status": "string",
+            "equipmentId": "string",
+            "temperatureCelsius": "integer"
+          }
+        }
+      ]
+    },
+    "files": [
+      {
+        "path": "src/generated/EquipmentTool.java",
+        "digest": "f6bc06b8a48a74ae432ac13dbbe0dcee93cf5dfbdf83bfc151b551a943cc92c2",
+        "size": 1762
+      },
+      {
+        "path": "test/generated/EquipmentToolTest.java",
+        "digest": "1fe84578a75564a44f0fd3b4711d6c5701429d4473620661ddf92e0aa6b454e7",
+        "size": 6838
+      },
+      {
+        "path": "skills/equipment-query/SKILL.md",
+        "digest": "31f66ac81c6560e6535e0d85d7cbc5322aa431c699c3e537787c68b168232809",
+        "size": 2039
+      },
+      {
+        "path": "rails/definition.json",
+        "digest": "db1314db9b614b7105a864fbb3c807783b0bd9ba8414a6423511a4d8bd2f99e3",
+        "size": 92
+      },
+      {
+        "path": "test-plan.json",
+        "digest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60",
+        "size": 3354
+      },
+      {
+        "path": "component.jar",
+        "digest": "13e98a4e295448218337b4869fb810a9378f4b8fdc9a600b122c491f4a1815cb",
+        "size": 3101
+      }
+    ]
+  },
+  "files": {
+    "railDefinitionDigest": "db1314db9b614b7105a864fbb3c807783b0bd9ba8414a6423511a4d8bd2f99e3",
+    "railDefinitionMatchesBundle": true,
+    "testPlanDigest": "3e0da838d0ec401d4e805ef1f65c4d1e92dd0099b8e1858f017b2a2a697beb60"
+  }
+}

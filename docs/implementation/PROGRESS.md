@@ -2,6 +2,8 @@
 
 目标：完成 TDD 计划至 TD-15，包括 P0-A/B/C 累积必测集及 NF-01～NF-06。状态：开发中，尚未完成阶段验收。
 
+TDD-115：在当前 App `76102ba…`／Runner `7f77f09…` 固定目标刷新真实设备样例：AC-21 两分支、AC-22a/b 六分支与 AC-22d 三分支通过。正式门禁现已按新镜像重绑：P0-A 0/70 通过、70 未验证；P0-B 8/170 通过、162 未验证；P0-C 11/235 通过、224 未验证，失败均为 0。大量旧证据因目标镜像变化而需重跑；TD-15 尚未完成。详见 [TDD-115](TDD-115.md)。
+
 TDD-114：完成 `wealth-balance-tool-java@1` 与 `wealth-balance-skill-java@1` 独立生成路径；同一批 App／Runner 镜像上，真实双角色生成、scope-aware 候选和 Mock 财务三项验收分别通过。当前镜像摘要为 App `76102ba…`、Runner `7f77f09…`。类型检查、146 项单元／契约、115 项集成、finance Adapter 4 项、Java Bridge 7 项和浏览器装配回归 1 项通过。正式 P0-A/B/C 汇总尚未绑定新镜像，AC-22 门禁证据仍需正式刷新，TD-15 尚未完成。详见 [TDD-114](TDD-114.md)。
 
 TDD-113：接通 `wealth-balance-tool-java@1` Tool-only admission 与 Runner 工作区：只开放 Tool 源码／单测写入，平台物化固定审阅 Skill，实际 Java 红绿测试、余额契约检查、JAR 打包和制品注册均通过。3 项 Adapter、8 项 Development 集成、11 项 Profile 测试、类型检查通过。尚未运行真实 OpenCode Tool-only 任务、部署候选或调用 Mock，AC-22a 未关闭；本轮未重建 Docker。详见 [TDD-113](TDD-113.md)。
