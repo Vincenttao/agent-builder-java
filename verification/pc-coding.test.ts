@@ -9,7 +9,7 @@ import type {CodingEngine} from '../workbench-server/coding.js';
 
 test('PC Coding reviews fixture changes, protects drafts/stale heads, answers original question and cancels',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-pc-coding-'));
- let progress:()=>void=()=>{};let calls=0,answer:((answers:string[][])=>void)|undefined;
+ let progress:()=>void=()=>{};let calls=0,answerCalls=0,answer:((answers:string[][])=>void)|undefined;
  const skills:string[]=[];
  const engine:CodingEngine={kind:'contract-fixture',async run(input){
   calls++;skills.push(input.skill);
@@ -23,7 +23,7 @@ test('PC Coding reviews fixture changes, protects drafts/stale heads, answers or
   if(input.prompt==='等待取消')await new Promise((_,reject)=>input.signal.addEventListener('abort',()=>reject(Error('aborted')),{once:true}));
   writeFileSync(join(input.directory,'instructions.md'),'浏览器契约测试建议 '+calls);
   return {sessionId:'pc-contract-fixture-'+calls,model:'contract-fixture',summary:'测试引擎差异，非真实模型生成。',evidence:[{tool:'skill',status:'completed',input:{name:input.skill}}]};
- },async answer(_directory,id,answers){assert.equal(id,'question-one');assert.ok(answer);answer(answers);}};
+ },async answer(_directory,id,answers){answerCalls++;assert.equal(id,'question-one');assert.ok(answer);answer(answers);}};
  const wb=createWorkbench({root,templateFiles:readTree(resolve('templates/moa')),codingEngine:engine});
  const release=wb.store.publish('moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'编码测试应用','application');
  const original=wb.store.files(app.id,'application')['instructions.md'];
@@ -57,13 +57,18 @@ test('PC Coding reviews fixture changes, protects drafts/stale heads, answers or
  await page.getByText('已记录开发 Skill 工具读取：',{exact:false}).waitFor();
  assert.equal(await page.getByLabel('补充回答 1',{exact:true}).inputValue(),'问题草稿不会被轮询覆盖');
  assert.equal(await page.getByLabel('补充回答 1',{exact:true}).evaluate(e=>e===document.activeElement),true);
+ await page.reload();await page.getByLabel('补充回答 1',{exact:true}).waitFor();
+ assert.equal(await page.getByLabel('补充回答 1',{exact:true}).inputValue(),'问题草稿不会被轮询覆盖');
+ assert.equal(calls,3);assert.equal(answerCalls,0); // Refresh observes the original question; it cannot generate or answer.
  await page.getByLabel('补充回答 1',{exact:true}).fill('');
  await page.getByLabel('保留 · 保留原范围',{exact:true}).check();
+ await page.reload();await page.getByRole('button',{name:'回答原问题',exact:true}).waitFor();
+ assert.equal(await page.getByLabel('保留 · 保留原范围',{exact:true}).isChecked(),true);assert.equal(answerCalls,0);
  await page.getByRole('button',{name:'回答原问题',exact:true}).click();await page.getByRole('button',{name:'应用全部差异',exact:true}).waitFor();
  await page.getByRole('button',{name:'应用全部差异',exact:true}).click();await page.getByText('建议已应用并提交工程版本',{exact:true}).waitFor();
  assert.equal(wb.store.files(app.id,'application')['instructions.md'],'浏览器契约测试建议 3');
  await page.getByLabel('开发需求').fill('等待取消');await page.getByRole('button',{name:'生成修改建议',exact:true}).click();
- await page.getByRole('button',{name:'取消原任务',exact:true}).click();await page.getByText('已取消',{exact:true}).waitFor();assert.equal(calls,4);
+ await page.getByRole('button',{name:'取消原任务',exact:true}).click();await page.getByText('已取消',{exact:true}).waitFor();assert.equal(calls,4);assert.equal(answerCalls,1);
  await page.locator('#identity').selectOption('platform');await page.getByRole('button',{name:'查看诊断'}).click();await page.getByRole('button',{name:'Coding 助手',exact:true}).click();
  await page.getByText('平台身份只能查看此应用的编码记录',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).count(),0);
  assert.ok(skills.every(s=>s==='moa-application-development'));

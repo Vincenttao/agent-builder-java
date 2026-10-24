@@ -18,7 +18,9 @@ window.WorkbenchCoding = (() => {
   function report(error,token,context){if(!valid(token,context))return;host.notify(error.message);document.getElementById('coding-list').textContent='读取失败；请点击“重新核对建议”核对原任务，不会自动重新生成。';}
   function question(job,s,readOnly){
     if(!job.pendingQuestion)return '';
-    const answers=s.answers.get(job.id+':'+job.pendingQuestion.id)??{};
+    const answerKey=job.id+':'+job.pendingQuestion.id;
+    if(!s.answers.has(answerKey)){const c=host.context(),saved=host.local?.read(c.project.id,c.role,'coding-answer:'+answerKey,{})??{};const valid=saved&&typeof saved==='object'&&!Array.isArray(saved)&&Object.values(saved).every(v=>Array.isArray(v)&&v.every(x=>typeof x==='string'));s.answers.set(answerKey,valid?saved:{});}
+    const answers=s.answers.get(answerKey);
     return `<form id="coding-answer" data-job="${esc(job.id)}" data-question="${esc(job.pendingQuestion.id)}">${job.pendingQuestion.questions.map((q,i)=>`<fieldset ${readOnly?'disabled':''}><legend>${esc(q.question??q.header??'请补充需求')}</legend>${(Array.isArray(q.options)?q.options:[]).map((o,j)=>`<label class="check"><input type="${q.multiple?'checkbox':'radio'}" name="q-${i}" value="${esc(o.label)}" ${(answers['q-'+i]??[]).includes(o.label)?'checked':''}> ${esc(o.label)}${o.description?' · '+esc(o.description):''}</label>`).join('')}${q.custom!==false?`<label for="coding-answer-${i}">补充回答 ${i+1}</label><textarea id="coding-answer-${i}" name="custom-${i}">${esc(answers['custom-'+i]?.[0]??'')}</textarea>`:''}</fieldset>`).join('')}${readOnly?'':'<button class="primary">回答原问题</button>'}</form>`;
   }
   function detail(job,s,context){
@@ -64,7 +66,7 @@ window.WorkbenchCoding = (() => {
     if(job&&activeStatuses.includes(job.status))timer=setTimeout(()=>refresh(token,context).catch(e=>report(e,token,context)),750);
   }
   function init(callbacks){host=callbacks;
-    document.addEventListener('input',e=>{const form=e.target.closest('#coding-answer');if(form){const c=host.context();if(c){const values={};for(const [name,value] of new FormData(form)){(values[name]??=[]).push(value);}state(c.project.id).answers.set(form.dataset.job+':'+form.dataset.question,values);}}if(e.target.id==='coding-prompt'){const context=host.context();if(context){const s=state(context.project.id);s.prompt=e.target.value;persist(context.project.id,s);}}});
+    document.addEventListener('input',e=>{const form=e.target.closest('#coding-answer');if(form){const c=host.context();if(c){const values={};for(const [name,value] of new FormData(form)){(values[name]??=[]).push(value);}const answerKey=form.dataset.job+':'+form.dataset.question;state(c.project.id).answers.set(answerKey,values);host.local?.write(c.project.id,c.role,'coding-answer:'+answerKey,values);}}if(e.target.id==='coding-prompt'){const context=host.context();if(context){const s=state(context.project.id);s.prompt=e.target.value;persist(context.project.id,s);}}});
     document.addEventListener('change',e=>{if(e.target.id==='coding-diff-file'){const c=host.context();if(!c)return;state(c.project.id).path=e.target.value;paint(c);}});
     document.addEventListener('click',e=>{const button=e.target.closest('button');if(!button||!button.dataset.codingAction&&!button.dataset.codingJob)return;host.action(async()=>{
       const c=host.context();if(!c)return;const s=state(c.project.id),token=generation;
@@ -88,7 +90,7 @@ window.WorkbenchCoding = (() => {
         if(!question||question.id!==form.dataset.question)throw Error('原问题已变化，请重新核对建议');
         const data=new FormData(form),answers=question.questions.map((q,i)=>{const custom=String(data.get('custom-'+i)??'').trim(),selected=data.getAll('q-'+i).map(String);return custom?(q.multiple?[...selected,custom]:[custom]):selected;});
         if(answers.some(a=>!a.length))throw Error('请回答每个原问题');
-        await host.api('/jobs/'+job.id+'/answer','POST',{questionId:question.id,answers});if(valid(token,c))await refresh(token,c,true);
+        await host.api('/jobs/'+job.id+'/answer','POST',{questionId:question.id,answers});s.answers.delete(job.id+':'+question.id);host.local?.write(c.project.id,c.role,'coding-answer:'+job.id+':'+question.id,{});if(valid(token,c))await refresh(token,c,true);
       }
     });});
   }
