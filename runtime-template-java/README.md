@@ -11,3 +11,5 @@
 `LocalSkillRunner` 是针对本 Demo 的受信任本机适配：只接受启动时登记的脚本文本，使用 `/usr/bin/python3 -I`，结构化 `SKILL_INPUT`，清空继承环境、限定超时和输出。它不提供远端 Sandbox 隔离，不支持任意 shell 命令或通用配置凭据绑定。企业脚本执行隔离仍属于后置能力。
 
 `TaskShelf` 只管理同进程的业务任务规则及每任务独立 Core Session：当前任务与一个保留任务、切换决定、恢复复核、输入标识失效、已提交操作/回执归属。最多保留 128 个任务和最近 4096 个状态事件。它尚未接入执行宿主；状态测试不等于真实 Core 中断恢复、外部零调用或跨重启恢复已验证。
+
+真实查询探测：先启动已配置的本机 Jaeger（HTTP 查询 16686、OTLP HTTP 14318），再运行 `node --import tsx verification/live-moa-http.ts`。脚本读取私有模型配置，自行启动并停止独立 Mock、编译 Java、执行真实 Flash/MOA/HTTP 查询，核对外部调用数和按 ID 取回 Trace。需 Linux Maven、已安装的固定 Core/Runtime 依赖和可用模型网络；失败记录保留，不自动重试模型。此探测仅覆盖查询，不覆盖确认、双层任务和发布。
