@@ -1,10 +1,10 @@
 # Agent Builder
 
-面向企业 AI 平台开发人员的一站式 Agent 开发与测试原型：确认需求，由开发 Agent 和测试 Agent 协作生成组件，再由平台根据执行证据决定是否可以交付。
+面向企业 AI 平台开发者与场景 Agent 开发者的开发工作台。产品目标是：平台方交付可复用范式和场景模板，场景方通过配置、装配与少量开发完成应用，再交给企业 CI/CD 发布为服务。完整方向见 [PRD 2.0](docs/Agent开发工作台_PRD_v2.0.md)，以 MOA 类范式和 i豆应用贯穿设计。
 
 当前可走通 **设备查询 Tool／Skill 自动开发 → 固定候选 → 独立验收 → 同一 JAR 发布 → 模拟企业 App 调用**。平台使用 TypeScript，业务 Agent 运行在 openJiuwen Java 上，工程开发使用 OpenCode 与 DeepSeek。
 
-> 当前为 trusted-local 开发原型，未启用任务沙箱。已实现范围和验证基线截至 2026-10-22 / TDD-017；完整 PRD 尚未验收完成。
+> PRD 2.0 是目标设计，本次仅更新文档，尚未实现 MOA/i豆完整链路或可脱离 Builder 的企业交付。当前仍为 trusted-local 开发原型，未启用任务沙箱。下文保留现有操作路径；各项验证以对应实施记录的版本和环境为准。
 
 ## 文档入口
 
@@ -13,7 +13,8 @@
 | 启动并体验 | 本页的快速上手 |
 | 逐步操作、部署维护、开发调试、排错 | [详细操作指南](docs/操作指南.md) |
 | 向团队介绍产品、架构与演示方法 | [项目汇报 HTML](docs/项目汇报.html)（浏览器直接打开，支持汇报模式和打印） |
-| 了解需求与总体设计 | [文档导航](docs/README.md) |
+| 了解当前产品方向 | [PRD 2.0](docs/Agent开发工作台_PRD_v2.0.md)、[后续推进计划](docs/后续推进计划与执行要求.md) |
+| 查看设计与历史实现文档 | [文档导航](docs/README.md) |
 | 核对已实现范围及实际测试 | [实施进度](docs/implementation/PROGRESS.md)、[TDD-017 验证记录](docs/implementation/TDD-017.md) |
 
 ## 快速上手：Docker Compose
@@ -96,7 +97,7 @@ flowchart TB
   M --> D[(独立 Mock 数据库)]
 ```
 
-平台持有需求、验收、发布和业务请求状态；Runner 管理工程进程与 JVM；Java SDK 执行业务 Agent；Mock 保存可核验的业务事实。Compose 提供部署封装，当前不提供每个开发任务的独立沙箱。[技术设计](docs/NL2Agent_技术设计_v0.1.md)描述完整目标架构，[汇报 HTML](docs/项目汇报.html)说明当前实现与设计取舍。
+平台持有需求、验收、发布和业务请求状态；Runner 管理工程进程与 JVM；Java SDK 执行业务 Agent；Mock 保存可核验的业务事实。Compose 提供部署封装，当前不提供每个开发任务的独立沙箱。[原技术设计](docs/NL2Agent_技术设计_v0.1.md)和[汇报 HTML](docs/项目汇报.html)描述此前设计与实现，尚未按 PRD 2.0 适配；上图为现有架构。
 
 ## 常用命令
 
