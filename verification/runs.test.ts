@@ -42,7 +42,7 @@ function fixture(t:test.TestContext,adapter=engine()){
 async function settled(runs:RunManager,id:string){for(let n=0;n<200;n++){const run=runs.get(id,'application');if(!['building','starting','stopping'].includes(run.status))return run;await new Promise(r=>setTimeout(r,10));}throw new Error('run did not settle');}
 
 test('run freezes saved content, isolates build output, proxies only owned business calls, and keeps read-only history',async t=>{
- const {store,runs,app}=fixture(t);const run=await runs.start(app.id,'application',app.head);const ready=await settled(runs,run.id);assert.equal(ready.status,'running');assert.equal(ready.engine,'contract-fixture');assert.equal(ready.head,app.head);assert.ok(ready.artifact);assert.ok(ready.artifact.sha256);
+ const {store,runs,app,template}=fixture(t);const run=await runs.start(app.id,'application',app.head);const ready=await settled(runs,run.id);assert.equal(ready.status,'running');assert.equal(ready.engine,'contract-fixture');assert.equal(ready.head,app.head);assert.ok(ready.artifact);assert.ok(ready.artifact.sha256);
  assert.equal(ready.logs.join('').includes('sk-aaaaaaaa'),false);assert.equal(store.git(app.id,['status','--porcelain']),'');
  store.save(app.id,'application',app.head,{'instructions.md':'下一版本'});assert.equal(runs.get(run.id,'application').head,app.head);
  const result=await runs.message(run.id,'application',{query:'查询'});assert.equal(result.conversationId,conversationId);
@@ -50,6 +50,9 @@ test('run freezes saved content, isolates build output, proxies only owned busin
  await assert.rejects(runs.command(run.id,'platform',conversationId,'reply',{taskId:'task',token:'x',answer:'确认'}),(e:unknown)=>e instanceof WorkbenchError&&e.code==='FORBIDDEN');
  await runs.stop(run.id,'application');const history=await runs.conversation(run.id,'application',conversationId);assert.equal(history.live,false);assert.equal(history.interrupted,true);
  await assert.rejects(runs.message(run.id,'application',{query:'重复'}),(e:unknown)=>e instanceof WorkbenchError&&e.code==='RUN_NOT_ACTIVE');
+ const platformRun=await runs.start(template.id,'platform',template.head);
+ assert.deepEqual(runs.listAll('application').map(r=>r.id),[run.id]);
+ assert.equal(runs.listAll('platform').length,2);await runs.stop(platformRun.id,'platform');
 });
 
 test('stale revision, wrong role, and concurrent build are rejected before another build',async t=>{

@@ -20,6 +20,7 @@ export class RunManager{
  private record(id:string){const cached=this.records.get(id);if(cached)return cached;const row=this.store.db.prepare('SELECT record FROM runs WHERE id=?').get(id) as {record:string}|undefined;if(!row)fail('NOT_FOUND','运行记录不存在',404);const run=JSON.parse(row.record) as RunRecord;this.records.set(id,run);return run;}
  get(id:string,role:Role){const run=this.record(id);this.store.get(run.projectId,role);return JSON.parse(JSON.stringify(run)) as RunRecord;}
  list(id:string,role:Role){this.store.get(id,role);return (this.store.db.prepare('SELECT id FROM runs WHERE projectId=? ORDER BY rowid DESC LIMIT 24').all(id) as {id:string}[]).map(row=>this.get(row.id,role));}
+ listAll(role:Role){return (this.store.db.prepare('SELECT id FROM runs ORDER BY rowid DESC LIMIT 24').all() as {id:string}[]).flatMap(row=>{try{return [this.get(row.id,role)];}catch(error){if(error instanceof WorkbenchError&&error.code==='FORBIDDEN')return [];throw error;}});}
  private owner(run:RunRecord,role:Role){this.store.get(run.projectId,role);if(run.role!==role)fail('FORBIDDEN','请使用发起运行的身份操作',403);}
  private log(run:RunRecord,text:string){const value=sanitize(text).slice(-4000);run.logs.push(value);if(run.logs.length>150)run.logs.shift();const file=join(this.directory(run.id),'process.log');if(!existsSync(file)||statSync(file).size<2_000_000)appendFileSync(file,value);this.persist(run);}
  async start(id:string,role:Role,head:string){
