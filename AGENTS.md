@@ -1,7 +1,7 @@
 # Repository collaboration rules
 
-- This is a new product baseline. The active branch contains only PRD-related documents and the static Demo. Do not restore legacy backend, Java, database, Docker, generation, or acceptance code as an implicit dependency.
-- Follow `docs/后续推进计划与执行要求.md`. The former DEV-02 and FULL-03 are merged into DEV-02 (the complete workbench for both roles). Follow the unified architecture discussion before implementation; do not start backend work automatically.
+- This is a new product baseline. The demo branch retains the static prototype; `dev/workbench-v2` is authorized for the new runnable Demo. Follow `docs/DEV-02_可运行Demo开发计划.md`. Do not restore legacy v1 implementation as an implicit dependency.
+- Follow `docs/后续推进计划与执行要求.md`. The former DEV-02 and FULL-03 are merged into DEV-02 (the complete workbench for both roles). The user has authorized implementation on dev/workbench-v2 using the reviewed Demo-first architecture and TDD at affected layers.
 - Use `docs/Agent开发工作台_PRD_v2.0.md` as the product baseline. The Demo is simulated; real OpenCode, Runtime, OTel, and enterprise delivery remain separate acceptance targets.
 - Legacy material is preserved on `archive/legacy-v1-20261025`; see `docs/历史项目归档说明.md`. Consult it only when relevant, and never treat its tests or old roadmap as the current project's task queue.
 

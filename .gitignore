@@ -7,3 +7,9 @@ coverage/
 .env.*
 *.log
 *:Zone.Identifier
+
+# Local development state and downloaded native tools
+.workbench/
+.tools/
+**/target/
+dist/
