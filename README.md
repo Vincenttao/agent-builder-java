@@ -25,7 +25,8 @@ node docs/developer-prototype-v2/scripts/serve.cjs
 | [PRD](docs/Agent开发工作台_PRD_v2.0.md) | 产品边界、角色、编排、需求和真实验收条款 |
 | [交互设计](docs/Agent开发工作台_交互设计_v2.0.md) | 双角色导航、开发流程、页面及交互规则 |
 | [MOA 业务规则分析](docs/MOA业务Agent分层与转交规则分析.md) | 固定源码快照、任务转交与 Skill 归属的依据 |
-| [推进计划](docs/后续推进计划与执行要求.md) | Demo → 应用开发者前后端 → 双角色完整前后端；后两阶段先讨论方案 |
+| [技术架构](docs/Agent开发工作台_技术架构设计_v2.0.md) | 本机运行、OpenCode、Java 业务状态、观测、构建与企业交付 |
+| [推进计划](docs/后续推进计划与执行要求.md) | Demo → 完整开发工作台；双角色统一设计，先讨论技术方案 |
 | [来源材料与文档索引](docs/README.md) | 需求来源和 Demo 相关设计记录 |
 | [历史项目归档](docs/历史项目归档说明.md) | 旧代码、文档和本地证据的保存位置 |
 
