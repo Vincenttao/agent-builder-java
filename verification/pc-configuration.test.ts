@@ -21,6 +21,7 @@ test('PC business configuration, Skill assembly and saved flow share actual proj
  await page.goto(`http://127.0.0.1:${address.port}`);
  await page.getByRole('button',{name:'进入工程'}).click();
  await page.getByRole('button',{name:'业务配置',exact:true}).click();
+ await page.getByLabel('余额结果字段路径').fill('employee.wallet.availablePoints');
  await page.getByLabel('自己负责的业务').fill('查询福利余额\n兑换礼品');
  await page.getByLabel('角色与行为（应用层 System Prompt）').fill('你是福利助手。兑换前必须确认。');
  await page.getByLabel('Skill 标识').fill('benefits');
@@ -40,6 +41,7 @@ test('PC business configuration, Skill assembly and saved flow share actual proj
  await page.getByRole('button',{name:'保存所有修改'}).click();
  await page.getByText('已提交工程版本',{exact:true}).waitFor();
  const definition=wb.store.definition(application.id,'application');
+ assert.equal(definition.mapping.balancePath,'employee.wallet.availablePoints');
  assert.deepEqual(definition.scope.own,['查询福利余额','兑换礼品']);assert.equal(definition.handoff.target,'fallback');assert.equal(definition.handoff.unfinished,'retain');
  assert.deepEqual(definition.skills,[{id:'benefits',file:'skills/benefits/SKILL.md',operations:[]}]);
  assert.match(wb.store.files(application.id,'application')['skills/benefits/SKILL.md'],/^---\nname: benefits\n/);
