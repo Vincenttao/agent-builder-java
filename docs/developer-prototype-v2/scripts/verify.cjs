@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {pathToFileURL}=require('node:url');
 const root=path.resolve(__dirname,'..');
-const out=path.resolve(root,'../../test-results/prototype-v2');
+const out=process.env.DEMO_CHECK_OUTPUT?path.resolve(process.env.DEMO_CHECK_OUTPUT):path.resolve(root,'../../test-results/prototype-v2');
 fs.mkdirSync(out,{recursive:true});
 const key='openjiuwen-workbench-v2-demo-3';
 (async()=>{
@@ -18,7 +18,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  const tab=id=>click('tab',`[data-id="${id}"]`);
  try{
  await page.goto(pathToFileURL(path.join(root,'开发工作台2.0.html')).href);
- await expect(page.getByRole('heading',{name:'i豆服务助手',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'MOA 开发模板',exact:true})).toBeVisible();await tab('overview');
  await expect(page.locator('nav')).toContainText(['我的应用','代码与场景扩展']);
  await click('suggest','[data-kind="eligibility"]');assert.equal((await state()).coding.scene.proposal,null);
  await platform();await expect(page.locator('nav')).toContainText('范式工程');await expect(page.locator('nav')).not.toContainText('我的应用');
@@ -27,7 +27,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  await click('review-proposal');await expect(page.locator('#dialog')).toContainText('修改前');await page.locator('#dialog [data-action="apply-proposal"]').click();
  await click('platform-check');await click('platform-tab','[data-id="publish"]');await click('publish');
  let s=await state();assert.equal(s.platform.templateVersion,'1.3.0');assert.equal(s.app.template,'1.2.0');
- await click('handoff');await click('create-app');await click('create-confirm');s=await state();assert.equal(s.app.template,'1.3.0');assert.equal(s.app.devSkill,'moa-scene-dev@demo-1.1');assert.equal(s.app.openRules,true);
+ await click('handoff');await click('create-app');await click('fill-ideabean');await click('create-confirm');s=await state();assert.equal(s.app.template,'1.3.0');assert.equal(s.app.devSkill,'moa-scene-dev@demo-1.1');assert.equal(s.app.openRules,true);
  checks.push('双角色导航、平台开放参数与模板交接，已有应用版本不被覆盖');
  await click('suggest','[data-kind="eligibility"]');assert.equal((await state()).app.eligibility,false);
  await click('open-code');let config=JSON.parse(await page.locator('#code-editor').inputValue());config.name='i豆员工助手';
@@ -56,7 +56,7 @@ const key='openjiuwen-workbench-v2-demo-3';
  await page.setViewportSize({width:1280,height:900});await tab('extensions');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await page.setViewportSize({width:390,height:844});for(const id of ['overview','extensions','debug','delivery']){await tab(id);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`mobile overflow: ${id}`);}
  await page.setViewportSize({width:1440,height:1000});await page.evaluate(()=>localStorage.setItem('unrelated-prototype','retain'));await click('tour');await click('reset-request');await click('reset-confirm');assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-prototype')),'retain');assert.equal((await state()).business.orders.length,0);
- await page.locator('#app-name').fill('<img src=x onerror=alert(1)>');await click('save-config');await expect(page.locator('.page-head h1')).toHaveText('<img src=x onerror=alert(1)>');assert.equal(await page.locator('.page-head img').count(),0);
+ await tab('overview');await page.locator('#app-name').fill('<img src=x onerror=alert(1)>');await click('save-config');await expect(page.locator('.page-head h1')).toHaveText('<img src=x onerror=alert(1)>');assert.equal(await page.locator('.page-head img').count(),0);
  assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);checks.push('桌面/手机无横向溢出、重置隔离、输入转义、零外部请求、零浏览器异常');
  fs.writeFileSync(path.join(out,'result.json'),JSON.stringify({kind:'simulated-ui-check',checks,passed:checks.length,businessE2E:false},null,2));console.log(JSON.stringify({passed:checks.length,checks,output:out},null,2));
  }catch(e){await page.screenshot({path:path.join(out,'failure.png'),fullPage:true});throw e;}finally{await browser.close();}

@@ -1,6 +1,6 @@
 # Agent Builder
 
-面向企业 AI 平台开发者与场景 Agent 开发者的开发工作台。产品目标是：平台方交付可复用范式和场景模板，场景方通过配置、装配与少量开发完成应用，再交给企业 CI/CD 发布为服务。完整方向见 [PRD 2.0](docs/Agent开发工作台_PRD_v2.0.md)，以 MOA 类范式和 i豆应用贯穿设计。
+面向企业 AI 平台开发者与场景 Agent 开发者的开发工作台。产品目标是：平台方交付可复用范式和开发模板，场景方通过配置、装配与少量开发完成应用，再交给企业 CI/CD 发布为服务。完整方向见 [PRD 2.0](docs/Agent开发工作台_PRD_v2.0.md)，以 MOA 类范式和 i豆应用贯穿设计。
 
 当前可走通 **设备查询 Tool／Skill 自动开发 → 固定候选 → 独立验收 → 同一 JAR 发布 → 模拟企业 App 调用**。平台使用 TypeScript，业务 Agent 运行在 openJiuwen Java 上，工程开发使用 OpenCode 与 DeepSeek。
 
