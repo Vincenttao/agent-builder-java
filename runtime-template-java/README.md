@@ -4,7 +4,7 @@
 
 依赖固定为 Core 0.1.17、Runtime 0.1.4。适配包括 Session/工具/中断 API、MOA 原生调用生命周期 Rail，以及 DeepAgentSession 的 Core OTel 会话门面。外部仓库不修改。
 
-已提供 `BusinessApplication` 可执行 JAR 入口、外置业务资产装载和 Skill HTTP 执行服务，使用 Runtime 的 Core 适配器和 MOA 原生工具循环。已接入应用意图路由、两层任务宿主与受控 A2A；工作台页面与独立导出仍在开发；不要将构建或 Skill 联调成功视为 RD-01～06 完成。
+已提供 `BusinessApplication` 可执行 JAR 入口、外置业务资产装载和 Skill HTTP 执行服务，使用 Runtime 的 Core 适配器和 MOA 原生工具循环。已接入应用意图路由、两层任务宿主与受控 A2A；工作台页面与技术导出已接入，导出包独立业务验收仍待验证；不要将构建或 Skill 联调成功视为 RD-01～06 完成。
 
 验证：`mvn -f runtime-template-java/pom.xml test`。前提是固定版本 Core/Runtime 已安装。`LiveMoaProbe` 是显式运行的集成探测，不属于默认单元测试；其 fixture 模式不调用模型，操作使用声明的固定数据。真实模型和固定模型记录分别保留在 `test-results/dev-workbench-v2/p0/`。
 
@@ -31,4 +31,4 @@
 
 Runtime SPI 的外部会话映射和 input-required/原确认续接有确定性集成测试；不能据此推断任意外部 A2A 客户端的全部入站兼容性。已知定义冲突阻断当前修订的新派发/旧确认，需经 Coding 修订并运行新修订；原已提交操作的只读核对仍可用。
 
-任务事件按会话追加到运行目录 `events.jsonl`，单会话最多 128 任务、4096 条内存事件、8 MB 事件文件；一个实例最多 64 会话。事件记录不是可重驱的 Core 检查点。进程重启后不自动恢复未完成任务，不能把事件文件存在当成恢复能力。当前工作台尚未接入该 Java 服务。
+任务事件按会话追加到运行目录 `events.jsonl`，单会话最多 128 任务、4096 条内存事件、8 MB 事件文件；一个实例最多 64 会话。事件记录不是可重驱的 Core 检查点。进程重启后不自动恢复未完成任务，不能把事件文件存在当成恢复能力。当前工作台已接入该 Java 服务的运行控制 API，PC 交互与导出控制层经契约测试；完整真实双角色业务验收仍需单列验证。

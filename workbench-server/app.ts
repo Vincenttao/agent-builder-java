@@ -3,6 +3,7 @@ import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
+import {ExportManager} from './exports.js';
 import {RunManager} from './runs.js';
 import {LocalJavaEngine,type RunEngine} from './local-java.js';
 import {moaTemplateFiles} from './template.js';
@@ -16,15 +17,16 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   store.seedTemplate(options.templateFiles??moaTemplateFiles());
   const jobs=new CodingJobs(store,options.codingEngine??new OpenCodeEngine(repository));
   const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
+  const exports=new ExportManager(store,runs);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
@@ -67,10 +69,15 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   app.get('/api/runs/:id/conversations/:conversation',async(req,res)=>res.json(await runs.conversation(req.params.id,res.locals.role,req.params.conversation)));
   app.post('/api/runs/:id/conversations/:conversation/observe',async(req,res)=>res.json(await runs.observe(req.params.id,res.locals.role,req.params.conversation)));
   for(const action of ['reply','decide','resume','receipt'])app.post<{id:string;conversation:string}>('/api/runs/:id/conversations/:conversation/'+action,async(req,res)=>res.json(await runs.command(req.params.id,res.locals.role,req.params.conversation,action,req.body)));
+  app.get('/api/projects/:id/exports',(req,res)=>res.json({exports:exports.list(req.params.id,res.locals.role)}));
+  app.post('/api/projects/:id/exports',async(req,res)=>{const result=await exports.create(req.params.id,res.locals.role,req.body?.runId);res.status(result.reused?200:201).json({export:result.record});});
+  app.get('/api/exports/:id/manifest',async(req,res)=>res.json({manifest:await exports.manifest(req.params.id,res.locals.role)}));
+  app.get('/api/exports/:id/files/:kind',async(req,res,next)=>{const file=await exports.file(req.params.id,res.locals.role,req.params.kind);res.set('X-Content-SHA256',file.artifact.sha256);res.download(file.path,req.params.id+'-'+file.artifact.filename,error=>{if(error)next(error);});});
+  app.delete('/api/exports/:id',async(req,res)=>{await exports.remove(req.params.id,res.locals.role);res.status(204).end();});
   app.use('/api',(_req,_res,next)=>next(new WorkbenchError('NOT_FOUND','接口不存在',404)));
   app.use((error:unknown,_req:Request,res:Response,_next:NextFunction)=>{
     const e=error instanceof WorkbenchError?error:error instanceof SyntaxError?new WorkbenchError('INVALID_JSON','请求必须是有效 JSON'):new WorkbenchError('INTERNAL_ERROR','操作失败，请查看本机服务状态',500);
     res.status(e.status).json({error:{code:e.code,message:e.message}});
   });
-  return {app,store,jobs,runs,close:async()=>{closing=true;await Promise.all([jobs.close(),runs.close()]);}};
+  return {app,store,jobs,runs,exports,close:async()=>{closing=true;await Promise.all([exports.close(),jobs.close(),runs.close()]);}};
 }
