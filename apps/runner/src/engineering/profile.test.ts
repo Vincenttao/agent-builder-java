@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest';
 import {validateGenerationRequest,checkFileAccess,checkCommand,generationProfile,generationProfileFor,profileRuntimeTools} from './profile.js';
-import {equipmentGenerationRequest,generationPolicyError,generationImplementationError,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
+import {equipmentGenerationRequest,generationPolicyError,generationImplementationError,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools,wealthToolGenerationRequest,wealthSkillGenerationRequest} from '../../../../packages/contracts/src/generation-profile.js';
 import {wealthQueryEngineeringSkills,wealthQueryToolContract} from './templates.js';
 const request={profileVersion:generationProfile.version,scope:[...generationProfile.scope],dependencies:[...generationProfile.dependencies],connectionProfile:generationProfile.connectionProfile};
 describe('reviewed generation profile',()=>{
@@ -60,6 +60,25 @@ describe('reviewed generation profile',()=>{
     expect(generationPolicyError({...finance,scope:['agent','skill','tool']})).toBe('GENERATION_SCOPE_UNSUPPORTED');
     expect(generationPolicyError({...finance,dependencies:[...finance.dependencies,'unreviewed@1']})).toBe('DEPENDENCY_NOT_ALLOWED');
     expect(generationPolicyError({...finance,connectionProfile:'production-bank'})).toBe('BUSINESS_CONNECTION_NOT_ALLOWED');
+  });
+  it('recognizes exact standalone finance Tool and Skill request contracts without accepting widened scope',()=>{
+    for(const request of [wealthToolGenerationRequest,wealthSkillGenerationRequest]){
+      const normalized={...request,scope:[...request.scope],dependencies:[...request.dependencies]};
+      expect(generationPolicyError(normalized)).toBeUndefined();
+      expect(generationImplementationError(normalized)).toBe('GENERATION_PROFILE_NOT_IMPLEMENTED');
+      expect(generationPolicyError({...normalized,scope:['tool','skill']})).toBe('GENERATION_SCOPE_UNSUPPORTED');
+    }
+    expect(wealthToolGenerationRequest.scope).toEqual(['tool']);
+    expect(wealthSkillGenerationRequest.scope).toEqual(['skill']);
+  });
+  it('maps standalone finance profiles to disjoint developer write sets',()=>{
+    const tool=generationProfileFor(wealthToolGenerationRequest.profileVersion);
+    const skill=generationProfileFor(wealthSkillGenerationRequest.profileVersion);
+    expect('developerWritableFiles' in tool&&tool.developerWritableFiles).toEqual(['src/generated/AccountBalanceTool.java','test/generated/AccountBalanceToolTest.java']);
+    expect('developerWritableFiles' in skill&&skill.developerWritableFiles).toEqual(['skills/balance-query/SKILL.md']);
+    expect(()=>checkFileAccess('developer','write','skills/balance-query/SKILL.md',0,tool)).toThrowError(expect.objectContaining({code:'FILE_OPERATION_NOT_ALLOWED'}));
+    expect(()=>checkFileAccess('developer','write','src/generated/AccountBalanceTool.java',0,skill)).toThrowError(expect.objectContaining({code:'FILE_OPERATION_NOT_ALLOWED'}));
+    expect(()=>checkFileAccess('tester','read','implementation/src/generated/AccountBalanceTool.java',0,skill)).not.toThrow();
   });
   it('rejects unsupported scopes, dependency declarations and business connections without relaxing the fixed profile',()=>{
     expect(()=>validateGenerationRequest(request)).not.toThrow();

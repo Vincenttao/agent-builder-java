@@ -1,5 +1,5 @@
 import type {EngineeringRole,GenerationRequest} from '../../../../packages/contracts/src/development.js';
-import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,generationImplementationError,equipmentRuntimeTool,wealthBalanceRuntimeTool,wealthAssistantRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
+import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthToolGenerationRequest,wealthSkillGenerationRequest,generationImplementationError,equipmentRuntimeTool,wealthBalanceRuntimeTool,wealthAssistantRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
 import {createHash} from 'node:crypto';
 import {toolStub,toolContract,repairContract,engineeringSkills,platformContractTest,balanceToolStub,balanceToolContract,balancePlatformContractTest,balanceEngineeringSkills,wealthQueryToolStub,wealthQueryToolContract,wealthQueryPlatformContractTest,wealthQueryEngineeringSkills} from './templates.js';
 export class PolicyError extends Error {constructor(public readonly code:string){super(code);}}
@@ -32,19 +32,31 @@ export const wealthAssistantProfile={...wealthBalanceProfile,version:wealthAssis
   sourceStub:wealthQueryToolStub,implementationContract:wealthQueryToolContract,repairContract:'',platformContractTest:wealthQueryPlatformContractTest,engineeringSkills:wealthQueryEngineeringSkills,
   templates:hashTemplates({toolStub:wealthQueryToolStub,toolContract:wealthQueryToolContract,platformContractTest:wealthQueryPlatformContractTest,...wealthQueryEngineeringSkills})
 } as const;
-export type GenerationProfile=typeof generationProfile|typeof wealthBalanceProfile|typeof wealthAssistantProfile;
+export const wealthToolProfile={...wealthBalanceProfile,version:wealthToolGenerationRequest.profileVersion,scope:wealthToolGenerationRequest.scope,
+  dependencies:wealthToolGenerationRequest.dependencies,connectionProfile:wealthToolGenerationRequest.connectionProfile,
+  developerWritableFiles:['src/generated/AccountBalanceTool.java','test/generated/AccountBalanceToolTest.java']
+} as const;
+export const wealthSkillProfile={...wealthBalanceProfile,version:wealthSkillGenerationRequest.profileVersion,scope:wealthSkillGenerationRequest.scope,
+  dependencies:wealthSkillGenerationRequest.dependencies,connectionProfile:wealthSkillGenerationRequest.connectionProfile,
+  developerWritableFiles:['skills/balance-query/SKILL.md']
+} as const;
+export type GenerationProfile=typeof generationProfile|typeof wealthBalanceProfile|typeof wealthAssistantProfile|typeof wealthToolProfile|typeof wealthSkillProfile;
 export const profileRuntimeTools=(profile:GenerationProfile)=>'runtimeTools' in profile?[...profile.runtimeTools]:[profile.runtimeTool];
 export function generationProfileFor(version:string):GenerationProfile{
   if(version===generationProfile.version)return generationProfile;
   if(version===wealthBalanceProfile.version)return wealthBalanceProfile;
   if(version===wealthAssistantProfile.version)return wealthAssistantProfile;
+  if(version===wealthToolProfile.version)return wealthToolProfile;
+  if(version===wealthSkillProfile.version)return wealthSkillProfile;
   throw new PolicyError('GENERATION_PROFILE_UNSUPPORTED');
 }
 export function validateGenerationRequest(request:GenerationRequest):void{
  const error=generationImplementationError(request);if(error)throw new PolicyError(error);
 }
 export function checkFileAccess(role:EngineeringRole,operation:'read'|'write',path:string,repairAttempt=0,profile:GenerationProfile=generationProfile):void{
-  const own:readonly string[]=role==='developer'?profile.developerFiles:profile.testerFiles;
+  const own:readonly string[]=role==='developer'
+    ?operation==='write'&&'developerWritableFiles' in profile?profile.developerWritableFiles:profile.developerFiles
+    :profile.testerFiles;
   if(own.includes(path))return;
   const regression=profile.repair.regressionFiles.slice(0,repairAttempt);
   if(role==='developer'&&regression.some(file=>file===path))return;
