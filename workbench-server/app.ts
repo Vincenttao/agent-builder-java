@@ -18,12 +18,12 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
   let closing=false;
   const uiVersion=createHash('sha256');
-  for(const name of ['index.html','style.css','app.js'])uiVersion.update(name+'\0'+readFileSync(resolve(repository,'workbench-ui',name),'utf8'));
+  for(const name of ['index.html','style.css','app.js','configuration.js'])uiVersion.update(name+'\0'+readFileSync(resolve(repository,'workbench-ui',name),'utf8'));
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.sendFile(resolve(repository,'workbench-ui/index.html'));});
-  for(const name of ['app.js','style.css'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.sendFile(resolve(repository,'workbench-ui',name));});
+  for(const name of ['app.js','style.css','configuration.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.sendFile(resolve(repository,'workbench-ui',name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const role=req.header('x-workbench-role')??'application';
