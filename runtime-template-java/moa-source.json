@@ -1,0 +1,427 @@
+{
+  "repository": "https://gitcode.com/openJiuwen/agent-solution",
+  "commit": "552294d013b28a79d912a5bda9f627237e826e6b",
+  "purpose": "MOA NativeSkillAgent dependency closure for L2 business execution; no L1 planner is imported",
+  "files": [
+    {
+      "path": "com/moaagent/agent/continuation/IntentSwitch.java",
+      "source_sha256": "88672981e99656cc6a5746de61ca88b29fe837d1207099f7b2dfc6821909901d",
+      "adapted": true,
+      "local_sha256": "8c6af96494e1edb25a66a02d25064fde0392170365d2f76163007b9d9bf8418e"
+    },
+    {
+      "path": "com/moaagent/agent/continuation/IntentSwitchTool.java",
+      "source_sha256": "305e52ff40e15aba6169d5ba5463e6ed5b1267247ad5a1fb3fa8bbcc77e31536",
+      "adapted": true,
+      "local_sha256": "8567036eee8068b035509d985dd31688f53ed1c8ea360802b5d3b873cf10c8ba"
+    },
+    {
+      "path": "com/moaagent/agent/discovery/CandidateCard.java",
+      "source_sha256": "807066538e26ee51dd5fcb241fe591e98f0ffdf2307f6bd8dfcf86d2bb9c8aa8",
+      "adapted": false,
+      "local_sha256": "807066538e26ee51dd5fcb241fe591e98f0ffdf2307f6bd8dfcf86d2bb9c8aa8"
+    },
+    {
+      "path": "com/moaagent/agent/discovery/HandoffSpec.java",
+      "source_sha256": "70dee2c02df11a3b0370e32c0223e3b710a0903a0f201c58b0f912d64da5d408",
+      "adapted": false,
+      "local_sha256": "70dee2c02df11a3b0370e32c0223e3b710a0903a0f201c58b0f912d64da5d408"
+    },
+    {
+      "path": "com/moaagent/agent/discovery/ResultField.java",
+      "source_sha256": "7d650b755f30e0cb87382f38a85b3468a8e8a5fadc17d0e57ebd0b1dcd5a87de",
+      "adapted": false,
+      "local_sha256": "7d650b755f30e0cb87382f38a85b3468a8e8a5fadc17d0e57ebd0b1dcd5a87de"
+    },
+    {
+      "path": "com/moaagent/agent/execution/OperationCompletion.java",
+      "source_sha256": "c70bd24ed9e6d441dc5a09f7e34d627579eb9b95a47bc157e3118ee89b92f2e3",
+      "adapted": false,
+      "local_sha256": "c70bd24ed9e6d441dc5a09f7e34d627579eb9b95a47bc157e3118ee89b92f2e3"
+    },
+    {
+      "path": "com/moaagent/agent/execution/OperationCompletionContext.java",
+      "source_sha256": "8d8fe5dcc1273e066206c5fd8ba7608e13e2b8556b984e71d86cdd3580655323",
+      "adapted": true,
+      "local_sha256": "3c16a9ac2cf9b0cf7fd67f672c1e994ad3e2f259975869a1ebb7a61477a54ca5"
+    },
+    {
+      "path": "com/moaagent/agent/execution/OperationCompletionListener.java",
+      "source_sha256": "4e73bf9d82b409af2643eec023f40059ca06dfe595169cef1a6aac7fbef75964",
+      "adapted": false,
+      "local_sha256": "4e73bf9d82b409af2643eec023f40059ca06dfe595169cef1a6aac7fbef75964"
+    },
+    {
+      "path": "com/moaagent/agent/execution/OperationCompletionPublisher.java",
+      "source_sha256": "e0b6b728fae55d935b239edcb0c250288dc1aa42e042eaf8a08c29c6ecf708c3",
+      "adapted": false,
+      "local_sha256": "e0b6b728fae55d935b239edcb0c250288dc1aa42e042eaf8a08c29c6ecf708c3"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/ConfirmationResponses.java",
+      "source_sha256": "bb35fd2c1689507c8074051670905c841e6e3fb9d3048b1401730cd8f96a6786",
+      "adapted": false,
+      "local_sha256": "bb35fd2c1689507c8074051670905c841e6e3fb9d3048b1401730cd8f96a6786"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/ConversationInteraction.java",
+      "source_sha256": "c994178748f244ff09743bba5d9367249287af96c8ee2b2a0a92463467df7d90",
+      "adapted": false,
+      "local_sha256": "c994178748f244ff09743bba5d9367249287af96c8ee2b2a0a92463467df7d90"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/ConversationInteractionContext.java",
+      "source_sha256": "857499700149ca9eec9bcf3be2dd89a74317297e64075bb176d325d98452ac34",
+      "adapted": true,
+      "local_sha256": "6ab7c069dd4173b2c8401cad957a766af91f5a19fe834d8877c0a3cd5867b8fa"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/ConversationInteractionListener.java",
+      "source_sha256": "cc05a2816af9af48c58f26df6ab87fc19160f0052e568b41243b1310ab57f9ce",
+      "adapted": false,
+      "local_sha256": "cc05a2816af9af48c58f26df6ab87fc19160f0052e568b41243b1310ab57f9ce"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/ConversationInteractionPublisher.java",
+      "source_sha256": "76fc244bd56c8d66960ac3890806f2de84dc494f0dbd819fa428fe52061e4a7c",
+      "adapted": true,
+      "local_sha256": "8d3ff6b4b3f344d56336e895db46adf70743389b1b53e00cb0f665e8cb8ffd48"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/EventEmitters.java",
+      "source_sha256": "f3cc5851cb104fecab3519789c2dd71d7f16d0252f90873834c3de44b1efc7d4",
+      "adapted": false,
+      "local_sha256": "f3cc5851cb104fecab3519789c2dd71d7f16d0252f90873834c3de44b1efc7d4"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/FrontendEventType.java",
+      "source_sha256": "d99be125f076cffc133693f1e122a606c6ab5ed38ae7a79a64be14629368049b",
+      "adapted": false,
+      "local_sha256": "d99be125f076cffc133693f1e122a606c6ab5ed38ae7a79a64be14629368049b"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/OutputEvent.java",
+      "source_sha256": "d618ff12dbdf96b4494eff156741f9a72b604d548bd366e925c7dc364eb07c8f",
+      "adapted": false,
+      "local_sha256": "d618ff12dbdf96b4494eff156741f9a72b604d548bd366e925c7dc364eb07c8f"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/NarrationContext.java",
+      "source_sha256": "ab697b9e8ef6ece95b35c5dd2b3b0a0824e7bccda2af1e6d8af78c2abdf8a7dc",
+      "adapted": false,
+      "local_sha256": "ab697b9e8ef6ece95b35c5dd2b3b0a0824e7bccda2af1e6d8af78c2abdf8a7dc"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/NarrationOutput.java",
+      "source_sha256": "356aab6251411757be25bb8fae14e942b40dcb741264e59a58d86fe87fbdc9d7",
+      "adapted": true,
+      "local_sha256": "cbbe5c43e276c6d1862b98c233bd753df01425e5206b8f4977a2ddae4ad5ab58"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/NarrationPlan.java",
+      "source_sha256": "a6c321e11ab3ac4d35dcf5bac2e1a4a046a58fc22dff25cfdb6b3afc1ebc384e",
+      "adapted": false,
+      "local_sha256": "a6c321e11ab3ac4d35dcf5bac2e1a4a046a58fc22dff25cfdb6b3afc1ebc384e"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/NarrationSettings.java",
+      "source_sha256": "49ee552788cd0f3b4dd0f18749e538dfcaefb87ab718394f5b67cdb7aa95bdca",
+      "adapted": false,
+      "local_sha256": "49ee552788cd0f3b4dd0f18749e538dfcaefb87ab718394f5b67cdb7aa95bdca"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/NarrationStage.java",
+      "source_sha256": "f4fd76d06ea2a194270f6df33328712bc0c81cd159693f16fc4a3e776c4eb252",
+      "adapted": false,
+      "local_sha256": "f4fd76d06ea2a194270f6df33328712bc0c81cd159693f16fc4a3e776c4eb252"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/ProgressNarrationCoordinator.java",
+      "source_sha256": "b57860a9dede5f1870a567dfc39fea695ed2bea4435cc2a7e143363b949d42bd",
+      "adapted": true,
+      "local_sha256": "1d93054e64c646cab37e4773ac69ba40098361717849dceffe81a638937bf475"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/ProgressNarrationProvider.java",
+      "source_sha256": "423cd1224509c3ae3d9fa66ad676f4845e57e7c5ebcd706ab990041275ce14c9",
+      "adapted": false,
+      "local_sha256": "423cd1224509c3ae3d9fa66ad676f4845e57e7c5ebcd706ab990041275ce14c9"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/StageLatencyProfile.java",
+      "source_sha256": "1fe3ca6ace81be57c917f1e175f677cb931da273a16355fa9a1a391bf5a30c50",
+      "adapted": false,
+      "local_sha256": "1fe3ca6ace81be57c917f1e175f677cb931da273a16355fa9a1a391bf5a30c50"
+    },
+    {
+      "path": "com/moaagent/agent/interaction/narration/StageLatencyProfileProvider.java",
+      "source_sha256": "cd5103be07e38636bb6db3f745821d0449817874b4cd09ef35807f6a76f8db38",
+      "adapted": false,
+      "local_sha256": "cd5103be07e38636bb6db3f745821d0449817874b4cd09ef35807f6a76f8db38"
+    },
+    {
+      "path": "com/moaagent/agent/leadout/ServiceLeadOut.java",
+      "source_sha256": "8bfd69b29a1e8e7680fcfcfa0a250c155bd85b705c6d9770ac6b73c55ebfe2c8",
+      "adapted": false,
+      "local_sha256": "8bfd69b29a1e8e7680fcfcfa0a250c155bd85b705c6d9770ac6b73c55ebfe2c8"
+    },
+    {
+      "path": "com/moaagent/agent/leadout/ServiceLeadOutItem.java",
+      "source_sha256": "3fa150adc2f6d48a82061da3f171862d11fc07267bf947546afcbcb19332ca05",
+      "adapted": false,
+      "local_sha256": "3fa150adc2f6d48a82061da3f171862d11fc07267bf947546afcbcb19332ca05"
+    },
+    {
+      "path": "com/moaagent/agent/leadout/ServiceLeadOutMetadata.java",
+      "source_sha256": "009805bf31ffb73542f0c9486e481efb642773ffec94577344c0f4f082e61c31",
+      "adapted": true,
+      "local_sha256": "c82d5907f2efe819154f6d296614ccc89a1891d02162979ed1ff0216c8232974"
+    },
+    {
+      "path": "com/moaagent/agent/leadout/ServiceLeadOutTrigger.java",
+      "source_sha256": "1097b15c86e709ecd23a8ff265864866624e86963f4d60e7345ae5cb802563c3",
+      "adapted": false,
+      "local_sha256": "1097b15c86e709ecd23a8ff265864866624e86963f4d60e7345ae5cb802563c3"
+    },
+    {
+      "path": "com/moaagent/agent/leadout/followup/ServiceLeadOutRoutingContext.java",
+      "source_sha256": "8677e169dbe6c103c4e0416fb015d96f59de8d47d3be466e1dda84d9e2007f77",
+      "adapted": true,
+      "local_sha256": "784e8d6cb1a5d82fe7986cbdeb68322df1b0f89d1aa0cf222fb4134c9af27f22"
+    },
+    {
+      "path": "com/moaagent/agent/rail/MoaAgentRailProvider.java",
+      "source_sha256": "8f785d26c8b7af367a3c8ee1c3ff3171cd7d0fd1889e44cc1053484074a5e0ab",
+      "adapted": false,
+      "local_sha256": "8f785d26c8b7af367a3c8ee1c3ff3171cd7d0fd1889e44cc1053484074a5e0ab"
+    },
+    {
+      "path": "com/moaagent/agent/rail/MoaAgentRails.java",
+      "source_sha256": "cfab873d738debd762471d423de33e8f9d7fc7dada850b314fa2a8dc8d2891ac",
+      "adapted": false,
+      "local_sha256": "cfab873d738debd762471d423de33e8f9d7fc7dada850b314fa2a8dc8d2891ac"
+    },
+    {
+      "path": "com/moaagent/agent/routing/context/DefaultModelContextContributor.java",
+      "source_sha256": "832b3c6ae384bb6799cb3af22152c82d80120a60d594256e4ea462a363ad8f83",
+      "adapted": false,
+      "local_sha256": "832b3c6ae384bb6799cb3af22152c82d80120a60d594256e4ea462a363ad8f83"
+    },
+    {
+      "path": "com/moaagent/agent/routing/context/IntentHandoff.java",
+      "source_sha256": "75faf2c0098740ec495c420e71f7f0a92aa159e5e65c9796bff6a0b522a4507d",
+      "adapted": true,
+      "local_sha256": "eb62d77ab5579a23c7d76413c79db9fb8645e9367449e1bfa2474ce6ad489b5e"
+    },
+    {
+      "path": "com/moaagent/agent/routing/context/LeadOutModelProjection.java",
+      "source_sha256": "ecefc2ca3268c6dd0d6126591b60c762d366996ce20ba0c3bf3b4890585b8820",
+      "adapted": false,
+      "local_sha256": "ecefc2ca3268c6dd0d6126591b60c762d366996ce20ba0c3bf3b4890585b8820"
+    },
+    {
+      "path": "com/moaagent/agent/routing/context/ModelContextContributor.java",
+      "source_sha256": "d6f13a6364cc5f6f872ce2ddce7da82399fbf79a8224265ad0a7ce7bf1a0b4cc",
+      "adapted": true,
+      "local_sha256": "7c9114a5d7d3c7e6ca0626a7244b87e5e29538fb74e327cfbc1d4011c2f5d315"
+    },
+    {
+      "path": "com/moaagent/agent/routing/context/RequestEnvelope.java",
+      "source_sha256": "6866149376ffcdaec1edd8f28734ec55057dffc6bca68cb437f0d0aed4a3a7dd",
+      "adapted": false,
+      "local_sha256": "6866149376ffcdaec1edd8f28734ec55057dffc6bca68cb437f0d0aed4a3a7dd"
+    },
+    {
+      "path": "com/moaagent/agent/skill/NativeSkillAgent.java",
+      "source_sha256": "493fc1b1b4860bfafe135871729f59dd2ff04a4013b90c0192501baa4d951598",
+      "adapted": true,
+      "local_sha256": "bfac91f3bf5dd519da425a99e1e779b29e86bf5a86abacfefe292b64e0b9ff8e"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillActionRail.java",
+      "source_sha256": "611bfeb91a8ee8269c8ceb76bb3f9a29860898729424681e95b7ee44f70ef04d",
+      "adapted": true,
+      "local_sha256": "86bee3b7ca32c4818d7ca87ecf1cb09f5fc5131c1be15d27383b486fa348a64e"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillAssets.java",
+      "source_sha256": "65591200f4d99588b2da38ca44401b71210d0a692cd2b23f9b3694815518c9d3",
+      "adapted": false,
+      "local_sha256": "65591200f4d99588b2da38ca44401b71210d0a692cd2b23f9b3694815518c9d3"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillBoundaryRail.java",
+      "source_sha256": "eb11d232a1ee8a12a5296a03ca59756d4afda9d1d6d168ccadfb8cceb9c6dde4",
+      "adapted": true,
+      "local_sha256": "e1db03de13c6953766ca8459e4a667b84e807b83b4d37dd50897491e7b9c2c2a"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillCompletion.java",
+      "source_sha256": "4dcf5e4841426b00c54b37954fe3f6c6a05eb1930a4b26c94b74c68b8938cad8",
+      "adapted": false,
+      "local_sha256": "4dcf5e4841426b00c54b37954fe3f6c6a05eb1930a4b26c94b74c68b8938cad8"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillConfirmation.java",
+      "source_sha256": "ad45e661a65bc11ad3a7782f861cdccbb42d71f77360717411ade022be797398",
+      "adapted": false,
+      "local_sha256": "ad45e661a65bc11ad3a7782f861cdccbb42d71f77360717411ade022be797398"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillEvents.java",
+      "source_sha256": "bdf9289b52687ee17e85e674f2c559f946e86dd1b04ced25407897990e079adb",
+      "adapted": false,
+      "local_sha256": "bdf9289b52687ee17e85e674f2c559f946e86dd1b04ced25407897990e079adb"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillIntentSwitchRail.java",
+      "source_sha256": "d8e155f09f9a76fa38b29937bf208c2b015917c9672d68049bd25e913d4d8a5a",
+      "adapted": true,
+      "local_sha256": "54ba12b4a4ab7e71f34c47e60e1fb5b5096d0d1090ff489a50e4c14d60a98df1"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillInteractionRail.java",
+      "source_sha256": "e606e536dcf7810617904e861bcfdfad6db5e40019ea8a0b826312bc0b0d5648",
+      "adapted": true,
+      "local_sha256": "18d2efd41754e92c23fb74b940f557ab054bcd8de23b99167e0440b09ac725d3"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillNarration.java",
+      "source_sha256": "fd5b01f79bbd6a82225b7fa16263ec46f5350cb038df8f0008853160132104e4",
+      "adapted": true,
+      "local_sha256": "dcad9808c3f10de798db25b24ba06f8f33f07d171c97102f86cfb013ce2284c8"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillNarrationContext.java",
+      "source_sha256": "37735038f32d458d43c09b5ee82c995eb15e603dfc6601fa2229c3be959593d9",
+      "adapted": true,
+      "local_sha256": "122fa3507081ed631ab394c30e59f83d85cfae0c03fe3a9f0299d7d39b610f50"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillNarrationOutput.java",
+      "source_sha256": "40f47e67eecfc0e15d7e3493f55008a2246d3b91d96946e7c8e1f9c3df2b7eeb",
+      "adapted": false,
+      "local_sha256": "40f47e67eecfc0e15d7e3493f55008a2246d3b91d96946e7c8e1f9c3df2b7eeb"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillNarrationRail.java",
+      "source_sha256": "9434d60317b3a46bdb853f57ce502fdd4276e11a61c6ce8af4851641449597fe",
+      "adapted": true,
+      "local_sha256": "52707116fc2fc27dad1c03d4d901610698b7f861a5434ea657bfd7ee1d49b903"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillOperation.java",
+      "source_sha256": "a99f7ed329c48a7d3d732ba7a47a48c22a290e64c0aa0af5a9071bc6fd3e30c9",
+      "adapted": false,
+      "local_sha256": "a99f7ed329c48a7d3d732ba7a47a48c22a290e64c0aa0af5a9071bc6fd3e30c9"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillOutput.java",
+      "source_sha256": "beeef456c23361b018455103e460475054436d2788773a945a292a024a8332d4",
+      "adapted": false,
+      "local_sha256": "beeef456c23361b018455103e460475054436d2788773a945a292a024a8332d4"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillResultBinding.java",
+      "source_sha256": "4a391e81a37a1891e000cee7de8c3a572146206b5e3b4a3edb541debd4d9fe49",
+      "adapted": false,
+      "local_sha256": "4a391e81a37a1891e000cee7de8c3a572146206b5e3b4a3edb541debd4d9fe49"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillSchema.java",
+      "source_sha256": "2ec446025117aa1fc66c5f4d77850214f12cd36393ad9caa5fb3831d70f9b646",
+      "adapted": false,
+      "local_sha256": "2ec446025117aa1fc66c5f4d77850214f12cd36393ad9caa5fb3831d70f9b646"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillScriptRunner.java",
+      "source_sha256": "3c4faf101ea3dd412f5473b22f351eec1ef6e055106ef56206f10d1d2f67a037",
+      "adapted": true,
+      "local_sha256": "1a037fc98792a08c7ca6109d8aab517c55a2f02fde3d8aaeefd076bfc9258b57"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillSession.java",
+      "source_sha256": "4367356e2de0d5ac3bed375230923b30bde1bd14327f34f7bbb89ca1e881702a",
+      "adapted": true,
+      "local_sha256": "c76bd3dded7b19ea053b92d6b1e49f4f564df3caf454d4bc23fd1b6cb79e4834"
+    },
+    {
+      "path": "com/moaagent/agent/skill/SkillTools.java",
+      "source_sha256": "88f28f2d77c04c2de09af72bf98613acbcd8e0d98c6b27b27527743fbb4acde4",
+      "adapted": false,
+      "local_sha256": "88f28f2d77c04c2de09af72bf98613acbcd8e0d98c6b27b27527743fbb4acde4"
+    },
+    {
+      "path": "com/moaagent/agent/skill/environment/ScriptEnvironmentBinding.java",
+      "source_sha256": "d4319d7b79b803e81ba73fe7473b0ac832ee7a4c820b229653fc2cb7669e8643",
+      "adapted": false,
+      "local_sha256": "d4319d7b79b803e81ba73fe7473b0ac832ee7a4c820b229653fc2cb7669e8643"
+    },
+    {
+      "path": "com/moaagent/agent/skill/environment/ScriptEnvironmentBindings.java",
+      "source_sha256": "9c9f39a3c7526e470245b766c7f654aa033ff6750fde4dee6e21b3e5d4aa51b1",
+      "adapted": false,
+      "local_sha256": "9c9f39a3c7526e470245b766c7f654aa033ff6750fde4dee6e21b3e5d4aa51b1"
+    },
+    {
+      "path": "com/moaagent/agent/skill/environment/ScriptEnvironmentContext.java",
+      "source_sha256": "8b68bd94ee05f499730e34051adddef8f1dda070e01cf7d3b001432f1d0a0fe0",
+      "adapted": false,
+      "local_sha256": "8b68bd94ee05f499730e34051adddef8f1dda070e01cf7d3b001432f1d0a0fe0"
+    },
+    {
+      "path": "com/moaagent/agent/support/BusinessInvocation.java",
+      "source_sha256": "8c93793252f8a1c157ca1d9cd64bb36cb0c3d3539ef0204f9664dde4120a70f8",
+      "adapted": false,
+      "local_sha256": "8c93793252f8a1c157ca1d9cd64bb36cb0c3d3539ef0204f9664dde4120a70f8"
+    },
+    {
+      "path": "com/moaagent/agent/support/Json.java",
+      "source_sha256": "e4ee64e5c4327b5c9bb56675283b177a025ca62f29ce491afcf57c560128a4a4",
+      "adapted": false,
+      "local_sha256": "e4ee64e5c4327b5c9bb56675283b177a025ca62f29ce491afcf57c560128a4a4"
+    },
+    {
+      "path": "com/moaagent/agent/support/MetadataSnapshot.java",
+      "source_sha256": "72366d3010a6b5e98bcb1fe35bb7161fed1e2e5b88ed5e88e5d457310e99d850",
+      "adapted": false,
+      "local_sha256": "72366d3010a6b5e98bcb1fe35bb7161fed1e2e5b88ed5e88e5d457310e99d850"
+    },
+    {
+      "path": "com/moaagent/agent/support/PromptTemplates.java",
+      "source_sha256": "fa53534f98ea7e687c61d56948c82b2f7c326060e2976721ca231e94996e1eeb",
+      "adapted": false,
+      "local_sha256": "fa53534f98ea7e687c61d56948c82b2f7c326060e2976721ca231e94996e1eeb"
+    },
+    {
+      "path": "com/moaagent/agent/support/RequestContextAccessor.java",
+      "source_sha256": "ceca3a745dc275e3c794dcbb47946a9f791237e940821102e11a945427ec47cf",
+      "adapted": true,
+      "local_sha256": "57acb439ca6a537552455c25b1715d993cbadd4269a8db25295d9996fd34c98f"
+    },
+    {
+      "path": "com/moaagent/compat/CoreApi.java",
+      "local_sha256": "2e099ef07ed54cc5632486dabfd4856ac55c37294c703dc9a66fdd376cd495da",
+      "origin": "workbench compatibility adapter"
+    },
+    {
+      "path": "com/moaagent/compat/DeepSessionOtelRail.java",
+      "local_sha256": "251bde475d69068c638f1dbd6317d1a909f008f9f0c40947b99f7d6d842a4f81",
+      "origin": "workbench compatibility adapter"
+    },
+    {
+      "path": "com/openjiuwen/service/adapters/agentcore/ext/context/RemoteResponseMetadataAccessor.java",
+      "local_sha256": "2f70fd6104c15cb5f50336273c01095da6d2d25fc95eed779e6bb5a31d900065",
+      "origin": "common/agent-runtime-ext-java/agent-service-adapters/agent-service-adapters-agentcore-ext/src/main/java/com/openjiuwen/service/adapters/agentcore/ext/context/RemoteResponseMetadataAccessor.java",
+      "source_sha256": "466d0b32ea1458e8d717be04f19397a8b1bed18b7b1759e1bec3a6fd53bfd84e",
+      "adapted": true
+    },
+    {
+      "path": "com/openjiuwen/service/adapters/agentcore/ext/context/ResponseMetadataAccessor.java",
+      "local_sha256": "06a6019f97be37292f7d9519e419e8a1ef8a19d0156a964c08107d6a2941bf01",
+      "origin": "common/agent-runtime-ext-java/agent-service-adapters/agent-service-adapters-agentcore-ext/src/main/java/com/openjiuwen/service/adapters/agentcore/ext/context/ResponseMetadataAccessor.java",
+      "source_sha256": "0d1eda0fe88c020009b10b81d95bc9ffdcdeca14c7116ec030bf6735e6efa901",
+      "adapted": true
+    }
+  ]
+}
