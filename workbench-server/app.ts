@@ -1,18 +1,23 @@
 import express,{type Request,type Response,type NextFunction} from 'express';
-import {join,dirname,resolve} from 'node:path';
+import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {RunManager} from './runs.js';
+import {LocalJavaEngine,type RunEngine} from './local-java.js';
 import {moaTemplateFiles} from './template.js';
 import {CodingJobs,type CodingEngine} from './coding.js';
 import {OpenCodeEngine} from './opencode.js';
 import {ProjectStore,WorkbenchError,applicationEditable,type Role,type Files} from './projects.js';
 const repository=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export {readTree} from './files.js';
-export function createWorkbench(options:{root:string;templateFiles?:Files;codingEngine?:CodingEngine}){
+export function createWorkbench(options:{root:string;templateFiles?:Files;codingEngine?:CodingEngine;runEngine?:RunEngine}){
   const store=new ProjectStore(options.root);
   store.seedTemplate(options.templateFiles??moaTemplateFiles());
   const jobs=new CodingJobs(store,options.codingEngine??new OpenCodeEngine(repository));
+  const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
+  let closing=false;
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   app.use('/api',(req,res,next)=>{
+    if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const role=req.header('x-workbench-role')??'application';
     if(!['application','platform'].includes(role))return next(new WorkbenchError('INVALID_ROLE','请选择应用开发者或平台开发者'));
     res.locals.role=role as Role;res.set('Cache-Control','no-store');next();
@@ -39,10 +44,20 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     const emit=()=>{try{const job=jobs.get(req.params.id,res.locals.role);res.write('event: state\ndata: '+JSON.stringify(job)+'\n\n');if(!['running','awaiting_input'].includes(job.status)){clearInterval(timer);res.end();}}catch{clearInterval(timer);res.end();}};
     const timer=setInterval(emit,750);req.on('close',()=>clearInterval(timer));emit();
   });
+  app.get('/api/projects/:id/runs',(req,res)=>res.json({runs:runs.list(req.params.id,res.locals.role)}));
+  app.post('/api/projects/:id/runs',async(req,res)=>res.status(202).json({run:await runs.start(req.params.id,res.locals.role,req.body.baseHead)}));
+  app.get('/api/runs/:id',(req,res)=>res.json({run:runs.get(req.params.id,res.locals.role)}));
+  app.post('/api/runs/:id/reconnect',async(req,res)=>res.json({run:await runs.reconnect(req.params.id,res.locals.role)}));
+  app.post('/api/runs/:id/stop',async(req,res)=>res.json({run:await runs.stop(req.params.id,res.locals.role)}));
+  app.delete('/api/runs/:id',async(req,res)=>{await runs.remove(req.params.id,res.locals.role);res.status(204).end();});
+  app.post('/api/runs/:id/messages',async(req,res)=>res.json(await runs.message(req.params.id,res.locals.role,req.body)));
+  app.get('/api/runs/:id/conversations/:conversation',async(req,res)=>res.json(await runs.conversation(req.params.id,res.locals.role,req.params.conversation)));
+  app.post('/api/runs/:id/conversations/:conversation/observe',async(req,res)=>res.json(await runs.observe(req.params.id,res.locals.role,req.params.conversation)));
+  for(const action of ['reply','decide','resume','receipt'])app.post<{id:string;conversation:string}>('/api/runs/:id/conversations/:conversation/'+action,async(req,res)=>res.json(await runs.command(req.params.id,res.locals.role,req.params.conversation,action,req.body)));
   app.use('/api',(_req,_res,next)=>next(new WorkbenchError('NOT_FOUND','接口不存在',404)));
   app.use((error:unknown,_req:Request,res:Response,_next:NextFunction)=>{
     const e=error instanceof WorkbenchError?error:error instanceof SyntaxError?new WorkbenchError('INVALID_JSON','请求必须是有效 JSON'):new WorkbenchError('INTERNAL_ERROR','操作失败，请查看本机服务状态',500);
     res.status(e.status).json({error:{code:e.code,message:e.message}});
   });
-  return {app,store,jobs};
+  return {app,store,jobs,runs,close:async()=>{closing=true;await Promise.all([jobs.close(),runs.close()]);}};
 }

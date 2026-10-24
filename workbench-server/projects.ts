@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import {execFileSync} from 'node:child_process';
 import {randomUUID, createHash} from 'node:crypto';
-import {mkdirSync, readdirSync, readFileSync, writeFileSync, lstatSync, existsSync, rmSync} from 'node:fs';
+import {mkdirSync, readdirSync, readFileSync, writeFileSync, lstatSync, existsSync, rmSync, openSync, closeSync, unlinkSync} from 'node:fs';
 import {join, resolve, dirname} from 'node:path';
 import {Ajv} from 'ajv';
 
@@ -31,7 +31,7 @@ export function validatePath(path:string){
   if(!path || path.length>500 || path.startsWith('/') || /[\\\x00-\x1f:]/.test(path) || path.split('/').some(p=>p==='..'||p==='.'||!p) || forbidden.test(path))fail('INVALID_PATH','文件路径不在工程允许范围内');
 }
 export function validateFiles(files:Files):Definition{
-  for(const [name,content] of Object.entries(files)){validatePath(name);if(Buffer.byteLength(content)>2_000_000)fail('FILE_TOO_LARGE','单文件不能超过 2 MB',413);}
+  for(const [name,content] of Object.entries(files)){validatePath(name);if(Buffer.byteLength(content)>2_000_000)fail('FILE_TOO_LARGE','单文件不能超过 2 MB',413);if(/sk-[a-zA-Z0-9_-]{20,}/.test(content))fail('SECRET_IN_PROJECT','工程包含疑似模型 Key，请使用本机私有配置');}
   let spec:Definition;
   try{spec=JSON.parse(files['application.json']??'');}catch{fail('INVALID_DEFINITION','application.json 必须是有效 JSON');}
   if(!validateDefinition(spec))fail('INVALID_DEFINITION','应用配置不满足 Schema：'+new Ajv().errorsText(validateDefinition.errors));
@@ -43,13 +43,25 @@ export function validateFiles(files:Files):Definition{
 export class ProjectStore{
   readonly db:Database.Database;
   readonly root:string;
+  private readonly lockToken=randomUUID();
+  private lockFile:string;
   constructor(root:string){
     this.root=resolve(root);mkdirSync(join(this.root,'projects'),{recursive:true});mkdirSync(join(this.root,'changes'),{recursive:true});
+    this.lockFile=join(this.root,'workbench.lock');
+    const start=(pid:number)=>{try{const stat=readFileSync(`/proc/${pid}/stat`,'utf8');return stat.slice(stat.lastIndexOf(')')+2).trim().split(/\s+/)[19];}catch{return undefined;}};
+    if(existsSync(this.lockFile)){
+      if(lstatSync(this.lockFile).isSymbolicLink())fail('DATA_DIR_IN_USE','工作目录锁归属不明，请先核对',409);
+      let owner:{kind:string;pid:number;started:string;token:string};try{owner=JSON.parse(readFileSync(this.lockFile,'utf8'));}catch{fail('DATA_DIR_IN_USE','工作目录锁损坏，请先核对',409);}
+      if(owner.kind!=='workbench-data'||!Number.isInteger(owner.pid)||owner.pid<=0||!/^\d+$/.test(owner.started)||typeof owner.token!=='string'||start(owner.pid)===owner.started)fail('DATA_DIR_IN_USE','已有工作台使用该数据目录；请使用原服务',409);
+      unlinkSync(this.lockFile);
+    }
+    let lock:number;try{lock=openSync(this.lockFile,'wx',0o600);}catch{fail('DATA_DIR_IN_USE','已有工作台正在打开该数据目录',409);}
+    try{writeFileSync(lock,JSON.stringify({kind:'workbench-data',pid:process.pid,started:start(process.pid),token:this.lockToken}));}finally{closeSync(lock);}
     this.db=new Database(join(this.root,'index.sqlite'));this.db.pragma('journal_mode = WAL');this.db.pragma('foreign_keys = ON');
     this.db.exec(`CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY,kind TEXT NOT NULL,name TEXT NOT NULL,head TEXT NOT NULL,sourceReleaseId TEXT,createdAt TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS releases(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,version TEXT NOT NULL,"commit" TEXT NOT NULL,digest TEXT NOT NULL,createdAt TEXT NOT NULL,UNIQUE(projectId,version),UNIQUE(projectId,"commit"));`);
   }
-  close(){if(this.db.open)this.db.close();}
+  close(){if(this.db.open)this.db.close();try{const lock=JSON.parse(readFileSync(this.lockFile,'utf8'));if(lock.token===this.lockToken)unlinkSync(this.lockFile);}catch{}}
   path(id:string){if(!/^[a-z0-9-]{1,80}$/.test(id))fail('NOT_FOUND','工程不存在',404);return join(this.root,'projects',id);}
   git(id:string,args:string[]){return execFileSync('git',['-C',this.path(id),...args],{encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:15_000}).trim();}
   get(id:string,role:Role):Project{

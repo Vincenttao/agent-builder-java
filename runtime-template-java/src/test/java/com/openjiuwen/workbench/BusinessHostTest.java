@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BusinessHostTest {
  @TempDir Path root;
- HttpServer server;BusinessHost host;Model routeModel,skillModel;AtomicInteger remote=new AtomicInteger(),third=new AtomicInteger(),writes=new AtomicInteger(),reads=new AtomicInteger(),modelCalls=new AtomicInteger();
+ HttpServer server;BusinessHost host;Model routeModel,skillModel;AtomicInteger routeCalls=new AtomicInteger(),remote=new AtomicInteger(),third=new AtomicInteger(),writes=new AtomicInteger(),reads=new AtomicInteger(),modelCalls=new AtomicInteger();
  AtomicInteger available=new AtomicInteger(1280);
  AtomicBoolean failB=new AtomicBoolean(),delayWrite=new AtomicBoolean();String orderKey;
  @BeforeEach void setup() throws Exception {
@@ -35,7 +35,7 @@ class BusinessHostTest {
   }catch(Exception ignored){}finally{exchange.close();}});server.start();
   Path source=Path.of("../examples/idou"),assets=root.resolve("assets");try(var files=Files.walk(source)){for(Path from:files.toList()){Path to=assets.resolve(source.relativize(from));if(Files.isDirectory(from))Files.createDirectories(to);else Files.copy(from,to);}}
   String base="http://127.0.0.1:"+server.getAddress().getPort();var definition=Json.object(Files.readString(assets.resolve("application.json")));definition.put("connections",Map.of("idou",base,"procurement",base+"/a2a/procurement","fallback",base+"/a2a/fallback"));Files.writeString(assets.resolve("application.json"),Json.write(definition));
-  routeModel=new Model((messages,a,b,c)->{String query=messages.get(messages.size()-1).getContent().toString();String action=query.contains("冲突")?"CONFLICT":query.contains("采购")?"DELEGATE":query.contains("范围外")?"HANDOFF":"SKILL";String target=action.equals("CONFLICT")?"":action.equals("DELEGATE")?"procurement":action.equals("HANDOFF")?"fallback":"benefits";return CompletableFuture.completedFuture(AssistantMessage.builder().content(Json.write(Map.of("action",action,"target",target,"reason","固定测试路由","question",""))).build());});
+  routeModel=new Model((messages,a,b,c)->{routeCalls.incrementAndGet();String query=messages.get(messages.size()-1).getContent().toString();String action=query.contains("冲突")?"CONFLICT":query.contains("采购")?"DELEGATE":query.contains("范围外")?"HANDOFF":"SKILL";String target=action.equals("CONFLICT")?"":action.equals("DELEGATE")?"procurement":action.equals("HANDOFF")?"fallback":"benefits";return CompletableFuture.completedFuture(AssistantMessage.builder().content(Json.write(Map.of("action",action,"target",target,"reason","固定测试路由","question",""))).build());});
   skillModel=new Model((messages,a,b,c)->{int n=modelCalls.incrementAndGet();return CompletableFuture.completedFuture(AssistantMessage.builder().content("").toolCalls(List.of(ToolCall.builder().id("skill-call-"+n).name(n%2==1?"confirm_action":"call_mcp").arguments("{\"operation\":\"redeem\",\"arguments\":{\"giftId\":\"coffee\",\"quantity\":1}}").build())).build());});
   host=new BusinessHost(new BusinessAssets(assets),routeModel,skillModel,root.resolve("state"));host.start();
  }
@@ -96,6 +96,11 @@ class BusinessHostTest {
   var first=host.query(request);assertEquals("external-conversation",first.getConversationId());var output=Json.object(first.getResult());var interrupt=Json.object(output.get("_interrupt"));assertFalse(interrupt.isEmpty());assertEquals(0,writes.get());
   request.setMessages(List.of());request.setMetadata(Map.of("runtime.remoteToolResults",Map.of(interrupt.get("toolCallId").toString(),"确认")));
   var result=host.query(request);assertFalse(Json.object(result.getResult()).containsKey("_interrupt"));assertEquals(1,writes.get());
+ }
+
+ @Test void reservingConversationCreatesNoBusinessTaskAndDoesNotCallModel(){
+  var reserved=host.reserve();assertNull(reserved.stack().current());assertTrue(reserved.tasks().isEmpty());assertTrue(reserved.events().isEmpty());assertEquals(0,routeCalls.get());assertEquals(0,modelCalls.get());
+  var started=host.message(reserved.conversationId(),"兑换1张咖啡券");assertEquals(reserved.conversationId(),started.conversationId());assertNotNull(current(started).prompt());assertEquals(1,routeCalls.get());assertEquals(1,modelCalls.get());
  }
 
 }

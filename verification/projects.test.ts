@@ -47,6 +47,7 @@ test('new application starts empty from MOA and data stays isolated and persiste
   assert.equal(store.files(b.id,'application')['instructions.md'],templateFiles['instructions.md']);
   assert.throws(()=>store.save(a.id,'application',a.head,{'instructions.md':'陈旧修改'}),error('REVISION_CONFLICT'));
   assert.equal(store.get(a.id,'application').head,changed.head);
+  store.close(); // Simulate a restart; a live data directory now has one owner.
   const reopened=new ProjectStore(root);
   assert.equal(reopened.files(a.id,'application')['instructions.md'],'仅此应用的行为');
   reopened.close();

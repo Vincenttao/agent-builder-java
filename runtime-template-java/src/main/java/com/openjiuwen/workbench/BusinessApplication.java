@@ -42,7 +42,8 @@ public class BusinessApplication {
         record Reply(String taskId,String token,String answer){}
         record Decision(String requestId,String choice){}
         record TaskInput(String taskId){}
-        @GetMapping("/workbench/application") Map<String,Object> application(){return Map.of("definition",assets.definition(),"mode","live-java","recovery","same-process, two tasks; restart interrupts unfinished conversations");}
+        @GetMapping("/workbench/application") Map<String,Object> application(){return Map.of("definition",assets.definition(),"mode","live-java","runId",System.getProperty("workbench.runId","standalone"),"recovery","same-process, two tasks; restart interrupts unfinished conversations");}
+        @PostMapping("/workbench/conversations") BusinessHost.View reserve(){return service.reserve();}
         @PostMapping("/workbench/messages") BusinessHost.View message(@RequestBody Message input){return service.message(input.conversationId,input.query);}
         @GetMapping("/workbench/conversations/{id}") BusinessHost.View view(@PathVariable String id){return service.view(id);}
         @PostMapping("/workbench/conversations/{id}/reply") BusinessHost.View reply(@PathVariable String id,@RequestBody Reply input){return service.reply(id,input.taskId,input.token,input.answer);}

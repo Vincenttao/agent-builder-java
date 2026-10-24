@@ -53,6 +53,7 @@ public final class BusinessHost implements AgentHandler {
         var c=new Conversation(UUID.randomUUID().toString(),targets,state);conversations.put(c.id,c);publish(c);return c;
     }
     private Conversation get(String id){if(id==null)throw error("CONVERSATION_NOT_FOUND");var c=conversations.get(id);if(c==null)throw error("CONVERSATION_NOT_FOUND");return c;}
+    public View reserve(){return create().published;}
     public View view(String id){return get(id).published;}
     public View message(String id,String query){
         Conversation c=id==null||id.isBlank()?create():get(id);

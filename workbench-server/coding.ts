@@ -15,7 +15,8 @@ function worktreeFiles(root:string):Files{
  }}visit(root);return files;
 }
 export class CodingJobs{
- private active?:string;
+ private active?:string;private closed=false;
+ private executions=new Map<string,Promise<void>>();
  private controllers=new Map<string,AbortController>();
  constructor(private store:ProjectStore,private engine:CodingEngine){
   store.db.exec('CREATE TABLE IF NOT EXISTS coding_jobs(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,record TEXT NOT NULL)');
@@ -27,6 +28,7 @@ export class CodingJobs{
  list(projectId:string,role:Role){this.store.get(projectId,role);return (this.store.db.prepare('SELECT record FROM coding_jobs WHERE projectId=? ORDER BY rowid DESC LIMIT 50').all(projectId) as {record:string}[]).map(row=>JSON.parse(row.record) as CodingJob);}
  private owner(job:CodingJob,role:Role){if(job.role!==role)throw new WorkbenchError('FORBIDDEN','请使用发起任务的身份审阅',403);}
  async start(projectId:string,role:Role,prompt:string){
+  if(this.closed)throw new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503);
   const project=this.store.get(projectId,role);if((project.kind==='template')!==(role==='platform'))throw new WorkbenchError('FORBIDDEN','当前身份不能修改该工程',403);
   if(typeof prompt!=='string'||!prompt.trim()||prompt.length>16000)throw new WorkbenchError('INVALID_PROMPT','请输入 1～16000 字的开发需求');
   if(this.active)throw new WorkbenchError('ENGINE_BUSY','已有编码任务正在执行，请查看原任务',409);
@@ -37,7 +39,7 @@ export class CodingJobs{
   this.store.git(projectId,['worktree','add','--detach',directory,project.head]);
   this.active=job.id;const controller=new AbortController();this.controllers.set(job.id,controller);this.persist(job);
   const skill=role==='platform'?'moa-platform-development':'moa-application-development';
-  void this.engine.run({directory,prompt,skill,signal:controller.signal,onEvent:event=>{if(event.type==='question'){job.status='awaiting_input';job.pendingQuestion={id:String(event.id),questions:event.questions as Record<string,unknown>[]};}else if(event.type==='question_answered'){job.status='running';delete job.pendingQuestion;}if(job.events.length<200)job.events.push(event);this.persist(job);}}).then(result=>{
+  const execution=this.engine.run({directory,prompt,skill,signal:controller.signal,onEvent:event=>{if(event.type==='question'){job.status='awaiting_input';job.pendingQuestion={id:String(event.id),questions:event.questions as Record<string,unknown>[]};}else if(event.type==='question_answered'){job.status='running';delete job.pendingQuestion;}if(job.events.length<200)job.events.push(event);this.persist(job);}}).then(result=>{
    Object.assign(job,result);if(controller.signal.aborted){job.status='cancelled';return;}
    if(!result.evidence.some(e=>e.tool==='skill'&&e.status==='completed'&&e.input?.name===skill))throw new WorkbenchError('SKILL_NOT_LOADED','未找到本角色范式 Skill 的实际读取证据，变更不进入审阅');
    const before=this.store.snapshot(projectId,job.baseHead),after=worktreeFiles(directory);validateFiles(after);
@@ -49,7 +51,8 @@ export class CodingJobs{
    job.status='awaiting_review';
   }).catch(error=>{
    job.status=controller.signal.aborted?'cancelled':'failed';job.error=error instanceof WorkbenchError?{code:error.code,message:error.message}:{code:'CODING_FAILED',message:'编码执行未完成，请查看任务记录并核对模型/进程状态'};
-  }).finally(()=>{this.persist(job);this.controllers.delete(job.id);if(this.active===job.id)this.active=undefined;});
+  }).finally(()=>{this.persist(job);this.controllers.delete(job.id);this.executions.delete(job.id);if(this.active===job.id)this.active=undefined;});
+  this.executions.set(job.id,execution);
   return job;
  }
  async apply(id:string,role:Role){
@@ -63,5 +66,6 @@ export class CodingJobs{
   if(!Array.isArray(answers)||!answers.every(a=>Array.isArray(a)&&a.every(v=>typeof v==='string'))||!this.engine.answer)throw new WorkbenchError('INVALID_ANSWER','请按问题顺序提供回答');
   await this.engine.answer(join(this.store.root,'jobs',job.id,'workspace'),questionId,answers);return this.get(id,role);
  }
+ async close(){this.closed=true;for(const controller of this.controllers.values())controller.abort();await Promise.allSettled(this.executions.values());}
  private clean(job:CodingJob){const directory=join(this.store.root,'jobs',job.id,'workspace');if(existsSync(directory))this.store.git(job.projectId,['worktree','remove','--force',directory]);}
 }
