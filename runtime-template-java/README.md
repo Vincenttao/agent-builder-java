@@ -9,3 +9,5 @@
 验证：`mvn -f runtime-template-java/pom.xml test`。前提是固定版本 Core/Runtime 已安装。`LiveMoaProbe` 是显式运行的集成探测，不属于默认单元测试；其 fixture 模式不调用模型，操作使用声明的固定数据。真实模型和固定模型记录分别保留在 `test-results/dev-workbench-v2/p0/`。
 
 `LocalSkillRunner` 是针对本 Demo 的受信任本机适配：只接受启动时登记的脚本文本，使用 `/usr/bin/python3 -I`，结构化 `SKILL_INPUT`，清空继承环境、限定超时和输出。它不提供远端 Sandbox 隔离，不支持任意 shell 命令或通用配置凭据绑定。企业脚本执行隔离仍属于后置能力。
+
+`TaskShelf` 只管理同进程的业务任务规则及每任务独立 Core Session：当前任务与一个保留任务、切换决定、恢复复核、输入标识失效、已提交操作/回执归属。最多保留 128 个任务和最近 4096 个状态事件。它尚未接入执行宿主；状态测试不等于真实 Core 中断恢复、外部零调用或跨重启恢复已验证。

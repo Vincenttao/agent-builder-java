@@ -53,3 +53,4 @@ PRD 中旧快照保留为历史源码证据，不自动覆盖。新实现记录�
 - P3～P5：待完成。当前目标继续推进至 RD-01～06 可实际演示。
 - P0 兼容探测完成：本项目导入 MOA NativeSkillAgent 依赖闭包并适配 Core 0.1.17；5 项兼容测试通过。真实 Flash 模型循环记录 `p0/live-moa-20261025-024310/`，操作仍为固定数据；随后确定性模型探测 `p0/live-moa-20261025-025441/` 证实 Core OTel Span 有效，Jaeger v3 服务查询已出现 `workbench-moa-probe`。两者证据分别记录，不合并声称真实业务端到端通过。原生生命周期和 DeepAgentSession 观测差异均在本项目适配，未修改外部源码。
 - P3 第一切片：限定本机 Skill 适配器从 4 个失败用例实现到全套 9 项 Java 测试通过；独立 i豆/A2A Mock 从 404 契约失败实现到 2 项真实 HTTP 测试通过。已验证 Mock 幂等、变参拒绝、写后超时原键查单及 A2A 等待/续接关联；尚未计为 Java 接入、双层任务或 RD-03/04 完成。类型检查通过，红/绿记录位于 `p0/local-skill-runner-*`、`p0/business-mock-*`。
+- P3 两层规则切片：新增 Java `TaskShelf`，每任务独立 Core Session，覆盖先询问/暂不切换、保留/放弃、第三层阻断、B 失败后 A 续办复核、旧确认失效、已提交任务计层及迟到回执归属。全套 Java 测试 14 项通过；随后针对旧确认标识重用补硬约束并单独复验。该状态机尚未绑定 MOA 执行宿主，不能把状态用例计为真实 A/B/C 外部调用验证。记录：`p0/task-shelf-red.log`、`p0/task-shelf-green.log`、`p0/task-shelf-final.log`。
