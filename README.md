@@ -4,20 +4,29 @@
 
 当前可走通 **设备查询 Tool／Skill 自动开发 → 固定候选 → 独立验收 → 同一 JAR 发布 → 模拟企业 App 调用**。平台使用 TypeScript，业务 Agent 运行在 openJiuwen Java 上，工程开发使用 OpenCode 与 DeepSeek。
 
-> PRD 2.0 是目标设计，本次仅更新文档，尚未实现 MOA/i豆完整链路或可脱离 Builder 的企业交付。当前仍为 trusted-local 开发原型，未启用任务沙箱。下文保留现有操作路径；各项验证以对应实施记录的版本和环境为准。
+> PRD 2.0 是目标设计，本次已提供双角色可点击 Demo，全部为本地模拟；尚未实现 MOA/i豆真实链路或可脱离 Builder 的企业交付。第二、三阶段先讨论技术方案，再开发前后端。当前仍为 trusted-local 开发原型，未启用任务沙箱。下文保留现有操作路径；各项验证以对应实施记录的版本和环境为准。
 
 ## 文档入口
 
 | 你要做什么 | 从这里开始 |
 | --- | --- |
-| 启动并体验 | 本页的快速上手 |
+| 体验双角色 MOA+i豆新设计 | [可点击 Demo 与演示路线](docs/developer-prototype-v2/README.md)：静态 HTML 或本机 Node，无需 Docker/Java/令牌 |
+| 启动并体验既有产品 | 本页的既有产品启动说明 |
 | 逐步操作、部署维护、开发调试、排错 | [详细操作指南](docs/操作指南.md) |
 | 向团队介绍产品、架构与演示方法 | [项目汇报 HTML](docs/项目汇报.html)（浏览器直接打开，支持汇报模式和打印） |
 | 了解当前产品方向 | [PRD 2.0](docs/Agent开发工作台_PRD_v2.0.md)、[后续推进计划](docs/后续推进计划与执行要求.md) |
 | 查看设计与历史实现文档 | [文档导航](docs/README.md) |
 | 核对已实现范围及实际测试 | [实施进度](docs/implementation/PROGRESS.md)、[TDD-017 验证记录](docs/implementation/TDD-017.md) |
 
-## 快速上手：Docker Compose
+## 新设计 Demo：本机运行
+
+```bash
+node docs/developer-prototype-v2/scripts/serve.cjs
+```
+
+访问 **http://127.0.0.1:8768/**，点击“演示路线”从平台开发者开始。也可直接打开 [单文件设计稿](docs/developer-prototype-v2/开发工作台2.0.html)。全部为模拟数据，不需要完整后端。
+
+## 既有产品启动：Docker Compose
 
 本地调试可在 `.env.local` 设置 `LOCAL_DEBUG_AUTH=true`，更新 `app` 服务后，打开页面会自动进入工作台，无需填写访问令牌。关闭此开关后恢复令牌登录。调试模式保留会话、Origin 和 CSRF 校验；Compose 端口继续只绑定本机。以下令牌登录步骤仅适用于关闭调试模式时。
 
