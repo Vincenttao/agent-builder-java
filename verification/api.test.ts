@@ -22,6 +22,9 @@ test('HTTP workbench persists real role/template/application revisions and block
   for(const path of ['/workbench-ui/../.env.local','/workbench-ui/package.json','/workbench-ui/app.ts'])assert.equal((await fetch(base+path)).status,404);
   async function call(path:string,role='application',method='GET',body?:unknown){const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json','x-workbench-role':role},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,body:await r.json() as any};}
   assert.equal((await call('/api/context')).body.identity.role,'application');
+  assert.equal((await call('/api/context')).body.workspaceId,store.workspaceId);
+  const wrongWorkspace=await fetch(base+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json','x-workbench-workspace':'another-workspace'},body:'{}'});
+  assert.equal(wrongWorkspace.status,409);assert.equal((await wrongWorkspace.json() as any).error.code,'WORKSPACE_CHANGED');
   assert.equal((await call('/api/context','admin')).status,400);
   assert.equal((await call('/api/projects')).body.projects.length,0);
   assert.equal((await call('/api/projects/moa-platform')).status,403);

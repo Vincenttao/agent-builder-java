@@ -49,6 +49,7 @@ test('new application starts empty from MOA and data stays isolated and persiste
   assert.equal(store.get(a.id,'application').head,changed.head);
   store.close(); // Simulate a restart; a live data directory now has one owner.
   const reopened=new ProjectStore(root);
+  assert.equal(reopened.workspaceId,store.workspaceId);
   assert.equal(reopened.files(a.id,'application')['instructions.md'],'仅此应用的行为');
   reopened.close();
 });

@@ -4,7 +4,8 @@ window.WorkbenchCoding = (() => {
   const labels={running:'执行中',awaiting_input:'等待开发者回答',awaiting_review:'建议待审阅',applied:'已应用',rejected:'已拒绝',failed:'执行失败',cancelled:'已取消'};
   let host, timer, generation=0, refreshSequence=0;
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function state(id){if(!states.has(id))states.set(id,{jobs:[],selected:null,prompt:'',review:null,detailKey:null,answers:new Map()});return states.get(id);}
+  function state(id){const role=host.context()?.role??'application',key=role+'|'+id;if(!states.has(key)){const saved=host.local?.read(id,role,'coding',{})??{};states.set(key,{jobs:[],selected:typeof saved.selected==='string'?saved.selected:null,prompt:typeof saved.prompt==='string'?saved.prompt:'',review:null,detailKey:null,answers:new Map()});}return states.get(key);}
+  function persist(id,s){host.local?.write(id,host.context()?.role??'application','coding',{prompt:s.prompt,selected:s.selected});}
   function skill(project){return project.kind==='template'?'moa-platform-development':'moa-application-development';}
   function render(context){
     const s=state(context.project.id), path=`.opencode/skills/${skill(context.project)}/SKILL.md`;
@@ -59,11 +60,11 @@ window.WorkbenchCoding = (() => {
     if(s.selected){const value=await host.api('/jobs/'+s.selected);if(!current())return;const index=s.jobs.findIndex(j=>j.id===value.job.id);if(index>=0)s.jobs[index]=value.job;else s.jobs.unshift(value.job);
       if(Object.keys(value.job.changes).length&&(force||s.review?.job.id!==value.job.id)){const review=await host.api('/jobs/'+value.job.id+'/review');if(!current())return;s.review=review;}
     }
-    paint(context);const job=s.jobs.find(j=>j.id===s.selected);
+    persist(context.project.id,s);paint(context);const job=s.jobs.find(j=>j.id===s.selected);
     if(job&&activeStatuses.includes(job.status))timer=setTimeout(()=>refresh(token,context).catch(e=>report(e,token,context)),750);
   }
   function init(callbacks){host=callbacks;
-    document.addEventListener('input',e=>{const form=e.target.closest('#coding-answer');if(form){const c=host.context();if(c){const values={};for(const [name,value] of new FormData(form)){(values[name]??=[]).push(value);}state(c.project.id).answers.set(form.dataset.job+':'+form.dataset.question,values);}}if(e.target.id==='coding-prompt'){const context=host.context();if(context)state(context.project.id).prompt=e.target.value;}});
+    document.addEventListener('input',e=>{const form=e.target.closest('#coding-answer');if(form){const c=host.context();if(c){const values={};for(const [name,value] of new FormData(form)){(values[name]??=[]).push(value);}state(c.project.id).answers.set(form.dataset.job+':'+form.dataset.question,values);}}if(e.target.id==='coding-prompt'){const context=host.context();if(context){const s=state(context.project.id);s.prompt=e.target.value;persist(context.project.id,s);}}});
     document.addEventListener('change',e=>{if(e.target.id==='coding-diff-file'){const c=host.context();if(!c)return;state(c.project.id).path=e.target.value;paint(c);}});
     document.addEventListener('click',e=>{const button=e.target.closest('button');if(!button||!button.dataset.codingAction&&!button.dataset.codingJob)return;host.action(async()=>{
       const c=host.context();if(!c)return;const s=state(c.project.id),token=generation;

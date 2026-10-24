@@ -19,23 +19,25 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
   const exports=new ExportManager(store,runs);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
     if(browserBuild&&browserBuild!==build&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('UI_VERSION_CHANGED','页面版本已变化，请保留草稿并刷新后操作',409));
+    const browserWorkspace=req.header('x-workbench-workspace');
+    if(browserWorkspace&&browserWorkspace!==store.workspaceId&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKSPACE_CHANGED','工作目录已切换，请保留草稿并刷新后操作',409));
     const role=req.header('x-workbench-role')??'application';
     if(!['application','platform'].includes(role))return next(new WorkbenchError('INVALID_ROLE','请选择应用开发者或平台开发者'));
     res.locals.role=role as Role;res.set('Cache-Control','no-store');next();
   });
-  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:'deepseek-flash',uiVersion:build}));
+  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:'deepseek-flash',uiVersion:build,workspaceId:store.workspaceId}));
   app.get('/api/templates',(_req,res)=>res.json({releases:store.listReleases()}));
   app.post('/api/templates/:id/releases',(req,res)=>res.status(201).json({release:store.publish(req.params.id,res.locals.role,req.body.version)}));
   app.get('/api/projects',(_req,res)=>res.json({projects:store.list(res.locals.role)}));

@@ -43,6 +43,7 @@ export function validateFiles(files:Files):Definition{
 export class ProjectStore{
   readonly db:Database.Database;
   readonly root:string;
+  readonly workspaceId:string;
   private readonly lockToken=randomUUID();
   private lockFile:string;
   constructor(root:string){
@@ -60,6 +61,9 @@ export class ProjectStore{
     this.db=new Database(join(this.root,'index.sqlite'));this.db.pragma('journal_mode = WAL');this.db.pragma('foreign_keys = ON');
     this.db.exec(`CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY,kind TEXT NOT NULL,name TEXT NOT NULL,head TEXT NOT NULL,sourceReleaseId TEXT,createdAt TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS releases(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,version TEXT NOT NULL,"commit" TEXT NOT NULL,digest TEXT NOT NULL,createdAt TEXT NOT NULL,UNIQUE(projectId,version),UNIQUE(projectId,"commit"));`);
+    this.db.exec('CREATE TABLE IF NOT EXISTS workbench_metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL)');
+    this.db.prepare('INSERT OR IGNORE INTO workbench_metadata VALUES(?,?)').run('workspace-id',randomUUID());
+    this.workspaceId=(this.db.prepare('SELECT value FROM workbench_metadata WHERE key=?').get('workspace-id') as {value:string}).value;
   }
   close(){if(this.db.open)this.db.close();try{const lock=JSON.parse(readFileSync(this.lockFile,'utf8'));if(lock.token===this.lockToken)unlinkSync(this.lockFile);}catch{}}
   path(id:string){if(!/^[a-z0-9-]{1,80}$/.test(id))fail('NOT_FOUND','工程不存在',404);return join(this.root,'projects',id);}

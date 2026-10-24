@@ -56,7 +56,7 @@ test('PC business configuration, Skill assembly and saved flow share actual proj
  const fixtureCatalog=JSON.parse(readTree(resolve('examples/idou'))['adapters/operations.json']);
  const current=wb.store.get(application.id,'application');
  wb.store.save(application.id,'application',current.head,{'adapters/operations.json':JSON.stringify({balance:fixtureCatalog.balance}),'skills/benefits/balance.py':readTree(resolve('examples/idou'))['skills/benefits/balance.py']});
- await page.reload();await page.getByRole('button',{name:'进入工程'}).click();
+ await page.reload();await page.locator('#editor').waitFor(); // Same-build refresh now restores the open project and file.
  await page.getByRole('button',{name:'业务配置',exact:true}).click();
  await page.getByLabel('查询余额 balance',{exact:false}).check();
  await page.getByRole('button',{name:'保存所有修改'}).click();await page.getByText('已提交工程版本',{exact:true}).waitFor();
