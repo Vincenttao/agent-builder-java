@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "requirement": "TD-15/NF-01 Runner and App container crash during committed Mock write response",
+  "executionMode": "isolated-live-docker",
+  "measuredAt": "2026-10-24T02:51:20.277Z",
+  "composeProject": "agent-builder-td15-nf01",
+  "draftId": "ee2388c3-65a1-4977-a77c-cf0eb20f4f5b",
+  "snapshotId": "aa8ac116-6553-450e-a666-21ca1b47bd68",
+  "baselineId": "f9aca945-0fbd-4a3a-9cc0-1fb7c8fcf60b",
+  "candidateId": "e6df33ad-60ec-4e7f-8520-a9304a3c8ad0",
+  "candidateArtifactDigest": "34d73b50b1b8e63dcac93c925eaeebeccf8c2ffdc2fb96d87e9a14ebf0e4b1f2",
+  "validationId": "ce557fb0-15e1-454a-9a1b-db8cd5ff96bc",
+  "validationStatus": "completed",
+  "caseId": "TC-008",
+  "runId": "a8932f8f-2a14-4b87-a107-e0d8c45d37ff",
+  "testDeploymentId": "83f16288-6c9d-49c6-ae90-07c10ea24414",
+  "beforeRestart": {
+    "validationStatus": "running",
+    "caseId": "TC-008",
+    "runId": "a8932f8f-2a14-4b87-a107-e0d8c45d37ff",
+    "testDeploymentId": "83f16288-6c9d-49c6-ae90-07c10ea24414",
+    "runStatus": "running",
+    "actionStatuses": [
+      "executing"
+    ],
+    "actionCount": 1,
+    "mock": {
+      "callCount": 2,
+      "operations": [
+        "equipment-status",
+        "work-order-create"
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "workOrderCallCount": 1,
+      "workOrderCount": 1,
+      "workOrders": [
+        {
+          "workOrderId": "a75a7ad6-b255-4647-ba99-4ee5fa3095b7",
+          "status": "created"
+        }
+      ]
+    },
+    "runtimeEvents": 21
+  },
+  "restart": {
+    "appRunnerKilled": true,
+    "appRunnerHealthyAfterRestart": true,
+    "runnerJournal": {
+      "id": "a8932f8f-2a14-4b87-a107-e0d8c45d37ff",
+      "status": "interrupted",
+      "error": "RUNNER_RESTART_REQUIRES_RECONCILIATION",
+      "eventCount": 17
+    }
+  },
+  "afterRestart": {
+    "runStatus": "interrupted",
+    "diagnostic": "RUNNER_RESTART_REQUIRES_RECONCILIATION",
+    "actionStatuses": [
+      "succeeded"
+    ],
+    "actionCount": 1,
+    "mock": {
+      "callCount": 3,
+      "operations": [
+        "equipment-status",
+        "work-order-create",
+        "work-order-by-key"
+      ],
+      "statuses": [
+        200,
+        200,
+        200
+      ],
+      "workOrderCallCount": 1,
+      "workOrderCount": 1,
+      "workOrders": [
+        {
+          "workOrderId": "a75a7ad6-b255-4647-ba99-4ee5fa3095b7",
+          "status": "created"
+        }
+      ]
+    },
+    "runtimeEventCount": 21,
+    "duplicateWrites": 0,
+    "workOrderCount": 1
+  },
+  "validationReport": {
+    "verdict": "failed",
+    "cases": [
+      {
+        "caseId": "TC-001",
+        "status": "passed"
+      },
+      {
+        "caseId": "TC-002",
+        "status": "passed"
+      },
+      {
+        "caseId": "TC-003",
+        "status": "passed"
+      },
+      {
+        "caseId": "TC-004",
+        "status": "passed"
+      },
+      {
+        "caseId": "TC-005",
+        "status": "failed"
+      },
+      {
+        "caseId": "TC-006",
+        "status": "passed"
+      },
+      {
+        "caseId": "TC-007",
+        "status": "passed"
+      },
+      {
+        "caseId": "TC-008",
+        "status": "failed"
+      }
+    ],
+    "tc008Assertions": [
+      {
+        "actual": "interrupted",
+        "ruleId": "run-status",
+        "status": "failed",
+        "expected": "succeeded"
+      },
+      {
+        "actual": "succeeded",
+        "ruleId": "action-outcome",
+        "status": "passed",
+        "expected": "succeeded"
+      },
+      {
+        "actual": 0,
+        "ruleId": "before-approval-write-count",
+        "status": "passed",
+        "expected": 0
+      },
+      {
+        "actual": 1,
+        "ruleId": "write-call-count",
+        "status": "passed",
+        "expected": 1
+      },
+      {
+        "actual": 1,
+        "ruleId": "workorder-state-count",
+        "status": "passed",
+        "expected": 1
+      },
+      {
+        "actual": 1,
+        "ruleId": "effective-decision-count",
+        "status": "passed",
+        "expected": 1
+      },
+      {
+        "actual": true,
+        "ruleId": "workorder-write-binding",
+        "status": "passed",
+        "expected": true
+      },
+      {
+        "actual": true,
+        "ruleId": "original-key-reconciliation",
+        "status": "passed",
+        "expected": true
+      }
+    ]
+  },
+  "noDuplicateExternalWrite": true,
+  "safetyAssertionsPassed": true,
+  "expectedInterruption": true,
+  "earlierCasesPassed": false,
+  "cleanup": {
+    "testDeploymentStatus": "stopped",
+    "isolatedComposeTeardownRequired": true
+  },
+  "verdict": "failed",
+  "targetImageIds": [
+    "sha256:76102baabd35608a22a570e6750d2a7842d90b864b1f2c8566e375258ec8580d",
+    "sha256:7f77f099bf59c660535604893cab9048287a9015529bddaa1eadaab9e361fd8e"
+  ]
+}
