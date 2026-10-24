@@ -12,6 +12,8 @@ test('HTTP workbench persists real role/template/application revisions and block
   t.after(async()=>{await new Promise<void>(resolve=>server.close(()=>resolve()));store.close();rmSync(root,{recursive:true,force:true});});
   const address=server.address();assert.ok(address&&typeof address!=='string');
   const base=`http://127.0.0.1:${address.port}`;
+  const stalePage=await fetch(base+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json','x-workbench-ui-build':'old-browser-build'},body:'{}'});
+  assert.equal(stalePage.status,409);assert.equal((await stalePage.json() as any).error.code,'UI_VERSION_CHANGED');
   const page=await fetch(base+'/');assert.equal(page.status,200);
   assert.match(await page.text(),/workbench-ui\/app.js/);
   const script=await fetch(base+'/workbench-ui/app.js');assert.equal(script.status,200);

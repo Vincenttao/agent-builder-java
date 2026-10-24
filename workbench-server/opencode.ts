@@ -8,6 +8,7 @@ import {WorkbenchError} from './projects.js';
 import type {CodingEngine,CodingEvidence,CodingResult} from './coding.js';
 type Request=(path:string,body?:unknown,timeout?:number)=>Promise<any>;
 export class OpenCodeEngine implements CodingEngine{
+ readonly kind='opencode';
  private active=new Map<string,{request:Request;sessionId:string}>();
  constructor(private repository=process.cwd()){}
  async answer(directory:string,id:string,answers:string[][]){

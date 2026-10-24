@@ -18,6 +18,8 @@ test('coding changes stay in worktree until review; rejecting or accepting prese
  const original=store.files(a.id,'application')['instructions.md'];
  const job=await jobs.start(a.id,'application','改为福利助手');const completed=await settled(jobs,job.id);
  assert.equal(completed.status,'awaiting_review');assert.equal(completed.changes['instructions.md'],'业务新指令');
+ assert.equal(jobs.review(job.id,'application').before['instructions.md'],original);
+ await assert.rejects(jobs.apply(job.id,'platform'),(e:unknown)=>e instanceof WorkbenchError&&e.code==='FORBIDDEN');
  assert.equal(store.files(a.id,'application')['instructions.md'],original);
  await jobs.reject(job.id,'application');assert.equal(jobs.get(job.id,'application').status,'rejected');assert.equal(store.get(a.id,'application').head,a.head);
  const next=await jobs.start(a.id,'application','修改业务指令');await settled(jobs,next.id);const applied=await jobs.apply(next.id,'application');
@@ -28,6 +30,7 @@ test('stale suggestions cannot overwrite manual revisions and repeated apply can
  const {store,jobs,a}=fixture(t,engine(dir=>writeFileSync(join(dir,'instructions.md'),'助手建议')));
  const job=await jobs.start(a.id,'application','修改');await settled(jobs,job.id);
  const manual=store.save(a.id,'application',a.head,{'instructions.md':'人工修改'});
+ const review=jobs.review(job.id,'application');assert.equal(review.stale,true);assert.equal(review.head,manual.head);assert.notEqual(review.before['instructions.md'],'人工修改');
  await assert.rejects(jobs.apply(job.id,'application'),(e:unknown)=>e instanceof WorkbenchError&&e.code==='REVISION_CONFLICT');
  assert.equal(store.get(a.id,'application').head,manual.head);assert.equal(store.files(a.id,'application')['instructions.md'],'人工修改');
 });

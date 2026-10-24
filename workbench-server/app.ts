@@ -17,15 +17,18 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const jobs=new CodingJobs(store,options.codingEngine??new OpenCodeEngine(repository));
   const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
   let closing=false;
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
-  for(const name of ['index.html','style.css','app.js','configuration.js'])uiVersion.update(name+'\0'+readFileSync(resolve(repository,'workbench-ui',name),'utf8'));
+  for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
-  app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.sendFile(resolve(repository,'workbench-ui/index.html'));});
-  for(const name of ['app.js','style.css','configuration.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.sendFile(resolve(repository,'workbench-ui',name));});
+  app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
+    const browserBuild=req.header('x-workbench-ui-build');
+    if(browserBuild&&browserBuild!==build&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('UI_VERSION_CHANGED','页面版本已变化，请保留草稿并刷新后操作',409));
     const role=req.header('x-workbench-role')??'application';
     if(!['application','platform'].includes(role))return next(new WorkbenchError('INVALID_ROLE','请选择应用开发者或平台开发者'));
     res.locals.role=role as Role;res.set('Cache-Control','no-store');next();
@@ -43,6 +46,7 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   app.get('/api/projects/:id/jobs',(req,res)=>res.json({jobs:jobs.list(req.params.id,res.locals.role)}));
   app.post('/api/projects/:id/jobs',async(req,res)=>res.status(202).json({job:await jobs.start(req.params.id,res.locals.role,req.body.prompt)}));
   app.get('/api/jobs/:id',(req,res)=>res.json({job:jobs.get(req.params.id,res.locals.role)}));
+  app.get('/api/jobs/:id/review',(req,res)=>res.json(jobs.review(req.params.id,res.locals.role)));
   app.post('/api/jobs/:id/apply',async(req,res)=>res.json({job:await jobs.apply(req.params.id,res.locals.role)}));
   app.post('/api/jobs/:id/reject',async(req,res)=>res.json({job:await jobs.reject(req.params.id,res.locals.role)}));
   app.post('/api/jobs/:id/cancel',async(req,res)=>res.json({job:await jobs.cancel(req.params.id,res.locals.role)}));
