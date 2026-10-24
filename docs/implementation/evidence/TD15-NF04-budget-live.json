@@ -4,10 +4,14 @@
   "executionMode": "isolated-live-docker",
   "baseUrl": "http://127.0.0.1:18080",
   "composeProject": "agent-builder-td15-nf01",
-  "measuredAt": "2026-10-23T21:36:48.534Z",
-  "draftId": "4540f5fd-6a29-4f36-a08e-85a9e03d14bf",
-  "snapshotId": "4ea6064c-3d8f-4092-a0ee-3e3580304bd7",
-  "developmentJobId": "c68a2c87-05fe-4b75-9de2-53d054049f01",
+  "targetImageIds": [
+    "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
+    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+  ],
+  "measuredAt": "2026-10-24T00:19:28.360Z",
+  "draftId": "20fd2f2d-0277-439b-8f19-1c3df87680db",
+  "snapshotId": "54b9a650-df38-45d6-9e8e-09a9bf193e95",
+  "developmentJobId": "dcb1cb68-af92-45b9-b3e6-d1e62f27bb86",
   "budgetSeconds": 20,
   "finalStatus": "failed",
   "diagnostic": "ENGINEERING_BUDGET_EXCEEDED",
@@ -21,8 +25,10 @@
       "status": "skipped"
     }
   ],
-  "eventCount": 0,
-  "eventTypes": [],
+  "eventCount": 1,
+  "eventTypes": [
+    "file.written"
+  ],
   "workerStarted": true,
   "timeoutDetected": true,
   "workerStopped": true,

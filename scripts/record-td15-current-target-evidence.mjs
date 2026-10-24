@@ -26,6 +26,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-NF01-sse-reconnect.json','AC13-NF01'],
   ['docs/implementation/evidence/TD15-NF01-two-sessions.json','NF01-two-sessions'],
   ['docs/implementation/evidence/TD15-NF02-live.json','NF02'],
+  ['docs/implementation/evidence/TD15-NF05-workspace.json','AC18-NF05'],
   ['docs/implementation/evidence/TD15-AC04-invalid-assembly.json','AC04'],
   ['docs/implementation/evidence/TD15-AC06-incompatible-assembly.json','AC06'],
   ['docs/implementation/evidence/TD15-AC07-http-mcp-live.json','AC07'],
@@ -35,6 +36,15 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC15-startup-failure-live.json','AC15'],
   ['docs/implementation/evidence/TD15-AC16-rollback-live.json','AC16'],
   ['docs/implementation/evidence/TD15-AC19-cancel-unknown-write-live.json','AC19'],
+  ['docs/implementation/evidence/TD15-AC20-simulation-not-publishable.json','AC20'],
+  ['docs/implementation/evidence/TD15-EQ01-empty-retrieval-live.json','EQ01'],
+  ['docs/implementation/evidence/TD15-EQ02-tool-unavailable-live.json','EQ02'],
+  ['docs/implementation/evidence/TD15-NF01-restart-snapshot-events.json','NF01-restart'],
+  ['docs/implementation/evidence/TD15-NF03-benchmark.json','NF03'],
+  ['docs/implementation/evidence/TD15-NF04-iterations-live.json','NF04-iterations'],
+  ['docs/implementation/evidence/TD15-NF04-budget-live.json','NF04-budget'],
+  ['docs/implementation/evidence/TD15-NF04-errors-live.json','NF04-errors'],
+  ['docs/implementation/evidence/TD15-NF04-event-retention-live.json','NF04-retention'],
   ['docs/implementation/evidence/TD15-AC42a-trusted-local-live.json','AC42a'],
   ['docs/implementation/evidence/TD15-NF01-validation-branches.json','NF01-validation'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
@@ -47,6 +57,15 @@ for(const [sourcePath,kind] of sources){
   const source=JSON.parse(await readFile(sourcePath,'utf8'));
   if(kind==='AC01')assert.equal(source.targetImageIds?.[0],appImageId,'AC01_APP_TARGET_MISMATCH');
   else if(kind==='NF02')assert.equal(source.appImageId,appImageId,'NF02_APP_TARGET_MISMATCH');
+  else if(kind==='AC20')assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],'AC20_TARGET_MISMATCH');
+  else if(kind==='EQ01'||kind==='EQ02'||kind==='NF01-restart')assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
+  else if(kind.startsWith('NF04-'))assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
+  else if(kind==='NF03')assert.equal(source.runtime.appImageId,appImageId,'NF03_APP_TARGET_MISMATCH');
+  else if(kind==='AC18-NF05'){
+    assert.equal(source.targetImageIds?.[0],appImageId,'NF05_TARGET_APP_IMAGE_MISMATCH');
+    assert.equal(source.targetImageIds?.[1],appImageId,'NF05_TARGET_MOCK_IMAGE_MISMATCH');
+    assert.equal(source.targetImageIds?.[3],runnerImageId,'NF05_TARGET_RUNNER_IMAGE_MISMATCH');
+  }
   else assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
   if(kind==='AC11'||kind==='AC14'||kind==='AC16'||kind==='AC19'||kind==='AC42a'||kind==='NF01-validation'){
     assert.ok(source.branches.length>0&&source.branches.every(branch=>branch.status==='passed'&&branch.assertions.every(item=>item.passed===true)),`${kind}_BRANCH_NOT_PASSED`);
@@ -72,6 +91,65 @@ for(const [sourcePath,kind] of sources){
       'sentinel-export':source.checks.export
     };
     for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'NF-02',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed},{name:'app_image_matches_current_target',passed:source.appImageId===appImageId}],evidence});
+  }else if(kind==='AC20'){
+    const logBytes=await readFile(source.testLogPath);
+    const logDigest=createHash('sha256').update(logBytes).digest('hex');
+    assert.equal(logDigest,source.testLogSha256,'AC20_TEST_LOG_DIGEST_MISMATCH');
+    assert.match(logBytes.toString('utf8'),/4 passed/,'AC20_TEST_LOG_NOT_PASSED');
+    const logDestination=`test-results/acceptance/evidence/${source.testLogPath.split('/').at(-1)}`;
+    await writeFile(logDestination,logBytes);
+    const checks=[
+      {name:'simulated_report_rejected',passed:source.assertions.simulatedReportRejected===true},
+      {name:'unverified_report_rejected',passed:source.assertions.unverifiedReportRejected===true},
+      {name:'current_app_and_runner_match',passed:source.targetImageIds[0]===appImageId&&source.targetImageIds[1]===runnerImageId},
+      {name:'tests_passed',passed:source.passedTests===4}
+    ];
+    const logEvidence={kind:'execution-record',path:logDestination.slice('test-results/'.length),sha256:logDigest};
+    results.push({caseId:'AC-20',branchId:'simulation-not-publishable',binding,executionMode:'simulated',status:checks.every(item=>item.passed)?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:checks,evidence:[...evidence,logEvidence]});
+  }else if(kind==='EQ01'||kind==='EQ02'){
+    assert.equal(source.verdict,'passed',`${kind}_NOT_PASSED`);
+    for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
+  }else if(kind==='NF01-restart'){
+    const active=JSON.parse(await readFile('docs/implementation/evidence/TD15-NF01-active-write-restart.json','utf8'));
+    const restartPassed=source.verdict==='passed'&&source.snapshotBindingMatches&&source.eventLogRetained&&source.eventSequenceUnique;
+    const reconciliationPassed=active.verdict==='passed-safety-with-expected-interruption'&&active.afterRestart.duplicateWrites===0&&active.afterRestart.workOrderCount===1&&active.afterRestart.mock.operations.includes('work-order-by-key');
+    results.push({caseId:'NF-01',branchId:'restart-snapshots-events',binding,executionMode:'live-mock',status:restartPassed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'snapshot_and_event_log_survive_restart',passed:restartPassed}],evidence});
+    results.push({caseId:'NF-01',branchId:'no-replay-unknown-reconcile',binding,executionMode:'live-mock',status:reconciliationPassed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'unknown_write_reconciled_without_replay',passed:reconciliationPassed}],evidence});
+  }else if(kind==='NF03'){
+    const common=source.verdict==='passed'&&source.workload.sampleCount===100&&source.workload.concurrency===5&&source.workload.modelCalls===0&&source.cleanup==='complete';
+    const checks={
+      'reference-workload':common&&source.save.count===100&&source.list.count===100,
+      'save-p95':common&&source.save.p95Ms<source.targetP95Ms,
+      'list-p95':common&&source.list.p95Ms<source.targetP95Ms,
+      'error-rate':common&&source.failures===0&&source.savedRecords===100
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'NF-03',branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed},{name:'current_app_image_matches',passed:source.runtime.appImageId===appImageId}],evidence});
+  }else if(kind==='NF04-iterations'){
+    const passed=source.verdict==='passed'&&source.limitRespected===true&&source.maxIterations===1&&source.modelCallCount<=1&&source.cleanupStatus==='stopped';
+    results.push({caseId:'NF-04',branchId:'iteration-limit',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'deployed_run_respects_iteration_limit',passed}],evidence});
+  }else if(kind==='NF04-budget'){
+    const passed=source.verdict==='passed'&&source.timeoutDetected===true&&source.workerStarted===true&&source.workerStopped===true&&source.targetImageIds[0]===appImageId&&source.targetImageIds[1]===runnerImageId;
+    results.push({caseId:'NF-04',branchId:'timeout',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'engineering_worker_stops_at_budget',passed}],evidence});
+  }else if(kind==='NF04-errors'){
+    const codes=Object.values(source.errors).map(item=>item.code);
+    const passed=source.verdict==='passed'&&source.categoriesDistinct&&new Set(codes).size===4;
+    results.push({caseId:'NF-04',branchId:'error-classification',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'error_categories_are_distinct_and_classified',passed}],evidence});
+  }else if(kind==='NF04-retention'){
+    const passed=source.verdict==='passed'&&source.observed.expiredSentinelCount===0&&source.observed.markerCount===1&&source.targetImageIds[0]===appImageId&&source.targetImageIds[1]===runnerImageId;
+    results.push({caseId:'NF-04',branchId:'event-retention',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'expired_events_removed_with_gap_marker',passed}],evidence});
+  }else if(kind==='AC18-NF05'){
+    const files=source.exportedGeneratedFiles??[];
+    const checks={
+      'export-no-secrets':source.credentialsAbsent===true&&files.length>0,
+      'fresh-directory-import':source.targetComposeRunningServices===4&&Boolean(source.importedDraftId&&source.restoredDevelopmentJobId&&source.restoredArtifactDigest)&&source.restoreVerdict==='passed'&&source.recoveryPackageSurvivedAppRestart===true,
+      'rebind-required':(source.connectionRebindRequired?.length??0)>0,
+      'fresh-directory-start':source.targetBase!==source.sourceBase&&source.targetComposeRunningServices===4&&source.targetStackRemoved===true,
+      'export-import':source.credentialsAbsent===true&&files.length>0&&source.generatedArtifactsToRebuild?.some(item=>item.reason==='SOURCE_INCLUDED_BINARY_NOT_PACKAGED')&&source.restoreVerdict==='passed',
+      'configurable-ports':source.targetBase?.endsWith(':18081')&&source.targetComposeRunningServices===4,
+      'rebind':(source.connectionRebindRequired?.length??0)>0&&source.restoreVerdict==='passed'
+    };
+    const caseByBranch={'export-no-secrets':'AC-18','fresh-directory-import':'AC-18','rebind-required':'AC-18','fresh-directory-start':'NF-05','export-import':'NF-05','configurable-ports':'NF-05','rebind':'NF-05'};
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:caseByBranch[branchId],branchId,binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed},{name:'target_app_and_runner_match_current_images',passed:source.targetImageIds[0]===appImageId&&source.targetImageIds[3]===runnerImageId}],evidence});
   }else if(kind==='AC13-NF01'){
     const checks={
       'refresh':source.runFoundAfterRefresh&&source.snapshotDigestBefore===source.snapshotDigestAfter,

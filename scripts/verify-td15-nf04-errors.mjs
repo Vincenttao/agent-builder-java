@@ -1,9 +1,14 @@
 import { randomUUID } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 
 const base = (process.env.NF04_BASE_URL ?? 'http://127.0.0.1:8080').replace(/\/$/, '');
 const origin = process.env.NF04_ORIGIN ?? process.env.APP_ORIGIN ?? base;
+const project = process.env.NF04_COMPOSE_PROJECT;
+const composeArgs = ['compose', '--env-file', '.env.local', ...(project ? ['-p', project] : [])];
+const containers = project ? execFileSync('docker', [...composeArgs, 'ps', '-q', 'app', 'runner'], { encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean) : [];
+const targetImageIds = containers.length ? execFileSync('docker', ['inspect', '--format', '{{.Image}}', ...containers], { encoding: 'utf8' }).trim().split(/\r?\n/) : [];
 assert.ok(process.env.LOCAL_BOOTSTRAP_TOKEN, 'LOCAL_BOOTSTRAP_TOKEN_REQUIRED');
 const login = await fetch(`${base}/api/auth/session`, { method: 'POST', headers: { origin, 'content-type': 'application/json' }, body: JSON.stringify({ token: process.env.LOCAL_BOOTSTRAP_TOKEN }) });
 assert.equal(login.status, 200);
@@ -36,7 +41,7 @@ await capture('connection', await fetch(`${base}/api/connection-bindings`, { met
 const timeoutEvidence = JSON.parse(await readFile('docs/implementation/evidence/TD15-NF04-budget-live.json', 'utf8'));
 assert.equal(timeoutEvidence.diagnostic, 'ENGINEERING_BUDGET_EXCEEDED');
 errors.runtime = { status: timeoutEvidence.finalStatus, code: timeoutEvidence.diagnostic, correlationIdPresent: false, reference: 'TD15-NF04-budget-live.json' };
-const report = { schemaVersion: 1, requirement: 'TD-15/NF-04 error classification', executionMode: process.env.NF04_COMPOSE_PROJECT ? 'isolated-live-docker' : 'live-platform', baseUrl: base, composeProject: process.env.NF04_COMPOSE_PROJECT ?? null, measuredAt: new Date().toISOString(), draftId: draft.id, errors,
+const report = { schemaVersion: 1, requirement: 'TD-15/NF-04 error classification', executionMode: project ? 'isolated-live-docker' : 'live-platform', baseUrl: base, composeProject: project ?? null, targetImageIds, measuredAt: new Date().toISOString(), draftId: draft.id, errors,
   categoriesDistinct: new Set([errors.requirements.code, errors.assembly.code, errors.connection.code, errors.runtime.code]).size === 4, verdict: new Set([errors.requirements.code, errors.assembly.code, errors.connection.code, errors.runtime.code]).size === 4 ? 'passed' : 'failed' };
 await mkdir('docs/implementation/evidence', { recursive: true });
 await writeFile('docs/implementation/evidence/TD15-NF04-errors-live.json', JSON.stringify(report, null, 2) + '\n');

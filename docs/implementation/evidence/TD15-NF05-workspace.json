@@ -5,22 +5,22 @@
   "sourceBase": "http://127.0.0.1:18080",
   "targetBase": "http://127.0.0.1:18081",
   "composeProject": "agent-builder-td15-nf05",
-  "startedAt": "2026-10-23T21:54:41.536Z",
-  "sourceDraftId": "4540f5fd-6a29-4f36-a08e-85a9e03d14bf",
-  "sourceDevelopmentJobId": "653d0e0c-cf4b-40f7-bd5a-d27fdf009909",
-  "sourceCandidateId": "eb2c68c6-c455-4a5c-875b-5dbbf3b5ee1c",
+  "startedAt": "2026-10-23T23:29:08.548Z",
+  "sourceDraftId": "6241aa2a-28b8-4c50-b80d-0e5bad12d25d",
+  "sourceDevelopmentJobId": "87ad0d88-5c6d-4c9c-a698-18dad58ff62b",
+  "sourceCandidateId": "beef7938-dbca-45df-be68-e64652d6e5d4",
   "exportedGeneratedFiles": [
     {
       "path": "src/generated/EquipmentTool.java",
-      "digest": "046504c8fbe1046ad8036f97a2745781e044e302a89858c492b0642a7c29ad42"
+      "digest": "70cef901a26b15520fda2cd4522918735fd996a3596d882f42b03cdde1d16394"
     },
     {
       "path": "test/generated/EquipmentToolTest.java",
-      "digest": "b08cf78f46f865a21d481171b39656cd68678c163044fbd40c547c11fb1b54b7"
+      "digest": "2dd77612cdd912c76d459759f18e857fdbd462a5e96efe708c503f761f1376e9"
     },
     {
       "path": "skills/equipment-query/SKILL.md",
-      "digest": "7ff6f0f7d09493efc09a2242a95235700f1f6917c5de15350c1a52eb902128f2"
+      "digest": "c3843a5c27ef2d965fb8f8c391cd8b839cad87f47ac4aabdb9355a70b4d82ef4"
     },
     {
       "path": "rails/definition.json",
@@ -28,7 +28,7 @@
     },
     {
       "path": "test-plan.json",
-      "digest": "2ae83666df3aadefc8ab1f1cc841ad455f7574690eea4405a28e8c1034dccff1"
+      "digest": "351c749c256f3368638d3d6f926fdbd3bd5c5d3cfb95ac5942e8ede4a4fad095"
     }
   ],
   "exportedMockScene": {
@@ -40,7 +40,7 @@
     ]
   },
   "credentialsAbsent": true,
-  "projectPackageSha256": "3d50c63aa5e28a2f2adc10313523b1ab580f546fbd3786c7882c0fed97cf276f",
+  "projectPackageSha256": "0e5e74207090f90865945750e5d75c2c66341713432f577ddc1add5e910caece",
   "sourceRunnerStatusBeforeTargetBuild": "running|healthy",
   "sourceRunnerPausedForTargetBuild": true,
   "targetComposeRunningServices": 4,
@@ -48,26 +48,26 @@
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
     "sha256:cc9f4143a8d2fa8cf3749d0cb4d26ecf2d53a77a2ac807e9ebd67ae22426221a",
-    "sha256:f9ccd0d068e377af1de2216adbc379ab8028900c7cd526f73dfed6fcaebd4797"
+    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
   ],
-  "importedDraftId": "47cf9af7-76e6-4105-8969-739256d6c75d",
-  "importedSnapshotId": "8cfc5338-86f3-46b5-b04b-4c0c3928e427",
+  "importedDraftId": "97d8c6a3-199c-4529-9f91-9af09247dea6",
+  "importedSnapshotId": "5faf71c1-0c3d-4c77-96a2-c6a8c6f7d0db",
   "needsRequirementConfirmation": false,
   "connectionRebindRequired": [
     "equipment-mock@1"
   ],
   "generatedArtifactsToRebuild": [
     {
-      "artifactDigest": "a25d000ca1aeb4707891419cefe58649f69b59660213ffa46318a00916672efc",
-      "sourceJobId": "653d0e0c-cf4b-40f7-bd5a-d27fdf009909",
+      "artifactDigest": "791b65655eb8ab330bb42d4d844b4f95d00cd3b77c33b28c61f48f108a5b4fdc",
+      "sourceJobId": "87ad0d88-5c6d-4c9c-a698-18dad58ff62b",
       "reason": "SOURCE_INCLUDED_BINARY_NOT_PACKAGED"
     }
   ],
-  "restoredDevelopmentJobId": "94b0e68d-5437-44ba-a51a-b5b83a22fbbf",
-  "restoredBundleDigest": "0c1462f90bf780d2bd9647b48d0f01aadf822ee7943e1b5486154380c8ca57fd",
-  "restoredCandidateId": "c72ca11f-be4c-41c4-9f0b-01d17f72f190",
-  "restoredArtifactDigest": "f5984bef4cf6ea0d612d574e1bdde82588b1821ee190e2806c1cbec14063a64e",
-  "smokeRunId": "1cc5fc6c-4ba4-4a9e-82a2-e16133b40900",
+  "restoredDevelopmentJobId": "54727ee1-8436-4cc7-aa47-d746c93db210",
+  "restoredBundleDigest": "20016a8fd8ba048a35799d3463f2959c34b786f318a4cab28f57bb6898e67735",
+  "restoredCandidateId": "eeef5da9-c754-4c22-bebc-10702923722c",
+  "restoredArtifactDigest": "024e1156f5c2662e56553597588581f47756f20f96e3242d483c737e777430e3",
+  "smokeRunId": "a18438be-85f4-4d15-8983-7b80312bdb36",
   "mockOperations": [
     "equipment-status"
   ],
@@ -76,9 +76,9 @@
   "targetRestarted": true,
   "verdict": "passed",
   "targetStackRemoved": true,
-  "sourceRunnerRecoveryMs": 221457,
+  "sourceRunnerRecoveryMs": 210194,
   "sourceRunnerRestoredHealthy": true,
-  "finishedAt": "2026-10-23T21:58:24.876Z",
+  "finishedAt": "2026-10-23T23:32:40.294Z",
   "evidencePath": "docs/implementation/evidence/TD15-NF05-workspace.json",
   "acceptanceResultsPath": "test-results/acceptance/td15-nf05-results.json"
 }

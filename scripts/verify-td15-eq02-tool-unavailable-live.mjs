@@ -20,10 +20,13 @@ const headers = { origin, cookie, 'x-csrf-token': session.csrfToken, 'content-ty
 const requestId = randomUUID();
 let mockStopped = false;
 let result;
+let startedRunId;
+let observedEvents = [];
 try {
   const response = await fetch(`${base}/api/snapshots/${active.snapshotId}/runs`, { method: 'POST', headers, body: JSON.stringify({ clientRequestId: requestId, input: '请查询 PUMP-001 的状态、温度和来源。' }) });
   assert.equal(response.status, 202, `EQ02_RUN_NOT_ACCEPTED:${response.status}`);
   const started = await response.json();
+  startedRunId = started.id;
   // Wait until the runtime has started its model turn, then stop Mock before the model can issue the read.
   let readyForFault = false;
   const faultDeadline = Date.now() + 60000;
@@ -36,6 +39,7 @@ try {
     assert.equal(eventsResponse.status, 200);
     const run = await runResponse.json();
     const events = (await eventsResponse.json()).items ?? [];
+    observedEvents = events.filter(item => item.type === 'runtime.event').map(item => item.data?.event);
     readyForFault = run.status === 'running' && events.some(item => item.type === 'runtime.event'
       && item.data?.event?.event === 'before_model_call');
     if (readyForFault) break;
@@ -46,7 +50,9 @@ try {
   compose('kill', 'mock-services'); mockStopped = true;
   let run;
   let toolCallFailed = false;
-  const deadline = Date.now() + 60000;
+  // The model turn can take longer than one minute. Keep the fault injected until
+  // the tool failure is observed, rather than restarting Mock before the call.
+  const deadline = Date.now() + 180000;
   while (Date.now() < deadline) {
     const [read, eventRead] = await Promise.all([
       fetch(`${base}/api/runs/${started.id}`, { headers: { origin, cookie } }),
@@ -91,7 +97,7 @@ try {
     ] }]
   };
 } catch (error) {
-  result = { schemaVersion: 1, requirement: 'TD-15 P0-A EQ-02 tool unavailable during live read', executionMode: 'live-mock', measuredAt: new Date().toISOString(), composeProject: project, targetImageIds, verdict: 'failed', failure: String(error?.stack ?? error) };
+  result = { schemaVersion: 1, requirement: 'TD-15 P0-A EQ-02 tool unavailable during live read', executionMode: 'live-mock', measuredAt: new Date().toISOString(), composeProject: project, targetImageIds, runId: startedRunId, observedEvents, verdict: 'failed', failure: String(error?.stack ?? error) };
 } finally {
   if (mockStopped) compose('start', 'mock-services');
   const until = Date.now() + 30000;

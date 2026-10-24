@@ -32,7 +32,7 @@ try {
     && runtimeEvents.length === crashEvidence.afterRestart.runtimeEventCount
     && new Set(sequences).size === sequences.length;
   result = { schemaVersion: 1, requirement: 'TD-15/NF-01 snapshot and event persistence after App/Runner restart', executionMode: 'isolated-live-docker', measuredAt: new Date().toISOString(),
-    composeProject: crashEvidence.composeProject, draftId: crashEvidence.draftId, snapshotId: snapshot.id, snapshotDigest: snapshot.digest,
+    composeProject: crashEvidence.composeProject, targetImageIds: crashEvidence.targetImageIds, draftId: crashEvidence.draftId, snapshotId: snapshot.id, snapshotDigest: snapshot.digest,
     validationId: crashEvidence.validationId, runId: run.id, runStatus: run.status, beforeRestartRuntimeEventCount: crashEvidence.beforeRestart.runtimeEvents,
     afterRestartRuntimeEventCount: runtimeEvents.length, totalEventCount: events.items.length, eventSequenceUnique: new Set(sequences).size === sequences.length,
     snapshotBindingMatches: bindingMatches, eventLogRetained,

@@ -14,6 +14,8 @@ const composeProject = process.env.NF04_COMPOSE_PROJECT;
 const composeArgs = ['compose', '--env-file', '.env.local', ...(composeProject ? ['-p', composeProject] : [])];
 const appContainer = composeProject ? execFileSync('docker', [...composeArgs, 'ps', '-q', 'app'], { encoding: 'utf8' }).trim() : '';
 const appImageId = appContainer ? execFileSync('docker', ['inspect', appContainer, '--format', '{{.Image}}'], { encoding: 'utf8' }).trim() : null;
+const targetContainers = composeProject ? execFileSync('docker', [...composeArgs, 'ps', '-q', 'app', 'runner'], { encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean) : [];
+const targetImageIds = targetContainers.length ? execFileSync('docker', ['inspect', '--format', '{{.Image}}', ...targetContainers], { encoding: 'utf8' }).trim().split(/\r?\n/) : [];
 assert.ok(process.env.LOCAL_BOOTSTRAP_TOKEN, 'LOCAL_BOOTSTRAP_TOKEN_REQUIRED');
 const login = await fetch(`${base}/api/auth/session`, { method: 'POST', headers: { origin, 'content-type': 'application/json' }, body: JSON.stringify({ token: process.env.LOCAL_BOOTSTRAP_TOKEN }) });
 assert.equal(login.status, 200);
@@ -65,7 +67,7 @@ try {
   const modelCalls = events.items.filter(event => event.type === 'runtime.event' && event.data?.event?.event === 'before_model_call').length;
   const calls = await mockCalls(deployment.environmentId, view.run.id);
   const toolCalls = calls.operations.filter(operation => operation === 'equipment-status').length;
-  result = { schemaVersion: 1, requirement: 'TD-15/NF-04 deployed candidate iteration limit', executionMode: composeProject ? 'isolated-live-docker' : 'live-platform', composeProject: composeProject ?? null, appImageId, measuredAt: new Date().toISOString(), draftId: draft.id, snapshotId: snapshot.id,
+  result = { schemaVersion: 1, requirement: 'TD-15/NF-04 deployed candidate iteration limit', executionMode: composeProject ? 'isolated-live-docker' : 'live-platform', composeProject: composeProject ?? null, appImageId, targetImageIds, measuredAt: new Date().toISOString(), draftId: draft.id, snapshotId: snapshot.id,
     candidateId: candidate.id, testDeploymentId: deployment.id, runId: view.run.id, maxIterations: 1, runStatus: view.run.status, diagnostic: view.run.diagnostic,
     runtimeError: events.items.find(event => event.type === 'run.failed')?.data?.runtimeError ?? null,
     modelCallCount: modelCalls, externalToolCallCount: toolCalls, unrelatedExternalCalls: calls.count - toolCalls,
