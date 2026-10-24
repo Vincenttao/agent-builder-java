@@ -56,6 +56,7 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC42a-trusted-local-live.json','AC42a'],
   ['docs/implementation/evidence/TD15-NF01-validation-branches.json','NF01-validation'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
+  ['docs/implementation/evidence/TD15-AC21-current-live.json','AC21-current'],
   ['docs/implementation/evidence/TD15-AC25-baseline-integrity-live.json','AC25'],
   ['docs/implementation/evidence/TD15-AC27-fixed-regression-live.json','AC27'],
   ['docs/implementation/evidence/TD15-AC32-wealth-assistant-live.json','AC32']
@@ -255,6 +256,8 @@ for(const [sourcePath,kind] of sources){
     results.push({caseId:'AC-15',branchId:'startup-failure-keeps-release',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'failed_startup_preserves_previous_release',passed}],evidence});
   }else if(kind==='AC21-AC22'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
+  }else if(kind==='AC21-current'){
+    for(const branch of source.branches)results.push({caseId:'AC-21',branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else if(kind==='AC25'||kind==='AC27'){
     for(const branch of source.branches)results.push({caseId:branch.caseId,branchId:branch.branchId,binding,executionMode:'live-mock',status:branch.status,artifactDigestAfter:artifactDigest,assertions:branch.assertions,evidence});
   }else{
