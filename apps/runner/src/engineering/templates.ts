@@ -112,9 +112,53 @@ description: Read an account balance through the approved get_account_balance To
 ---
 Use get_account_balance with the confirmed accountId. Treat availableBalanceFen as integer fen and asOf as the Mock clock time. Report only fields returned by the Tool. If the interface is unavailable, timed out, or returns invalid data, state that the balance could not be confirmed. Never infer a balance, income, risk level, or investment recommendation.
 `;
+export const wealthBalanceSkillStub=`---
+name: balance-query
+description: TODO
+---
+TODO
+`;
+export const wealthBalanceSkillContract=`Generate only skills/balance-query/SKILL.md. The platform pins the reviewed AccountBalanceTool Java implementation and its tests as immutable dependencies; do not modify or replace them. Use frontmatter name: balance-query. Describe get_account_balance and the accountId input. Explain that availableBalanceFen is an integer amount in fen and asOf is the Mock clock timestamp. Instruct the Agent to request accountId when missing, report only returned facts, and state that the balance is unknown when the Tool times out, is unavailable, or returns invalid data. Do not infer interest, risk, performance, or investment advice. The platform validates the Skill before packaging it with the fixed Tool dependency.
+`;
+export const wealthToolOnlyContract=balanceToolContract.replace(/\nWrite skills\/balance-query\/SKILL\.md[\s\S]*$/,'\nThe platform supplies a reviewed balance-query Skill as a fixed dependency. Do not write or alter the Skill. Implement and test only the Java balance Tool.');
+export const wealthBalanceReviewedToolSource=`package generated;
+import com.openjiuwen.core.foundation.tool.Tool;
+import java.util.Map;
+import java.util.Set;
+public final class AccountBalanceTool extends Tool {
+ private final Tool transport;
+ public AccountBalanceTool(Tool transport){super(transport.getCard());this.transport=transport;}
+ protected Object invokeInternal(Map<String,Object> input,Map<String,Object> context)throws Exception{
+  if(!input.keySet().equals(Set.of("accountId"))||!(input.get("accountId") instanceof String id)||id.isBlank())throw new IllegalArgumentException("TOOL_INPUT_CONTRACT_INVALID");
+  Object response=transport.invoke(input,context);
+  if(!(response instanceof Map<?,?> data)||!(data.get("accountId") instanceof String)||!(data.get("currency") instanceof String)||!(data.get("availableBalanceFen") instanceof Integer||data.get("availableBalanceFen") instanceof Long)||!(data.get("asOf") instanceof String))throw new IllegalStateException("TOOL_RESPONSE_CONTRACT_INVALID");
+  return Map.of("accountId",data.get("accountId"),"currency",data.get("currency"),"availableBalanceFen",data.get("availableBalanceFen"),"asOf",data.get("asOf"));
+ }
+}
+`;
+export const wealthBalanceReviewedToolTest=`package generated;
+import com.openjiuwen.core.foundation.tool.Tool;
+import com.openjiuwen.core.foundation.tool.ToolCard;
+import java.util.Map;
+public final class AccountBalanceToolTest {
+ static final class Transport extends Tool {
+  Transport(){super(new ToolCard("balance@1","get_account_balance","fixture",Map.of()));}
+  protected Object invokeInternal(Map<String,Object> input,Map<String,Object> context){return Map.of("accountId","A1001","currency","CNY","availableBalanceFen",1000000,"asOf","2026-10-21T08:00:00.000Z");}
+ }
+ public static void main(String[] args)throws Exception{
+  Object actual=new AccountBalanceTool(new Transport()).invoke(Map.of("accountId","A1001"));
+  if(!actual.equals(Map.of("accountId","A1001","currency","CNY","availableBalanceFen",1000000,"asOf","2026-10-21T08:00:00.000Z")))throw new AssertionError("balance response mapping");
+  System.out.println("REVIEWED_BALANCE_TOOL_OK");
+ }
+}
+`;
 export const wealthToolEngineeringSkills={
   tester:balanceEngineeringSkills.tester,
   developer:`# OpenJiuwen standalone balance Tool development @1\nUse only builder MCP tools. Read context.json and follow the fixed Java Tool contract. First save test/generated/AccountBalanceToolTest.java, then run unit-test and observe valid red from the unchanged stub. The approved balance-query Skill is a fixed dependency supplied by the platform; do not try to write it. Implement only AccountBalanceTool.java after valid red. Preserve transport ToolCard and trusted kwargs; accept only accountId and exact balance response fields. Never invent data or accept caller-supplied endpoint, actor, credentials or approval. Do not write executable Rail code. Rerun unit-test, then build. The platform checks the Java contract and packages the generated Tool with the pinned reviewed Skill dependency. Inspect actual command results.`
+};
+export const wealthSkillEngineeringSkills={
+  tester:balanceEngineeringSkills.tester,
+  developer:`# OpenJiuwen standalone balance Skill development @1\nUse only builder MCP tools. Read the fixed Tool dependency, its contract and context.json. First run unit-test: it compiles and executes the platform-reviewed Tool dependency, then validates the Skill stub and must report SKILL_CONTRACT_INVALID. Do not write Java source, Java tests, Tool mapping or Rail files. After observing red, write only skills/balance-query/SKILL.md. Include exact frontmatter name balance-query, describe get_account_balance and accountId, define availableBalanceFen as integer fen, and instruct the Agent to report only returned fields, ask for a missing accountId, and say balance is unknown after timeout/unavailable/invalid response. Run unit-test again for green, then build. The fixed Tool implementation and unit test are platform-owned dependencies. Never claim generated or changed the Tool.`
 };
 
 export const wealthQueryToolStub=`package generated;

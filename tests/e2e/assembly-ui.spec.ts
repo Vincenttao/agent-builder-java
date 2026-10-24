@@ -68,4 +68,11 @@ test('catalog selections submit executable assembly and distinguish generated sk
   await expect(page.getByText('余额与产品能力由双角色生成')).toBeVisible();
   await expect(page.getByLabel('Agent 指令')).toHaveValue(/list_wealth_products/);
   await expect(page.getByTestId('baseline-review')).toContainText('BR-BAL-003');
+  await page.getByLabel('能力模板').selectOption('wealth-tool');
+  await expect(page.getByText('只生成余额 Tool；Skill 使用平台审阅版固定资产')).toBeVisible();
+  await expect(page.getByLabel('能力模板')).toHaveValue('wealth-tool');
+  await page.getByLabel('能力模板').selectOption('wealth-skill');
+  await expect(page.getByText('只生成余额 Skill；复用平台审阅版 Tool')).toBeVisible();
+  await expect(page.getByLabel('Agent 指令')).toHaveValue(/balance-query/);
+  await expect(page.getByTestId('baseline-review')).toContainText('BR-BAL-003');
 });

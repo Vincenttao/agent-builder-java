@@ -15,8 +15,9 @@ export function candidateEvidenceComplete(observation:CaseObservation,candidate:
     if(contentDigest(loaded.generated??null)!==contentDigest(generated.generated))return false;
     if(observation.calls.length){
       const events=observation.events.map(value=>(value as {data?:{event?:Record<string,unknown>}}).data?.event);
+      const toolEvent=generated.generated.generatedScope?.includes('tool')===false?'bound_tool_invoked':'generated_tool_invoked';
       if(!events.some(e=>e?.event==='skill_loaded'&&e.sessionId===progress.runId&&e.skillDigest===generated.generated.skillDigest&&e.developmentBundleDigest===generated.generated.developmentBundleDigest)
-        ||!events.some(e=>e?.event==='generated_tool_invoked'&&e.sessionId===progress.runId&&e.componentDigest===generated.generated.componentDigest&&e.developmentBundleDigest===generated.generated.developmentBundleDigest))return false;
+        ||!events.some(e=>e?.event===toolEvent&&e.sessionId===progress.runId&&e.componentDigest===generated.generated.componentDigest&&e.developmentBundleDigest===generated.generated.developmentBundleDigest))return false;
     }
   }else if(loaded.generated)return false;
   return true;

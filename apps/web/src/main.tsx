@@ -4,7 +4,7 @@ import type { ApiError, AssemblyInput, Blocker, Draft, DraftInput, EnvironmentSt
 import type { ValidationReport } from '../../../packages/contracts/src/validations.js';
 import './style.css';
 import { DebugRun } from './debug-run.js';
-import { equipmentAssembly, workOrderAssembly,wealthBalanceAssembly,wealthAssistantAssembly } from '../../../packages/contracts/src/equipment-template.js';
+import { equipmentAssembly, workOrderAssembly,wealthBalanceAssembly,wealthAssistantAssembly,wealthToolAssembly,wealthSkillAssembly } from '../../../packages/contracts/src/equipment-template.js';
 import { BaselineReview, ProjectValidation } from './project-validation.js';
 import {DemoApp} from './demo-app.js';
 import { ComponentCatalog, AssemblySummary } from './assembly-editor.js';
@@ -17,6 +17,22 @@ const blank = (): DraftInput => ({ name: '', brief: {
   goal: { value: '', source: 'user', confirmed: false },
   output: { value: '', source: 'user', confirmed: false }
 } });
+function assemblyTemplateKey(assembly:AssemblyInput){
+  const version=assembly.generationProfileVersion;
+  if(version==='wealth-assistant-java@1')return 'wealth-assistant';
+  if(version==='wealth-balance-java@1')return 'wealth-balance';
+  if(version==='wealth-balance-tool-java@1')return 'wealth-tool';
+  if(version==='wealth-balance-skill-java@1')return 'wealth-skill';
+  return assembly.toolIds.includes('work-order-create@1')?'equipment-workorder':'equipment-read';
+}
+function assemblyForTemplate(key:string,goal:string):AssemblyInput{
+  if(key==='equipment-workorder')return workOrderAssembly(goal);
+  if(key==='wealth-assistant')return wealthAssistantAssembly(goal);
+  if(key==='wealth-balance')return wealthBalanceAssembly(goal);
+  if(key==='wealth-tool')return wealthToolAssembly(goal);
+  if(key==='wealth-skill')return wealthSkillAssembly(goal);
+  return equipmentAssembly(goal);
+}
 class RequestError extends Error { constructor(public readonly body: ApiError) { super(body.message); } }
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -175,14 +191,14 @@ function App() {
           <section className="environment workflow-environment" aria-label="环境诊断"><div><strong>环境诊断</strong><p>配置状态不代表模型调用已通过运行核验</p></div><div><span className={environment?.database==='ready'?'badge good':'badge warning'}>数据库 {environment?.database==='ready'?'就绪':'不可用'}</span><span className="badge">模型 {environment?.model==='configured_unverified'?'已配置，待核验':'未配置'}</span><span className={environment?.canRun?'badge good':'badge warning'}>运行依赖 {environment?.canRun?'就绪':'未就绪'}</span><button type="button" className="secondary" onClick={()=>{void refresh().catch(showError);}}>重新检测</button></div></section>
           <div className="panel-head"><div><p className="eyebrow">02 / 选择组件与装配</p><h2>装配业务 Agent</h2></div><span className="badge">受限模板装配</span></div>
           <p className="muted">先选择能力模板或下方组件，再审阅装配预览。固定版本保存已确认的需求与配置，后续编辑不会改变它。</p>
-          <label>能力模板<select value={assembly.generationProfileVersion==='wealth-assistant-java@1'?'wealth-assistant':assembly.generationProfileVersion==='wealth-balance-java@1'?'wealth-balance':assembly.toolIds.includes('work-order-create@1') ? 'equipment-workorder' : 'equipment-read'} onChange={e => { setAssemblyTouched(true); setAssembly(e.target.value === 'equipment-workorder' ? workOrderAssembly(current.brief.goal.value) : e.target.value==='wealth-assistant'?wealthAssistantAssembly(current.brief.goal.value):e.target.value==='wealth-balance'?wealthBalanceAssembly(current.brief.goal.value):equipmentAssembly(current.brief.goal.value)); }}>
-            <option value="equipment-read">设备状态查询</option><option value="equipment-workorder">设备查询与工单审批</option><option value="wealth-balance">理财账户余额查询（生成 Tool / Skill）</option><option value="wealth-assistant">理财余额与产品查询（生成 Tool / Skill）</option>
+          <label>能力模板<select value={assemblyTemplateKey(assembly)} onChange={e => { setAssemblyTouched(true); setAssembly(assemblyForTemplate(e.target.value,current.brief.goal.value)); }}>
+            <option value="equipment-read">设备状态查询</option><option value="equipment-workorder">设备查询与工单审批</option><option value="wealth-balance">理财账户余额查询（生成 Tool / Skill）</option><option value="wealth-assistant">理财余额与产品查询（生成 Tool / Skill）</option><option value="wealth-tool">单独生成余额 Tool</option><option value="wealth-skill">单独生成余额 Skill（使用固定 Tool）</option>
           </select></label>
-          {['wealth-balance-java@1','wealth-assistant-java@1'].includes(assembly.generationProfileVersion??'')?<div className="workflow-empty"><strong>{assembly.generationProfileVersion==='wealth-assistant-java@1'?'余额与产品能力由双角色生成':'余额能力由双角色生成'}</strong><p>该模板不预装业务 Tool。开发 Agent 将生成受约束的 Java Tool、Skill 和测试，再由平台绑定到企业金融 Mock 接口。</p></div>:<ComponentCatalog assembly={assembly} onChange={value=>{setAssemblyTouched(true);setAssembly(value);}} disabled={busy} goal={current.brief.goal.value}/>}
+          {['wealth-balance-java@1','wealth-assistant-java@1','wealth-balance-tool-java@1','wealth-balance-skill-java@1'].includes(assembly.generationProfileVersion??'')?<div className="workflow-empty"><strong>{assembly.generationProfileVersion==='wealth-assistant-java@1'?'余额与产品能力由双角色生成':assembly.generationProfileVersion==='wealth-balance-tool-java@1'?'只生成余额 Tool；Skill 使用平台审阅版固定资产':assembly.generationProfileVersion==='wealth-balance-skill-java@1'?'只生成余额 Skill；复用平台审阅版 Tool':'余额 Tool 与 Skill 由双角色生成'}</strong><p>金融模板使用受限字段、Mock 连接和只读验收基线。平台固定 Tool/Skill 依赖版本，并将候选装配结果绑定到企业金融 Mock 接口。</p></div>:<ComponentCatalog assembly={assembly} onChange={value=>{setAssemblyTouched(true);setAssembly(value);}} disabled={busy} goal={current.brief.goal.value}/>}
           <label>Agent 指令<textarea rows={3} value={assembly.systemPrompt} onChange={e => {setAssemblyTouched(true);setAssembly({ ...assembly, systemPrompt: e.target.value });}}/></label>
           <label>最大模型轮次<input type="number" min={1} max={20} value={assembly.maxIterations} onChange={e => {setAssemblyTouched(true);setAssembly({ ...assembly, maxIterations: Number(e.target.value) });}}/></label>
           <AssemblySummary assembly={assembly}/>
-          <BaselineReview draft={current} templateId={['wealth-balance-java@1','wealth-assistant-java@1'].includes(assembly.generationProfileVersion??'')?'wealth-balance-read@1':assembly.toolIds.includes('work-order-create@1') ? 'equipment-workorder@1' : 'equipment-read@1'} enabled={Boolean(canFreeze)} api={api} onError={showError} onConfirmed={() => setBaselineRevision(value => value + 1)}/>
+          <BaselineReview draft={current} templateId={['wealth-balance-java@1','wealth-assistant-java@1','wealth-balance-tool-java@1','wealth-balance-skill-java@1'].includes(assembly.generationProfileVersion??'')?'wealth-balance-read@1':assembly.toolIds.includes('work-order-create@1') ? 'equipment-workorder@1' : 'equipment-read@1'} enabled={Boolean(canFreeze)} api={api} onError={showError} onConfirmed={() => setBaselineRevision(value => value + 1)}/>
           <button type="button" className="primary" disabled={busy || !canFreeze} onClick={() => { void freeze(); }}>固定为测试版本 →</button>
           {!canFreeze && <p className="hint">填写、确认全部需求字段并保存后，可以固定版本。</p>}
           <div className="workflow-next"><span>固定后进入开发与测试；可先查看候选能力。</span><button type="button" className="secondary" disabled={!selectedSnapshotId} onClick={()=>setActiveTab('development')}>下一步：开发与测试 →</button></div>

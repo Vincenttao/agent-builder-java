@@ -119,10 +119,13 @@ export class RuntimeArtifactRegistry {
     for(const entry of entries){const bytes=await readFile(join(extracted,entry));if(bytes.length>262144)throw new PolicyError('COMPONENT_ARCHIVE_INVALID');await immutable(join(stage,'BOOT-INF/classes',entry),bytes);if(entry.endsWith('.class'))classes[entry]=hash(bytes);}
     const skillDigest=hash(await readFile(join(extracted,skillPath)));
     if(skillDigest!==bundle.files.find(file=>file.path===skillPath)?.digest)throw new PolicyError('GENERATED_SKILL_MISMATCH');
-    const generated:GeneratedComponentManifest=runtimeTools.length===1
-      ?{kind:'generated-tool-skill@1',developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath}
-      :{kind:'generated-tool-skill@2',developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath,
-        toolBindings:runtimeTools.map(tool=>({toolClassName,toolName:tool.name,operationId:tool.operationId}))};
+    const generated:GeneratedComponentManifest='developerWritableFiles' in profile
+      ?{kind:'generated-tool-skill@3',generatedScope:[...profile.scope],developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath,
+        ...(runtimeTools.length>1?{toolBindings:runtimeTools.map(tool=>({toolClassName,toolName:tool.name,operationId:tool.operationId}))}:{})}
+      :runtimeTools.length===1
+        ?{kind:'generated-tool-skill@1',developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath}
+        :{kind:'generated-tool-skill@2',developmentBundleDigest:digest,sdkArtifactDigest:this.defaultDigest,snapshotId:bundle.snapshotId,specDigest,componentDigest:bundle.artifactDigest,skillDigest,classes,toolClassName,toolName,operationId,skillName,skillPath,
+          toolBindings:runtimeTools.map(tool=>({toolClassName,toolName:tool.name,operationId:tool.operationId}))};
     await immutable(join(stage,'BOOT-INF/classes/generated/agent-builder-component.json'),canonicalJson(generated));
     const jarPath=join(work,'candidate.jar');await copyFile(this.path(this.defaultDigest),jarPath,1);
     await jar('compose-candidate',['--update','--file',jarPath,'--date=2026-01-01T00:00:00Z','-C',stage,'BOOT-INF/classes']);

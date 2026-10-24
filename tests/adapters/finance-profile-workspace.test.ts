@@ -3,7 +3,7 @@ import {resolve,join} from 'node:path';
 import {expect,it} from 'vitest';
 import {EngineeringWorkspace} from '../../apps/runner/src/engineering/workspace.js';
 import {RuntimeArtifactRegistry} from '../../apps/runner/src/runtime/artifact-registry.js';
-import {wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools,wealthToolGenerationRequest} from '../../packages/contracts/src/generation-profile.js';
+import {wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthAssistantRuntimeTools,wealthToolGenerationRequest,wealthSkillGenerationRequest} from '../../packages/contracts/src/generation-profile.js';
 import type {AcceptanceBaseline} from '../../packages/contracts/src/baselines.js';
 import {generatedBalanceTool,generatedBalanceUnit,generatedBalanceSkill} from '../support/generated-balance.js';
 
@@ -77,6 +77,31 @@ it('generates a finance Tool independently and packages only a reviewed, immutab
     const registry=new RuntimeArtifactRegistry(join(root,'runtime'),sdk);await registry.initialize();
     const artifact=await registry.compose(bundle,join(root,'bundles',bundle.digest),'c'.repeat(64));
     expect(artifact.kind).toBe('generated-component');
-    if(artifact.kind==='generated-component')expect(artifact.generated).toMatchObject({kind:'generated-tool-skill@1',toolClassName:'generated.AccountBalanceTool',toolName:'get_account_balance',operationId:'getAccountBalance',skillName:'balance-query'});
+    if(artifact.kind==='generated-component')expect(artifact.generated).toMatchObject({kind:'generated-tool-skill@3',generatedScope:['tool'],toolClassName:'generated.AccountBalanceTool',toolName:'get_account_balance',operationId:'getAccountBalance',skillName:'balance-query'});
+  }finally{await ws.cancel();}
+},90000);
+it('generates a Skill independently on a reviewed fixed Tool dependency and binds its scope into the runtime artifact',async()=>{
+  const root=resolve('test-results',`wealth-skill-only-${randomUUID()}`),sdk=resolve('java/runtime-bridge/target/runtime-bridge-0.1.0.jar'),snapshotId=randomUUID();
+  const runtimeSpec={agent:{id:'balance-agent',type:'DeepAgent' as const,systemPrompt:'Read the generated balance-query Skill and query account balance.',maxIterations:5,rails:['tool-allowlist']},tools:[]};
+  const request={...wealthSkillGenerationRequest,scope:[...wealthSkillGenerationRequest.scope],dependencies:[...wealthSkillGenerationRequest.dependencies]};
+  const ws=new EngineeringWorkspace(root,sdk,{baseline,goal:'Generate only a balance-query Skill referencing get_account_balance',snapshotId,runtimeSpec},undefined,request);
+  await ws.initialize();
+  try{
+    await expect(ws.write('developer','src/generated/AccountBalanceTool.java','changed')).rejects.toMatchObject({code:'FILE_OPERATION_NOT_ALLOWED'});
+    await expect(ws.write('developer','skills/balance-query/SKILL.md','premature')).rejects.toMatchObject({code:'UNIT_RED_REQUIRED'});
+    await ws.write('tester','tests/plan.json',JSON.stringify({baselineDigest:baseline.digest,cases:baseline.content.cases.map(item=>({caseId:item.id,requirementIds:item.requirementIds,assertions:item.assertions,steps:['Read the generated Skill and call get_account_balance','Verify the pinned Mock response']}))}));
+    const red=await ws.run('developer','unit-test');expect(red.status).toBe('failed');expect(red.output).toContain('SKILL_CONTRACT_INVALID');
+    await ws.write('developer','skills/balance-query/SKILL.md',generatedBalanceSkill);
+    const green=await ws.run('developer','unit-test');expect(green.status).toBe('passed');expect(green.output).toContain('SKILL_CONTRACT_OK');
+    await ws.write('developer','skills/balance-query/SKILL.md',generatedBalanceSkill+'\n');
+    await expect(ws.run('developer','build')).rejects.toMatchObject({code:'UNIT_GREEN_STALE'});
+    await ws.write('developer','skills/balance-query/SKILL.md',generatedBalanceSkill);
+    expect((await ws.run('developer','build')).status).toBe('passed');
+    const bundle=ws.inspect().bundle!;expect(bundle.profileVersion).toBe(wealthSkillGenerationRequest.profileVersion);
+    expect(bundle.runtimeSpec?.tools).toEqual([expect.objectContaining({name:'get_account_balance',operationId:'getAccountBalance'})]);
+    const registry=new RuntimeArtifactRegistry(join(root,'runtime'),sdk);await registry.initialize();
+    const artifact=await registry.compose(bundle,join(root,'bundles',bundle.digest),'c'.repeat(64));
+    expect(artifact.kind).toBe('generated-component');
+    if(artifact.kind==='generated-component')expect(artifact.generated).toMatchObject({kind:'generated-tool-skill@3',generatedScope:['skill'],toolClassName:'generated.AccountBalanceTool',skillName:'balance-query'});
   }finally{await ws.cancel();}
 },90000);

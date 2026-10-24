@@ -9,8 +9,21 @@ const origin = process.env.TD15_FINANCE_ORIGIN ?? base;
 const project = process.env.TD15_FINANCE_COMPOSE_PROJECT ?? 'agent-builder-td15-nf01';
 const evidencePath = process.env.TD15_FINANCE_EVIDENCE_PATH ?? 'docs/implementation/evidence/TDD-073/finance-generation-live.json';
 const resumeJobId = process.env.TD15_FINANCE_RESUME_JOB;
-const evidence = { startedAt: new Date().toISOString(), base, composeProject: project, verdict: 'running' };
-if (resumeJobId) Object.assign(evidence, JSON.parse(await readFile(evidencePath, 'utf8')));
+const requestedScope = process.env.TD15_FINANCE_GENERATION_SCOPE ?? 'tool-skill';
+const generationByScope = {
+  tool: { profileVersion: 'wealth-balance-tool-java@1', scope: ['tool'] },
+  skill: { profileVersion: 'wealth-balance-skill-java@1', scope: ['skill'] },
+  'tool-skill': { profileVersion: 'wealth-balance-java@1', scope: ['tool', 'skill'] },
+};
+assert.ok(generationByScope[requestedScope], 'INVALID_TD15_FINANCE_GENERATION_SCOPE');
+const generationProfile = generationByScope[requestedScope];
+const evidence = { startedAt: new Date().toISOString(), base, composeProject: project, requestedScope,
+  profileVersion: generationProfile.profileVersion, expectedGeneratedScope: generationProfile.scope, verdict: 'running' };
+if (resumeJobId) {
+  const previous = JSON.parse(await readFile(evidencePath, 'utf8'));
+  Object.assign(evidence, previous);
+  if (evidence.error) { evidence.recoveredError = evidence.error; delete evidence.error; }
+}
 let cookie, csrf;
 
 function imageIds() {
@@ -66,15 +79,15 @@ try {
     brief: {
       audience: { value: '企业手机银行用户', source: 'user', confirmed: true },
       goal: { value: '通过受限生成创建只读余额查询 Agent，缺少账户号时追问，接口错误时不编造余额。', source: 'user', confirmed: true },
-      output: { value: '生成 AccountBalanceTool 与余额查询 Skill，输出账户、币种、可用余额分、更新时间。', source: 'user', confirmed: true }
+      output: { value: requestedScope === 'tool' ? '只生成 AccountBalanceTool，Skill 使用平台固定审阅版本。' : requestedScope === 'skill' ? '只生成余额查询 Skill，Tool 使用平台固定审阅版本。' : '生成 AccountBalanceTool 与余额查询 Skill，输出账户、币种、可用余额分、更新时间。', source: 'user', confirmed: true }
     } });
   evidence.draftId = draft.id;
   const assembly = { agentType: 'DeepAgent', maxIterations: 4, railIds: ['audit@1', 'tool-allowlist@1'], toolIds: [],
-    generationProfileVersion: 'wealth-balance-java@1',
+    generationProfileVersion: generationProfile.profileVersion,
     systemPrompt: '你是企业理财账户查询助手。缺少账户编号时不得猜测或调用工具，必须追问，并仅输出 JSON：{"kind":"clarification","missingFields":["accountId"],"message":"请提供账户编号"}。有账户编号时，必须先调用 skill_tool 读取 balance-query 的 SKILL.md（skill_name 为 balance-query，relative_file_path 为 SKILL.md），再按 Skill 调用 get_account_balance 获取当前模拟账户事实。成功后仅输出一个 JSON 对象：kind 固定 account-balance；accountId、currency、asOf 为 JSON 字符串，availableBalanceFen 为 JSON 整数，值原样取自工具结果。工具报错、超时或数据缺失时不编造余额、币种或时间，仅输出 JSON：kind 固定 tool-error，code 原样取 TOOL_TIMEOUT 或 TOOL_UNAVAILABLE，message 必须明确余额未知。Agent 只读，不得申购、转账或更改账户数据。' };
   evidence.requestFixture = { source: 'verifier request definition (reconstructed; not a captured HTTP request)', assembly: { agentType: assembly.agentType,
-    railIds: assembly.railIds, toolIds: assembly.toolIds, generationProfileVersion: 'wealth-balance-java@1',
-    generationScope: ['tool', 'skill'], connectionProfile: 'mock-finance@1' } };
+    railIds: assembly.railIds, toolIds: assembly.toolIds, generationProfileVersion: generationProfile.profileVersion,
+    generationScope: generationProfile.scope, connectionProfile: 'mock-finance@1' } };
   snapshot = await api(`/api/drafts/${draft.id}/snapshots`, 'POST', { expectedRevision: draft.revision, assembly });
   evidence.snapshotId = snapshot.id;
   const preview = await api(`/api/drafts/${draft.id}/baseline-preview?templateId=wealth-balance-read%401`);
@@ -85,7 +98,7 @@ try {
   evidence.baselineDigest = baseline.digest;
   evidence.baselineCases = baseline.content.cases.map(item => ({ id: item.id, scenario: item.scenario, fault: item.fault }));
 
-  const generation = { profileVersion: 'wealth-balance-java@1', scope: ['tool', 'skill'],
+  const generation = { profileVersion: generationProfile.profileVersion, scope: generationProfile.scope,
     dependencies: ['openjiuwen-core@0.1.17', 'agent-builder-bridge@0.1.0'], connectionProfile: 'mock-finance@1' };
   job = await api(`/api/snapshots/${snapshot.id}/development`, 'POST', { clientRequestId: randomUUID(), baselineId: baseline.id, generation, maxSeconds: 900 });
   evidence.developmentJobId = job.id;
@@ -94,34 +107,58 @@ try {
   evidence.development = built;
   const events = (await api(`/api/development/${job.id}/events`)).items;
   evidence.developmentEvents = events;
+  const bundle = built.bundle;
+  const redEvent = events.find(item => item.type === 'command.completed' && item.data.id === bundle?.unitRedId);
+  const greenEvent = events.find(item => item.type === 'command.completed' && item.data.id === bundle?.unitGreenId);
   const commands = [];
+  const missingCommandEvidence = [];
   for (const event of events.filter(item => item.type === 'command.completed')) {
     const id = event.data.id ?? event.data.commandId;
-    if (id) commands.push(await api(`/api/development/${job.id}/commands/${id}`));
+    if (id) {
+      try { commands.push(await api(`/api/development/${job.id}/commands/${id}`)); }
+      catch (error) {
+        if (![bundle?.unitRedId, bundle?.unitGreenId].includes(id)) throw error;
+        missingCommandEvidence.push(id);
+      }
+    }
   }
+  evidence.firstRed = commands.find(item => item.id === bundle?.unitRedId)
+    ?? (redEvent ? { id: bundle.unitRedId, status: redEvent.data.status, exitCode: redEvent.data.exitCode } : null);
+  evidence.unitGreen = commands.find(item => item.id === bundle?.unitGreenId)
+    ?? (greenEvent ? { id: bundle.unitGreenId, status: greenEvent.data.status, exitCode: greenEvent.data.exitCode } : null);
+  evidence.commandEvidenceUnavailableFor = missingCommandEvidence;
+  assert.ok(evidence.firstRed, 'TEST_FIRST_RED_EVENT_MISSING');
+  assert.ok(evidence.unitGreen, 'UNIT_GREEN_EVENT_MISSING');
   const redact = value => typeof value === 'string' ? value.slice(-4000)
     .replace(/((?:api[_-]?key|token|password)\s*[:=]\s*|authorization\s*[:=]\s*(?:Bearer\s+)?)[^\s,"]+/gi, '$1[REDACTED]') : undefined;
   evidence.commands = commands.map(({ id, commandId, executable, args, exitCode, status, output }) => ({ id, commandId, executable, args, exitCode, status,
     outputTail: redact(output) }));
   assert.equal(built.status, 'built', `GENERATION_${built.diagnostic ?? built.status}`);
   assert.ok(built.bundle, 'GENERATED_BUNDLE_MISSING');
-  const bundle = built.bundle;
-  const relevant = ['src/generated/AccountBalanceTool.java', 'skills/balance-query/SKILL.md'];
+  const relevant = requestedScope === 'skill' ? ['skills/balance-query/SKILL.md', 'src/generated/AccountBalanceTool.java']
+    : ['src/generated/AccountBalanceTool.java', 'skills/balance-query/SKILL.md'];
   evidence.generatedFiles = [];
   for (const path of relevant) {
     const file = await api(`/api/development/${job.id}/file?path=${encodeURIComponent(path)}`);
     evidence.generatedFiles.push(file);
   }
-  for (const commandId of [bundle.unitRedId, bundle.unitGreenId, bundle.contractCheckId, bundle.buildId]) {
+  assert.equal(evidence.firstRed.exitCode, 1, 'TEST_FIRST_RED_NOT_PROVEN');
+  assert.equal(evidence.unitGreen.exitCode, 0, 'UNIT_GREEN_NOT_PROVEN');
+  assert.ok(commands.some(item => item.commandId === 'unit-test' && item.executable === 'java' && item.exitCode === 0)
+    || evidence.unitGreen.status === 'passed', 'JAVA_UNIT_TEST_NOT_PROVEN');
+  for (const commandId of [bundle.contractCheckId, bundle.buildId]) {
     const result = commands.find(item => item.id === commandId);
     assert.ok(result, `COMMAND_EVIDENCE_MISSING:${commandId}`);
-    if (commandId === bundle.unitRedId) assert.equal(result.exitCode, 1, 'TEST_FIRST_RED_NOT_PROVEN');
-    else assert.equal(result.exitCode, 0, `BUILD_STAGE_FAILED:${commandId}`);
+    assert.equal(result.exitCode, 0, `BUILD_STAGE_FAILED:${commandId}`);
   }
-  assert.ok(evidence.generatedFiles[0].content.includes('class AccountBalanceTool')
-    && evidence.generatedFiles[0].content.includes('accountId')
-    && evidence.generatedFiles[0].content.includes('transport.invoke('), 'GENERATED_BALANCE_TOOL_INVALID');
-  assert.ok(evidence.generatedFiles[1].content.length > 50, 'GENERATED_BALANCE_SKILL_EMPTY');
+  const toolFile = evidence.generatedFiles.find(file => file.path.endsWith('AccountBalanceTool.java'));
+  const skillFile = evidence.generatedFiles.find(file => file.path.endsWith('SKILL.md'));
+  assert.ok(toolFile?.content.includes('class AccountBalanceTool')
+    && toolFile.content.includes('accountId')
+    && toolFile.content.includes('transport.invoke('), 'BALANCE_TOOL_INVALID');
+  assert.ok(skillFile?.content.length > 50, 'BALANCE_SKILL_EMPTY');
+  if (requestedScope === 'tool') assert.equal(bundle.profileVersion, 'wealth-balance-tool-java@1', 'TOOL_ONLY_PROFILE_MISMATCH');
+  if (requestedScope === 'skill') assert.equal(bundle.profileVersion, 'wealth-balance-skill-java@1', 'SKILL_ONLY_PROFILE_MISMATCH');
   assert.equal(bundle.runtimeSpec.tools[0]?.operationId, 'getAccountBalance', 'RUNTIME_TOOL_OPERATION_MISMATCH');
   assert.equal(bundle.runtimeSpec.tools[0]?.name, 'get_account_balance', 'RUNTIME_TOOL_NAME_MISMATCH');
 
@@ -140,9 +177,15 @@ try {
   for (const item of finalReport.cases ?? []) {
     if (item.evidenceId) evidence.validationEvidence.push(await api(`/api/validations/${validation.id}/evidence/${item.evidenceId}`));
   }
+  const observedScopes = [...new Set(evidence.validationEvidence.flatMap(item => item.candidateEvidence ?? [])
+    .map(item => item.loadedManifest?.generated?.generatedScope?.join(','))
+    .filter(Boolean))].map(scope => scope.split(',').sort());
+  evidence.observedGeneratedScopes = observedScopes;
+  assert.ok(observedScopes.length > 0 && observedScopes.every(scope => JSON.stringify(scope) === JSON.stringify([...generationProfile.scope].sort())), 'RUNTIME_GENERATED_SCOPE_MISMATCH');
   assert.equal(finalReport.verdict, 'passed', `WEALTH_VALIDATION_${finalReport.verdict}`);
   assert.equal(finalReport.cases.length, 3, 'WEALTH_VALIDATION_CASE_COUNT');
   assert.ok(finalReport.cases.every(item => item.status === 'passed'), 'WEALTH_CASE_FAILURE');
+  delete evidence.error;
   evidence.verdict = 'passed';
 } catch (error) {
   evidence.verdict = 'failed';

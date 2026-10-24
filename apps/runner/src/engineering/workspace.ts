@@ -10,7 +10,7 @@ import {equipmentGenerationRequest} from '../../../../packages/contracts/src/gen
 import {EngineeringCommands} from './commands.js';
 import {isValidRedExecution} from './unit-test-policy.js';
 const digest=(data:string|Buffer)=>createHash('sha256').update(data).digest('hex');
-interface WorkspaceState {sdkArtifactDigest?:string;unitRed?:CommandResult;unitGreen?:CommandResult;unitDigest?:string;greenSourceDigest?:string;planDigest?:string;bundle?:GeneratedBundle;diagnostic?:string}
+interface WorkspaceState {sdkArtifactDigest?:string;unitRed?:CommandResult;unitGreen?:CommandResult;unitDigest?:string;greenSourceDigest?:string;greenSkillDigest?:string;planDigest?:string;bundle?:GeneratedBundle;diagnostic?:string}
 export class EngineeringWorkspace {
   private state:WorkspaceState={};private queue:Promise<unknown>=Promise.resolve();private sequence=0;private commands:EngineeringCommands;
   private sdkReady:Promise<void>|undefined;private cancelled=false;
@@ -32,9 +32,12 @@ export class EngineeringWorkspace {
         for(const file of this.context.repair.files)await writeFile(join(this.root,file.path==='test-plan.json'?'tester/tests/plan.json':`developer/${file.path}`),file.content,{flag:'wx'});
         this.state.planDigest=this.context.repair.bundle.planDigest;
       }else {
-        await writeFile(join(this.root,'developer',this.profile.developerFiles[0]),this.profile.sourceStub,{flag:'wx'});
+        const sourcePath=this.profile.developerFiles[0]!;
+        const fixedAssets:Record<string,string>='materializedAssets' in this.profile?this.profile.materializedAssets:{};
+        const fixedSource=fixedAssets[sourcePath];
+        await writeFile(join(this.root,'developer',sourcePath),fixedSource??this.profile.sourceStub,{flag:'wx'});
         await writeFile(join(this.root,'developer',this.profile.developerFiles[3]),'{"schemaVersion":1,"rails":[]}',{flag:'wx'});
-        if('materializedAssets' in this.profile)for(const[path,content]of Object.entries(this.profile.materializedAssets))await writeFile(join(this.root,'developer',path),content,{flag:'wx'});
+        if('materializedAssets' in this.profile)for(const[path,content]of Object.entries(this.profile.materializedAssets))if(path!==sourcePath)await writeFile(join(this.root,'developer',path),content,{flag:'wx'});
       }
       await this.persist();}
     await this.assertSdk();
@@ -70,6 +73,7 @@ export class EngineeringWorkspace {
         if(role==='developer'&&this.context.repair&&path.startsWith('test/')&&path!==this.repairTest())throw new PolicyError('PRIOR_TEST_FROZEN');
         if(role==='developer'&&path.startsWith('src/')&&!this.state.unitRed)throw new PolicyError('UNIT_RED_REQUIRED');
         if(role==='developer'&&this.context.repair&&path.startsWith('skills/')&&!this.state.unitRed)throw new PolicyError('UNIT_RED_REQUIRED');
+        if(role==='developer'&&path.startsWith('skills/')&&this.profile.scope.length===1&&this.profile.scope[0]==='skill'&&!this.state.unitRed)throw new PolicyError('UNIT_RED_REQUIRED');
         if(role==='developer'&&path.startsWith('test/')&&this.state.unitDigest)throw new PolicyError('UNIT_TEST_FROZEN');
         if(role==='tester'&&path==='tests/plan.json'){this.validatePlan(content);if(this.state.planDigest&&this.state.planDigest!==digest(content))throw new PolicyError('TEST_PLAN_FROZEN');}
         if(path.endsWith('.java'))for(const imported of content.matchAll(/\bimport\s+([\w.*]+)\s*;/g)){if(!/^java\.util\.[\w*]+$/.test(imported[1]!)&&!['com.openjiuwen.core.foundation.tool.Tool','com.openjiuwen.core.foundation.tool.ToolCard'].includes(imported[1]!))throw new PolicyError('DEPENDENCY_NOT_ALLOWED');}
@@ -111,15 +115,25 @@ export class EngineeringWorkspace {
         let result:CommandResult|undefined;
         for(const path of tests){result=await this.commands.run('unit-test','java',['-ea','-cp',directory+delimiter+cp,`generated.${path.split('/').at(-1)!.replace('.java','')}`],this.root);if(result.status!=='passed'&&path!==tests.at(-1))return result;}
         if(sourceDigest!==digest(await this.source())||testDigest!==await this.testDigest())throw new PolicyError('SOURCE_CHANGED_DURING_COMMAND');
+        if(this.profile.scope.length===1&&this.profile.scope[0]==='skill'){
+          const skill=await readFile(join(this.root,'developer',this.profile.skillPath),'utf8');
+          const valid=skill.includes(`name: ${this.profile.skillName}`)&&skill.includes(this.profile.toolName)&&skill.includes('availableBalanceFen')&&skill.length>=180;
+          const result:CommandResult={id:randomUUID(),commandId:'unit-test',executable:'platform-skill-contract',args:[],exitCode:valid?0:1,status:valid?'passed':'failed',startedAt:new Date().toISOString(),finishedAt:new Date().toISOString(),output:valid?'SKILL_CONTRACT_OK':'SKILL_CONTRACT_INVALID',truncated:false};
+          await this.event(role,'command.completed',{id:result.id,commandId:result.commandId,status:result.status,exitCode:result.exitCode,truncated:false});
+          if(!valid){this.state.unitRed??=result;this.state.unitDigest=testDigest;await this.persist();return result;}
+          if(!this.state.unitRed||this.state.unitRed.output!=='SKILL_CONTRACT_INVALID')throw new PolicyError('TDD_RED_INVALID');
+          this.state.unitGreen=result;this.state.unitDigest=testDigest;this.state.greenSourceDigest=sourceDigest;this.state.greenSkillDigest=digest(skill);await this.persist();return result;
+        }
         const originalSource=this.context.repair?.files.find(f=>f.path===this.profile.developerFiles[0])?.content;
         const isRed=isValidRedExecution({source,stubSource:this.profile.sourceStub,...(originalSource!==undefined?{originalSource}:{}),result:result!});
         if(!this.state.unitRed){if(!isRed)throw new PolicyError('TDD_RED_INVALID');this.state.unitRed=result!;}
-        if(this.state.unitRed&&source!==this.profile.sourceStub&&result!.status==='passed'&&!result!.truncated){this.state.unitGreen=result!;this.state.greenSourceDigest=sourceDigest;}
+        if(this.state.unitRed&&source!==this.profile.sourceStub&&result!.status==='passed'&&!result!.truncated){this.state.unitGreen=result!;this.state.greenSourceDigest=sourceDigest;this.state.greenSkillDigest=digest(await readFile(join(this.root,'developer',this.profile.skillPath),'utf8'));}
         await this.persist();return result!;
       }
       if(sourceDigest!==this.state.greenSourceDigest)throw new PolicyError('UNIT_GREEN_STALE');
       if(await this.testDigest()!==this.state.unitDigest)throw new PolicyError('UNIT_TEST_FROZEN');
       const skill=await readFile(join(this.root,'developer',this.profile.developerFiles[2]),'utf8');
+      if(this.state.greenSkillDigest!==digest(skill))throw new PolicyError('UNIT_GREEN_STALE');
       if(!skill.includes(`name: ${this.profile.skillName}`)||!skill.includes(this.profile.toolName)||skill.length<120)throw new PolicyError('SKILL_PACKAGE_INVALID');
       const harness=join(this.root,'control/checks/verification',`${this.profile.contractClass}.java`);await writeFile(harness,this.profile.platformContractTest);
       const compiled=await this.commands.run('compile-contract','javac',['-encoding','UTF-8','--release','21','-cp',cp,'-d',directory,join(this.root,'developer',this.profile.developerFiles[0]),harness],this.root);

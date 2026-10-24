@@ -7,7 +7,7 @@ import {contentDigest} from '../snapshots/domain/assembly.js';
 import {AppError} from '../shared/errors.js';
 import type {BaselineService} from '../acceptance/application/baseline-service.js';
 import type {DevelopmentJob,EngineeringTaskInput} from '../../../../packages/contracts/src/development.js';
-import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthToolGenerationRequest,generatedRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
+import {equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthToolGenerationRequest,wealthSkillGenerationRequest,generatedRuntimeTools} from '../../../../packages/contracts/src/generation-profile.js';
 import type {ValidationCandidate} from '../../../../packages/contracts/src/validations.js';
 import {effectiveRuntimeSpec,validateGeneratedRailDefinition} from '../../../../packages/contracts/src/rail-generation.js';
 export class CandidateService {
@@ -22,7 +22,7 @@ export class CandidateService {
       ||contentDigest(bundle.repair??null)!==contentDigest(row.task_input.context.repair?.reference??null)||row.task_input.context.repair&&bundle.planDigest!==row.task_input.context.repair.bundle.planDigest)
       throw new AppError('CANDIDATE_BUILD_MISMATCH','生成任务与需求、基线或构建包不匹配',409);
     if(bundle.profileVersion&&bundle.profileVersion!==row.task_input.generation.profileVersion)throw new AppError('CANDIDATE_BUILD_MISMATCH','构建包生成 Profile 与任务不匹配',409);
-    if(([equipmentGenerationRequest.profileVersion,wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion,wealthToolGenerationRequest.profileVersion] as string[]).includes(row.task_input.generation.profileVersion)){
+    if(([equipmentGenerationRequest.profileVersion,wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion,wealthToolGenerationRequest.profileVersion,wealthSkillGenerationRequest.profileVersion] as string[]).includes(row.task_input.generation.profileVersion)){
       let definition;try{definition=validateGeneratedRailDefinition(row.task_input.context.goal,bundle.railDefinition);}catch{throw new AppError('CANDIDATE_RAIL_INVALID','构建包缺少与确认需求相符的受限 Rail 定义',409);}
       const base=structuredClone(row.task_input.context.runtimeSpec??snapshot.content.runtimeSpec);
       const generatedTools=generatedRuntimeTools(row.task_input.generation.profileVersion);
@@ -53,12 +53,15 @@ export class CandidateService {
       if(bundle.sdkArtifactDigest!==runtime.artifactDigest)throw new AppError('CANDIDATE_SDK_CHANGED','生成组件所用 SDK 已变化，请基于当前运行时重新生成',409);
       if(!this.runtime.packageGenerated)throw new AppError('CANDIDATE_BUILD_UNAVAILABLE','Runner 未提供生成制品登记能力',409);
       const artifact=await this.runtime.packageGenerated(developmentJobId,{bundleDigest:bundle.digest,specDigest:content.specDigest});
+      const expectedGeneratedScope=generation.profileVersion===wealthToolGenerationRequest.profileVersion?['tool']:generation.profileVersion===wealthSkillGenerationRequest.profileVersion?['skill']:undefined;
       if(artifact.kind!=='generated-component'||!/^[a-f0-9]{64}$/.test(artifact.artifactDigest)||artifact.sdkArtifactDigest!==runtime.artifactDigest||artifact.sdkArtifactDigest!==bundle.sdkArtifactDigest
         ||artifact.generated.developmentBundleDigest!==bundle.digest||artifact.generated.snapshotId!==snapshotId||artifact.generated.specDigest!==content.specDigest
         ||artifact.generated.sdkArtifactDigest!==bundle.sdkArtifactDigest||artifact.generated.componentDigest!==bundle.artifactDigest
         ||artifact.generated.operationId!==undefined&&artifact.generated.operationId!==generatedRuntimeTools(generation.profileVersion)?.[0]?.operationId
         ||artifact.generated.toolBindings!==undefined&&contentDigest(artifact.generated.toolBindings.map(binding=>[binding.toolName,binding.operationId]))!==contentDigest((generatedRuntimeTools(generation.profileVersion)??[]).map(tool=>[tool.name,tool.operationId]))
-        ||artifact.generated.skillDigest!==bundle.files.find(file=>file.path===(artifact.generated.skillPath??'skills/equipment-query/SKILL.md'))?.digest)
+        ||artifact.generated.skillDigest!==bundle.files.find(file=>file.path===(artifact.generated.skillPath??'skills/equipment-query/SKILL.md'))?.digest
+        ||expectedGeneratedScope&&contentDigest(artifact.generated.generatedScope??null)!==contentDigest(expectedGeneratedScope)
+        ||!expectedGeneratedScope&&artifact.generated.generatedScope!==undefined)
         throw new AppError('CANDIDATE_ARTIFACT_MISMATCH','Runner 实际制品与生成任务不匹配',409);
       content.artifactDigest=artifact.artifactDigest;content.provenance='generated-component';
       content.generated={developmentJobId,developmentBundleDigest:bundle.digest,baselineId:job.baselineId,baselineDigest:job.baselineDigest,sourceDigest:bundle.sourceDigest,runtimeArtifact:artifact};

@@ -44,7 +44,7 @@ class GeneratedComponentsTest {
         Files.writeString(classes.resolve("generated/agent-builder-component.json"),new ObjectMapper().writeValueAsString(manifest));
         return new URLClassLoader(new java.net.URL[]{classes.toUri().toURL()},Tool.class.getClassLoader());
     }
-    private URLClassLoader financeComponent() throws Exception {
+    private URLClassLoader financeComponent(String manifestKind) throws Exception {
         Path classes=directory.resolve("finance-classes");Files.createDirectories(classes.resolve("generated"));
         Path source=directory.resolve("AccountBalanceTool.java");Files.writeString(source,"""
             package generated;
@@ -58,7 +58,8 @@ class GeneratedComponentsTest {
             """);
         assertThat(ToolProvider.getSystemJavaCompiler().run(null,null,null,"-encoding","UTF-8","--release","21","-cp",System.getProperty("java.class.path"),"-d",classes.toString(),source.toString())).isZero();
         Path skill=classes.resolve("skills/balance-query/SKILL.md");Files.createDirectories(skill.getParent());Files.writeString(skill,"---\nname: balance-query\ndescription: Generated account balance query fixture\n---\nUse get_account_balance and report only returned fields.\n");
-        var manifest=Map.ofEntries(Map.entry("kind","generated-tool-skill@1"),Map.entry("developmentBundleDigest","b".repeat(64)),Map.entry("sdkArtifactDigest","c".repeat(64)),Map.entry("snapshotId","00000000-0000-0000-0000-000000000001"),Map.entry("specDigest",SPEC),Map.entry("componentDigest","d".repeat(64)),Map.entry("skillDigest",hash(Files.readAllBytes(skill))),Map.entry("toolClassName","generated.AccountBalanceTool"),Map.entry("toolName","get_account_balance"),Map.entry("operationId","getAccountBalance"),Map.entry("skillName","balance-query"),Map.entry("skillPath","skills/balance-query/SKILL.md"),Map.entry("classes",Map.of("generated/AccountBalanceTool.class",hash(Files.readAllBytes(classes.resolve("generated/AccountBalanceTool.class"))))));
+        var manifest=new java.util.HashMap<String,Object>(Map.ofEntries(Map.entry("kind",manifestKind),Map.entry("developmentBundleDigest","b".repeat(64)),Map.entry("sdkArtifactDigest","c".repeat(64)),Map.entry("snapshotId","00000000-0000-0000-0000-000000000001"),Map.entry("specDigest",SPEC),Map.entry("componentDigest","d".repeat(64)),Map.entry("skillDigest",hash(Files.readAllBytes(skill))),Map.entry("toolClassName","generated.AccountBalanceTool"),Map.entry("toolName","get_account_balance"),Map.entry("operationId","getAccountBalance"),Map.entry("skillName","balance-query"),Map.entry("skillPath","skills/balance-query/SKILL.md"),Map.entry("classes",Map.of("generated/AccountBalanceTool.class",hash(Files.readAllBytes(classes.resolve("generated/AccountBalanceTool.class")))))));
+        if("generated-tool-skill@3".equals(manifestKind))manifest.put("generatedScope",List.of("skill"));
         Files.writeString(classes.resolve("generated/agent-builder-component.json"),new ObjectMapper().writeValueAsString(manifest));
         return new URLClassLoader(new java.net.URL[]{classes.toUri().toURL()},Tool.class.getClassLoader());
     }
@@ -96,7 +97,7 @@ class GeneratedComponentsTest {
         }
     }
     @Test void loadsGeneratedFinanceToolAndItsProfileSpecificSkill() throws Exception {
-        try(var loader=financeComponent()) {
+        try(var loader=financeComponent("generated-tool-skill@1")) {
             var components=GeneratedComponents.load(loader,directory.resolve("finance-workspace"),SPEC);
             assertThat(components.enabled()).isTrue();
             AtomicInteger calls=new AtomicInteger();List<Map<String,Object>> events=new ArrayList<>();
@@ -110,6 +111,20 @@ class GeneratedComponentsTest {
             var rail=new ManagedSkillRail(components,events::add);rail.reloadSkills();
             assertThat(((ToolOutput)rail.managedTool().invoke(Map.of("skill_name","balance-query"))).getData().toString()).contains("get_account_balance");
             assertThat(events).anySatisfy(event->assertThat(event).containsEntry("event","skill_loaded").containsEntry("skill","balance-query"));
+        }
+    }
+    @Test void loadsStandaloneGeneratedSkillAndRecordsItsScopeWithoutClaimingToolGeneration() throws Exception {
+        try(var loader=financeComponent("generated-tool-skill@3")) {
+            var components=GeneratedComponents.load(loader,directory.resolve("scoped-skill-workspace"),SPEC);
+            assertThat(components.manifest()).containsEntry("generatedScope",List.of("skill"));
+            assertThat(components.toolName()).isEqualTo("get_account_balance");
+            assertThat(Files.readString(directory.resolve("scoped-skill-workspace/skills/balance-query/SKILL.md"))).contains("name: balance-query");
+            List<Map<String,Object>> events=new ArrayList<>();
+            Tool transport=new Tool(new ToolCard("balance@1","get_account_balance","fixture",Map.of())){
+                protected Object invokeInternal(Map<String,Object> input,Map<String,Object> kwargs){return Map.of("availableBalanceFen",1000000);}
+            };
+            assertThat(components.wrap(transport,events::add).invoke(Map.of("accountId","A1001"),Map.of())).isEqualTo(Map.of("availableBalanceFen",1000000));
+            assertThat(events).anySatisfy(event->assertThat(event).containsEntry("event","bound_tool_invoked"));
         }
     }
     @Test void loadsActualGeneratedClassPreservesTrustedContextAndRecordsItsInvocation() throws Exception {

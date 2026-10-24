@@ -20,7 +20,7 @@ export function generatedRuntimeTools(profileVersion:string):RuntimeSpec['tools'
  const tool=generatedRuntimeTool(profileVersion);return tool?[tool]:undefined;
 }
 const reviewedProfiles=[equipmentGenerationRequest,wealthBalanceGenerationRequest,wealthAssistantGenerationRequest,wealthToolGenerationRequest,wealthSkillGenerationRequest] as const;
-const implementedProfileVersions:readonly string[]=[equipmentGenerationRequest.profileVersion,wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion,wealthToolGenerationRequest.profileVersion];
+const implementedProfileVersions:readonly string[]=[equipmentGenerationRequest.profileVersion,wealthBalanceGenerationRequest.profileVersion,wealthAssistantGenerationRequest.profileVersion,wealthToolGenerationRequest.profileVersion,wealthSkillGenerationRequest.profileVersion];
 export function generationPolicyError(request:GenerationRequest):string|undefined {
  const profile=reviewedProfiles.find(item=>item.profileVersion===request.profileVersion);
  if(!profile)return 'GENERATION_PROFILE_UNSUPPORTED';

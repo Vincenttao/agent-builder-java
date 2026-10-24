@@ -1,6 +1,7 @@
 export interface GeneratedComponentManifest {
-  kind:'equipment-tool-skill@1'|'generated-tool-skill@1'|'generated-tool-skill@2';developmentBundleDigest:string;sdkArtifactDigest:string;snapshotId:string;specDigest:string;
+  kind:'equipment-tool-skill@1'|'generated-tool-skill@1'|'generated-tool-skill@2'|'generated-tool-skill@3';developmentBundleDigest:string;sdkArtifactDigest:string;snapshotId:string;specDigest:string;
   componentDigest:string;skillDigest:string;classes:Record<string,string>;
+  generatedScope?:('agent'|'skill'|'rail'|'tool')[];
   toolClassName?:string;toolName?:string;operationId?:string;skillName?:string;skillPath?:string;
   toolBindings?:{toolClassName:string;toolName:string;operationId:string}[];
 }

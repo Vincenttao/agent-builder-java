@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {wealthBalanceAssembly,wealthAssistantAssembly} from '../../packages/contracts/src/equipment-template.js';
+import {wealthBalanceAssembly,wealthAssistantAssembly,wealthToolAssembly,wealthSkillAssembly} from '../../packages/contracts/src/equipment-template.js';
 
 it('assembles the generated balance Skill and tool with explicit no-fabrication outputs',()=>{
  const assembly=wealthBalanceAssembly('查询账户可用余额');
@@ -19,4 +19,10 @@ it('assembles one generated read-only Agent for balance and wealth products',()=
  expect(assembly.systemPrompt).toContain('get_account_balance');
  expect(assembly.systemPrompt).toContain('list_wealth_products');
  expect(assembly.systemPrompt).toContain('只读');
+});
+it('offers independently selectable Tool-only and Skill-only financial assembly profiles',()=>{
+ const tool=wealthToolAssembly('查询账户余额');const skill=wealthSkillAssembly('查询账户余额');
+ expect(tool).toMatchObject({generationProfileVersion:'wealth-balance-tool-java@1',toolIds:[]});
+ expect(skill).toMatchObject({generationProfileVersion:'wealth-balance-skill-java@1',toolIds:[]});
+ expect(skill.systemPrompt).toContain('balance-query');expect(skill.systemPrompt).toContain('get_account_balance');
 });

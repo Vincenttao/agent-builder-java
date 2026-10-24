@@ -26,3 +26,13 @@ it('requires stopped actual candidate bytes and source-matched Skill/Tool events
     (o:CaseObservation)=>{o.events=[];}
   ]){const h=fixture();mutate(h.observation);expect(h.check()).toBe(false);}
 });
+it('treats a Skill-only candidate invocation as use of its bound fixed Tool dependency',()=>{
+  const h=fixture();
+  const loaded=h.observation.candidateEvidence!.loadedManifest as {generated:Record<string,unknown>};
+  Object.assign(loaded.generated,{generatedScope:['skill']});
+  h.observation.events=[
+    {data:{event:{event:'skill_loaded',sessionId:'run',skillDigest:'e'.repeat(64),developmentBundleDigest:'b'.repeat(64)}}},
+    {data:{event:{event:'bound_tool_invoked',sessionId:'run',componentDigest:'d'.repeat(64),developmentBundleDigest:'b'.repeat(64)}}}
+  ];
+  expect(h.check()).toBe(true);
+});

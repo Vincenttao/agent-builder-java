@@ -65,10 +65,9 @@ describe('reviewed generation profile',()=>{
     for(const request of [wealthToolGenerationRequest,wealthSkillGenerationRequest]){
       const normalized={...request,scope:[...request.scope],dependencies:[...request.dependencies]};
       expect(generationPolicyError(normalized)).toBeUndefined();
-      expect(generationImplementationError(normalized)).toBe(request.profileVersion===wealthToolGenerationRequest.profileVersion?undefined:'GENERATION_PROFILE_NOT_IMPLEMENTED');
+      expect(generationImplementationError(normalized)).toBeUndefined();
       expect(generationPolicyError({...normalized,scope:['tool','skill']})).toBe('GENERATION_SCOPE_UNSUPPORTED');
-      if(request.profileVersion===wealthToolGenerationRequest.profileVersion)expect(()=>validateGenerationRequest(normalized)).not.toThrow();
-      else expect(()=>validateGenerationRequest(normalized)).toThrowError(expect.objectContaining({code:'GENERATION_PROFILE_NOT_IMPLEMENTED'}));
+      expect(()=>validateGenerationRequest(normalized)).not.toThrow();
     }
     expect(wealthToolGenerationRequest.scope).toEqual(['tool']);
     expect(wealthSkillGenerationRequest.scope).toEqual(['skill']);
@@ -80,6 +79,8 @@ describe('reviewed generation profile',()=>{
     expect('developerWritableFiles' in skill&&skill.developerWritableFiles).toEqual(['skills/balance-query/SKILL.md']);
     expect('materializedAssets' in tool&&tool.materializedAssets['skills/balance-query/SKILL.md']).toContain('name: balance-query');
     expect('engineeringSkills' in tool&&tool.engineeringSkills.developer).toContain('approved balance-query Skill is a fixed dependency');
+    expect(tool.implementationContract).toContain('The platform supplies a reviewed balance-query Skill as a fixed dependency');
+    expect(skill.implementationContract).toContain('Generate only skills/balance-query/SKILL.md');
     expect(generatedRuntimeTool(wealthToolGenerationRequest.profileVersion)).toMatchObject({name:'get_account_balance',operationId:'getAccountBalance'});
     expect(()=>checkFileAccess('developer','write','skills/balance-query/SKILL.md',0,tool)).toThrowError(expect.objectContaining({code:'FILE_OPERATION_NOT_ALLOWED'}));
     expect(()=>checkFileAccess('developer','write','src/generated/AccountBalanceTool.java',0,skill)).toThrowError(expect.objectContaining({code:'FILE_OPERATION_NOT_ALLOWED'}));

@@ -40,7 +40,13 @@ public final class GeneratedComponents {
         Set<String> generatedKeys=Set.of("kind", "developmentBundleDigest", "sdkArtifactDigest", "snapshotId", "specDigest", "componentDigest", "skillDigest", "classes", "toolClassName", "toolName", "operationId", "skillName", "skillPath");
         Set<String> generatedKeysV2=new java.util.HashSet<>(generatedKeys);generatedKeysV2.add("toolBindings");
         boolean multi="generated-tool-skill@2".equals(data.get("kind"))&&data.keySet().equals(generatedKeysV2);
-        if (!(legacy && data.keySet().equals(legacyKeys) || "generated-tool-skill@1".equals(data.get("kind")) && data.keySet().equals(generatedKeys) || multi))
+        Set<String> generatedKeysV3=new java.util.HashSet<>(generatedKeys);generatedKeysV3.add("generatedScope");
+        Set<String> generatedKeysV3Multi=new java.util.HashSet<>(generatedKeysV3);generatedKeysV3Multi.add("toolBindings");
+        boolean scoped="generated-tool-skill@3".equals(data.get("kind"))&&(data.keySet().equals(generatedKeysV3)||data.keySet().equals(generatedKeysV3Multi));
+        boolean scopedMulti=scoped&&data.keySet().contains("toolBindings");
+        if (!(legacy && data.keySet().equals(legacyKeys) || "generated-tool-skill@1".equals(data.get("kind")) && data.keySet().equals(generatedKeys) || multi || scoped))
+            throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
+        if(scoped&&(!(data.get("generatedScope") instanceof List<?> scope)||scope.size()!=1||!("tool".equals(scope.get(0))||"skill".equals(scope.get(0)))))
             throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
         for (String field : List.of("developmentBundleDigest", "sdkArtifactDigest", "specDigest", "componentDigest", "skillDigest"))
             if (!(data.get(field) instanceof String value) || !value.matches("[a-f0-9]{64}")) throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
@@ -50,7 +56,7 @@ public final class GeneratedComponents {
         String toolName=legacy?"get_equipment":string(data,"toolName");
         String operationId=legacy?"equipment-status":string(data,"operationId");
         Map<String,String> bindings=new HashMap<>();
-        if(multi){
+        if(multi||scopedMulti){
             if(!(data.get("toolBindings") instanceof List<?> entries)||entries.size()<2||entries.size()>16)throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
             for(Object entry:entries){
                 if(!(entry instanceof Map<?,?> binding)||!binding.keySet().equals(Set.of("toolClassName","toolName","operationId")))throw new IllegalStateException("GENERATED_MANIFEST_INVALID");
@@ -118,9 +124,11 @@ public final class GeneratedComponents {
         if (!enabled() || !toolBindings.containsKey(transport.getCard().getName())) throw new IllegalStateException("GENERATED_TOOL_BINDING_INVALID");
         Tool generated = toolClass.getConstructor(Tool.class).newInstance(transport);
         if (generated.getCard() != transport.getCard()) throw new IllegalStateException("GENERATED_TOOL_CONTRACT_INVALID");
+        boolean generatedTool=!(manifest.get("generatedScope") instanceof List<?> scope)||scope.contains("tool");
+        String invocationEvent=generatedTool?"generated_tool_invoked":"bound_tool_invoked";
         return new Tool(transport.getCard()) {
             @Override protected Object invokeInternal(Map<String,Object> input, Map<String,Object> kwargs) throws Exception {
-                events.accept(Map.of("event", "generated_tool_invoked", "className", toolClass.getName(), "componentDigest", manifest.get("componentDigest"),
+                events.accept(Map.of("event", invocationEvent, "className", toolClass.getName(), "componentDigest", manifest.get("componentDigest"),
                         "developmentBundleDigest", manifest.get("developmentBundleDigest"), "sessionId", sessionId(kwargs)));
                 try { return generated.invoke(input, kwargs); }
                 catch (IllegalStateException error) { return RegisteredHttpTool.readFailure(error); }
