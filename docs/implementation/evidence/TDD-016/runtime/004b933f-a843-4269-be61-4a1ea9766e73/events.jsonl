@@ -1,5 +1,0 @@
-{"event":{"event":"before_invoke","turnCount":1,"rail":"audit","tool":"","sessionId":"8a60d194-21ff-4839-a2b7-49eef94dcb87"},"time":"2026-10-22T01:47:47.916401100Z"}
-{"event":{"event":"before_model_call","turnCount":1,"rail":"audit","tool":"","sessionId":"8a60d194-21ff-4839-a2b7-49eef94dcb87"},"time":"2026-10-22T01:47:48.010608400Z"}
-{"event":{"event":"after_model_call","turnCount":1,"rail":"audit","tool":"","sessionId":"8a60d194-21ff-4839-a2b7-49eef94dcb87"},"time":"2026-10-22T01:47:49.110830600Z"}
-{"event":{"content":"{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}","event":"assistant_output","rail":"audit","sessionId":"8a60d194-21ff-4839-a2b7-49eef94dcb87"},"time":"2026-10-22T01:47:49.112431Z"}
-{"event":{"event":"after_invoke","turnCount":1,"rail":"audit","tool":"","sessionId":"8a60d194-21ff-4839-a2b7-49eef94dcb87"},"time":"2026-10-22T01:47:49.116849500Z"}

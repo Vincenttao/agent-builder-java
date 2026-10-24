@@ -1,13 +1,9 @@
 node_modules/
-.tools/
-.cache/
-dist/
-coverage/
 test-results/
 playwright-report/
+coverage/
+.cache/
 .env
 .env.*
-!.env.example
-*.tsbuildinfo
-**/target/
-**/.flattened-pom.xml
+*.log
+*:Zone.Identifier

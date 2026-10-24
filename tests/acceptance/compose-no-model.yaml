@@ -1,7 +1,0 @@
-services:
-  app:
-    environment:
-      DEEPSEEK_API_KEY: ""
-  runner:
-    environment:
-      DEEPSEEK_API_KEY: ""

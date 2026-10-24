@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "composeProject": "agent-builder-td15-nf01",
-  "appImageId": "sha256:76102baabd35608a22a570e6750d2a7842d90b864b1f2c8566e375258ec8580d",
-  "runnerImageId": "sha256:7f77f099bf59c660535604893cab9048287a9015529bddaa1eadaab9e361fd8e",
-  "platform": "win32",
-  "arch": "x64"
-}

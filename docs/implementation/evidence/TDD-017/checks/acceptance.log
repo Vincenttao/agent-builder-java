@@ -1,6 +1,0 @@
-
-> agent-builder@0.1.0 test:acceptance D:\agent-builder-java
-> node --import tsx scripts/check-acceptance.ts "--" "--phase" "P0-C"
-
-P0-C: unverified; 88 required items; report=test-results\acceptance\P0-C-1792636689356.json
- ELIFECYCLE  Command failed with exit code 1.

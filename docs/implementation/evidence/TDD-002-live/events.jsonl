@@ -1,9 +1,0 @@
-{"event":{"tool":"","sessionId":"java-live-1792605573338","event":"before_invoke","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:38.537682800Z"}
-{"event":{"tool":"","sessionId":"java-live-1792605573338","event":"before_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:38.591153900Z"}
-{"event":{"tool":"","sessionId":"java-live-1792605573338","event":"after_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:39.704813500Z"}
-{"event":{"sessionId":"java-live-1792605573338","allowed":true,"tool":"get_equipment","event":"before_tool_call","rail":"tool-allowlist"},"time":"2026-10-21T17:59:39.711867700Z"}
-{"event":{"tool":"get_equipment","sessionId":"java-live-1792605573338","event":"before_tool_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:39.712893100Z"}
-{"event":{"tool":"get_equipment","sessionId":"java-live-1792605573338","event":"after_tool_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:39.738533200Z"}
-{"event":{"tool":"","sessionId":"java-live-1792605573338","event":"before_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:39.743528800Z"}
-{"event":{"tool":"","sessionId":"java-live-1792605573338","event":"after_model_call","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:40.627275200Z"}
-{"event":{"tool":"","sessionId":"java-live-1792605573338","event":"after_invoke","turnCount":1,"rail":"audit"},"time":"2026-10-21T17:59:40.630752300Z"}

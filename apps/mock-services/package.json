@@ -1,4 +1,0 @@
-{
-  "name": "@agent-builder/mock-services", "private": true, "type": "module", "version": "0.1.0",
-  "dependencies": { "fastify": "^5.12.7", "pg": "^8.16.0" }
-}

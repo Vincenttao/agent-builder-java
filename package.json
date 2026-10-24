@@ -1,45 +1,18 @@
 {
-  "name": "agent-builder",
-  "version": "0.1.0",
+  "name": "agent-workbench-demo",
+  "version": "2.0.0",
   "private": true,
-  "type": "module",
-  "packageManager": "pnpm@10.32.1",
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
-    "demo": "node scripts/start-demo.mjs",
-    "test": "vitest run --project unit --project contract",
-    "test:unit": "vitest run --project unit",
-    "test:contract": "vitest run --project contract",
-    "test:integration": "vitest run --project integration",
-    "test:live:adapters": "vitest run --project adapter",
-    "test:acceptance": "node --import tsx scripts/check-acceptance.ts",
-    "test:e2e": "node --env-file-if-exists=.env.local node_modules/@playwright/test/cli.js test",
-    "model:probe": "node --env-file-if-exists=.env.local --import tsx scripts/probe-model.ts",
-    "opencode:probe": "node --env-file-if-exists=.env.local scripts/probe-opencode.mjs",
-    "java:probe": "node --env-file-if-exists=.env.local scripts/probe-java.mjs",
-    "typecheck": "tsc --noEmit",
-    "build": "corepack pnpm --filter @agent-builder/web build && tsc -p tsconfig.build.json",
-    "dev": "node --env-file-if-exists=.env.local --import tsx apps/server/src/main.ts",
-    "dev:web": "pnpm --filter @agent-builder/web dev",
-    "db:migrate": "node --env-file-if-exists=.env.local --import tsx apps/server/src/migrate.ts",
-    "start": "node --env-file-if-exists=.env.local dist/apps/server/src/main.js"
+    "start": "node docs/developer-prototype-v2/scripts/serve.cjs",
+    "demo": "node docs/developer-prototype-v2/scripts/serve.cjs",
+    "build": "node docs/developer-prototype-v2/scripts/build.cjs",
+    "test:demo": "node docs/developer-prototype-v2/scripts/verify-identity.cjs",
+    "test:flow": "node docs/developer-prototype-v2/scripts/verify-flow-map.cjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0",
-    "@types/node": "^24.0.0",
-    "@types/pg": "^8.15.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "tsx": "^4.20.0",
-    "typescript": "^5.9.0",
-    "vitest": "^4.0.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "opencode-ai"
-    ]
+    "@playwright/test": "1.61.1"
   }
 }

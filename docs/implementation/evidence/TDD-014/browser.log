@@ -1,8 +1,0 @@
-
-Running 1 test using 1 worker
-
-(node:23728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-  ok 1 tests\e2e\development-ui.spec.ts:9:1 › development UI restores tasks, cancels, and displays source and command evidence using explicit API fixtures (22.3s)
-
-  1 passed (27.2s)

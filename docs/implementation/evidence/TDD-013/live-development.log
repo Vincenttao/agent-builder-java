@@ -1,8 +1,0 @@
-{"stage":"admitted","probeId":"d0df022a-7382-4e74-bdf3-ed173199b34d","jobId":"b13f259c-bffa-4ffd-a055-a5a9b78023b2"}
-{"stage":"progress","jobId":"b13f259c-bffa-4ffd-a055-a5a9b78023b2","status":"queued","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
-{"stage":"progress","jobId":"b13f259c-bffa-4ffd-a055-a5a9b78023b2","status":"running","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
-{"stage":"progress","jobId":"b13f259c-bffa-4ffd-a055-a5a9b78023b2","status":"running","roles":[{"role":"tester","status":"running"},{"role":"developer","status":"queued"}]}
-{"stage":"progress","jobId":"b13f259c-bffa-4ffd-a055-a5a9b78023b2","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f502679ffex0GXlXlYkNzwYJ"},{"role":"developer","status":"running"}]}
-{"stage":"progress","jobId":"b13f259c-bffa-4ffd-a055-a5a9b78023b2","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f502679ffex0GXlXlYkNzwYJ"},{"role":"developer","status":"completed","sessionId":"ses_e9f4fdb22ffeGavXrbGj0WBb3X"}]}
-{"stage":"progress","jobId":"b13f259c-bffa-4ffd-a055-a5a9b78023b2","status":"failed","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f502679ffex0GXlXlYkNzwYJ"},{"role":"developer","status":"completed","sessionId":"ses_e9f4fdb22ffeGavXrbGj0WBb3X"}]}
-{"stage":"failed","id":"d0df022a-7382-4e74-bdf3-ed173199b34d","code":"Expected values to be strictly equal:\n\n'failed' !== 'built'\n"}

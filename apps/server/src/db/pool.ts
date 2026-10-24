@@ -1,1 +1,0 @@
-export { Pool } from 'pg';

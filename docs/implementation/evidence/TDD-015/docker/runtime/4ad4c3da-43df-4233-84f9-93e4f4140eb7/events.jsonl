@@ -1,5 +1,0 @@
-{"time":"2026-10-22T00:33:13.384334578Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"4dfe06b5-2c8d-44ca-923f-37085c61294e","event":"before_invoke"}}
-{"time":"2026-10-22T00:33:13.447419743Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"4dfe06b5-2c8d-44ca-923f-37085c61294e","event":"before_model_call"}}
-{"time":"2026-10-22T00:33:14.488964203Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"4dfe06b5-2c8d-44ca-923f-37085c61294e","event":"after_model_call"}}
-{"time":"2026-10-22T00:33:14.489722055Z","event":{"content":"{\"kind\":\"clarification\",\"missingFields\":[\"equipmentId\"],\"message\":\"请提供设备编号\"}","event":"assistant_output","rail":"audit","sessionId":"4dfe06b5-2c8d-44ca-923f-37085c61294e"}}
-{"time":"2026-10-22T00:33:14.492250707Z","event":{"turnCount":1,"rail":"audit","tool":"","sessionId":"4dfe06b5-2c8d-44ca-923f-37085c61294e","event":"after_invoke"}}

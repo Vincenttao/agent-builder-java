@@ -1,7 +1,0 @@
-{"stage":"admitted","probeId":"cba9b1ff-89c1-479c-9b99-50902976e026","jobId":"2471fcff-6511-4bce-a0f8-0ab5fa3018f7"}
-{"stage":"progress","jobId":"2471fcff-6511-4bce-a0f8-0ab5fa3018f7","status":"queued","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
-{"stage":"progress","jobId":"2471fcff-6511-4bce-a0f8-0ab5fa3018f7","status":"running","roles":[{"role":"tester","status":"queued"},{"role":"developer","status":"queued"}]}
-{"stage":"progress","jobId":"2471fcff-6511-4bce-a0f8-0ab5fa3018f7","status":"running","roles":[{"role":"tester","status":"running"},{"role":"developer","status":"queued"}]}
-{"stage":"progress","jobId":"2471fcff-6511-4bce-a0f8-0ab5fa3018f7","status":"running","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f4b6bedffe30ZW47FFlcBQVi"},{"role":"developer","status":"running"}]}
-{"stage":"progress","jobId":"2471fcff-6511-4bce-a0f8-0ab5fa3018f7","status":"built","roles":[{"role":"tester","status":"completed","sessionId":"ses_e9f4b6bedffe30ZW47FFlcBQVi"},{"role":"developer","status":"completed","sessionId":"ses_e9f4aba40ffeU3PQtzLo0MZsX2"}]}
-{"stage":"failed","id":"cba9b1ff-89c1-479c-9b99-50902976e026","code":"Expected values to be strictly equal:\n+ actual - expected\n\n+ 'cancelling'\n- 'cancelled'\n          ^\n"}
