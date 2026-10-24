@@ -12,7 +12,7 @@ const targetImageIds = execFileSync('docker', ['inspect', '--format', '{{.Image}
 const reference = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'utf8'));
 assert.equal(reference.composeProject, project, 'REFERENCE_PROJECT_CHANGED');
 assert.deepEqual(targetImageIds, reference.targetImageIds, 'TARGET_IMAGE_CHANGED');
-const target = JSON.parse(await readFile('test-results/acceptance/td15-platform-target.json', 'utf8'));
+const target = JSON.parse(await readFile('test-results/acceptance/td15-platform-target-current.json', 'utf8'));
 assert.equal(createHash('sha256').update(await readFile(target.artifactPath)).digest('hex'), target.artifactDigest, 'TARGET_ARTIFACT_CHANGED');
 assert.ok(process.env.LOCAL_BOOTSTRAP_TOKEN, 'LOCAL_BOOTSTRAP_TOKEN_REQUIRED');
 

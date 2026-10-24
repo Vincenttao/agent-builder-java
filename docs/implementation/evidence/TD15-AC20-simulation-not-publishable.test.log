@@ -1,12 +1,14 @@
 
  RUN  v4.1.12 D:/agent-builder-java
 
- ✓ |unit| apps/server/src/releases/project-release-gate.test.ts > does not accept simulated or unverified reports as permission to publish 9ms
- ✓ |unit| apps/server/src/releases/project-release-gate.test.ts > requires every fixed case and assertion, evidence references and exact target bindings 6ms
- ✓ |unit| apps/server/src/releases/project-release-gate.test.ts > rechecks the actual environment and accepts only the same validated target 2ms
+ ✓ |unit| apps/server/src/releases/project-release-gate.test.ts > does not accept simulated or unverified reports as permission to publish 11ms
+ ✓ |unit| apps/server/src/releases/project-release-gate.test.ts > requires every fixed case and assertion, evidence references and exact target bindings 5ms
+ ✓ |unit| apps/server/src/releases/project-release-gate.test.ts > rechecks the actual environment and accepts only the same validated target 3ms
  ✓ |unit| apps/server/src/releases/project-release-gate.test.ts > revalidates the exact generated candidate and plan instead of substituting the default template 4ms
 
  Test Files  1 passed (1)
       Tests  4 passed (4)
-   Start at  07:33:36
-   Duration  436ms (transform 144ms, setup 0ms, import 197ms, tests 25ms, environment 0ms)
+   Start at  08:43:38
+   Duration  738ms (transform 189ms, setup 0ms, import 257ms, tests 26ms, environment 1ms)
+
+\n

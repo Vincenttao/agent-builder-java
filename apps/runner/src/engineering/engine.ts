@@ -47,9 +47,10 @@ export class OpenCodeEngine {
   await this.stop();throw new PolicyError('ENGINE_START_TIMEOUT');
  }
  private safe<T>(value:T):T{let text=JSON.stringify(value);for(const secret of [this.options.modelKey,this.password,...Object.values(this.options.tokens)])if(secret)text=text.replaceAll(secret,'[REDACTED]');return JSON.parse(text) as T;}
- async runRole(role:EngineeringRole,prompt:string):Promise<RoleResult>{
+ async runRole(role:EngineeringRole,prompt:string,attempt=1):Promise<RoleResult>{
   if(this.stopped||!this.process)throw new PolicyError('ENGINE_NOT_RUNNING');if(this.active)throw new PolicyError('ENGINE_ROLE_BUSY');
-  const recordPath=resolve(this.options.root,'control',`${role}-session.json`);
+  if(!Number.isInteger(attempt)||attempt<1||attempt>2||role!=='tester'&&attempt!==1)throw new PolicyError('ENGINE_ROLE_ATTEMPT_INVALID');
+  const recordPath=resolve(this.options.root,'control',attempt===1?`${role}-session.json`:`${role}-session-${attempt}.json`);
   try{await readFile(recordPath);throw new PolicyError('ENGINE_TASK_REQUIRES_RECONCILIATION');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
   const session=await this.api<{id:string}>('/session','POST',{title:`Agent Builder ${role}`},role);this.active={role,sessionId:session.id};
   await writeFile(recordPath,JSON.stringify({role,sessionId:session.id,status:'running'}));

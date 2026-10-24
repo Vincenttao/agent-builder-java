@@ -9,7 +9,7 @@ const image = name => execFileSync('docker', ['inspect', '--format', '{{.Image}}
 const appImage = image(`${project}-app-1`);
 const runnerImage = image(`${project}-runner-1`);
 const mockImage = image(mockContainer);
-const target = JSON.parse(await readFile('test-results/acceptance/td15-platform-target.json', 'utf8'));
+const target = JSON.parse(await readFile('test-results/acceptance/td15-platform-target-current.json', 'utf8'));
 const liveReference = JSON.parse(await readFile('docs/implementation/evidence/TD15-AC23-policy-audit-live.json', 'utf8'));
 assert.equal(liveReference.composeProject, project, 'REFERENCE_PROJECT_CHANGED');
 assert.deepEqual(liveReference.targetImageIds, [appImage, runnerImage], 'TARGET_IMAGE_CHANGED');

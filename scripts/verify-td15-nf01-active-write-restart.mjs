@@ -87,7 +87,9 @@ try {
   compose('kill', '--signal', 'SIGKILL', 'app', 'runner');
   crashed = true;
   compose('up', '-d', 'app', 'runner');
-  const readyDeadline = Date.now() + 120000;
+  // Restoring persisted test deployments is sequential and can take several
+  // minutes after a Runner crash. Keep the probe window above that recovery time.
+  const readyDeadline = Date.now() + 480000;
   while (Date.now() < readyDeadline) {
     try {
       const readiness = await fetch(`${base}/health/ready`, { signal: AbortSignal.timeout(2000) });

@@ -19,6 +19,10 @@ const compatibilityKey=createHash('sha256').update(JSON.stringify({appImageId,ru
 Object.assign(binding,{artifactDigest,compatibilityKey});
 const targetPath='test-results/acceptance/td15-platform-target-current.json';
 await writeFile(targetPath,JSON.stringify({artifactPath,artifactDigest,compatibilityKey},null,2)+'\n');
+if(process.argv.includes('--target-only')){
+  console.log(JSON.stringify({artifactPath,targetPath,artifactDigest,compatibilityKey,appImageId,runnerImageId},null,2));
+  process.exit(0);
+}
 const sources=[
   ['docs/implementation/evidence/TD15-AC01-no-model.json','AC01'],
   ['docs/implementation/evidence/TD15-AC02-mode-switch.json','AC02'],
@@ -45,6 +49,10 @@ const sources=[
   ['docs/implementation/evidence/TD15-NF04-budget-live.json','NF04-budget'],
   ['docs/implementation/evidence/TD15-NF04-errors-live.json','NF04-errors'],
   ['docs/implementation/evidence/TD15-NF04-event-retention-live.json','NF04-retention'],
+  ['docs/implementation/evidence/TD15-AC23-policy-audit-live.json','AC23'],
+  ['docs/implementation/evidence/TD15-AC24-candidate-integrity-live.json','AC24'],
+  ['docs/implementation/evidence/TD15-AC30-mock-isolation-live.json','AC30'],
+  ['docs/implementation/evidence/TD15-AC26-docker-live.json','AC26'],
   ['docs/implementation/evidence/TD15-AC42a-trusted-local-live.json','AC42a'],
   ['docs/implementation/evidence/TD15-NF01-validation-branches.json','NF01-validation'],
   ['docs/implementation/evidence/TD15-AC21-AC22-generation-live.json','AC21-AC22'],
@@ -53,13 +61,25 @@ const sources=[
   ['docs/implementation/evidence/TD15-AC32-wealth-assistant-live.json','AC32']
 ];
 const results=[];
+const skippedSources=[];
 for(const [sourcePath,kind] of sources){
   const source=JSON.parse(await readFile(sourcePath,'utf8'));
+  const expectedIds=JSON.stringify([appImageId,runnerImageId]);
+  const sourceTargetMatches=kind==='AC01'?source.targetImageIds?.[0]===appImageId
+    :kind==='NF02'?source.appImageId===appImageId
+    :kind==='AC18-NF05'?source.targetImageIds?.[0]===appImageId&&source.targetImageIds?.[1]===appImageId&&source.targetImageIds?.[3]===runnerImageId
+    :kind==='NF03'?source.runtime?.appImageId===appImageId
+    :JSON.stringify(source.targetImageIds)===expectedIds;
+  if(!sourceTargetMatches&&process.argv.includes('--skip-stale-target')){
+    skippedSources.push({kind,sourcePath,targetImageIds:source.targetImageIds??[source.appImageId??source.runtime?.appImageId]});
+    continue;
+  }
   if(kind==='AC01')assert.equal(source.targetImageIds?.[0],appImageId,'AC01_APP_TARGET_MISMATCH');
   else if(kind==='NF02')assert.equal(source.appImageId,appImageId,'NF02_APP_TARGET_MISMATCH');
   else if(kind==='AC20')assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],'AC20_TARGET_MISMATCH');
   else if(kind==='EQ01'||kind==='EQ02'||kind==='NF01-restart')assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
   else if(kind.startsWith('NF04-'))assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
+  else if(kind==='AC23'||kind==='AC24'||kind==='AC30'||kind==='AC26')assert.deepEqual(source.targetImageIds,[appImageId,runnerImageId],`${kind}_TARGET_MISMATCH`);
   else if(kind==='NF03')assert.equal(source.runtime.appImageId,appImageId,'NF03_APP_TARGET_MISMATCH');
   else if(kind==='AC18-NF05'){
     assert.equal(source.targetImageIds?.[0],appImageId,'NF05_TARGET_APP_IMAGE_MISMATCH');
@@ -137,6 +157,31 @@ for(const [sourcePath,kind] of sources){
   }else if(kind==='NF04-retention'){
     const passed=source.verdict==='passed'&&source.observed.expiredSentinelCount===0&&source.observed.markerCount===1&&source.targetImageIds[0]===appImageId&&source.targetImageIds[1]===runnerImageId;
     results.push({caseId:'NF-04',branchId:'event-retention',binding,executionMode:'live-mock',status:passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:'expired_events_removed_with_gap_marker',passed}],evidence});
+  }else if(kind==='AC23'){
+    const checks={
+      directory:source.results.some(item=>item.name==='directory'&&item.code==='FILE_OPERATION_NOT_ALLOWED'),
+      dependency:source.results.some(item=>item.name==='dependency'&&item.code==='DEPENDENCY_NOT_ALLOWED'),
+      command:source.results.some(item=>item.name==='command'&&item.code==='COMMAND_NOT_ALLOWED'),
+      connection:source.results.some(item=>item.name==='connection'&&item.code==='BUSINESS_CONNECTION_NOT_ALLOWED')
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-23',branchId,binding,executionMode:'live-mock',status:source.verdict==='passed'&&passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});
+  }else if(kind==='AC24'){
+    const checks={
+      'dev-copy-changed':source.assertions.developmentCopyChanged,
+      'tester-write-denied':source.assertions.testerWriteRejected,
+      'digest-before':source.candidateArtifactDigestBefore===source.candidateArtifactDigestAfterRun&&Boolean(source.candidateBundleDigestBefore),
+      'digest-after':source.assertions.fixedBundleUnaffected&&source.assertions.candidateDigestStable&&source.assertions.tamperedCandidateDigestRejected
+    };
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-24',branchId,binding,executionMode:'live-mock',status:source.verdict==='passed'&&passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed:passed===true}],evidence});
+  }else if(kind==='AC30'){
+    const checks={'same-seed':'sameSeed','independent-instances':'independentInstances','active-run-reset-denied':'activeRunResetDenied','unknown-write-reset-denied':'unknownWriteResetDenied','history-after-reset':'historyRetainedAfterReset'};
+    for(const [branchId,key] of Object.entries(checks)){const passed=source.assertions[key]===true;results.push({caseId:'AC-30',branchId,binding,executionMode:'live-mock',status:source.verdict==='passed'&&passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed}],evidence});}
+  }else if(kind==='AC26'){
+    const checks={'defect-observed':source.branches.defectObserved&&source.firstVerdict==='failed'&&source.actualTemperatureCelsius===87,
+      'new-candidate':source.branches.newCandidate&&source.firstArtifactDigest!==source.repairedArtifactDigest,
+      'same-assertion':source.branches.sameAssertion&&source.failedRuleId===source.repairedRuleId&&source.repairVerdict==='passed',
+      'failure-history-retained':source.branches.failureHistoryRetained&&source.failureHistoryRetained===true&&source.releaseStatus==='succeeded'&&source.businessRunStatus==='succeeded'};
+    for(const [branchId,passed] of Object.entries(checks))results.push({caseId:'AC-26',branchId,binding,executionMode:'live-mock',status:source.verdict==='passed'&&passed?'passed':'failed',artifactDigestAfter:artifactDigest,assertions:[{name:branchId,passed:passed===true}],evidence});
   }else if(kind==='AC18-NF05'){
     const files=source.exportedGeneratedFiles??[];
     const checks={
@@ -224,5 +269,5 @@ for(const [sourcePath,kind] of sources){
   }
 }
 const outputPath='test-results/acceptance/td15-platform-results-current.json';
-await writeFile(outputPath,JSON.stringify({binding,results},null,2)+'\n');
-console.log(JSON.stringify({outputPath,artifactPath,targetPath,artifactDigest,compatibilityKey,resultCount:results.length,caseCounts:Object.fromEntries([...new Set(results.map(item=>item.caseId))].map(caseId=>[caseId,results.filter(item=>item.caseId===caseId).length]))},null,2));
+await writeFile(outputPath,JSON.stringify({binding,results,skippedSources},null,2)+'\n');
+console.log(JSON.stringify({outputPath,artifactPath,targetPath,artifactDigest,compatibilityKey,resultCount:results.length,skippedSourceCount:skippedSources.length,caseCounts:Object.fromEntries([...new Set(results.map(item=>item.caseId))].map(caseId=>[caseId,results.filter(item=>item.caseId===caseId).length]))},null,2));

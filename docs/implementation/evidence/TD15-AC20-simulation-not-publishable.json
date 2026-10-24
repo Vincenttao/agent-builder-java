@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "requirement": "TD-15 P0-A AC-20 simulated or unverified reports cannot authorize publication",
   "executionMode": "simulated",
-  "measuredAt": "2026-10-23T23:33:57.900Z",
+  "measuredAt": "2026-10-24T00:43:39.282Z",
   "testFile": "apps/server/src/releases/project-release-gate.test.ts",
   "testName": "does not accept simulated or unverified reports as permission to publish",
   "testLogPath": "docs/implementation/evidence/TD15-AC20-simulation-not-publishable.test.log",
-  "testLogSha256": "c15d27d7b5c02b69b7cda79650bee2578de60b186ea32a4251b2f371e4e371d8",
+  "testLogSha256": "117f9a640b638b503ee19819d211ce85a4aa4aa229f2f5bcfdcd59e1470a323d",
   "passedTests": 4,
   "targetImageIds": [
     "sha256:304a9e2802e5747debcd6ebb3675389fb76d33ab3daaf815881f411a85a3e248",
-    "sha256:c0bd683a0168c4f577f60c9e6a89bd91ed5f4cc907f6b049a5f047c97b8677a0"
+    "sha256:9981321ff8212b901447699da232c62af869db356efbdaf0c2f226143e990863"
   ],
   "assertions": {
     "simulatedReportRejected": true,
