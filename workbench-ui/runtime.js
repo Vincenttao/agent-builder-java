@@ -9,9 +9,11 @@ window.WorkbenchRuntime=(()=>{
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const json=value=>JSON.stringify(value,null,2);
  const ended=state=>['COMPLETED','FAILED','ABANDONED'].includes(state);
- function state(id){if(!states.has(id))states.set(id,{runs:[],all:[],selected:null,byRun:new Map(),detailKey:null});return states.get(id);}
- function runState(s,id){if(!s.byRun.has(id))s.byRun.set(id,{conversation:null,view:null,pending:false,uncertain:false,error:'',playback:null,drafts:new Map()});return s.byRun.get(id);}
- function draft(rs){const key=rs.conversation||'new';if(!rs.drafts.has(key))rs.drafts.set(key,{query:'',reply:''});return rs.drafts.get(key);}
+ function state(id){const role=host.context()?.role??'application',key=role+'|'+id;if(!states.has(key)){const saved=host.local?.read(id,role,'runtime',{})??{};states.set(key,{projectId:id,role,runs:[],all:[],selected:typeof saved.selected==='string'?saved.selected:null,byRun:new Map(),detailKey:null});}return states.get(key);}
+ function persist(s,rs){host.local?.write(s.projectId,s.role,'runtime',{selected:s.selected});if(rs)host.local?.write(s.projectId,s.role,'runtime-conversation:'+rs.runId,rs.conversation);}
+ function persistQuery(rs,key=rs.conversation||'new'){host.local?.write(rs.projectId,rs.role,'runtime-query:'+rs.runId+':'+key,rs.drafts.get(key)?.query??'');}
+ function runState(s,id){if(!s.byRun.has(id))s.byRun.set(id,{projectId:s.projectId,role:s.role,runId:id,conversation:host.local?.read(s.projectId,s.role,'runtime-conversation:'+id,null)??null,view:null,pending:false,uncertain:false,error:'',playback:null,drafts:new Map()});return s.byRun.get(id);}
+ function draft(rs){const key=rs.conversation||'new';if(!rs.drafts.has(key))rs.drafts.set(key,{query:host.local?.read(rs.projectId,rs.role,'runtime-query:'+rs.runId+':'+key,'')??'',reply:''});return rs.drafts.get(key);}
  function read(c,path,method='GET',body){return host.api(path,method,body,c.role);}
  function currentRun(c){const s=state(c.project.id);return s.runs.find(r=>r.id===s.selected);}
  function valid(token,c){const now=host.context();return token===generation&&now&&now.project.id===c.project.id&&now.role===c.role&&document.getElementById('runtime-host');}
@@ -84,7 +86,7 @@ window.WorkbenchRuntime=(()=>{
   clearTimeout(timer);const seq=++sequence,current=()=>valid(token,c)&&seq===sequence;
   const execution=(async()=>{
    if(force){const {runs}=await read(c,'/runs');if(!current())return;s.all=runs;s.runs=runs.filter(r=>r.projectId===c.project.id);if(!s.runs.some(r=>r.id===s.selected))s.selected=s.runs[0]?.id??null;}
-   const run=currentRun(c);if(run){const value=await read(c,'/runs/'+run.id);if(!current())return;s.runs[s.runs.findIndex(r=>r.id===run.id)]=value.run;s.all=s.all.map(r=>r.id===run.id?value.run:r);const rs=runState(s,run.id);if(rs.conversation===null)rs.conversation=value.run.conversations.at(-1)??'';
+   const run=currentRun(c);if(run){const value=await read(c,'/runs/'+run.id);if(!current())return;s.runs[s.runs.findIndex(r=>r.id===run.id)]=value.run;s.all=s.all.map(r=>r.id===run.id?value.run:r);const rs=runState(s,run.id);if(rs.conversation===null||rs.conversation&&!value.run.conversations.includes(rs.conversation))rs.conversation=value.run.conversations.at(-1)??'';persist(s,rs);
     if(rs.conversation){const view=await read(c,'/runs/'+run.id+'/conversations/'+rs.conversation);if(!current())return;rs.view=view;}
    }
    if(!current())return;paint(host.context());const latest=currentRun(c);if(latest&&activeStatuses.includes(latest.status))timer=setTimeout(()=>refresh(token,c).catch(e=>report(e,token,c)),1000);
@@ -95,16 +97,16 @@ window.WorkbenchRuntime=(()=>{
   rs.pending=true;rs.error='';paint(c);const token=generation,conversation=rs.conversation,originalDraft=draft(rs),text=action==='messages'?originalDraft.query:originalDraft.reply;
   try{
    const path='/runs/'+run.id+(action==='messages'?'/messages':'/conversations/'+conversation+'/'+action);
-   const view=await read(c,path,'POST',body);rs.view=view;rs.conversation=view.conversationId;rs.uncertain=false;if(action==='messages'&&originalDraft.query===text)originalDraft.query='';if(action==='reply'&&originalDraft.reply===text)originalDraft.reply='';
+   const view=await read(c,path,'POST',body);rs.view=view;rs.conversation=view.conversationId;rs.uncertain=false;if(action==='messages'&&originalDraft.query===text){originalDraft.query='';persistQuery(rs,conversation||'new');}if(action==='reply'&&originalDraft.reply===text)originalDraft.reply='';
   }catch(error){rs.error=errors[error.code]||error.message;if(error.code==='JAVA_REQUEST_UNOBSERVED'||!error.code){rs.uncertain=true;if(action==='messages'&&!conversation)rs.conversation=null;}host.notify(rs.error);}
   finally{rs.pending=false;if(valid(token,c)){s.detailKey=null;await refresh(token,c,true).catch(e=>report(e,token,c));}}
  }
  function init(callbacks){host=callbacks;
   document.addEventListener('input',e=>{const c=host.context();if(!c)return;const run=currentRun(c);if(!run)return;const s=state(c.project.id),rs=runState(s,run.id);
-   if(e.target.id==='runtime-query')draft(rs).query=e.target.value;if(e.target.id==='runtime-reply-input')draft(rs).reply=e.target.value;
+   if(e.target.id==='runtime-query'){draft(rs).query=e.target.value;persistQuery(rs);}if(e.target.id==='runtime-reply-input')draft(rs).reply=e.target.value;
    if(['replay-position','replay-slider'].includes(e.target.id)&&rs.playback){rs.playback.cursor=Math.max(1,Math.min((rs.playback.view.events??[]).length||1,Number(e.target.value)||1));s.detailKey=null;paint(c);}
   });
-  document.addEventListener('change',e=>{if(e.target.id!=='runtime-conversation')return;const c=host.context(),run=c&&currentRun(c);if(!run)return;const s=state(c.project.id),rs=runState(s,run.id);rs.conversation=e.target.value;rs.view=null;s.detailKey=null;refresh(generation,c).catch(error=>report(error,generation,c));});
+  document.addEventListener('change',e=>{if(e.target.id!=='runtime-conversation')return;const c=host.context(),run=c&&currentRun(c);if(!run)return;const s=state(c.project.id),rs=runState(s,run.id);rs.conversation=e.target.value;persist(s,rs);rs.view=null;s.detailKey=null;refresh(generation,c).catch(error=>report(error,generation,c));});
   document.addEventListener('submit',e=>{const id=e.target.getAttribute('id');if(!['runtime-message','runtime-reply'].includes(id))return;e.preventDefault();const c=host.context(),run=c&&currentRun(c);if(!run)return;const rs=runState(state(c.project.id),run.id);const body=id==='runtime-message'?{query:draft(rs).query,...(rs.conversation?{conversationId:rs.conversation}:{})}:{taskId:e.target.dataset.task,token:e.target.dataset.token,answer:draft(rs).reply};void operate(c,id==='runtime-message'?'messages':'reply',body).catch(error=>host.notify(error.message));});
   document.addEventListener('click',e=>{const button=e.target.closest('button');if(!button||!button.dataset.runAction&&!button.dataset.runSelect&&!button.dataset.runOpen)return;
    const c=host.context();if(!c)return;const s=state(c.project.id),run=currentRun(c),rs=run&&runState(s,run.id),action=button.dataset.runAction;
@@ -123,7 +125,7 @@ window.WorkbenchRuntime=(()=>{
     if(action==='live'){rs.playback=null;generation++;s.detailKey=null;return refresh(generation,c,true);}
     if(['previous','next'].includes(action)&&rs.playback){rs.playback.cursor=Math.max(1,Math.min(rs.playback.view.events.length,rs.playback.cursor+(action==='next'?1:-1)));s.detailKey=null;paint(c);return;}
     if(rs.playback)throw Error('当前为只读回放');
-    if(action==='new-conversation'){if(rs.pending)throw Error('请等待原请求结束');rs.conversation='';rs.view=null;rs.uncertain=false;rs.error='';s.detailKey=null;paint(c);return;}
+    if(action==='new-conversation'){if(rs.pending)throw Error('请等待原请求结束');rs.conversation='';persist(s,rs);rs.view=null;rs.uncertain=false;rs.error='';s.detailKey=null;paint(c);return;}
     if(action==='stop'){if(!confirm('停止原运行会中断尚未结束的会话；不会撤销已提交的业务。确定停止？'))return;await read(c,'/runs/'+run.id+'/stop','POST',{});return refresh(generation,c,true);}
     if(action==='reconnect'){await read(c,'/runs/'+run.id+'/reconnect','POST',{});return refresh(generation,c,true);}
     if(action==='delete'){if(!confirm('清理此已停止运行的专属目录与记录？工程和其他运行不会被删除。'))return;await read(c,'/runs/'+run.id,'DELETE');s.byRun.delete(run.id);s.selected=null;return refresh(generation,c,true);}

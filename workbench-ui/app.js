@@ -110,6 +110,6 @@ window.addEventListener('beforeunload', e => { if ([...drafts.values()].some(d =
 } });
 async function boot(){const context=await api('/context');build=context.uiVersion;workspaceId=context.workspaceId;WorkbenchPersistence.init({build,workspaceId,buildKey,onWarning:notify});role=localUI.read('','shared','role','application');if(!['application','platform'].includes(role))role='application';$('#identity').value=role;const remembered=localUI.read('',role,'navigation',{});await load();if(remembered?.projectId&&projects.some(p=>p.id===remembered.projectId))await open(remembered.projectId);}
 WorkbenchCoding.init({api,local:localUI,context:codingContext,action,notify,reloadProject:async()=>{const id=current.project.id;current=await api('/projects/'+id);render();}});
-WorkbenchRuntime.init({api,context:codingContext,action,notify,openRun:async(projectId)=>{await open(projectId);tab='runs';render();}});
+WorkbenchRuntime.init({api,local:localUI,context:codingContext,action,notify,openRun:async(projectId)=>{await open(projectId);tab='runs';render();}});
 WorkbenchDelivery.init({api,context:codingContext,action,notify});
 boot().catch(e => notify(e.message));

@@ -16,7 +16,11 @@ test('PC runtime preserves original task confirmation, A/B recovery, unknown res
  const address=server.address();assert.ok(address&&typeof address!=='string');const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);let runtimeRequests=0;page.on('request',r=>{if(/\/api\/runs(?:\/|$)/.test(r.url()))runtimeRequests++;});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(`http://127.0.0.1:${address.port}`);await page.getByRole('button',{name:'进入工程'}).click();await page.getByRole('button',{name:'调试运行',exact:true}).click();
  await page.getByRole('button',{name:'构建并启动保存版本',exact:true}).click();await page.getByRole('heading',{name:'运行中',exact:true}).waitFor();assert.equal(fixture.counters.builds,1);
+ await page.getByLabel('新需求或澄清补充').fill('刷新前未发送的需求');const postsBeforeRefresh=fixture.counters.posts;
+ await page.reload();await page.getByLabel('新需求或澄清补充').waitFor();assert.equal(await page.getByLabel('新需求或澄清补充').inputValue(),'刷新前未发送的需求');assert.equal(fixture.counters.posts,postsBeforeRefresh);assert.equal(fixture.counters.builds,1);
  await page.getByLabel('新需求或澄清补充').fill('兑换 coffee');await page.getByRole('button',{name:'发送新需求',exact:true}).click();await page.getByRole('button',{name:'确认原操作',exact:true}).waitFor();
+ await page.getByLabel('新需求或澄清补充').fill('已有会话的未发送需求');const activePosts=fixture.counters.posts;
+ await page.reload();await page.getByRole('button',{name:'确认原操作',exact:true}).waitFor();assert.equal(await page.getByLabel('新需求或澄清补充').inputValue(),'已有会话的未发送需求');assert.equal(fixture.counters.posts,activePosts);assert.equal(fixture.counters.writes,0);
  await page.getByLabel('新需求或澄清补充').fill('处理采购');await page.getByRole('button',{name:'发送新需求',exact:true}).click();await page.getByRole('button',{name:'保留原任务并切换',exact:true}).click();
  await page.getByText('保留的原任务',{exact:true}).waitFor();
  for(const width of [1280,1440,1920]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`two task cards overflow at ${width}`);}
