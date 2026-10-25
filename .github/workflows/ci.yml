@@ -1,5 +1,7 @@
-name: Platform checks
-on: [push, pull_request]
+# Legacy application: retained for explicit investigation, not an automatic gate for the V2 workbench.
+name: Legacy platform checks (manual)
+on:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
