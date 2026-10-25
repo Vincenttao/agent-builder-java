@@ -22,10 +22,11 @@ public class BusinessApplication {
         app.run(args);
     }
     @Bean BusinessAssets businessAssets(){return new BusinessAssets(Path.of(System.getenv().getOrDefault("WORKBENCH_APP_DIR",".")));}
-    @Bean Model businessModel(){
-        String key=System.getenv("DEEPSEEK_API_KEY");if(key==null||key.isBlank())throw new IllegalArgumentException("DEEPSEEK_API_KEY required");
-        var client=new ModelClientConfig();client.setClientProvider("OpenAI");client.setApiKey(key);String base=System.getenv().getOrDefault("DEEPSEEK_BASE_URL","https://api.deepseek.com").replaceAll("/+$","");client.setApiBase(base.endsWith("/v1")?base:base+"/v1");client.setTimeout(45.0);client.setMaxRetries(0);
-        var request=ModelRequestConfig.builder().modelName("deepseek-flash").maxTokens(4096).build();request.setExtraField("thinking",Map.of("type","disabled"));
+    @Bean Model businessModel(){return createBusinessModel(System.getenv());}
+    static Model createBusinessModel(Map<String,String> environment){
+        var config=ModelConfiguration.from(environment);
+        var client=new ModelClientConfig();client.setClientProvider("OpenAI");client.setApiKey(config.apiKey());client.setApiBase(config.baseUrl());client.setTimeout(45.0);client.setMaxRetries(0);
+        var request=ModelRequestConfig.builder().modelName(config.model()).maxTokens(4096).build();if(config.model().equals("deepseek-flash"))request.setExtraField("thinking",Map.of("type","disabled"));
         return new Model(client,request);
     }
     @Bean BusinessHost businessHost(BusinessAssets assets,Model model){

@@ -24,10 +24,15 @@ function startScript(kind:ExportKind,fixture:boolean){return `#!/bin/sh
 set -eu
 package_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 sh "$package_root/verify.sh"
-${fixture?'echo "此为 contract fixture 测试包，不能作为真实 Java 服务启动。" >&2\nexit 1\n':''}: "\${DEEPSEEK_API_KEY:?请通过外部环境提供 DEEPSEEK_API_KEY，不要写进交付包}"
+${fixture?'echo "此为 contract fixture 测试包，不能作为真实 Java 服务启动。" >&2\nexit 1\n':''}export MODEL_API_KEY="\${MODEL_API_KEY:-\${DEEPSEEK_API_KEY:-}}"
+: "\${MODEL_API_KEY:?请通过外部环境提供 MODEL_API_KEY，不要写进交付包}"
+export DEEPSEEK_API_KEY="$MODEL_API_KEY"
+export MODEL_NAME="\${MODEL_NAME:-\${DEEPSEEK_MODEL:-deepseek-flash}}"
+export DEEPSEEK_MODEL="$MODEL_NAME"
 export WORKBENCH_APP_DIR="$package_root${kind==='application'?'/assets':''}"
 export WORKBENCH_STATE_DIR="\${WORKBENCH_STATE_DIR:-$package_root/.runtime-state}"
-export DEEPSEEK_BASE_URL="\${DEEPSEEK_BASE_URL:-https://api.deepseek.com}"
+export MODEL_BASE_URL="\${MODEL_BASE_URL:-\${DEEPSEEK_BASE_URL:-https://api.deepseek.com}}"
+export DEEPSEEK_BASE_URL="$MODEL_BASE_URL"
 ${kind==='application'?'application_jar="$package_root/application.jar"':'set -- "$package_root"/target/*.jar\n[ "$#" -eq 1 ] && [ -f "$1" ] || { echo "请先构建且仅保留一个可执行 JAR。" >&2; exit 1; }\napplication_jar=$1'}
 exec "\${JAVA_BIN:-java}" -Xmx768m -jar "$application_jar" --server.address=127.0.0.1 --server.port="\${APP_PORT:-8780}"
 `;}
@@ -97,7 +102,7 @@ export class ExportManager{
      else if(['LICENSE','Third_Party_Open_Source_Software_Notice.txt','runtime-source.json','SOURCE.md'].includes(name))contents[name]=content;
     }
     contents['manifest.json']=text;contents['verify.sh']=verifyScript;contents['start.sh']=startScript(kind,run.engine!=='local-java');if(kind==='source')contents['build.sh']=buildScript;
-    contents['runtime.env.example']='# Required: inject DEEPSEEK_API_KEY through the target environment. No key is included.\nDEEPSEEK_BASE_URL=https://api.deepseek.com\nAPP_PORT=8780\nOTEL_EXPORTER_OTLP_ENDPOINT=http://127.0.0.1:14318\n# WORKBENCH_STATE_DIR: choose a dedicated directory; restart does not restore unfinished tasks.\n';
+    contents['runtime.env.example']='# Required: inject MODEL_API_KEY (legacy DEEPSEEK_API_KEY also accepted) through the target environment. No key is included.\nMODEL_BASE_URL=https://api.deepseek.com\nMODEL_NAME=deepseek-flash\nAPP_PORT=8780\nOTEL_EXPORTER_OTLP_ENDPOINT=http://127.0.0.1:14318\n# WORKBENCH_STATE_DIR: choose a dedicated directory; restart does not restore unfinished tasks.\n';
     contents['DELIVERY.md']=this.instructions(kind,run.engine);
     for(const [name,content]of Object.entries(contents)){validatePath(name);const path=join(packageRoot,name);mkdirSync(dirname(path),{recursive:true});writeFileSync(path,content,{mode:name.endsWith('.sh')?0o755:0o644});}
     const sums=Object.fromEntries(Object.entries(contents).map(([name,content])=>[name,hash(content)]));
@@ -115,7 +120,7 @@ export class ExportManager{
    this.store.db.prepare('INSERT INTO exports VALUES(?,?,?,?,?)').run(id,run.projectId,run.id,FORMAT_VERSION,JSON.stringify(record));return record;
   }catch(error){rmSync(root,{recursive:true,force:true});throw error;}
  }
- private instructions(kind:ExportKind,engine:string){return `# 固定版本技术交付包\n\n来源引擎：${engine}。本包只表明固定版本已导出；独立运行、业务验收、CI 和发布均未由导出操作验证。${engine==='local-java'?'':'这是契约测试包，start.sh 会拒绝把它当作真实 Java 服务启动。'}\n\n## 环境\n\n使用 Linux/WSL、sh、GNU tar、sha256sum、Java 17+。业务脚本使用 /usr/bin/python3。实际依赖以本包 POM、Runtime BOM 和 JAR 为准；本 Demo 基线为 Core 0.1.17/Runtime 0.1.4。${kind==='source'?'源码构建还需要 Maven，以及已在声明的 Maven 仓库安装的 Core/Runtime 依赖；包内不复制开发机 Maven 缓存。':''}\n\n模型 Key 通过外部 DEEPSEEK_API_KEY 注入，不写入文件或命令参数。默认使用 deepseek-flash；DEEPSEEK_BASE_URL 默认 https://api.deepseek.com。服务连接见 manifest.json 和 ${kind==='application'?'assets/':''}application.json；本机 Mock 地址需要在目标环境实际可达。本包不包含 Mock、工作台代理、OpenCode、数据库或运行事件。Jaeger OTLP HTTP 默认 http://127.0.0.1:14318，Trace 查看依赖独立 Jaeger。\n\n## 校验与启动\n\n解压后进入 ${kind}/，执行 sh verify.sh。${kind==='source'?'然后执行 sh build.sh（可用 MAVEN_BIN 指定 Maven），生成 target 下唯一可执行 JAR；重建后的 JAR 摘要需要重新记录，不能冒用原二进制验收。':''}在目标环境注入 Key 后，执行 sh start.sh。APP_PORT 默认 8780，监听 127.0.0.1；JAVA_BIN 可指定 Java。脚本显式设置资产目录，WORKBENCH_STATE_DIR 可指定独立目录。停止工作台/OpenCode后本包不需要它们存活，但仍需要模型、业务 HTTP/A2A 服务及本机 Python。\n\n健康/定义：GET http://127.0.0.1:8780/workbench/application。业务：POST /workbench/messages，JSON 为 {"query":"业务请求"}。原任务回复 POST /workbench/conversations/:id/reply，使用响应里的 taskId/token/answer；切换/复核/原键查单接口为 decide/resume/receipt。业务确认不能跳过。\n\n首期同进程最多 A→B，只恢复 A。重启不会自动恢复未完成会话；事件文件不等于 Core 检查点。start.sh 首先校验 SHA256SUMS；它检测已列文件的缺失或变化，不是数字签名。归档 SHA-256 从工作台导出记录另行取得，用于核对整个下载包。\n`;}
+ private instructions(kind:ExportKind,engine:string){return `# 固定版本技术交付包\n\n来源引擎：${engine}。本包只表明固定版本已导出；独立运行、业务验收、CI 和发布均未由导出操作验证。${engine==='local-java'?'':'这是契约测试包，start.sh 会拒绝把它当作真实 Java 服务启动。'}\n\n## 环境\n\n使用 Linux/WSL、sh、GNU tar、sha256sum、Java 17+。业务脚本使用 /usr/bin/python3。实际依赖以本包 POM、Runtime BOM 和 JAR 为准；本 Demo 基线为 Core 0.1.17/Runtime 0.1.4。${kind==='source'?'源码构建还需要 Maven，以及已在声明的 Maven 仓库安装的 Core/Runtime 依赖；包内不复制开发机 Maven 缓存。':''}\n\n模型 Key 通过外部 MODEL_API_KEY 注入，不写入文件或命令参数。MODEL_NAME 默认 deepseek-flash，MODEL_BASE_URL 默认 https://api.deepseek.com；保留 DEEPSEEK_API_KEY/DEEPSEEK_MODEL/DEEPSEEK_BASE_URL 兼容。仅支持 OpenAI 兼容接口，替换模型的工具调用行为须另验；旧 JAR 不因新环境变量自动升级。服务连接见 manifest.json 和 ${kind==='application'?'assets/':''}application.json；本机 Mock 地址需要在目标环境实际可达。本包不包含 Mock、工作台代理、OpenCode、数据库或运行事件。Jaeger OTLP HTTP 默认 http://127.0.0.1:14318，Trace 查看依赖独立 Jaeger。\n\n## 校验与启动\n\n解压后进入 ${kind}/，执行 sh verify.sh。${kind==='source'?'然后执行 sh build.sh（可用 MAVEN_BIN 指定 Maven），生成 target 下唯一可执行 JAR；重建后的 JAR 摘要需要重新记录，不能冒用原二进制验收。':''}在目标环境注入 Key 后，执行 sh start.sh。APP_PORT 默认 8780，监听 127.0.0.1；JAVA_BIN 可指定 Java。脚本显式设置资产目录，WORKBENCH_STATE_DIR 可指定独立目录。停止工作台/OpenCode后本包不需要它们存活，但仍需要模型、业务 HTTP/A2A 服务及本机 Python。\n\n健康/定义：GET http://127.0.0.1:8780/workbench/application。业务：POST /workbench/messages，JSON 为 {"query":"业务请求"}。原任务回复 POST /workbench/conversations/:id/reply，使用响应里的 taskId/token/answer；切换/复核/原键查单接口为 decide/resume/receipt。业务确认不能跳过。\n\n首期同进程最多 A→B，只恢复 A。重启不会自动恢复未完成会话；事件文件不等于 Core 检查点。start.sh 首先校验 SHA256SUMS；它检测已列文件的缺失或变化，不是数字签名。归档 SHA-256 从工作台导出记录另行取得，用于核对整个下载包。\n`;}
  async remove(id:string,role:Role){const record=this.get(id,role);this.owner(record,role);if(this.execution)fail('EXPORT_BUSY','请等待当前打包完成');const root=this.owned(record);this.store.db.transaction(()=>{this.store.db.prepare('DELETE FROM exports WHERE id=?').run(id);rmSync(root,{recursive:true,force:true});})();}
  async close(){this.closed=true;await this.execution?.catch(()=>{});}
 }

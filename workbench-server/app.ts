@@ -1,3 +1,4 @@
+import {settings} from './settings.js';
 import express,{type Request,type Response,type NextFunction} from 'express';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -37,7 +38,7 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     if(!['application','platform'].includes(role))return next(new WorkbenchError('INVALID_ROLE','请选择应用开发者或平台开发者'));
     res.locals.role=role as Role;res.set('Cache-Control','no-store');next();
   });
-  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:'deepseek-flash',uiVersion:build,workspaceId:store.workspaceId}));
+  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:settings(repository).model,uiVersion:build,workspaceId:store.workspaceId}));
   app.get('/api/templates',(_req,res)=>res.json({releases:store.listReleases()}));
   app.post('/api/templates/:id/releases',(req,res)=>res.status(201).json({release:store.publish(req.params.id,res.locals.role,req.body.version)}));
   app.get('/api/projects',(_req,res)=>res.json({projects:store.list(res.locals.role)}));

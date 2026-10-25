@@ -63,8 +63,8 @@ export class LocalJavaEngine implements RunEngine{
   const jar=realpathSync(join(target,jars[0]));if(relative(realpathSync(input.directory),jar).startsWith('..'))throw new WorkbenchError('ARTIFACT_INVALID','构建产物越出本次工程');return {jar};
  }
  async start(input:EngineInput&{jar:string;stateDirectory:string}){
-  const config=settings(this.repository);if(!config.apiKey)throw new WorkbenchError('MODEL_KEY_MISSING','请在本机私有配置中设置 DEEPSEEK_API_KEY');
-  const env={...environment(),DEEPSEEK_API_KEY:config.apiKey,DEEPSEEK_BASE_URL:config.baseUrl,WORKBENCH_APP_DIR:input.directory,WORKBENCH_STATE_DIR:input.stateDirectory,OTEL_EXPORTER_OTLP_ENDPOINT:process.env.OTEL_EXPORTER_OTLP_ENDPOINT??'http://127.0.0.1:14318'};
+  const config=settings(this.repository);if(!config.apiKey)throw new WorkbenchError('MODEL_KEY_MISSING','请在本机私有配置中设置 MODEL_API_KEY（兼容 DEEPSEEK_API_KEY）');
+  const env={...environment(),MODEL_API_KEY:config.apiKey,MODEL_BASE_URL:config.baseUrl,MODEL_NAME:config.model,DEEPSEEK_API_KEY:config.apiKey,DEEPSEEK_BASE_URL:config.baseUrl,DEEPSEEK_MODEL:config.model,WORKBENCH_APP_DIR:input.directory,WORKBENCH_STATE_DIR:input.stateDirectory,OTEL_EXPORTER_OTLP_ENDPOINT:process.env.OTEL_EXPORTER_OTLP_ENDPOINT??'http://127.0.0.1:14318'};
   const execution=child(input,process.env.JAVA_BIN??'java',['-Xmx768m','-Dworkbench.runId='+input.runId,'-jar',resolve(input.jar),'--server.port=0','--server.address=127.0.0.1'],env,'java');
   try{
    for(let n=0;n<180;n++){
