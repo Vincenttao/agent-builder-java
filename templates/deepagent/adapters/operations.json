@@ -1,0 +1,70 @@
+{
+  "read_file": {
+    "type": "CORE",
+    "title": "读取交付物",
+    "description": "读取当前会话brief.md",
+    "nativeTool": "read_file",
+    "confirmationRequired": false,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "enum": [
+            "brief.md"
+          ]
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    },
+    "outputSchema": {
+      "type": "object"
+    }
+  },
+  "write_file": {
+    "type": "CORE",
+    "title": "写入交付物",
+    "description": "创建或更新brief.md；必须写后读回",
+    "nativeTool": "write_file",
+    "confirmationRequired": false,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "enum": [
+            "brief.md"
+          ]
+        },
+        "content": {
+          "type": "string",
+          "maxLength": 50000
+        }
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    },
+    "outputSchema": {
+      "type": "object"
+    }
+  },
+  "list_files": {
+    "type": "CORE",
+    "title": "列出交付物",
+    "description": "列出当前会话交付文件",
+    "nativeTool": "list_files",
+    "confirmationRequired": false,
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "outputSchema": {
+      "type": "object"
+    }
+  }
+}

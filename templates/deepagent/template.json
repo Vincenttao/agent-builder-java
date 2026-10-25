@@ -1,0 +1,23 @@
+{
+  "family": "deepagent",
+  "title": "DeepAgent 开发模板",
+  "execution": "core-deepagent",
+  "artifact": "brief.md",
+  "taskMode": "single-goal",
+  "nativeTools": [
+    "read_file",
+    "write_file",
+    "list_files"
+  ],
+  "openCapabilities": {
+    "skills": true,
+    "nativeTools": [
+      "read_file",
+      "write_file",
+      "list_files"
+    ],
+    "agent": false,
+    "handoff": false,
+    "note": "首批接通Skill与原生文件工具；Agent、HTTP/MCP等显示草稿或未接通。"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "name": "短材料整理（装配示例）",
+  "description": "从通用DeepAgent模板装配material-notes Skill与文件工具；人工编写示例，非OpenCode生成。",
+  "scope": {
+    "own": [
+      "整理短材料为要点、行动项、待确认事项；在同一会话中修改既有整理稿"
+    ],
+    "delegated": [],
+    "outside": []
+  },
+  "skills": [
+    {
+      "id": "material-notes",
+      "file": "skills/material-notes/SKILL.md",
+      "operations": [
+        "read_file",
+        "write_file",
+        "list_files"
+      ]
+    }
+  ],
+  "capabilities": [],
+  "handoff": {
+    "enabled": false,
+    "target": "",
+    "unfinished": "ask",
+    "resume": "prompt",
+    "maxTasks": 2
+  },
+  "connections": {},
+  "mapping": {
+    "balancePath": "data.points.available"
+  }
+}

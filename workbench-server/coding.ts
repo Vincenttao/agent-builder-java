@@ -47,7 +47,7 @@ export class CodingJobs{
   const directory=join(this.store.root,'jobs',job.id,'workspace');mkdirSync(join(this.store.root,'jobs',job.id),{recursive:true});
   this.store.git(projectId,['worktree','add','--detach',directory,project.head]);
   this.active=job.id;const controller=new AbortController();this.controllers.set(job.id,controller);this.persist(job);
-  const skill=role==='platform'?'moa-platform-development':'moa-application-development';
+  const family=this.store.family(projectId,role);const skill=family+'-'+(role==='platform'?'platform':'application')+'-development';
   const execution=this.engine.run({directory,prompt,skill,signal:controller.signal,onEvent:event=>{if(event.type==='question'){job.status='awaiting_input';job.pendingQuestion={id:String(event.id),questions:event.questions as Record<string,unknown>[]};}else if(event.type==='question_answered'){job.status='running';delete job.pendingQuestion;}if(job.events.length<200)job.events.push(event);this.persist(job);}}).then(result=>{
    Object.assign(job,result);if(controller.signal.aborted){job.status='cancelled';return;}
    if(!result.evidence.some(e=>e.tool==='skill'&&e.status==='completed'&&e.input?.name===skill))throw new WorkbenchError('SKILL_NOT_LOADED','未找到本角色范式 Skill 的实际读取证据，变更不进入审阅');

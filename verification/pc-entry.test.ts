@@ -22,14 +22,14 @@ test('PC entry uses real role, release, empty application, independent drafts an
  assert.equal(await page.evaluate(()=>localStorage.getItem('openjiuwen-workbench-v2-demo-99')),null);
  assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-user-data')),'preserve');
  await page.locator('#identity').selectOption('platform');
- await page.getByRole('button',{name:'进入工程'}).click();
+ await page.locator('.project-card').filter({has:page.getByRole('heading',{name:'MOA 开发模板',exact:true})}).getByRole('button',{name:'进入工程'}).click();
  await page.getByRole('button',{name:'模板发行',exact:true}).click();
  await page.getByLabel('版本号').fill('1.0.0');
  await page.getByRole('button',{name:'发行模板',exact:true}).click();
  await page.getByText('模板版本已发行',{exact:true}).waitFor();
  await page.locator('#identity').selectOption('application');
  await page.getByLabel('应用名称').fill('i豆福利助手');
- await page.getByRole('button',{name:'创建空白应用'}).click();
+ await page.getByRole('button',{name:'创建应用'}).click();
  await page.getByRole('heading',{name:'i豆福利助手',exact:true}).waitFor();
  const apps=workbench.store.list('application');assert.equal(apps.length,1);
  assert.deepEqual(workbench.store.definition(apps[0].id,'application').skills,[]);
@@ -50,7 +50,7 @@ test('PC entry uses real role, release, empty application, independent drafts an
  assert.equal(workbench.store.files(apps[0].id,'application')['instructions.md'],'这是尚未保存的应用指令。');
  await page.getByRole('button',{name:'全部应用',exact:false}).click();
  await page.getByLabel('应用名称').fill('第二个应用');
- await page.getByRole('button',{name:'创建空白应用'}).click();
+ await page.getByRole('button',{name:'创建应用'}).click();
  await page.getByRole('heading',{name:'第二个应用',exact:true}).waitFor();
  await navigate(page,'文件与指令');
  assert.notEqual(await page.locator('#editor').inputValue(),'这是尚未保存的应用指令。');

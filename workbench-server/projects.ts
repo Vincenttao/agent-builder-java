@@ -84,7 +84,8 @@ export class ProjectStore{
     this.git(id,['add','-f','--',...Object.keys(files)]);this.git(id,['commit','-m','Create '+kind+' from fixed template']);const head=this.git(id,['rev-parse','HEAD']);
     const p:Project={id,kind,name,head,sourceReleaseId,createdAt:new Date().toISOString()};this.db.prepare('INSERT INTO projects VALUES(@id,@kind,@name,@head,@sourceReleaseId,@createdAt)').run(p);return p;
   }
-  seedTemplate(files:Files){const existing=this.db.prepare("SELECT * FROM projects WHERE id='moa-platform'").get() as Project|undefined;return existing??this.init('moa-platform','template','MOA 开发模板',files,null);}
+  seedTemplate(files:Files,identity={id:'moa-platform',name:'MOA 开发模板'}){if(!/^[a-z][a-z0-9-]{0,63}$/.test(identity.id))fail('INVALID_TEMPLATE_ID','模板标识无效');const existing=this.db.prepare('SELECT * FROM projects WHERE id=?').get(identity.id) as Project|undefined;if(existing&&existing.kind!=='template')fail('INVALID_TEMPLATE_ID','模板标识已占用');return existing??this.init(identity.id,'template',identity.name,files,null);}
+  family(id:string,role:Role,commit?:string):'moa'|'deepagent'{this.get(id,role);try{const text=commit?this.git(id,['show',commit+':template.json']):readFileSync(join(this.path(id),'template.json'),'utf8');return JSON.parse(text).family==='deepagent'?'deepagent':'moa';}catch{return 'moa';}}
   files(id:string,role:Role):Files{
     this.get(id,role);const root=this.path(id);const files:Files={};
     const walk=(directory:string,prefix='')=>{

@@ -19,10 +19,12 @@ export class ReviewManager {
     }[]).map(r => ({ ...JSON.parse(r.record), stale: JSON.parse(r.record).head !== p.head })); }
     check(id: string, role: Role) {
         const p = this.owner(id, role), files = this.store.snapshot(id, p.head), d = validateFiles(files), items: Item[] = [];
+        const family=this.store.family(id,role,p.head);
         const add = (code: string, name: string, passed: boolean, detail: string) => items.push({ code, name, passed, detail });
+        if(family==='deepagent')add('DEEP_SINGLE_GOAL','独立业务边界',d.capabilities.length===0&&!d.handoff.enabled&&d.scope.delegated.length===0,'首批支持业务Skill与原生CORE文件工具；A2A接管尚未接通');
         add('DEFINITION', '定义与版本', true, '读取已保存Git提交；未保存草稿不参与检查');
         add('INSTRUCTIONS', '角色与行为', Boolean(files['instructions.md']?.trim()), 'instructions.md需要非空；语义一致性仍须审阅');
-        add('BUSINESS_SCOPE', '业务范围', p.kind === 'template' || d.scope.own.length + d.scope.delegated.length > 0, p.kind === 'template' ? '空MOA模板不预置业务' : '应用需要自己负责或已委派的业务范围');
+        add('BUSINESS_SCOPE', '业务范围', p.kind === 'template' || d.scope.own.length + d.scope.delegated.length > 0, p.kind === 'template' ? '空业务模板不预置场景' : '应用需要自己负责或已委派的业务范围');
         let catalog: Record<string, any> = {};
         try {
             catalog = JSON.parse(files['adapters/operations.json'] ?? '{}');
@@ -34,6 +36,7 @@ export class ReviewManager {
             catalog={};
             add('CATALOG', '操作目录JSON', false, 'adapters/operations.json格式无效');
         }
+        if(family==='deepagent')add('DEEP_CORE_TOOLS','DeepAgent工具接线',d.skills.every(s=>s.operations.every(name=>['read_file','write_file','list_files'].includes(name)&&catalog[name]?.type==='CORE'&&catalog[name]?.nativeTool===name)),'只允许已接通的CORE工具；自定义HTTP/MCP/脚本仍需实现适配器');
         const agents = d.capabilities.filter((c: any) => c.type === 'agent'), ids = agents.map((c: any) => c.id), drafts = d.capabilities.filter((c: any) => c.status === 'draft' || !['agent'].includes(c.type));
         add('ASSEMBLY_READY', '能力装配状态', drafts.length === 0, drafts.length ? '存在未接线能力草稿；它们不是可执行工具' : '挂载能力没有待接线草稿');
         add('CONNECTIONS', '连接与引用', new Set(ids).size === ids.length && agents.every((c: any) => { try {
@@ -46,7 +49,7 @@ export class ReviewManager {
         add('HANDOFF', '接管与两层策略', !d.handoff.enabled || ids.includes(d.handoff.target), '启用时接管目标必须已挂载；最多A→B');
         for (const s of d.skills) {
             const ops = s.operations.map((name: string) => catalog[name]);
-            add('SKILL_' + s.id, 'Skill ' + s.id, Boolean(files[s.file]?.startsWith('---')) && ops.length > 0 && ops.every((op: any) => op && ['SCRIPT', 'A2A'].includes(op.type) && (!op.resultScript || Boolean(files['skills/' + op.resultScript]))), '检查指导、操作引用及脚本存在；可用集合不是强制执行顺序');
+            add('SKILL_' + s.id, 'Skill ' + s.id, Boolean(files[s.file]?.startsWith('---')) && ops.length > 0 && ops.every((op: any) => op && (['SCRIPT', 'A2A'].includes(op.type)||family==='deepagent'&&op.type==='CORE'&&['read_file','write_file','list_files'].includes(op.nativeTool)) && (!op.resultScript || Boolean(files['skills/' + op.resultScript]))), '检查指导、操作引用及脚本存在；可用集合不是强制执行顺序');
             for (const name of s.operations) {
                 const op = catalog[name];
                 if (['redeem', 'transfer', 'purchase'].includes(name))

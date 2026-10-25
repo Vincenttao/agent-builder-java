@@ -1,0 +1,26 @@
+{
+  "solutionReference": {
+    "branch": "common",
+    "commit": "089822db38f23f2458abc804e0818d2194414ca4",
+    "guide": "guides/docs-java/how-to/deepagent.md"
+  },
+  "resolvedArtifacts": [
+    {
+      "artifact": "com.openjiuwen:agent-core-java",
+      "version": "0.1.17",
+      "sha256": "62eee69c604ccdb6eb5861db8396b7cdc6a770ff6a33c3d760d9ed8a8b4be83f"
+    },
+    {
+      "artifact": "com.openjiuwen:agent-service-app",
+      "version": "0.1.4",
+      "sha256": "b466ee476ab3f2aa7613d93bdf8bf2067a6838d183359186097069ad6bf72bc0"
+    },
+    {
+      "artifact": "com.openjiuwen:agent-service-adapters-agentcore",
+      "version": "0.1.4",
+      "sha256": "a39cc58577614870fac81e53ded98252b6d683f65bd6b2e29b600a4cef638d13"
+    }
+  ],
+  "compatibilityNote": "Guide uses Duration for completion timeout; resolved Core 0.1.17 constructor requires Double seconds (180.0). Factory and file-tool behavior were verified against resolved JARs.",
+  "assemblyAdapter": "Saved application.json Skill allow-list -> bounded LocalFunction skill_tool/list_skills -> per-Skill CORE operation guard; not an unrestricted SkillHub"
+}

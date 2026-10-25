@@ -1,7 +1,7 @@
 'use strict';
 const $ = s => document.querySelector(s), esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 let role = 'application', projects = [], releases = [], current = null, tab = 'overview', file = 'instructions.md', epoch = 0, busy = false;
-const drafts = new Map();
+const drafts = new Map();const familyName=p=>p?.family==='deepagent'?'DeepAgent':'MOA';
 const buildKey = 'openjiuwen-workbench-live-ui-build';
 let build = null, workspaceId=null,modelInfo=null;
 const localUI={read:(id,actor,name,fallback)=>WorkbenchPersistence.read(id,actor,name,fallback),write:(id,actor,name,value)=>WorkbenchPersistence.write(id,actor,name,value)};
@@ -36,7 +36,7 @@ function shell(body) {
  const platform=role==='platform';
  $('#role-caption').textContent=platform?'平台开发':'应用开发';
  $('#breadcrumb').innerHTML=`企业空间 <span>/</span> ${platform?'平台开发':'应用'}${current?` <span>/</span> <strong>${esc(current.project.name)}</strong>`:''}`;
- $('#global-nav').innerHTML=platform?`<button data-action="home" class="${!current?'active':''}">开发模板与应用诊断</button><div class="nav-label">MOA 开发模板</div>${[['overview','范式概览'],['files','范式代码'],['capabilities','公共能力'],['guidance','开发 Skill'],['coding','编码任务'],['activity','工程活动'],['release','版本发行'],['runs','模板调试']].map(([id,label])=>`<button data-action="template" data-target-tab="${id}" class="${current?.project.kind==='template'&&tab===id?'active':''}">${label}</button>`).join('')}`:`<button data-action="home" class="active">▦　我的应用</button>`;
+ $('#global-nav').innerHTML=platform?`<button data-action="home" class="${!current?'active':''}">开发模板与应用诊断</button><div class="nav-label">开发模板</div><select id="template-switch" aria-label="切换开发模板">${projects.filter(p=>p.kind==='template').map(p=>`<option value="${esc(p.id)}" ${current?.project.id===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>${[['overview','范式概览'],['files','范式代码'],['capabilities','公共能力'],['guidance','开发 Skill'],['coding','编码任务'],['activity','工程活动'],['release','版本发行'],['runs','模板调试']].map(([id,label])=>`<button data-action="template" data-target-tab="${id}" class="${current?.project.kind==='template'&&tab===id?'active':''}">${label}</button>`).join('')}`:`<button data-action="home" class="active">▦　我的应用</button>`;
  $('#workspace').innerHTML=body;
  if(current)WorkbenchPanels.mount(tab);
  if(current)WorkbenchCoding.mount();else WorkbenchCoding.unmount();
@@ -46,19 +46,20 @@ function shell(body) {
 function render() {
  localUI.write('',role,'navigation',{projectId:current?.project.id??null});if(current)localUI.write(current.project.id,role,'position',{tab,file});
  if(!current)return home();const p=current.project,d=editable()?draft():{baseHead:p.head,changes:{}};
- shell(`<section class="project-header"><div class="project-title"><button class="back-link" data-action="home">← ${role==='platform'?'模板与应用':'全部应用'}</button><div class="title-line"><h1>${esc(p.name)}</h1><span class="badge">${p.kind==='template'?'MOA 开发模板':editable()?'应用工程':'应用诊断 · 只读'}</span></div><p class="muted">${p.kind==='template'?'维护开发范式，定义应用可装配的能力与开发指导。':'基于 MOA 模板开发 · 配置、代码与运行各自绑定版本'}</p></div><div class="project-actions"><select class="project-switch" id="project-switch" aria-label="切换工程">${projects.map(x=>`<option value="${esc(x.id)}" ${x.id===p.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select><div class="row"><code title="${esc(p.head)}">版本 ${esc(p.head.slice(0,12))}</code><span id="draft-count">${Object.keys(d.changes).length} 个文件待保存</span>${editable()?`<button data-action="save" class="primary" ${d.baseHead!==p.head?'disabled':''}>保存所有修改</button><button data-action="discard">放弃草稿</button>`:''}</div></div></section>
+ shell(`<section class="project-header"><div class="project-title"><button class="back-link" data-action="home">← ${role==='platform'?'模板与应用':'全部应用'}</button><div class="title-line"><h1>${esc(p.name)}</h1><span class="badge">${p.kind==='template'?familyName(p)+' 开发模板':editable()?'应用工程':'应用诊断 · 只读'}</span></div><p class="muted">${p.kind==='template'?'维护开发范式，定义应用可装配的能力与开发指导。':'基于 '+familyName(p)+' 模板开发 · 配置、代码与运行各自绑定版本'}</p></div><div class="project-actions"><select class="project-switch" id="project-switch" aria-label="切换工程">${projects.map(x=>`<option value="${esc(x.id)}" ${x.id===p.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select><div class="row"><code title="${esc(p.head)}">版本 ${esc(p.head.slice(0,12))}</code><span id="draft-count">${Object.keys(d.changes).length} 个文件待保存</span>${editable()?`<button data-action="save" class="primary" ${d.baseHead!==p.head?'disabled':''}>保存所有修改</button><button data-action="discard">放弃草稿</button>`:''}</div></div></section>
  <nav class="tabs app-tabs" aria-label="当前工程导航">${[['overview','概览'],['configuration','开发'],['checks','测试'],['history','运行记录'],[p.kind==='template'?'release':'delivery',p.kind==='template'?'模板发行':'版本与发布']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id||id==='configuration'&&['flow','capabilities','files','coding','guidance'].includes(tab)||id==='checks'&&tab==='runs'?'active':''}">${label}</button>`).join('')}</nav>
  ${['configuration','capabilities','flow','files','coding','guidance'].includes(tab)?`<nav class="tabs develop-tabs" aria-label="开发内容">${[['configuration','应用设置'],['capabilities',p.kind==='template'?'公共能力':'能力'],['flow','编排'],['files','文件与指令'],['coding','Coding 助手'],...(p.kind==='template'?[['guidance','开发 Skill']]:[])].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}">${label}</button>`).join('')}</nav>`:''}
  ${['checks','runs'].includes(tab)?`<nav class="tabs develop-tabs" aria-label="测试内容"><button data-tab="checks" class="${tab==='checks'?'active':''}">结构检查与候选</button><button data-tab="runs" class="${tab==='runs'?'active':''}">调试运行</button></nav>`:''}
  <div class="work-layout"><section class="canvas-main" aria-label="工程工作区">${d.baseHead!==p.head?'<p class="warning">工程版本已变化。请先复制保留草稿，再放弃草稿并基于新版本修改。</p>':''}${view()}</section>${WorkbenchCoding.dock(codingContext(),tab==='coding')}</div>`);
 }
 function home() {
- const platform=role==='platform';shell(`<div class="directory"><div class="directory-head"><div><div class="eyebrow">${platform?'PLATFORM WORKSPACE':'APPLICATION WORKSPACE'}</div><h1>${platform?'开发模板与应用诊断':'我的应用'}</h1><p class="muted">${platform?'维护 MOA 开发范式、发行模板，并协助定位应用问题。':'从 MOA 开发模板开始，和 Coding Agent 一起构建业务应用。'}</p></div><span class="badge">${projects.length} 个${platform?'工程':'应用'}</span></div>
- ${!platform?`<section class="panel create-panel"><div><div class="template-icon">◈</div><h2>从 MOA 模板创建应用</h2><p class="muted">空白业务工程 · 保留代码与配置的编辑能力</p></div>${releases.length?`<form id="create"><div class="field"><label for="name">应用名称</label><input id="name" name="name" required maxlength="120" placeholder="例如：i豆福利助手"></div><div class="field"><label for="release">模板版本</label><select name="releaseId" id="release">${releases.map(r=>`<option value="${esc(r.id)}">MOA · ${esc(r.version)} · ${esc(r.commit.slice(0,8))}</option>`).join('')}</select></div><button class="primary">创建空白应用</button></form>`:'<p>尚无已发行模板。请切换至平台开发者，检查 MOA 模板并发行版本。</p>'}</section>`:''}
- <div class="section-title"><h2>${platform?'模板与应用':'已有应用'}</h2><span class="muted">工程按保存版本管理</span></div><div class="grid applications-grid">${projects.map(p=>`<section class="panel project-card"><div class="card-meta"><span class="template-icon">${p.kind==='template'?'◈':'▦'}</span><span class="badge">${p.kind==='template'?'开发模板':'应用'}</span></div><h2>${esc(p.name)}</h2><p class="muted">${p.kind==='template'?'范式代码、开放契约与开发 Skill':'业务配置、Skill 与挂载 Agent'}</p><div class="card-bottom"><code>${esc(p.head.slice(0,12))}</code><button data-open="${esc(p.id)}">${platform&&p.kind==='application'?'查看诊断':'进入工程'}</button></div></section>`).join('')||'<section class="panel">尚未创建应用。新应用不会预置 i豆业务。</section>'}</div></div>`);
+ const platform=role==='platform';shell(`<div class="directory"><div class="directory-head"><div><div class="eyebrow">${platform?'PLATFORM WORKSPACE':'APPLICATION WORKSPACE'}</div><h1>${platform?'开发模板与应用诊断':'我的应用'}</h1><p class="muted">${platform?'维护 MOA 开发范式、发行模板，并协助定位应用问题。':'选择适合业务的开发模板，和 Coding Agent 一起构建应用。'}</p></div><span class="badge">${projects.length} 个${platform?'工程':'应用'}</span></div>
+ ${!platform?`<section class="panel create-panel"><div><div class="template-icon">◈</div><h2>从开发模板创建应用</h2><p class="muted">MOA：装配业务与Agent；DeepAgent：独立目标与文件交付</p></div>${releases.length?`<form id="create"><div class="field"><label for="name">应用名称</label><input id="name" name="name" required maxlength="120" placeholder="例如：材料整理助手"></div><div class="field"><label for="release">模板版本</label><select name="releaseId" id="release">${releases.map(r=>`<option value="${esc(r.id)}" ${r.developmentMode==='legacy-trial'?'disabled':''}>${r.developmentMode==='legacy-trial'?'历史试作 · ':''}${esc(r.templateName??'MOA')} · ${esc(r.version)} · ${esc(r.commit.slice(0,8))}</option>`).join('')}</select></div><button class="primary">创建应用</button></form>`:'<p>尚无已发行模板。请切换至平台开发者，检查 MOA 模板并发行版本。</p>'}</section>`:''}
+ <div class="section-title"><h2>${platform?'模板与应用':'已有应用'}</h2><span class="muted">工程按保存版本管理</span></div><div class="grid applications-grid">${projects.map(p=>`<section class="panel project-card"><div class="card-meta"><span class="template-icon">${p.kind==='template'?'◈':'▦'}</span><span class="badge">${p.kind==='template'?'开发模板':releases.some(r=>r.id===p.sourceReleaseId&&r.developmentMode==='legacy-trial')?'历史试作 · 旧模板':'应用'}</span></div><h2>${esc(p.name)}</h2><p class="muted">${p.kind==='template'?'范式代码、开放契约与开发 Skill':'业务配置、Skill 与挂载 Agent'}</p><div class="card-bottom"><code>${esc(p.head.slice(0,12))}</code><button data-open="${esc(p.id)}">${platform&&p.kind==='application'?'查看诊断':'进入工程'}</button></div></section>`).join('')||'<section class="panel">尚未创建应用。新应用不会预置 i豆业务。</section>'}</div></div>`);
 }
 function overview(){const d=current.definition;const stages=[['01','业务定义',d.scope.own.length+d.scope.delegated.length>0?'已定义业务范围':'待补充业务范围','configuration'],['02','能力与编排',d.skills.length?'已有Skill定义，待检查调用条件':'待装配业务Skill','flow'],['03','检查与运行','按保存版本检查，再运行真实业务','checks'],['04','固定版本交付','构建、导出与企业发布分别核验','delivery']];return `<section class="panel"><h2>开发进度与下一步</h2><div class="stage-cards">${stages.filter(x=>current.project.kind==='application'||x[3]!=='delivery').map(([n,title,status,target])=>`<article><small>${n}</small><h3>${title}</h3><p>${status}</p><button data-tab="${target}">${target==='configuration'?'完善应用设置':target==='flow'?'查看编排':target==='checks'?'检查当前版本':'进入交付'}</button></article>`).join('')}</div><p class="muted">模板来源 ${esc(current.project.sourceReleaseId??'MOA范式工程')} · 未保存草稿不计为可交付版本。</p></section>`+ `<div class="section-title"><div><h2>${current.project.kind==='template'?'范式工作区':'应用工作区'}</h2><p class="muted">先定义业务，再装配能力；保存后进入调试验证。</p></div><span class="badge">${current.project.kind==='template'?'平台维护':'应用开发'}</span></div><div class="overview-stats">${[['业务 Skill',d.skills.length,'configuration'],['已挂载 Agent',d.capabilities.filter(c=>c.type==='agent').length,'configuration'],['任务层数','A → B','flow']].map(([label,value,target])=>`<button data-tab="${target}"><span>${label}</span><strong>${value}</strong><small>查看配置 ↗</small></button>`).join('')}</div><div class="overview-path"><span>01　业务与范围</span><i>→</i><span>02　能力与编排</span><i>→</i><span>03　调试与轨迹</span><i>→</i><span>04　固定版本交付</span></div>`;}
 function view() {
+    if(current.project.family==='deepagent'&&['overview','configuration','flow'].includes(tab))return WorkbenchDeep.render(tab,codingContext());
     if(['capabilities','checks','guidance','activity'].includes(tab))return WorkbenchPanels.render(tab,codingContext());
     if(tab==='delivery')return WorkbenchDelivery.render(codingContext());
     if(['runs','history'].includes(tab))return WorkbenchRuntime.render(codingContext());
@@ -99,7 +100,7 @@ document.addEventListener('click', e => { const b = e.target.closest('button'); 
     file = b.dataset.file;
     return render();
 } switch (b.dataset.action) {
-    case 'template': {const target=projects.find(p=>p.kind==='template');if(!target)throw Error('尚无开发模板');await open(target.id);tab=b.dataset.targetTab;return render();}
+    case 'template': {const target=projects.find(p=>p.kind==='template'&&p.id===current?.project.id)??projects.find(p=>p.kind==='template');if(!target)throw Error('尚无开发模板');await open(target.id);tab=b.dataset.targetTab;return render();}
     case 'home':
         current = null;
         return load();
@@ -115,14 +116,14 @@ document.addEventListener('click', e => { const b = e.target.closest('button'); 
 document.addEventListener('input', e => { if (e.target.id === 'editor')
     setDraft(file, e.target.value);
 else if(current && editable()) { try {const changes=WorkbenchConfiguration.change(e.target,effectiveFiles());if(changes)patch(changes);}catch(error){notify(error.message);} } });
-document.addEventListener('change', e => { if (e.target.id === 'project-switch')
+document.addEventListener('change', e => { if (['project-switch','template-switch'].includes(e.target.id))
     action(() => open(e.target.value)); });
 document.addEventListener('submit', e => { e.preventDefault(); const form = e.target; if(!['create','publish','add-skill','add-agent'].includes(form.getAttribute('id')))return; action(async () => { if(['add-skill','add-agent'].includes(form.getAttribute('id'))) {if(!editable())throw Error('此工程只读');patch(WorkbenchConfiguration.submit(form,effectiveFiles()));render();notify('已加入工程草稿，请保存所有修改');return;} if (form.getAttribute('id') === 'create') {
     const v = Object.fromEntries(new FormData(form));
     const { project } = await api('/projects', 'POST', v);
     await load();
     await open(project.id);
-    notify('已从 MOA 发行版创建空白应用');
+    notify('已从 '+familyName(current.project)+' 发行版创建应用');
 } if (form.getAttribute('id') === 'publish') {
     await api('/templates/' + current.project.id + '/releases', 'POST', Object.fromEntries(new FormData(form)));
     await load();
@@ -138,4 +139,5 @@ WorkbenchRuntime.init({api,local:localUI,context:codingContext,action,notify,ope
 WorkbenchDelivery.init({api,context:codingContext,action,notify});
 WorkbenchDesign.init({local:localUI,context:codingContext,render,patch,save,action,coding:text=>{tab='coding';render();WorkbenchCoding.setPrompt(text);}});
 WorkbenchPanels.init({api,context:codingContext,render,patch,save,action,notify});
+WorkbenchDeep.init({context:codingContext,patch,render});
 boot().catch(e => notify(e.message));

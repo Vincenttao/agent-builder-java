@@ -6,7 +6,7 @@ window.WorkbenchCoding = (() => {
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function state(id){const role=host.context()?.role??'application',key=role+'|'+id;if(!states.has(key)){const saved=host.local?.read(id,role,'coding',{})??{};states.set(key,{jobs:[],selected:typeof saved.selected==='string'?saved.selected:null,prompt:typeof saved.prompt==='string'?saved.prompt:'',review:null,detailKey:null,answers:new Map()});}return states.get(key);}
   function persist(id,s){host.local?.write(id,host.context()?.role??'application','coding',{prompt:s.prompt,selected:s.selected});}
-  function skill(project){return project.kind==='template'?'moa-platform-development':'moa-application-development';}
+  function skill(project){return (project.family??'moa')+'-'+(project.kind==='template'?'platform':'application')+'-development';}
   function render(context){return `<div class="section-title"><div><h2>工程变更审阅</h2><p class="muted">在右侧选择编码记录，在这里核对完整差异与执行证据。</p></div><span class="badge">${context.editable?'审阅后应用':'只读诊断'}</span></div><section class="panel" id="coding-detail">选择记录查看执行与差异。</section>`;}
   function dock(context,reviewing=false){
     const s=state(context.project.id),name=skill(context.project),path=`.opencode/skills/${name}/SKILL.md`;
@@ -29,7 +29,7 @@ window.WorkbenchCoding = (() => {
   function detail(job,s,context){
     const readOnly=!context.editable||job.role!==context.role, review=s.review?.job.id===job.id?s.review:null;
     const stale=job.baseHead!==context.project.head||Boolean(review?.stale), dirty=context.dirty;
-    const roleSkill=job.role==='platform'?'moa-platform-development':'moa-application-development';
+    const roleSkill=(context.project.family??'moa')+'-'+(job.role==='platform'?'platform':'application')+'-development';
     const evidence=[...(job.evidence??[]),...(job.events??[]).filter(e=>e.type==='tool')];
     const loaded=evidence.some(e=>e.tool==='skill'&&e.status==='completed'&&e.input?.name===roleSkill);
     const paths=Object.keys(job.changes??{});
