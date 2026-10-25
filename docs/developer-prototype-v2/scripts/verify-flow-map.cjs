@@ -2,7 +2,7 @@ const {chromium,expect}=require('@playwright/test');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{pathToFileURL}=require('node:url');
 const out=path.resolve(process.env.DEMO_CHECK_OUTPUT||'test-results/prototype-v2-flow-map/checks');fs.mkdirSync(out,{recursive:true});
 const artifact=path.resolve(__dirname,'../开发工作台2.0.html'),key='openjiuwen-workbench-v2-demo-3';
-(async()=>{const browser=await chromium.launch({executablePath:'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:1440,height:900}});page.setDefaultTimeout(5000);const checks=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
+(async()=>{const browser=await chromium.launch({...(process.env.DEMO_BROWSER_PATH?{executablePath:process.env.DEMO_BROWSER_PATH}:{}),headless:true,args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:1440,height:900}});page.setDefaultTimeout(5000);const checks=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
  const state=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  const click=async(action,attrs='')=>{const s=`[data-action="${action}"]${attrs}`,dialog=page.locator(`#dialog[open] ${s}`);await (await dialog.count()?dialog:page.locator(s+':visible')).first().click();};
  const section=async id=>{await click('tab','[data-id="develop"]');await click('dev-section','[data-id="orchestration"]');await click('flow-section',`[data-id="${id}"]`);};
