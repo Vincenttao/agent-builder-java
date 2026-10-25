@@ -14,9 +14,9 @@
 | GAP-04 模板发行闭环 | 已实现，相关层验证通过 | 报告绑定/门禁、历史、发行活动、差异清单与应用方预览；旧发行不改写 |
 | GAP-05 分工与流程关联 | 已实现，相关层验证通过 | 业务范围/可用目标/预期示例同页投影，示例统一增改删；流程来源变化提示并关联Coding修订 |
 | GAP-06 页面业务回归 | 已实现，契约/API/PC验证通过；真实业务E2E待验 | 版本化用例、Mock账本断言、原运行互斥、取消与报告；最终Java/模型及Deep严格局部修改仍需真实验证 |
-| GAP-07 候选与交付证据 | 待实现 | 绑定检查、测试、运行、制品及企业交接登记 |
+| GAP-07 候选与交付证据 | 已实现，API/PC验证通过；真实证据链待最终验收 | 不可变候选绑定报告/运行/包、模型及摘要、引用保护、明确用户登记；不自动发布 |
 | GAP-08 集中运行诊断 | 已实现，相关层验证通过 | 平台跨应用/版本/状态筛选，原运行只读进入，事件字段与载荷展示；不虚构Span或耗时 |
-| GAP-09 冲突修订闭环 | 诊断/修订/复核及运行阻断已实现，契约/PC通过；真实语义及候选联动待验 | OpenCode诊断任务、来源摘要、关联审阅、原版本保护；后续接候选业务证据和真实行为验证 |
+| GAP-09 冲突修订闭环 | 已实现，契约/API/PC通过；真实语义及行为待最终验收 | OpenCode诊断任务、关联审阅/复核、原版本保护及候选/登记阻断；真实行为需最终E2E证明 |
 | GAP-10 模型与环境 | 已实现，相关层验证通过 | 本机目录/工程引用、双范式选择、环境连接覆盖、新任务/运行固定配置；导出记录实际模型，密钥外部注入 |
 | GAP-11 平台开放契约 | 已实现，相关层验证通过 | 平台开放开关、有限能力类型与可写路径服务端校验、固定来源/应用覆盖说明；Deep未接通能力保持禁用 |
 | GAP-12 版本恢复与升级预览 | 已实现，相关层验证通过 | 最近60次保存、差异/完整原文、草稿与过期阻断、恢复新提交、升级覆盖/冲突及所需检查预览 |
@@ -128,3 +128,14 @@ OpenCode 根据固定任务副本解析模型引用，任务记录保留公开�
 新增consistency服务与PC测试，联合Coding/运行/PC业务回归共21项通过，类型检查及UI语法检查通过。首次契约夹具错误地把worktree的.git指针计入输入摘要，已修正夹具并保留失败记录，没有改生产摘要规则或放宽验收。PC覆盖1280/1440/1920、冲突→关联差异→应用→复核→平台只读；实际查看1280截图。契约引擎的clear明确标为非真实OpenCode验证，未调用真实模型/Java。本批不宣称真实语义或业务E2E完成。
 
 证据：test-results/journey-gap-consistency-red.log、journey-gap-consistency-service.log（首次失败）、journey-gap-consistency-service-retest.log、journey-gap-consistency-pc.log、journey-gap-consistency-regression.log、journey-gap-consistency-final-types.log及journey-gap-consistency-pc/截图。操作与边界见一致性诊断与关联修订.md。GAP-07候选联动、真实OpenCode/Java/Mock/Deep行为验证和GitHub同步继续推进。
+
+
+## 9 D3批：验证候选、制品绑定及企业交接登记
+
+新增验证证据候选，保留原源码技术候选/独立导出。固定时核对当前源码、通过的结构/业务报告、原运行/JAR/公开模型配置、同输入诊断、原运行交付包及实际归档摘要。不能混用相同源码的另一次运行。候选引用报告、运行、诊断及交付包，引用中的包/报告不可清理；不改旧包格式或字节。契约/缺少真实来源只记录contract-only，不能冒充真实业务通过。
+
+“版本与发布”提供报告及原运行包选择、证据详情、企业验收/交接追加登记。登记显式为用户声明，固定候选和包摘要，包含负责人/结果/时间/说明/链接，不执行链接或流水线、不修改原业务状态、不标发布成功。平台应用诊断只读。当前阶段引导接入冲突、业务报告与验证候选，已知冲突优先展示阻断；保留原任务/证据。
+
+相关API/PC/导出/结构检查/阶段引导11项通过；另补候选后发现冲突、结构候选与通过登记阻断、复核解除的服务检查通过。TypeScript与新增JS语法检查通过。PC覆盖1280/1440/1920和平台只读；实际查看1280登记及双包页面。首次TypeScript发现never帮助函数的推断问题，首次API发现SQLite外键错误代码映射缺失，首次PC发现选择框缺少明确可访问名称；均修复并保留失败日志，未放宽证据匹配或真实来源要求。
+
+证据：test-results/journey-gap-delivery-red.log、journey-gap-delivery-service.log（首次失败）、journey-gap-delivery-service-retest.log、journey-gap-delivery-current.log（PC首次失败）、journey-gap-delivery-regression.log、journey-gap-delivery-conflict.log、journey-gap-delivery-current-types.log及journey-gap-delivery-pc/截图。本批仍使用契约引擎与独立Mock，不替代真实OpenCode/Java/双范式业务E2E。最终真实验收、严格局部编辑缺陷处理与GitHub同步继续推进。

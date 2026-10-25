@@ -50,7 +50,7 @@ function shell(body) {
  if(['runs','history'].includes(tab)&&current)WorkbenchRuntime.mount();else WorkbenchRuntime.unmount();
  if(tab==='business-tests'&&current)WorkbenchBusinessTests.mount();else WorkbenchBusinessTests.unmount();
  if(tab==='consistency'&&current)WorkbenchConsistency.mount();else WorkbenchConsistency.unmount();
- if(tab==='delivery'&&current)WorkbenchDelivery.mount();else WorkbenchDelivery.unmount();
+ if(tab==='delivery'&&current){WorkbenchDelivery.mount();WorkbenchDeliveryEvidence.mount();}else{WorkbenchDelivery.unmount();WorkbenchDeliveryEvidence.unmount();}
 }
 function render() {
  localUI.write('',role,'navigation',{projectId:current?.project.id??null});if(current)localUI.write(current.project.id,role,'position',{tab,file});
@@ -147,6 +147,7 @@ window.addEventListener('beforeunload', e => { if ([...drafts.values()].some(d =
     e.returnValue = '';
 } });
 async function boot(){const context=await api('/context');build=context.uiVersion;workspaceId=context.workspaceId;modelInfo=context.modelConfiguration;executionCatalog=context.executionCatalog;WorkbenchPersistence.init({build,workspaceId,buildKey,onWarning:notify});role=localUI.read('','shared','role','application');if(!['application','platform'].includes(role))role='application';$('#identity').value=role;const remembered=localUI.read('',role,'navigation',{});await load();if(remembered?.projectId&&projects.some(p=>p.id===remembered.projectId))await open(remembered.projectId);}
+WorkbenchDeliveryEvidence.init({api,context:codingContext,action,notify});
 WorkbenchConsistency.init({api,context:codingContext,action,notify,openJob:jobId=>{WorkbenchCoding.selectJob(jobId);tab='coding';render();}});
 WorkbenchBusinessTests.init({api,context:codingContext,action,notify,coding:text=>{tab='coding';render();WorkbenchCoding.setPrompt(text);},openRun:async runId=>{localUI.write(current.project.id,role,'runtime',{selected:runId});tab='history';render();}});
 WorkbenchExecutionSettings.init({api,context:codingContext,action,notify,render,reload:async()=>{current=await api('/projects/'+current.project.id);render();}});

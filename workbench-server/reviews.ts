@@ -10,7 +10,7 @@ type Item = {
     detail: string;
 };
 export class ReviewManager {
-    constructor(private store: ProjectStore) { store.db.exec('CREATE TABLE IF NOT EXISTS design_checks(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,record TEXT NOT NULL); CREATE TABLE IF NOT EXISTS design_candidates(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,record TEXT NOT NULL)'); }
+    constructor(private store: ProjectStore,private definitionGuard?:(id:string,role:Role,head:string)=>void) { store.db.exec('CREATE TABLE IF NOT EXISTS design_checks(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,record TEXT NOT NULL); CREATE TABLE IF NOT EXISTS design_candidates(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,record TEXT NOT NULL)'); }
     private owner(id: string, role: Role) { const p = this.store.get(id, role); if ((p.kind === 'template') !== (role === 'platform'))
         throw new WorkbenchError('FORBIDDEN', '当前身份只能只读查看此工程', 403); return p; }
     list(id: string, role: Role) { const p = this.store.get(id, role); return (this.store.db.prepare('SELECT record FROM design_checks WHERE projectId=? ORDER BY rowid DESC LIMIT 30').all(id) as {
@@ -92,7 +92,7 @@ export class ReviewManager {
         this.store.db.prepare('INSERT INTO design_checks VALUES(?,?,?)').run(report.id, id, JSON.stringify(report));
         return report;
     }
-    candidate(id: string, role: Role, checkId: string) { const p = this.owner(id, role); if (p.kind !== 'application')
+    candidate(id: string, role: Role, checkId: string) { const p = this.owner(id, role);this.definitionGuard?.(id,role,p.head); if (p.kind !== 'application')
         throw new WorkbenchError('INVALID_PROJECT', '请在应用中固定技术候选'); const report = this.list(id, role).find(r => r.id === checkId); if (!report?.passed || report.head !== p.head)
         throw new WorkbenchError('CHECK_REQUIRED', '先对当前保存版本完成结构检查，旧报告不能固定新候选', 409); const previous = this.candidates(id, role).find(c => c.head === p.head && c.checkId === checkId); if (previous)
         return previous; const value = { id: randomUUID(), projectId: id, head: p.head, checkId, createdAt: new Date().toISOString(), verification: 'structural-only', business: 'not-verified', publication: 'not-published' }; this.store.db.prepare('INSERT INTO design_candidates VALUES(?,?,?)').run(value.id, id, JSON.stringify(value)); return value; }

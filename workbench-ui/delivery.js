@@ -5,7 +5,7 @@ window.WorkbenchDelivery=(()=>{
  function state(id){if(!states.has(id))states.set(id,{runs:[],exports:[],runId:null,manifest:null,candidates:[]});return states.get(id);}
  function valid(token,c){const now=host.context();return token===generation&&now&&now.role===c.role&&now.project.id===c.project.id&&document.getElementById('delivery-host');}
  const eligible=run=>run.artifact&&run.origin&&['running','stopped','interrupted'].includes(run.status);
- function render(){return '<div id="delivery-host"><section class="panel"><div class="toolbar"><div><h2>固定版本与技术导出</h2><p>选择已构建并启动过的运行，下载其 JAR/资产应用包与可构建源码包。</p></div><button data-delivery-action="refresh">刷新交付记录</button></div><p class="warning">导出与业务验收、企业 CI/CD 和发布是不同步骤。当前不把下载成功标记为已发布。</p><div id="delivery-source">正在读取固定运行…</div><p id="delivery-progress" role="status"></p></section><div id="delivery-records"></div><section id="delivery-manifest-panel" class="panel" hidden><h2>固定交付清单</h2><pre id="delivery-manifest"></pre></section></div>';}
+ function render(){return '<div id="delivery-host"><section class="panel"><div class="toolbar"><div><h2>固定版本与技术导出</h2><p>选择已构建并启动过的运行，下载其 JAR/资产应用包与可构建源码包。</p></div><button data-delivery-action="refresh">刷新交付记录</button></div><p class="warning">导出与业务验收、企业 CI/CD 和发布是不同步骤。当前不把下载成功标记为已发布。</p><div id="delivery-source">正在读取固定运行…</div><p id="delivery-progress" role="status"></p></section>'+WorkbenchDeliveryEvidence.render()+'<div id="delivery-records"></div><section id="delivery-manifest-panel" class="panel" hidden><h2>固定交付清单</h2><pre id="delivery-manifest"></pre></section></div>';}
  function unmount(){generation++;}
  function mount(){unmount();const c=host.context();if(!c||!document.getElementById('delivery-host'))return;const token=generation;refresh(token,c).catch(e=>{if(valid(token,c))host.notify(e.message);});}
  async function refresh(token,c){const [runs,records,candidates]=await Promise.all([host.api('/projects/'+c.project.id+'/runs','GET',undefined,c.role),host.api('/projects/'+c.project.id+'/exports','GET',undefined,c.role),host.api('/projects/'+c.project.id+'/candidates','GET',undefined,c.role)]);if(!valid(token,c))return;const s=state(c.project.id);s.runs=runs.runs;s.exports=records.exports;s.candidates=candidates.candidates;if(!s.runs.some(r=>r.id===s.runId))s.runId=s.runs.find(eligible)?.id??null;paint(c);}
@@ -24,7 +24,7 @@ window.WorkbenchDelivery=(()=>{
    if(!c.editable||c.project.kind!=='application')throw Error('请使用应用开发者身份操作');
    if(action==='create'){
     document.getElementById('delivery-progress').textContent='正在核对原 JAR、构建输入与业务资产并打包；不会重新运行模型。';
-    try{const result=await host.api('/projects/'+c.project.id+'/exports','POST',{runId:s.runId},c.role);if(!valid(token,c))return;const previous=s.exports.some(x=>x.id===result.export.id);await refresh(token,c);host.notify(previous?'复用同一运行的固定交付包':'已生成技术包；独立运行与业务验收尚未验证');}
+    try{const result=await host.api('/projects/'+c.project.id+'/exports','POST',{runId:s.runId},c.role);if(!valid(token,c))return;const previous=s.exports.some(x=>x.id===result.export.id);await refresh(token,c);WorkbenchDeliveryEvidence.refresh();host.notify(previous?'复用同一运行的固定交付包':'已生成技术包；独立运行与业务验收尚未验证');}
     finally{if(valid(token,c))document.getElementById('delivery-progress').textContent='';}
    }
    if(action==='delete'){if(!confirm('清理这份交付归档和记录？原工程与运行将保留。请先完成所需下载。'))return;await host.api('/exports/'+button.dataset.export,'DELETE',undefined,c.role);if(valid(token,c)){s.manifest=null;await refresh(token,c);}}
