@@ -2,7 +2,7 @@
 
 JDK17、Maven；Core0.1.17、Runtime0.1.4。`mvn package` 后运行 `java -jar target/deepagent-business-application-2.0.0.jar`。模型由 MODEL_API_KEY / MODEL_BASE_URL / MODEL_NAME 提供（兼容旧 DEEPSEEK_*）。WORKBENCH_APP_DIR 为工程目录，WORKBENCH_STATE_DIR 为独立运行状态目录。
 
-执行使用 HarnessFactory 创建原生 DeepAgent、最多8次模型迭代、最多3轮目标循环和180秒完成超时。通过受限skill_tool读取已装配的业务Skill，再放行该Skill的CORE工具集合；未装配工具不可执行。文件工具只开放当前会话brief.md的读写、精确替换与列出；不提供 Shell/网络工具。每轮交付同时检查完成信号、文件存在、写后读回。未满足条件会明确显示未完成。
+执行使用 HarnessFactory 创建原生 DeepAgent、最多12次模型迭代、最多3轮目标循环和180秒完成超时。通过受限skill_tool读取已装配的业务Skill，再放行该Skill的CORE工具集合；未装配工具不可执行。文件工具只开放当前会话brief.md的读写、精确替换与列出；不提供 Shell/网络工具。每轮交付同时检查完成信号、文件存在、写后读回。未满足条件会明确显示未完成。
 同会话增量请求复用既有工作区和 AgentSession。最多20个会话，每会话最多20轮；重启不恢复未完成执行。运行目录随既有工作台运行保留/清理策略管理，不另建无限测试工作区。
 
 工作台的消息、只读事件回放和固定运行导出可用；不提供MOA的意图分发和A/B接管。当前新增模板未接入OTel，页面不生成虚构Trace链接。技术导出不包含运行材料，企业CI/CD发布另行验收。
