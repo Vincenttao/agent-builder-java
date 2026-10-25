@@ -7,6 +7,12 @@ description: 基于 MOA 范式装配应用，统一修改业务范围、System P
 
 来源：agent-solution 的 MOA 二次开发指导，固定提交 552294d013b28a79d912a5bda9f627237e826e6b；Core develop 0.1.17 / Runtime develop 0.1.4 的实际适配以本工程为准。平台维护技术范式；应用开发者维护下层业务范围、操作分工和业务 Skill。
 
+## 从业务需求到工程修订
+
+用户只需描述业务目标和必要的业务连接信息；工具名称、脚本协议、配置字段从本Skill及references读取，不要求用户提供技术实现提示。先识别当前应用的相关范围/Skill和已接通操作，再联合编辑配置、System Prompt、业务Skill及必要脚本。业务目标明确时自行选择合理的Skill标识和文件组织；只有缺少真实端点、业务规则或授权选择时提问。交付前用读取工具核对实际文件和引用，不以文字建议代替编辑。
+
+业务Skill必须以YAML frontmatter开头，含name与单行description；name与application.json中Skill id一致，file指向skills/<id>/SKILL.md。operations引用真实操作目录。业务Skill须写清原生桥接工具名和参数结构（SCRIPT经call_mcp，A2A经call_versatile），不能仅写“调用操作名”；读成功后按授权终结契约收束，TODO或文字完成不代表业务执行。业务Skill指导当前任务如何处理业务；本开发Skill指导OpenCode如何开发工程，两者分开。
+
 ## 必须遵守
 
 - 当前应用的业务范围包括自己用 Skill 处理与委派挂载 Agent；范围外按配置转交，不把所有后续输入重新分发。
@@ -28,6 +34,6 @@ description: 基于 MOA 范式装配应用，统一修改业务范围、System P
 
 ## 交付前核对
 
-JSON 可解析，schemaVersion=1，handoff.maxTasks=2。每个 Skill 的 file 引用存在；各入口描述一致。对自己修改的内容运行适用检查。最后返回简短变更说明；不要输出密钥、完整上下文或无关文件。
+JSON 可解析，schemaVersion=1，handoff.maxTasks=2。每个 Skill 的 file 引用存在；各入口描述一致。若提供tests/routing-examples.json，先按本机运行契约“路由预演样例的文件格式”核对case顶层query/action/target；业务答案预期不能替代路由字段。对自己修改的内容运行适用检查。最后返回简短变更说明；不要输出密钥、完整上下文或无关文件。
 
 完整机制参考本 Skill 的 references/native-skill-agent.md、request-routing.md、rail-extension.md 和 intent-switch.md，均固定到 SOURCE.md 声明的来源提交。涉及旧 Core API 的部分以本工程兼容适配和实际测试为准。
