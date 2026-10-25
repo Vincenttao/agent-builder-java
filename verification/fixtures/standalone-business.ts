@@ -21,7 +21,7 @@ export async function verifyStandaloneBusiness(base:string,mockBase:string,onObs
  await call(`/workbench/conversations/${a.conversationId}/reply`,{taskId:original.id,token:original.prompt.token,answer:'确认'},400);assert.equal((await ledger()).writes,before.writes);
  const completed=stages.completed=await reply(resumed,'确认');assert.equal(completed.stack.current.state,'COMPLETED');assert.equal((await ledger()).writes,before.writes+1);
  await reply(resumed,'确认',400);assert.equal((await ledger()).writes,before.writes+1);
- const reject=stages.rejectStart=await message(null,query);assert.ok(current(reject).prompt);stages.rejected=await reply(reject,'拒绝');assert.equal((await ledger()).writes,before.writes+1);
+ const reject=stages.rejectStart=await message(null,query);assert.ok(current(reject).prompt);stages.rejected=await reply(reject,'拒绝');assert.equal((await ledger()).writes,before.writes+1);assert.equal(stages.rejected.stack.current.state,'COMPLETED','rejection must settle normally, zero writes alone is insufficient');
  const externalBefore=await ledger(),viewBefore=await call('/workbench/conversations/'+completed.conversationId);
  for(let n=0;n<3;n++)assert.deepEqual(await call('/workbench/conversations/'+completed.conversationId),viewBefore);
  assert.deepEqual(await ledger(),externalBefore);

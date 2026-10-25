@@ -41,6 +41,14 @@ i豆本机 Mock 的余额 JSON 字段为 `employee.wallet.availablePoints`；`ma
 
 A2A 目标以 `capabilities` 中 `type: agent` 和 `connection` 绑定到已声明连接；范围外目标仍须挂载。后续原任务回答/确认续接原等待点，不重新全局路由。任务最多当前加保留共两个；恢复时复核事实并生成新确认。事件文件不是跨重启检查点；不生成跨重启自动续办承诺。
 
+## 路由阶段与后续强制实施
+
+`LlmRouter` 只判断本轮输入的业务归属和候选目标，不推进任务，也不代表已经调用。返回 `SKILL`/`DELEGATE`/`HANDOFF` 只是选定已挂载目标；`CONTINUE` 只是把补参/确认归回当前任务。实际调用 Skill/Agent、参数确认与写入、任务切换等都由 `BusinessHost`/`TaskShelf` 在路由之后执行并强制校验，路由通过不等于业务已执行。
+
+因此，当已有未完成任务（如等待确认）而用户又提出属于自身或已委派范围的新业务时，路由按新业务归属返回 `SKILL`/`DELEGATE` 即可；未完成任务的保留、询问或放弃由 `BusinessHost` 按 `handoff.unfinished` 策略在后续强制询问并在 `decide` 中落实，不要求用户在提出新业务的同一句话里先给出切换选择。缺少该选择不构成 `CLARIFY` 或 `CONFLICT`，也不得因此判定业务定义矛盾。
+
+判定取舍：原任务的补参与确认仍为 `CONTINUE`；新业务本身信息不清可 `CLARIFY`；只有真实业务范围、System Prompt 或 Skill 指导之间的实质矛盾才 `CONFLICT`。仅存在当前等待点、或用户未在同句给出保留/放弃选择，都不是冲突理由。路由不授权绕过确认或直接调用新 Agent。给路由模型的路由上下文直接携带 `scope`/`handoff` 等原始结构（含 `own`/`delegated`/`outside` 数组），不得改写成 Map 或作其它投影，以免丢失真实业务范围。
+
 ## 审阅和验证
 
 联合核对 scope、System Prompt、业务 Skill 与操作目录。需要业务决定时提问，不擅自扩权。应用身份不得修改固定 Java、POM、开发 Skill 或 runtime-tests；发现范式契约问题应说明并交平台修订。
