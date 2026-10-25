@@ -74,7 +74,17 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - name: Browser against real app and database
         run: |
-          pnpm start > /tmp/agent-builder-ci.log 2>&1 &
+          # Match deploy/Dockerfile: tsc output alone cannot resolve pnpm workspace dependencies.
+          pnpm --filter @agent-builder/server deploy --prod .cache/ci-server
+          cp -R dist .cache/ci-server/dist
+          mkdir -p .cache/ci-server/apps/web
+          cp -R apps/web/dist .cache/ci-server/apps/web/dist
+          cp -R db .cache/ci-server/db
+          mkdir -p test-results
+          (
+            cd .cache/ci-server
+            node dist/apps/server/src/main.js > "$GITHUB_WORKSPACE/test-results/ci-server.log" 2>&1
+          ) &
           node scripts/wait-ready.mjs
           pnpm test:e2e
       - uses: actions/upload-artifact@v4

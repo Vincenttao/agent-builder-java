@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { JavaDeploymentManager } from '../../apps/runner/src/runtime/deployment-manager.js';
 import { ExecutionJournal } from '../../apps/runner/src/executions/journal.js';
@@ -43,5 +43,6 @@ it('cancels only the requested execution and leaves queued sessions and the depl
   expect((await runtime.get(deploymentId)).status).toBe('ready');
   await expect(runtime.resume(deploymentId, first, 'must-not-call', true)).rejects.toBeDefined();
   expect((await runtime.get(deploymentId)).status).toBe('ready');
+  await mkdir(resolve('test-results/tdd-008'),{recursive:true});
   await writeFile(resolve('test-results/tdd-008/shared-session-evidence.json'),JSON.stringify({modelMode:'deterministic-fixture',artifactDigest:runtime.artifactDigest,deployment:await runtime.get(deploymentId),cancelled:await journal.get(first),otherSession:await journal.get(second),modelCalls:calls,toolCalls:tools,events:await runtime.events(deploymentId)},null,2));
 });
