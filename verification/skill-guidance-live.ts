@@ -143,6 +143,7 @@ try {
         const template = await api('/projects/moa-platform', 'platform');
         const changes = Object.fromEntries(Object.entries(moaTemplateFiles()).filter(([name, text]) => name.startsWith('.opencode/skills/') && template.files[name] !== text));
         await api('/projects/moa-platform/files', 'platform', 'PUT', { baseHead: template.project.head, changes });
+        assert.equal((await api('/projects/moa-platform/checks','platform','POST',{})).report.passed,true);
         const release = (await api('/templates/moa-platform/releases', 'platform', 'POST', { version: '1.1.0' })).release;
         const app = (await api('/projects', 'application', 'POST', { releaseId: release.id, name: 'i豆余额助手' })).project;
         const generated = await develop(app.id, 'application', retryGoal, 'moa-invocation-refined');
@@ -169,9 +170,11 @@ try {
         report.priorReport = process.env.SKILL_GUIDANCE_REFINEMENT;
         report.reason = 'Fresh applications after routing-schema and minimal-edit guidance refinement; original failures retained';
         save();
+        assert.equal((await api('/projects/deepagent-platform/checks','platform','POST',{})).report.passed,true);
         const deepRelease = (await api('/templates/deepagent-platform/releases', 'platform', 'POST', { version: '1.0.0' })).release;
         const deepApp = (await api('/projects', 'application', 'POST', { releaseId: deepRelease.id, name: '会议行动项助手' })).project;
         const deepResult = await develop(deepApp.id, 'application', retryDeepGoal, 'deep-guidance-revised');
+        assert.equal((await api('/projects/moa-platform/checks','platform','POST',{})).report.passed,true);
         const release = (await api('/templates/moa-platform/releases', 'platform', 'POST', { version: '1.0.0' })).release;
         const app = (await api('/projects', 'application', 'POST', { releaseId: release.id, name: 'i豆余额助手' })).project;
         const result = await develop(app.id, 'application', retryGoal, 'moa-guidance-revised');
@@ -192,10 +195,12 @@ try {
         const old = execFileSync('git', ['show', '1a94e19:templates/deepagent/' + guide], { encoding: 'utf8' });
         report.control = { oldSkillSource: '1a94e19', runtimeSource: report.sourceHead, changedPaths: [guide, reference], runtimeUnchanged: true };
         await api('/projects/deepagent-platform/files', 'platform', 'PUT', { baseHead: deep.project.head, changes: { [guide]: old, [reference]: null } });
+        assert.equal((await api('/projects/deepagent-platform/checks','platform','POST',{})).report.passed,true);
         const oldRelease = (await api('/templates/deepagent-platform/releases', 'platform', 'POST', { version: '1.0.0' })).release;
         const baseline = (await api('/projects', 'application', 'POST', { releaseId: oldRelease.id, name: '会议行动项助手' })).project;
         const oldTemplate = await api('/projects/deepagent-platform', 'platform');
         await api('/projects/deepagent-platform/files', 'platform', 'PUT', { baseHead: oldTemplate.project.head, changes: { [guide]: currentFiles[guide], [reference]: currentFiles[reference] } });
+        assert.equal((await api('/projects/deepagent-platform/checks','platform','POST',{})).report.passed,true);
         const release = (await api('/templates/deepagent-platform/releases', 'platform', 'POST', { version: '1.1.0' })).release;
         const treatment = (await api('/projects', 'application', 'POST', { releaseId: release.id, name: '会议行动项助手' })).project;
         const b = (await api('/projects/' + baseline.id)).files, t = (await api('/projects/' + treatment.id)).files;
@@ -209,6 +214,7 @@ try {
         const goal = '帮我开发一个会议行动项助手：把会议材料整理为决定、行动项（负责人和期限）、待确认事项。缺失信息不要编造。同一会话支持只修改指定内容并保留其余事实。请直接完成工程开发，并附首次整理和局部修改的验收样例。';
         await develop(baseline.id, 'application', goal, 'deep-old');
         const improved = await develop(treatment.id, 'application', goal, 'deep-new');
+        assert.equal((await api('/projects/moa-platform/checks','platform','POST',{})).report.passed,true);
         const moaRelease = (await api('/templates/moa-platform/releases', 'platform', 'POST', { version: '1.0.0' })).release;
         const moa = (await api('/projects', 'application', 'POST', { releaseId: moaRelease.id, name: 'i豆余额助手' })).project;
         const moaResult = await develop(moa.id, 'application', '帮我开发一个只读i豆余额助手，只查询员工demo的可用积分。业务服务地址是' + mockBase + '。不允许兑换、转账或购买；请完成工程开发并写明查询验收样例。', 'moa-new');

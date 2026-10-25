@@ -17,8 +17,8 @@ function draft() {
  if(!drafts.has(k))drafts.set(k,WorkbenchPersistence.loadDraft(current.project.id,role)??{baseHead:current.project.head,changes:{},cacheTag:null,cached:true});
  const d=drafts.get(k);if(!Object.keys(d.changes).length)d.baseHead=current.project.head;return d;
 }
-function effectiveFiles() { return editable() ? {...current.files,...draft().changes} : current.files; }
-function canEdit(path) { return editable() && (current.editablePaths.includes(path) || (Object.hasOwn(draft().changes,path) && (current.project.kind==='template' || /^(skills|adapters|tests)\//.test(path)))); }
+function effectiveFiles() { return editable() ? Object.fromEntries(Object.entries({...current.files,...draft().changes}).filter(([,value])=>value!==null)) : current.files; }
+function canEdit(path) { if(current?.project.kind==='application'&&current.contract?.editablePrefixes&&!current.contract.editablePrefixes.some(prefix=>prefix.endsWith('/')?path.startsWith(prefix):path===prefix))return false;return editable() && (current.editablePaths.includes(path) || (Object.hasOwn(draft().changes,path) && (current.project.kind==='template' || /^(skills|adapters|tests)\//.test(path)))); }
 function patch(changes) { for(const [path,value] of Object.entries(changes)) setDraft(path,value); }
 function content(path) { if (!editable())
     return current.files[path] ?? ''; const d = draft(); return Object.hasOwn(d.changes, path) ? d.changes[path] : current.files[path] ?? ''; }
@@ -31,15 +31,18 @@ async function load() { const token = ++epoch; const [p, r] = await Promise.all(
     return; projects = p.projects; releases = r.releases; render(); }
 async function open(id) { const token = ++epoch; const value = await api('/projects/' + encodeURIComponent(id)); if (token !== epoch)
     return; current=value;const position=localUI.read(id,role,'position',{});file=typeof position.file==='string'?position.file:'instructions.md';tab=['overview','files','configuration','flow','capabilities','checks','history','guidance','activity','coding','runs',...(current.project.kind==='template'?['release']:['delivery'])].includes(position.tab)?position.tab:'overview';render(); }
-function codingContext() {return current?{project:current.project,files:current.files,sourceRelease:current.sourceRelease,templateMetadata:current.templateMetadata,journey:current.journey,effectiveFiles:effectiveFiles(),role,modelInfo,historyOnly:tab==='history',editable:editable(),dirty:editable()&&Object.keys(draft().changes).length>0}:null;}
+function codingContext() {return current?{project:current.project,files:current.files,releases,assetOrigins:current.assetOrigins,contract:current.contract,sourceRelease:current.sourceRelease,templateMetadata:current.templateMetadata,journey:current.journey,effectiveFiles:effectiveFiles(),role,modelInfo,historyOnly:tab==='history',editable:editable(),dirty:editable()&&Object.keys(draft().changes).length>0}:null;}
 function shell(body) {
  const platform=role==='platform';
  $('#role-caption').textContent=platform?'平台开发':'应用开发';
  $('#breadcrumb').innerHTML=`企业空间 <span>/</span> ${platform?'平台开发':'应用'}${current?` <span>/</span> <strong>${esc(current.project.name)}</strong>`:''}`;
  $('#global-nav').innerHTML=platform?`<button data-action="home" class="${!current?'active':''}">开发模板与应用诊断</button><div class="nav-label">切换模板 · 在工程内维护</div><select id="template-switch" aria-label="切换开发模板">${projects.filter(p=>p.kind==='template').map(p=>`<option title="${esc(p.name)}" value="${esc(p.id)}" ${current?.project.id===p.id?'selected':''}>${esc(familyName(p))} 模板</option>`).join('')}</select>${[['guidance','开发 Skill'],['activity','工程活动']].map(([id,label])=>`<button data-action="template" data-target-tab="${id}" class="${current?.project.kind==='template'&&tab===id?'active':''}">${label}</button>`).join('')}`:`<button data-action="home" class="active">▦　我的应用</button>`;
  $('#workspace').innerHTML=body;
+ if(current&&tab==='configuration')WorkbenchConfiguration.restrict(current.contract);
+ if(current&&tab==='configuration')WorkbenchConfiguration.focus(localUI.read(current.project.id,role,'configuration-section','scope-settings'));
  if(current)WorkbenchPanels.mount(tab);
  if(current)WorkbenchJourney.mount();
+ if(current&&tab==='release')WorkbenchRelease.mount();
  if(current)WorkbenchCoding.mount();else WorkbenchCoding.unmount();
  if(['runs','history'].includes(tab)&&current)WorkbenchRuntime.mount();else WorkbenchRuntime.unmount();
  if(tab==='delivery'&&current)WorkbenchDelivery.mount();else WorkbenchDelivery.unmount();
@@ -75,8 +78,7 @@ function view() {
             file = paths[0];
         return `<div class="files"><section class="panel file-list">${paths.map(f => `<button data-file="${esc(f)}" title="${esc(f)}" aria-label="${esc(f)}${canEdit(f)?'':' · 只读'}" class="${file===f?'active':''}"><span class="file-name">${esc(f.split('/').at(-1))}${canEdit(f)?'':' · 只读'}</span>${f.includes('/')?`<small>${esc(f.slice(0,f.lastIndexOf('/')))}</small>`:''}</button>`).join('')}</section><section class="panel"><label for="editor">${esc(file)}</label><textarea id="editor" class="editor" spellcheck="false" ${canEdit(file) ? '' : 'readonly'}>${esc(content(file))}</textarea><p class="muted">同一界面版本内可恢复本机草稿；它尚未保存为 Git 版本。界面升级或关闭前请保存到工程。</p></section></div>`;
     }
-    if (tab === 'release')
-        return `<section class="panel"><h2>发行不可变模板版本</h2><p>发行已保存的工程提交。既有应用保持原模板来源，新应用选择新版本。结构检查不等于模板业务验收。</p><button data-tab="checks">先检查模板保存版本</button><button data-tab="activity">查看工程活动</button><form id="publish"><div class="field"><label for="version">版本号</label><input name="version" id="version" required placeholder="例如 1.0.0"></div><button class="primary" ${Object.keys(draft().changes).length ? 'disabled' : ''}>发行模板</button></form></section>`;
+    if (tab === 'release')return WorkbenchRelease.render(codingContext());
     return '<section class="panel">请选择工程功能。</section>';
 }
 async function save(){const d=draft();if(!Object.keys(d.changes).length)return notify('没有待保存的修改');if(d.baseHead!==current.project.head)throw Error('草稿基础版本已变化，请先核对并保留内容');const id=current.project.id;await api('/projects/'+id+'/files','PUT',{baseHead:d.baseHead,changes:d.changes});WorkbenchPersistence.clearDraft(id,role,d);current=await api('/projects/'+id);drafts.set(draftKey(),{baseHead:current.project.head,changes:{},cacheTag:null,cached:true});render();notify('已提交工程版本');}
@@ -92,8 +94,8 @@ finally {
     $('#identity').disabled = false;
 } }
 $('#identity').onchange = () => action(async () => { epoch++; role = $('#identity').value;localUI.write('','shared','role',role); current = null; await load(); });
-document.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !(b.dataset.open || b.dataset.tab || b.dataset.file || b.dataset.configSection || b.dataset.openFile || b.dataset.action))
-    return; action(async () => { if(b.dataset.openFile){tab='files';file=b.dataset.openFile;return render();} if(b.dataset.configSection) {tab='configuration';render();document.getElementById(b.dataset.configSection)?.scrollIntoView({block:'start'});return;} if (b.dataset.open)
+document.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !(b.dataset.open || b.dataset.tab || b.dataset.file || b.dataset.configSection || b.hasAttribute('data-config-expand') || b.dataset.openFile || b.dataset.action))
+    return; action(async () => { if(b.hasAttribute('data-config-expand')){localUI.write(current.project.id,role,'configuration-section','all');WorkbenchConfiguration.focus('all');return;} if(b.dataset.openFile){tab='files';file=b.dataset.openFile;return render();} if(b.dataset.configSection) {localUI.write(current.project.id,role,'configuration-section',b.dataset.configSection);tab='configuration';render();document.getElementById(b.dataset.configSection)?.scrollIntoView({block:'start'});return;} if (b.dataset.open)
     return open(b.dataset.open); if (b.dataset.tab) {
     tab = b.dataset.tab;
     return render();
@@ -135,6 +137,8 @@ window.addEventListener('beforeunload', e => { if ([...drafts.values()].some(d =
     e.returnValue = '';
 } });
 async function boot(){const context=await api('/context');build=context.uiVersion;workspaceId=context.workspaceId;modelInfo=context.modelConfiguration;WorkbenchPersistence.init({build,workspaceId,buildKey,onWarning:notify});role=localUI.read('','shared','role','application');if(!['application','platform'].includes(role))role='application';$('#identity').value=role;const remembered=localUI.read('',role,'navigation',{});await load();if(remembered?.projectId&&projects.some(p=>p.id===remembered.projectId))await open(remembered.projectId);}
+WorkbenchRelease.init({api,context:codingContext});
+WorkbenchAssembly.init({context:codingContext,patch,render,action,notify});
 WorkbenchJourney.init({api,context:codingContext,releases:()=>releases,update:j=>{if(current)current.journey=j;},next:target=>action(async()=>{if(target==='save')return save();tab=target;render();if(target==='coding'&&current.definition.description)WorkbenchCoding.setPrompt('请根据以下业务目标检查当前工程，并在允许范围内补齐开发方案、业务Skill与测试：\n'+current.definition.description);})});
 WorkbenchCoding.init({api,local:localUI,context:codingContext,action,notify,showReview:()=>{tab='coding';render();},reloadProject:async()=>{const id=current.project.id;current=await api('/projects/'+id);render();}});
 WorkbenchRuntime.init({api,local:localUI,context:codingContext,action,notify,openRun:async(projectId)=>{await open(projectId);tab='runs';render();}});

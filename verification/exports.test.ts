@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync,readFileSync,writeFileSync,mkdirSync,existsSync,statSync} from 'node:fs';
@@ -10,7 +11,7 @@ import {pcRunFixture} from './fixtures/pc-run-engine.js';
 test('technical exports pin run source/JAR, exclude local state, detect changes and retain run references',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-exports-')),fixture=pcRunFixture();
  const wb=createWorkbench({root:join(root,'.workbench'),runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
- const release=wb.store.publish('moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'导出测试应用','application');
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'导出测试应用','application');
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));
  t.after(async()=>{await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
  const address=server.address();assert.ok(address&&typeof address!=='string');const base=`http://127.0.0.1:${address.port}`;
@@ -47,7 +48,7 @@ test('export rejects altered frozen source or JAR and leaves no ready package',a
  const root=mkdtempSync(join(tmpdir(),'workbench-export-tamper-')),fixture=pcRunFixture();
  const wb=createWorkbench({root,runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
  t.after(async()=>{await wb.close();wb.store.close();rmSync(root,{recursive:true,force:true});});
- const release=wb.store.publish('moa-platform','platform','1.0.0'),app=wb.store.createApplication(release.id,'篡改检查','application');const run=await wb.runs.start(app.id,'application',app.head);
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0'),app=wb.store.createApplication(release.id,'篡改检查','application');const run=await wb.runs.start(app.id,'application',app.head);
  for(let n=0;n<100&&wb.runs.get(run.id,'application').status!=='running';n++)await new Promise(r=>setTimeout(r,10));
  const exports=wb.exports;assert.ok(exports,'export manager must be available');
  const path=join(wb.runs.directory(run.id),'project/instructions.md'),original=readFileSync(path,'utf8');writeFileSync(path,'改动构建输入');await assert.rejects(exports.create(app.id,'application',run.id),(e:any)=>e.code==='RUN_SOURCE_CHANGED');
@@ -59,7 +60,7 @@ test('legacy export index preserves original bytes and permits a new package for
  const {createHash,randomUUID}=await import('node:crypto');const {ExportManager}=await import('../workbench-server/exports.js');
  const root=mkdtempSync(join(tmpdir(),'workbench-export-format-')),fixture=pcRunFixture();const wb=createWorkbench({root,runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
  t.after(async()=>{await wb.close();wb.store.close();rmSync(root,{recursive:true,force:true});});
- const release=wb.store.publish('moa-platform','platform','1.0.0'),app=wb.store.createApplication(release.id,'格式迁移测试','application'),run=await wb.runs.start(app.id,'application',app.head);
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0'),app=wb.store.createApplication(release.id,'格式迁移测试','application'),run=await wb.runs.start(app.id,'application',app.head);
  for(let n=0;n<100&&wb.runs.get(run.id,'application').status!=='running';n++)await new Promise(r=>setTimeout(r,10));
  // Opaque legacy fixture files test index/byte preservation, not a runnable package.
  const id=randomUUID(),directory=wb.exports.directory(id);mkdirSync(directory,{recursive:true});writeFileSync(join(directory,'owner.json'),JSON.stringify({kind:'workbench-export',id,projectId:app.id}));

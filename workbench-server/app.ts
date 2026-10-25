@@ -1,4 +1,4 @@
-import {releaseInfo,projectJourney,templateMetadata} from './journey.js';
+import {releaseInfo,projectJourney,templateMetadata,assetOrigins} from './journey.js';
 import {settings} from './settings.js';
 import {ReviewManager} from './reviews.js';
 import express,{type Request,type Response,type NextFunction} from 'express';
@@ -24,14 +24,14 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const exports=new ExportManager(store,runs);
   const reviews=new ReviewManager(store);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
@@ -44,12 +44,13 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   });
   app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:settings(repository).model,modelConfiguration:(()=>{const s=settings(repository);let origin='地址无效';try{origin=new URL(s.baseUrl).origin;}catch{}return {model:s.model,origin,configured:Boolean(s.apiKey),scope:'local-shared'};})(),uiVersion:build,workspaceId:store.workspaceId}));
   app.get('/api/templates',(_req,res)=>res.json({releases:store.listReleases().map(r=>releaseInfo(store,r))}));
+  app.get('/api/projects/:id/release-preview',(req,res)=>{const p=store.get(req.params.id,res.locals.role);if(p.kind!=='template')throw new WorkbenchError('INVALID_PROJECT','请在模板工程预览发行',400);const previous=store.listReleases().filter(r=>r.projectId===p.id).at(-1),before=previous?store.snapshot(p.id,previous.commit):{},after=store.snapshot(p.id,p.head);const changes=[...new Set([...Object.keys(before),...Object.keys(after)])].sort().filter(path=>before[path]!==after[path]).map(path=>({path,status:!(path in before)?'新增':!(path in after)?'移除':'修改'}));res.json({head:p.head,previous:previous??null,changes});});
   app.post('/api/templates/:id/releases',(req,res)=>res.status(201).json({release:store.publish(req.params.id,res.locals.role,req.body.version)}));
   app.get('/api/projects',(_req,res)=>res.json({projects:store.list(res.locals.role).map(p=>({...p,family:store.family(p.id,res.locals.role)}))}));
   app.post('/api/projects',(req,res)=>res.status(201).json({project:store.createApplication(req.body.releaseId,req.body.name,res.locals.role,req.body.goal)}));
   app.get('/api/projects/:id',(req,res)=>{
     const project=store.get(req.params.id,res.locals.role);const files=store.files(project.id,res.locals.role);
-    res.json({sourceRelease:project.sourceReleaseId?releaseInfo(store,store.release(project.sourceReleaseId)):null,templateMetadata:templateMetadata(store.snapshot(project.id,project.head),project.head),journey:projectJourney(store,reviews,jobs,runs,exports,project.id,res.locals.role),project:{...project,family:store.family(project.id,res.locals.role)},definition:store.definition(project.id,res.locals.role),files,editablePaths:Object.keys(files).filter(f=>project.kind==='template'?res.locals.role==='platform':res.locals.role==='application'&&applicationEditable(f))});
+    res.json({assetOrigins:assetOrigins(store,project.id,res.locals.role),contract:store.contract(project.id,res.locals.role),sourceRelease:project.sourceReleaseId?releaseInfo(store,store.release(project.sourceReleaseId)):null,templateMetadata:templateMetadata(store.snapshot(project.id,project.head),project.head),journey:projectJourney(store,reviews,jobs,runs,exports,project.id,res.locals.role),project:{...project,family:store.family(project.id,res.locals.role)},definition:store.definition(project.id,res.locals.role),files,editablePaths:Object.keys(files).filter(f=>project.kind==='template'?res.locals.role==='platform':res.locals.role==='application'&&store.canEdit(project.id,res.locals.role,f))});
   });
   app.get('/api/projects/:id/journey',(req,res)=>res.json({journey:projectJourney(store,reviews,jobs,runs,exports,req.params.id,res.locals.role)}));
   app.put('/api/projects/:id/files',(req,res)=>res.json({project:store.save(req.params.id,res.locals.role,req.body.baseHead,req.body.changes)}));

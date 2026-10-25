@@ -33,6 +33,7 @@ try{
  const call=async(path:string,role='application',method='GET',body?:unknown,expected=200)=>{const response=await fetch(base+'/api'+path,{method,headers:{'content-type':'application/json','x-workbench-role':role},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(240000)});const value=await response.json() as any;assert.equal(response.status,expected,JSON.stringify(value));return value;};
  const template=(await call('/projects/moa-platform','platform')).project;
  await call('/projects/moa-platform/files','platform','PUT',{baseHead:template.head,changes:{'delivery-notes.md':'固定本机 MOA 范式；本批验证独立交付，不冒充真实编码生成。\n'}});
+ assert.equal((await call('/projects/moa-platform/checks','platform','POST',{},201)).report.passed,true);
  const release=(await call('/templates/moa-platform/releases','platform','POST',{version:'1.0.0'},201)).release;
  const application=(await call('/projects','application','POST',{releaseId:release.id,name:'独立交付验证应用'},201)).project;
  assert.deepEqual((await call('/projects/'+application.id)).definition.skills,[]);

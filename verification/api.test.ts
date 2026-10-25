@@ -30,6 +30,8 @@ test('HTTP workbench persists real role/template/application revisions and block
   assert.equal((await call('/api/projects/moa-platform')).status,403);
   const template=(await call('/api/projects/moa-platform','platform')).body.project;
   const forbidden=await call('/api/templates/moa-platform/releases','application','POST',{version:'1.0.0'});assert.equal(forbidden.status,403);
+  assert.equal((await call('/api/templates/moa-platform/releases','platform','POST',{version:'1.0.0'})).status,409);
+  assert.equal((await call('/api/projects/moa-platform/checks','platform','POST',{})).body.report.passed,true);
   const publish=await call('/api/templates/moa-platform/releases','platform','POST',{version:'1.0.0'});assert.equal(publish.status,201);
   const releases=await call('/api/templates');assert.equal(releases.body.releases.length,1);
   const created=await call('/api/projects','application','POST',{releaseId:publish.body.release.id,name:'新的福利应用'});assert.equal(created.status,201);

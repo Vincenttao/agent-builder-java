@@ -14,7 +14,7 @@ export function templateMetadata(files:Files,commit:string){
  return {family,title:typeof manifest.title==='string'?manifest.title:family==='deepagent'?'DeepAgent 独立业务模板':'MOA 开发模板',commit,
   purpose:family==='deepagent'?'处理独立业务目标，装配业务 Skill 和文件工具，交付材料或文件。':'处理业务请求，装配业务 Skill 与 Agent，支持两层任务转交和续办。',
   openCapabilities:manifest.openCapabilities??{skills:true,agent:true,handoff:true,execution:['SCRIPT','A2A'],note:'公共接线由平台维护；HTTP/MCP新增接入先作为待接线草稿。'},
-  editable:['application.json','instructions.md','README.md','skills/','adapters/','tests/','src/main/java/com/openjiuwen/workbench/app/'],
+  editable:Array.isArray(manifest.applicationEditablePrefixes)?manifest.applicationEditablePrefixes.filter((p:unknown)=>typeof p==='string'):['application.json','instructions.md','README.md','skills/','adapters/','tests/','src/main/java/com/openjiuwen/workbench/app/'],
   prerequisites:family==='deepagent'?['Node.js 22+','Java 17+','Maven','Core Maven依赖','外部模型配置']:['Node.js 22+','Java 17+','Maven','Python 3','Core/Runtime Maven依赖','外部模型配置','按业务准备服务连接'],
   dependencies,developmentSkills,digest:createHash('sha256').update(JSON.stringify(Object.entries(files).sort(([a],[b])=>a.localeCompare(b)))).digest('hex')};
 }
@@ -39,4 +39,16 @@ export function projectJourney(store:ProjectStore,reviews:ReviewManager,jobs:Cod
   check:check?{id:check.id,passed:check.passed,head:check.head}:null,previousChecks:reports.filter(r=>r.head!==project.head).length,
   candidate:candidate?{id:candidate.id,head:candidate.head}:null,run:run?{id:run.id,status:run.status,engine:run.engine,head:run.head}:null,
   export:delivery?{id:delivery.id,head:delivery.head}:null};
+}
+
+/** Compare each saved asset with its fixed source; a later template is never consulted. */
+export function assetOrigins(store:ProjectStore,id:string,role:Role){
+ const p=store.get(id,role),current=store.snapshot(id,p.head);const r=p.sourceReleaseId?store.release(p.sourceReleaseId):null,baseline=r?store.snapshot(r.projectId,r.commit):current;
+ const parse=(files:Files,path:string,fallback:any)=>{try{return JSON.parse(files[path]??'');}catch{return fallback;}};
+ const d=parse(current,'application.json',{}),b=parse(baseline,'application.json',{}),origins:Record<string,string>={};
+ const label=(exists:boolean,same:boolean)=>p.kind==='template'?'模板默认能力':!exists?'应用新增':same?'模板提供 · 未覆盖':'应用覆盖 · 来源模板 '+r?.version;
+ for(const s of d.skills??[]){const old=b.skills?.find((x:any)=>x.id===s.id);origins['skill:'+s.id]=label(Boolean(old),JSON.stringify(old)===JSON.stringify(s)&&baseline[s.file]===current[s.file]);}
+ for(const cap of d.capabilities??[]){const old=b.capabilities?.find((x:any)=>x.id===cap.id);origins[cap.type+':'+cap.id]=label(Boolean(old),JSON.stringify(old)===JSON.stringify(cap));}
+ const ops=parse(current,'adapters/operations.json',{}),original=parse(baseline,'adapters/operations.json',{});if(ops&&typeof ops==='object')for(const [name,op]of Object.entries(ops))origins['operation:'+name]=label(Boolean(original?.[name]),JSON.stringify(original?.[name])===JSON.stringify(op));
+ return origins;
 }

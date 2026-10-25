@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync,writeFileSync,mkdirSync} from 'node:fs';
@@ -7,7 +8,7 @@ import {ProjectStore,WorkbenchError} from '../workbench-server/projects.js';
 import {readTree} from '../workbench-server/app.js';
 import {CodingJobs,type CodingEngine} from '../workbench-server/coding.js';
 function fixture(t:test.TestContext,engine:CodingEngine,omitCacheIgnore=false){
- const root=mkdtempSync(join(tmpdir(),'workbench-coding-'));const store=new ProjectStore(root);const files=readTree('templates/moa');if(omitCacheIgnore)delete files['.opencode/.gitignore'];const template=store.seedTemplate(files);const release=store.publish(template.id,'platform','1.0.0');const a=store.createApplication(release.id,'应用','application');const jobs=new CodingJobs(store,engine);
+ const root=mkdtempSync(join(tmpdir(),'workbench-coding-'));const store=new ProjectStore(root);const files=readTree('templates/moa');if(omitCacheIgnore)delete files['.opencode/.gitignore'];const template=store.seedTemplate(files);const release=checkedRelease(store,template.id,'platform','1.0.0');const a=store.createApplication(release.id,'应用','application');const jobs=new CodingJobs(store,engine);
  t.after(()=>{store.close();rmSync(root,{recursive:true,force:true});});return {store,jobs,a};
 }
 const engine=(change:(dir:string)=>void):CodingEngine=>({async run(input){change(input.directory);return {sessionId:'real-adapter-fixture',model:'deepseek-flash',summary:'修改业务指令',evidence:[{tool:'skill',status:'completed',input:{name:'moa-application-development'}}]};}});
@@ -87,5 +88,5 @@ test('noncanonical cache ignore cannot bypass application path guards',async t=>
 });
 
 test('an existing template ignore remains protected even when overwritten with canonical cache text',async t=>{
- const canonical='node_modules\npackage.json\npackage-lock.json\nbun.lock\n.gitignore';const {store,jobs,a}=fixture(t,engine(dir=>{writeFileSync(join(dir,'.opencode/.gitignore'),canonical);writeFileSync(join(dir,'instructions.md'),'业务修改');}));const template=store.get('moa-platform','platform');store.save(template.id,'platform',template.head,{'.opencode/.gitignore':'platform-owned-rule\n'});const release=store.publish(template.id,'platform','2.0.0'),p=store.createApplication(release.id,'保留模板规则','application');const job=await jobs.start(p.id,'application','修改');const result=await settled(jobs,job.id);assert.equal(result.status,'failed');assert.equal(result.error?.code,'FORBIDDEN_PATH');assert.equal(store.files(p.id,'application')['.opencode/.gitignore'],'platform-owned-rule\n');
+ const canonical='node_modules\npackage.json\npackage-lock.json\nbun.lock\n.gitignore';const {store,jobs,a}=fixture(t,engine(dir=>{writeFileSync(join(dir,'.opencode/.gitignore'),canonical);writeFileSync(join(dir,'instructions.md'),'业务修改');}));const template=store.get('moa-platform','platform');store.save(template.id,'platform',template.head,{'.opencode/.gitignore':'platform-owned-rule\n'});const release=checkedRelease(store,template.id,'platform','2.0.0'),p=store.createApplication(release.id,'保留模板规则','application');const job=await jobs.start(p.id,'application','修改');const result=await settled(jobs,job.id);assert.equal(result.status,'failed');assert.equal(result.error?.code,'FORBIDDEN_PATH');assert.equal(store.files(p.id,'application')['.opencode/.gitignore'],'platform-owned-rule\n');
 });

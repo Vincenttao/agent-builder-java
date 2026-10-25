@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -9,7 +10,7 @@ import {createWorkbench} from '../workbench-server/app.js';
 test('desktop journey explains fixed templates, carries goals to Coding and presents honest states for both paradigms',async t=>{
  const root=mkdtempSync(join(tmpdir(),'pc-journey-'));let generated=0;
  const wb=createWorkbench({root,codingEngine:{async run(){generated++;throw Error('This review must not generate');}}});
- wb.store.publish('moa-platform','platform','1.0.0');const deep=wb.store.publish('deepagent-platform','platform','1.1.1');
+ checkedRelease(wb.store,'moa-platform','platform','1.0.0');const deep=checkedRelease(wb.store,'deepagent-platform','platform','1.1.1');
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));const addr=server.address();assert.ok(addr&&typeof addr!=='string');
  const browser=await chromium.launch({headless:true});t.after(async()=>{await browser.close();await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
  const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(8000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));

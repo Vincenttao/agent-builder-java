@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync, rmSync, writeFileSync, symlinkSync} from 'node:fs';
@@ -22,12 +23,12 @@ function error(code:string) {return (e:unknown)=>e instanceof WorkbenchError && 
 test('only a platform developer publishes an immutable template version',t=>{
   const {store,project}=fixture(t);
   assert.throws(()=>store.publish(project.id,'application','1.0.0'),error('FORBIDDEN'));
-  const first=store.publish(project.id,'platform','1.0.0');
+  const first=checkedRelease(store,project.id,'platform','1.0.0');
   assert.equal(first.commit,project.head);
   assert.throws(()=>store.publish(project.id,'platform','1.0.0'),error('RELEASE_EXISTS'));
   assert.throws(()=>store.publish(project.id,'platform','1.1.0'),error('ALREADY_PUBLISHED'));
   const changed=store.save(project.id,'platform',project.head,{'instructions.md':'模板 v2 指导'});
-  const second=store.publish(project.id,'platform','1.1.0');
+  const second=checkedRelease(store,project.id,'platform','1.1.0');
   assert.equal(second.commit,changed.head);
   const oldApp=store.createApplication(first.id,'旧应用','application');
   const newApp=store.createApplication(second.id,'新应用','application');
@@ -37,7 +38,7 @@ test('only a platform developer publishes an immutable template version',t=>{
 
 test('new application starts empty from MOA and data stays isolated and persistent',t=>{
   const {store,root,project}=fixture(t);
-  const release=store.publish(project.id,'platform','1.0.0');
+  const release=checkedRelease(store,project.id,'platform','1.0.0');
   assert.throws(()=>store.createApplication(release.id,'错身份','platform'),error('FORBIDDEN'));
   const a=store.createApplication(release.id,'员工助手','application');
   const b=store.createApplication(release.id,'第二应用','application');
@@ -56,7 +57,7 @@ test('new application starts empty from MOA and data stays isolated and persiste
 
 test('file writes cannot escape project, alter dev skills or break config; failed saves preserve head',t=>{
   const {store,root,project}=fixture(t);
-  const release=store.publish(project.id,'platform','1.0.0');
+  const release=checkedRelease(store,project.id,'platform','1.0.0');
   const a=store.createApplication(release.id,'应用','application');
   for(const p of ['../outside.txt','/tmp/outside.txt','.git/config','.env.local','x/../../escape.txt','x\\escape','instructions.md\u0000']) {
     assert.throws(()=>store.save(a.id,'application',a.head,{[p]:'bad'}),error('INVALID_PATH'));
@@ -73,7 +74,7 @@ test('file writes cannot escape project, alter dev skills or break config; faile
 
 test('platform can diagnose applications but cannot silently edit their content',t=>{
   const {store,project}=fixture(t);
-  const release=store.publish(project.id,'platform','1.0.0');
+  const release=checkedRelease(store,project.id,'platform','1.0.0');
   const a=store.createApplication(release.id,'应用','application');
   assert.equal(store.get(a.id,'platform').id,a.id);
   assert.throws(()=>store.save(a.id,'platform',a.head,{'instructions.md':'覆盖用户内容'}),error('FORBIDDEN'));
@@ -82,7 +83,7 @@ test('platform can diagnose applications but cannot silently edit their content'
 
 test('application edits stay inside template-opened business files',t=>{
   const {store,project}=fixture(t);
-  const release=store.publish(project.id,'platform','1.0.0');
+  const release=checkedRelease(store,project.id,'platform','1.0.0');
   const a=store.createApplication(release.id,'应用','application');
   for(const name of ['pom.xml','src/main/java/com/openjiuwen/workbench/RuntimeServer.java','.opencode/skills/moa-application-development/SKILL.md']){
     assert.throws(()=>store.save(a.id,'application',a.head,{[name]:'replace fixed infrastructure'}),error('FORBIDDEN_PATH'));

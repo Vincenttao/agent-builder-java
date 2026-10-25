@@ -45,6 +45,7 @@ try{
   evidence.previousExport=record;evidence.repackagedOriginalBuild=reused.id!==record.id;record=reused;
   evidence.reusedOriginalBuild=true;evidence.exactInputHashesMatched=true;console.log('Reusing hash-matched original build without Maven rebuild:',run.id);
  }else{
+  assert.equal((await call('/projects/moa-platform/checks','platform','POST',{},201)).report.passed,true);
   const release=(await call('/templates/moa-platform/releases','platform','POST',{version:'1.0.0'},201)).release;
   const created=(await call('/projects','application','POST',{releaseId:release.id,name:'本机独立包验证'},201)).project;assert.deepEqual((await call('/projects/'+created.id)).definition.skills,[]);
   const saved=(await call('/projects/'+created.id+'/files','application','PUT',{baseHead:created.head,changes:assets})).project;

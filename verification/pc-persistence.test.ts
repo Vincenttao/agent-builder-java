@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +11,7 @@ import {createWorkbench,readTree} from '../workbench-server/app.js';
 test('same-build refresh restores per-project drafts, file, role and unsent coding target; stale drafts cannot overwrite',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-pc-persistence-'));let generations=0;
  const wb=createWorkbench({root,templateFiles:readTree(resolve('templates/moa')),codingEngine:{kind:'disabled-persistence-fixture',async run(){generations++;throw Error('must not generate');}}});
- const release=wb.store.publish('moa-platform','platform','1.0.0'),a=wb.store.createApplication(release.id,'应用 A','application'),b=wb.store.createApplication(release.id,'应用 B','application');const original=wb.store.files(a.id,'application')['instructions.md'];
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0'),a=wb.store.createApplication(release.id,'应用 A','application'),b=wb.store.createApplication(release.id,'应用 B','application');const original=wb.store.files(a.id,'application')['instructions.md'];
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));const browser=await chromium.launch({headless:true});
  t.after(async()=>{await browser.close();await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
  const address=server.address();assert.ok(address&&typeof address!=='string');const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));

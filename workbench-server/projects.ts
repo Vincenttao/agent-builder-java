@@ -1,3 +1,4 @@
+import {assemblyContract,contractIssues} from './contracts.js';
 import Database from 'better-sqlite3';
 import {execFileSync} from 'node:child_process';
 import {randomUUID, createHash} from 'node:crypto';
@@ -8,7 +9,7 @@ import {Ajv} from 'ajv';
 export type Role='platform'|'application';
 export type Files=Record<string,string>;
 export type Project={id:string;kind:'template'|'application';name:string;head:string;sourceReleaseId:string|null;createdAt:string};
-export type Release={id:string;projectId:string;version:string;commit:string;digest:string;createdAt:string};
+export type Release={id:string;projectId:string;version:string;commit:string;digest:string;createdAt:string;checkId?:string|null};
 export type Definition={schemaVersion:1;name:string;description:string;scope:{own:string[];delegated:string[];outside:string[]};skills:{id:string;file:string;operations:string[]}[];capabilities:Record<string,unknown>[];handoff:{enabled:boolean;target:string;unfinished:'ask'|'retain'|'discard';resume:'prompt'|'auto';maxTasks:2};connections:Record<string,string>;mapping:{balancePath:string}};
 export class WorkbenchError extends Error {
   constructor(public code:string, message:string, public status=400){super(message);}
@@ -46,6 +47,9 @@ export class ProjectStore{
   readonly workspaceId:string;
   private readonly lockToken=randomUUID();
   private lockFile:string;
+  private snapshotCache=new Map<string,{files:Files;bytes:number}>();
+  private snapshotCacheBytes=0;
+  private contracts=new Map<string,ReturnType<typeof assemblyContract>>();
   constructor(root:string){
     this.root=resolve(root);mkdirSync(join(this.root,'projects'),{recursive:true});mkdirSync(join(this.root,'changes'),{recursive:true});
     this.lockFile=join(this.root,'workbench.lock');
@@ -61,6 +65,8 @@ export class ProjectStore{
     this.db=new Database(join(this.root,'index.sqlite'));this.db.pragma('journal_mode = WAL');this.db.pragma('foreign_keys = ON');
     this.db.exec(`CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY,kind TEXT NOT NULL,name TEXT NOT NULL,head TEXT NOT NULL,sourceReleaseId TEXT,createdAt TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS releases(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,version TEXT NOT NULL,"commit" TEXT NOT NULL,digest TEXT NOT NULL,createdAt TEXT NOT NULL,UNIQUE(projectId,version),UNIQUE(projectId,"commit"));`);
+    if(!(this.db.prepare('PRAGMA table_info(releases)').all() as {name:string}[]).some(c=>c.name==='checkId'))this.db.exec('ALTER TABLE releases ADD COLUMN checkId TEXT');
+    this.db.exec('CREATE TABLE IF NOT EXISTS design_checks(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,record TEXT NOT NULL)');
     this.db.exec('CREATE TABLE IF NOT EXISTS workbench_metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL)');
     this.db.prepare('INSERT OR IGNORE INTO workbench_metadata VALUES(?,?)').run('workspace-id',randomUUID());
     this.workspaceId=(this.db.prepare('SELECT value FROM workbench_metadata WHERE key=?').get('workspace-id') as {value:string}).value;
@@ -97,14 +103,17 @@ export class ProjectStore{
       }
     };walk(root);return files;
   }
+  contract(id:string,role:Role){const p=this.get(id,role);const key=p.sourceReleaseId??p.id+':'+p.head;const cached=this.contracts.get(key);if(cached)return cached;const source=p.sourceReleaseId?this.release(p.sourceReleaseId):null;const value=assemblyContract(source?this.snapshot(source.projectId,source.commit):this.snapshot(id,p.head));if(this.contracts.size>=128)this.contracts.delete(this.contracts.keys().next().value!);this.contracts.set(key,value);return value;}
+  canEdit(id:string,role:Role,name:string){const p=this.get(id,role);if(p.kind==='template')return role==='platform';if(role!=='application'||!applicationEditable(name))return false;const prefixes=this.contract(id,role).editablePrefixes;return !prefixes||prefixes.some((prefix:string)=>prefix.endsWith('/')?name.startsWith(prefix):name===prefix);}
   definition(id:string,role:Role){return validateFiles(this.files(id,role));}
   snapshot(id:string,commit:string):Files{
     const p=this.get(id,'platform');if(!/^[a-f0-9]{40}$/.test(commit))fail('REVISION_CONFLICT','提交无效',409);
     // Only commits reachable from this project may supply content.
     try{this.git(p.id,['merge-base','--is-ancestor',commit,'HEAD']);}catch{fail('REVISION_CONFLICT','提交不属于当前工程',409);}
+    const cacheKey=id+':'+commit,cached=this.snapshotCache.get(cacheKey);if(cached){this.snapshotCache.delete(cacheKey);this.snapshotCache.set(cacheKey,cached);return {...cached.files};}
     const names=this.git(id,['ls-tree','-r','--name-only','-z',commit]).split('\0').filter(Boolean);const files:Files={};
     for(const name of names){validatePath(name);const mode=this.git(id,['ls-tree',commit,'--',name]).split(' ')[0];if(mode==='120000')fail('INVALID_PATH','版本包含符号链接');files[name]=execFileSync('git',['-C',this.path(id),'show',`${commit}:${name}`],{encoding:'utf8',stdio:['ignore','pipe','pipe'],maxBuffer:3_000_000,timeout:15_000});}
-    validateFiles(files);return files;
+    validateFiles(files);const bytes=Object.entries(files).reduce((total,[path,value])=>total+Buffer.byteLength(path)+Buffer.byteLength(value),0);if(bytes<=16_000_000){while(this.snapshotCache.size&&(this.snapshotCacheBytes+bytes>16_000_000||this.snapshotCache.size>=64)){const oldest=this.snapshotCache.keys().next().value!,entry=this.snapshotCache.get(oldest)!;this.snapshotCacheBytes-=entry.bytes;this.snapshotCache.delete(oldest);}this.snapshotCache.set(cacheKey,{files:{...files},bytes});this.snapshotCacheBytes+=bytes;}return files;
   }
   save(id:string,role:Role,baseHead:string,changes:Record<string,string|null>):Project{
     const p=this.get(id,role);if((p.kind==='template')!==(role==='platform'))fail('FORBIDDEN','当前身份不能修改该工程',403);
@@ -112,11 +121,12 @@ export class ProjectStore{
     if(!changes||!Object.keys(changes).length)fail('EMPTY_CHANGE','没有待保存变更');
     const files=this.files(id,role);
     for(const [name,content]of Object.entries(changes)){
-      validatePath(name);if(role==='application'&&!applicationEditable(name))fail('FORBIDDEN_PATH','此文件是模板固定部分；请在开放的配置、Skill 或适配代码中修改',403);
+      validatePath(name);if(role==='application'&&!this.canEdit(id,role,name))fail('FORBIDDEN_PATH','此文件是模板固定部分；请在开放的配置、Skill 或适配代码中修改',403);
       if(content!==null&&typeof content!=='string')fail('INVALID_CONTENT','文件内容必须是文本');
       if(content===null)delete files[name];else files[name]=content;
     }
     const spec=validateFiles(files);
+    if(p.kind==='application'&&p.sourceReleaseId){const r=this.release(p.sourceReleaseId);const problems=contractIssues(files,this.snapshot(r.projectId,r.commit));if(problems.length)fail('ASSEMBLY_CONTRACT',problems.join('；'));}
     if(this.git(id,['status','--porcelain']))fail('UNSAVED_EXTERNAL_CHANGE','存在工作台以外修改，请先核对',409);
     const worktree=join(this.root,'changes',randomUUID());let commit:string|undefined;
     const run=(args:string[])=>execFileSync('git',['-C',worktree,...args],{encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:15_000}).trim();
@@ -138,9 +148,12 @@ export class ProjectStore{
     if(this.db.prepare('SELECT 1 FROM releases WHERE projectId=? AND version=?').get(id,version))fail('RELEASE_EXISTS','版本号已经发行',409);
     if(this.db.prepare('SELECT 1 FROM releases WHERE projectId=? AND "commit"=?').get(id,p.head))fail('ALREADY_PUBLISHED','同一工程修订不能重复发行',409);
     if(this.git(id,['status','--porcelain']))fail('UNSAVED_EXTERNAL_CHANGE','模板含未保存文件',409);
+    const inspection=this.db.prepare('SELECT id,record FROM design_checks WHERE projectId=? ORDER BY rowid DESC').all(id) as {id:string;record:string}[];
+    const check=inspection.find(r=>JSON.parse(r.record).head===p.head);if(!check||!JSON.parse(check.record).passed)fail('CHECK_REQUIRED','发行前须对当前保存版本完成结构检查，失败或旧版本报告不能发行',409);
+    const problems=contractIssues(this.snapshot(id,p.head),this.snapshot(id,p.head));if(problems.length)fail('ASSEMBLY_CONTRACT',problems.join('；'));
     const files=this.snapshot(id,p.head);const digest=createHash('sha256').update(JSON.stringify(Object.entries(files).sort(([a],[b])=>a.localeCompare(b)))).digest('hex');
-    const release:Release={id:randomUUID(),projectId:id,version,commit:p.head,digest,createdAt:new Date().toISOString()};
-    this.db.prepare('INSERT INTO releases VALUES(@id,@projectId,@version,@commit,@digest,@createdAt)').run(release);return release;
+    const release:Release={id:randomUUID(),projectId:id,version,commit:p.head,digest,createdAt:new Date().toISOString(),checkId:check.id};
+    this.db.prepare('INSERT INTO releases(id,projectId,version,"commit",digest,createdAt,checkId) VALUES(@id,@projectId,@version,@commit,@digest,@createdAt,@checkId)').run(release);return release;
   }
   createApplication(releaseId:string,name:string,role:Role,goal:string=''):Project{
     if(role!=='application')fail('FORBIDDEN','请切换到应用开发者创建应用',403);if(!name?.trim()||name.length>120)fail('INVALID_NAME','请输入 1～120 字的应用名称');

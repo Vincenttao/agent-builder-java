@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,7 +27,7 @@ test('PC Coding reviews fixture changes, protects drafts/stale heads, answers or
   return {sessionId:'pc-contract-fixture-'+calls,model:'contract-fixture',summary:'测试引擎差异，非真实模型生成。',evidence:[{tool:'skill',status:'completed',input:{name:input.skill}}]};
  },async answer(_directory,id,answers){answerCalls++;assert.equal(id,'question-one');assert.ok(answer);answer(answers);}};
  const wb=createWorkbench({root,templateFiles:readTree(resolve('templates/moa')),codingEngine:engine});
- const release=wb.store.publish('moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'编码测试应用','application');
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'编码测试应用','application');
  const original=wb.store.files(app.id,'application')['instructions.md'];
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));const browser=await chromium.launch({headless:true});
  t.after(async()=>{await browser.close();await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});

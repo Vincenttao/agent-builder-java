@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,writeFileSync,chmodSync,rmSync} from 'node:fs';
@@ -29,7 +30,7 @@ test('reconstructed manager adopts the original live process and blocks a second
  const adapter:RunEngine={kind:'process-fixture',async build(input){const jar=join(input.directory,'fixture.jar');writeFileSync(jar,'process fixture');return {jar};},start:input=>native.start(input)};
  const first=new RunManager(store,adapter);let next:RunManager|undefined;
  t.after(async()=>{if(next)await next.close();await first.close();store.close();fixture.cleanup();});
- const template=store.seedTemplate({...readTree('templates/moa'),'pom.xml':'fixture','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'fixture'});const release=store.publish(template.id,'platform','1.0.0');const app=store.createApplication(release.id,'应用','application');
+ const template=store.seedTemplate({...readTree('templates/moa'),'pom.xml':'fixture','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'fixture'});const release=checkedRelease(store,template.id,'platform','1.0.0');const app=store.createApplication(release.id,'应用','application');
  const created=await first.start(app.id,'application',app.head);let running=first.get(created.id,'application');
  for(let n=0;n<200&&running.status!=='running';n++){await new Promise(r=>setTimeout(r,10));running=first.get(created.id,'application');}assert.equal(running.status,'running');assert.ok(running.process);
  next=new RunManager(store,adapter);await next.ready;assert.equal(next.get(created.id,'application').process?.pid,running.process.pid);assert.equal(next.get(created.id,'application').status,'running');

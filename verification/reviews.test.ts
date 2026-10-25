@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync } from 'node:fs';
@@ -9,7 +10,7 @@ import { readTree } from '../workbench-server/files.js';
 test('saved revision checks and technical candidates remain immutable and become stale after edits', t => {
     const root = mkdtempSync(join(tmpdir(), 'workbench-review-')), store = new ProjectStore(root);
     t.after(() => { store.close(); rmSync(root, { recursive: true, force: true }); });
-    const template = store.seedTemplate(readTree('templates/moa')), release = store.publish(template.id, 'platform', '1.0.0'), p = store.createApplication(release.id, '检查应用', 'application');
+    const template = store.seedTemplate(readTree('templates/moa')), release = checkedRelease(store,template.id, 'platform', '1.0.0'), p = store.createApplication(release.id, '检查应用', 'application');
     const reviews = new ReviewManager(store);
     const failed = reviews.check(p.id, 'application');
     assert.equal(failed.passed, false);
@@ -31,7 +32,7 @@ test('saved revision checks and technical candidates remain immutable and become
 test('unsupported assembly drafts and invalid references block checks; guidance/routing examples are validated', t => {
     const root = mkdtempSync(join(tmpdir(), 'workbench-review-')), store = new ProjectStore(root);
     t.after(() => { store.close(); rmSync(root, { recursive: true, force: true }); });
-    const template = store.seedTemplate(readTree('templates/moa')), release = store.publish(template.id, 'platform', '1.0.0'), p = store.createApplication(release.id, '检查应用', 'application'), files = readTree('examples/idou');
+    const template = store.seedTemplate(readTree('templates/moa')), release = checkedRelease(store,template.id, 'platform', '1.0.0'), p = store.createApplication(release.id, '检查应用', 'application'), files = readTree('examples/idou');
     const d = JSON.parse(files['application.json']);
     d.capabilities.push({ id: 'new-api', type: 'tool', status: 'draft', execution: 'HTTP' });
     files['application.json'] = JSON.stringify(d);
@@ -44,5 +45,5 @@ test('unsupported assembly drafts and invalid references block checks; guidance/
     assert.ok(manager.activity(p.id, 'platform').some((i: any) => i.kind === 'check'));
 });
 test('malformed operation catalogs, ambiguous examples and invalid diagrams return failed reports without executing scripts',t=>{
- const root=mkdtempSync(join(tmpdir(),'workbench-review-invalid-')),store=new ProjectStore(root);t.after(()=>{store.close();rmSync(root,{recursive:true,force:true});});const template=store.seedTemplate(readTree('templates/moa')),release=store.publish(template.id,'platform','1.0.0'),p=store.createApplication(release.id,'异常配置','application'),files=readTree('examples/idou');files['adapters/operations.json']='null';files['skills/benefits/flow.json']=JSON.stringify({designOnly:true,nodes:[{id:'one',label:'错误引用',operation:'missing',row:0,column:1}],edges:[{from:'one',to:'missing'}]});files['tests/routing-examples.json']=JSON.stringify({cases:[{query:'相同请求',action:'CLARIFY'},{query:'相同请求',action:'CONTINUE'}]});files['skills/benefits/invalid.py']='def broken(:\n';store.save(p.id,'application',p.head,files);const manager=new ReviewManager(store),report=manager.check(p.id,'application');assert.equal(report.passed,false);for(const code of ['CATALOG','FLOW_benefits','ROUTING_EXAMPLES','PYTHON_SYNTAX'])assert.ok(report.items.some(i=>i.code===code&&!i.passed),code);assert.throws(()=>manager.candidate(p.id,'application',report.id));
+ const root=mkdtempSync(join(tmpdir(),'workbench-review-invalid-')),store=new ProjectStore(root);t.after(()=>{store.close();rmSync(root,{recursive:true,force:true});});const template=store.seedTemplate(readTree('templates/moa')),release=checkedRelease(store,template.id,'platform','1.0.0'),p=store.createApplication(release.id,'异常配置','application'),files=readTree('examples/idou');files['adapters/operations.json']='null';files['skills/benefits/flow.json']=JSON.stringify({designOnly:true,nodes:[{id:'one',label:'错误引用',operation:'missing',row:0,column:1}],edges:[{from:'one',to:'missing'}]});files['tests/routing-examples.json']=JSON.stringify({cases:[{query:'相同请求',action:'CLARIFY'},{query:'相同请求',action:'CONTINUE'}]});files['skills/benefits/invalid.py']='def broken(:\n';store.save(p.id,'application',p.head,files);const manager=new ReviewManager(store),report=manager.check(p.id,'application');assert.equal(report.passed,false);for(const code of ['CATALOG','FLOW_benefits','ROUTING_EXAMPLES','PYTHON_SYNTAX'])assert.ok(report.items.some(i=>i.code===code&&!i.passed),code);assert.throws(()=>manager.candidate(p.id,'application',report.id));
 });

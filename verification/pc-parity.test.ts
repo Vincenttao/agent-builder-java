@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium } from '@playwright/test';
@@ -8,7 +9,7 @@ import { createWorkbench, readTree } from '../workbench-server/app.js';
 import { navigate } from './pc-navigation.js';
 test('restored desktop design: interactive graph, saved previews, capabilities, checks, candidates and platform guidance', async (t) => {
     const root = mkdtempSync(join(tmpdir(), 'workbench-parity-')), wb = createWorkbench({ root, templateFiles: readTree('templates/moa') });
-    const release = wb.store.publish('moa-platform', 'platform', '1.0.0'), p = wb.store.createApplication(release.id, '综合业务演示', 'application');
+    const release = checkedRelease(wb.store,'moa-platform', 'platform', '1.0.0'), p = wb.store.createApplication(release.id, '综合业务演示', 'application');
     const files = readTree('examples/commerce-wealth');
     wb.store.save(p.id, 'application', p.head, files);
     const server = wb.app.listen(0, '127.0.0.1');

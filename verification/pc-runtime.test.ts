@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,7 +12,7 @@ import {pcRunFixture} from './fixtures/pc-run-engine.js';
 test('PC runtime preserves original task confirmation, A/B recovery, unknown result and read-only playback',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-pc-runtime-')),fixture=pcRunFixture();
  const wb=createWorkbench({root,runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
- const release=wb.store.publish('moa-platform','platform','1.0.0');const project=wb.store.createApplication(release.id,'运行测试应用','application');
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0');const project=wb.store.createApplication(release.id,'运行测试应用','application');
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));const browser=await chromium.launch({headless:true});
  t.after(async()=>{await browser.close();await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
  const address=server.address();assert.ok(address&&typeof address!=='string');const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);let runtimeRequests=0;page.on('request',r=>{if(/\/api\/runs(?:\/|$)/.test(r.url()))runtimeRequests++;});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));

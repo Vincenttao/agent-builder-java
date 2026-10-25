@@ -18,6 +18,7 @@ try{
  const mockAddress=await Promise.race([once(mock,'message').then(([v])=>v as {port:number}),once(mock,'exit').then(()=>{throw new Error('Mock exited');}),new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error('Mock startup timeout')),10000).unref())]);const mockBase=`http://127.0.0.1:${mockAddress.port}`;mockOrigin=mockBase;
  const template=await call('/api/projects/moa-platform','platform');
  const updated=await call('/api/projects/moa-platform/files','platform','PUT',{baseHead:template.project.head,changes:{'RUNTIME.md':template.files['RUNTIME.md']+'\n平台发行：本机双层 MOA 范式。\n'}});
+ assert.equal((await call('/api/projects/moa-platform/checks','platform','POST',{},201)).report.passed,true);
  const release=(await call('/api/templates/moa-platform/releases','platform','POST',{version:'1.0.0'},201)).release;
  const created=(await call('/api/projects','application','POST',{releaseId:release.id,name:'工作台运行联调应用'},201)).project;
  const empty=await call('/api/projects/'+created.id);assert.deepEqual(empty.definition.skills,[]);assert.deepEqual(empty.definition.scope.own,[]);

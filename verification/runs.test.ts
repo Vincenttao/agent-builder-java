@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync,readFileSync,writeFileSync,existsSync} from 'node:fs';
@@ -36,7 +37,7 @@ function engine(options:{fail?:boolean;wait?:boolean;loseMessage?:boolean}={}):R
  };
 }
 function fixture(t:test.TestContext,adapter=engine()){
- const root=mkdtempSync(join(tmpdir(),'workbench-runs-'));const store=new ProjectStore(root);const template=store.seedTemplate({...readTree('templates/moa'),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'fixture'});const release=store.publish(template.id,'platform','1.0.0');const app=store.createApplication(release.id,'应用','application');const runs=new RunManager(store,adapter);
+ const root=mkdtempSync(join(tmpdir(),'workbench-runs-'));const store=new ProjectStore(root);const template=store.seedTemplate({...readTree('templates/moa'),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'fixture'});const release=checkedRelease(store,template.id,'platform','1.0.0');const app=store.createApplication(release.id,'应用','application');const runs=new RunManager(store,adapter);
  t.after(async()=>{await runs.close();store.close();rmSync(root,{recursive:true,force:true});});return {root,store,runs,app,template};
 }
 async function settled(runs:RunManager,id:string){for(let n=0;n<200;n++){const run=runs.get(id,'application');if(!['building','starting','stopping'].includes(run.status))return run;await new Promise(r=>setTimeout(r,10));}throw new Error('run did not settle');}
@@ -76,6 +77,7 @@ test('HTTP runtime routes enforce owner role and preserve read-only stopped conv
  t.after(async()=>{await workbench.close();await new Promise<void>(r=>server.close(()=>r()));workbench.store.close();rmSync(root,{recursive:true,force:true});});
  const address=server.address();assert.ok(address&&typeof address!=='string');const base=`http://127.0.0.1:${address.port}`;
  const call=async(path:string,role='application',method='GET',body?:unknown)=>{const response=await fetch(base+path,{method,headers:{'content-type':'application/json','x-workbench-role':role},body:body===undefined?undefined:JSON.stringify(body)});return {status:response.status,body:response.status===204?null:await response.json() as any};};
+ assert.equal((await call('/api/projects/moa-platform/checks','platform','POST',{})).body.report.passed,true);
  const release=(await call('/api/templates/moa-platform/releases','platform','POST',{version:'1.0.0'})).body.release;
  const project=(await call('/api/projects','application','POST',{releaseId:release.id,name:'应用'})).body.project;
  const created=await call('/api/projects/'+project.id+'/runs','application','POST',{baseHead:project.head});assert.equal(created.status,202);const run=await settled(workbench.runs,created.body.run.id);assert.equal(run.status,'running');

@@ -1,0 +1,16 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {mkdtempSync,rmSync} from 'node:fs';import {tmpdir} from 'node:os';import {join} from 'node:path';
+import {ProjectStore,WorkbenchError} from '../workbench-server/projects.js';import {ReviewManager} from '../workbench-server/reviews.js';import {readTree} from '../workbench-server/files.js';
+test('release gate rejects missing, failed and stale reports and binds the passing report',t=>{
+ const root=mkdtempSync(join(tmpdir(),'release-gate-')),store=new ProjectStore(root);t.after(()=>{store.close();rmSync(root,{recursive:true,force:true});});const p=store.seedTemplate(readTree('templates/moa')),reviews=new ReviewManager(store);
+ const rejected=(code:string)=>(e:unknown)=>e instanceof WorkbenchError&&e.code===code;
+ assert.throws(()=>store.publish(p.id,'platform','1.0.0'),rejected('CHECK_REQUIRED'));
+ const report=reviews.check(p.id,'platform');assert.equal(report.passed,true);const release=store.publish(p.id,'platform','1.0.0');assert.equal(release.checkId,report.id);const snapshot=store.snapshot(p.id,release.commit),original=snapshot['instructions.md'];snapshot['instructions.md']='修改调用者副本';assert.equal(store.snapshot(p.id,release.commit)['instructions.md'],original);
+ const changed=store.save(p.id,'platform',p.head,{'instructions.md':'新版本必须重新检查'});assert.throws(()=>store.publish(p.id,'platform','1.1.0'),rejected('CHECK_REQUIRED'));
+ const files=store.files(p.id,'platform');const d=JSON.parse(files['application.json']);d.capabilities.push({id:'bad',type:'tool',status:'draft',execution:'HTTP'});store.save(p.id,'platform',changed.head,{'application.json':JSON.stringify(d)});assert.equal(reviews.check(p.id,'platform').passed,false);assert.throws(()=>store.publish(p.id,'platform','1.1.0'),rejected('CHECK_REQUIRED'));
+ assert.ok(reviews.activity(p.id,'platform').some(e=>e.kind==='release'&&e.head===release.commit));
+});
+test('template restrictions and confirmation floors survive direct saves and cannot be bypassed through application metadata',t=>{
+ const root=mkdtempSync(join(tmpdir(),'assembly-contract-')),store=new ProjectStore(root);t.after(()=>{store.close();rmSync(root,{recursive:true,force:true});});const files=readTree('templates/moa');files['template.json']=JSON.stringify({family:'moa',openCapabilities:{skills:true,agent:false,handoff:false,toolDrafts:['SCRIPT']}});const p=store.seedTemplate(files);const reviews=new ReviewManager(store);assert.equal(reviews.check(p.id,'platform').passed,true);const r=store.publish(p.id,'platform','1.0.0'),app=store.createApplication(r.id,'限制测试','application');let d=store.definition(app.id,'application');d.capabilities.push({id:'agent',type:'agent',connection:'a'});d.connections.a='http://127.0.0.1:8770/a2a';assert.throws(()=>store.save(app.id,'application',app.head,{'application.json':JSON.stringify(d)}),/未开放/);assert.throws(()=>store.save(app.id,'application',app.head,{'application.json':JSON.stringify(d),'adapters/operations.json':'{invalid'}),/未开放/);
+ const example=readTree('examples/idou');const ops=JSON.parse(example['adapters/operations.json']);ops.redeem.confirmationRequired=false;example['adapters/operations.json']=JSON.stringify(ops);assert.throws(()=>store.save(app.id,'application',app.head,example),/确认/);
+});

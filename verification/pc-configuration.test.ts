@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +11,7 @@ import {createWorkbench,readTree} from '../workbench-server/app.js';
 test('PC business configuration, Skill assembly and saved flow share actual project files',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-config-'));
  const wb=createWorkbench({root,templateFiles:readTree(resolve('templates/moa'))});
- const release=wb.store.publish('moa-platform','platform','1.0.0');
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0');
  const application=wb.store.createApplication(release.id,'福利应用','application');
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));
  const browser=await chromium.launch({headless:true});

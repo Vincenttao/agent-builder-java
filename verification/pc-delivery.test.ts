@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,7 +13,7 @@ import {pcRunFixture} from './fixtures/pc-run-engine.js';
 test('PC delivery exports and downloads immutable technical packages without claiming business or publication',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-pc-delivery-')),fixture=pcRunFixture();
  const wb=createWorkbench({root,runEngine:fixture.engine,templateFiles:{...readTree(resolve('templates/moa')),'pom.xml':'<project/>','src/main/java/com/openjiuwen/workbench/BusinessApplication.java':'contract fixture'}});
- const release=wb.store.publish('moa-platform','platform','1.0.0'),project=wb.store.createApplication(release.id,'交付测试应用','application');const run=await wb.runs.start(project.id,'application',project.head);
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0'),project=wb.store.createApplication(release.id,'交付测试应用','application');const run=await wb.runs.start(project.id,'application',project.head);
  for(let n=0;n<100&&wb.runs.get(run.id,'application').status!=='running';n++)await new Promise(r=>setTimeout(r,10));
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));const browser=await chromium.launch({headless:true});
  t.after(async()=>{await browser.close();await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});

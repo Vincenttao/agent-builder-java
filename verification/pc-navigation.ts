@@ -5,4 +5,6 @@ export async function navigate(page:Page,name:string){
  if(['应用设置','编排','文件与指令','Coding 助手'].includes(target))await page.getByRole('button',{name:'开发',exact:true}).click();
  if(target==='调试运行')await page.getByRole('button',{name:'测试',exact:true}).click();
  await page.locator('#workspace').getByRole('button',{name:target,exact:true}).click();
+ // Existing multi-section scenarios deliberately use the visible expanded configuration mode.
+ if(target==='应用设置'){const expand=page.getByRole('button',{name:'展开全部配置',exact:true});if(await expand.count())await expand.click();}
 }

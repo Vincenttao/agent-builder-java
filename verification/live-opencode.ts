@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 // Opt-in network verification. Never included in the default test glob.
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {resolve,join} from 'node:path';
@@ -8,7 +9,7 @@ import {OpenCodeEngine} from '../workbench-server/opencode.js';
 import {readTree} from '../workbench-server/app.js';
 const stamp=new Date().toISOString().replace(/[:.]/g,'-');
 const root=resolve('.workbench/verification/opencode-'+stamp),output=resolve('test-results/dev-workbench-v2/p2/'+stamp);mkdirSync(output,{recursive:true});
-const store=new ProjectStore(root);const template=store.seedTemplate(readTree('templates/moa'));const release=store.publish(template.id,'platform','1.0.0');const app=store.createApplication(release.id,'真实助手验证应用','application');
+const store=new ProjectStore(root);const template=store.seedTemplate(readTree('templates/moa'));const release=checkedRelease(store,template.id,'platform','1.0.0');const app=store.createApplication(release.id,'真实助手验证应用','application');
 const before=store.files(app.id,'application')['instructions.md'];const jobs=new CodingJobs(store,new OpenCodeEngine(process.cwd()));
 let passed=false;
 try{

@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +11,7 @@ import {createWorkbench,readTree} from '../workbench-server/app.js';
 test('desktop workbench follows prototype shell with persistent real coding dock and independent canvas',async t=>{
  const root=mkdtempSync(join(tmpdir(),'workbench-desktop-'));let generations=0;
  const wb=createWorkbench({root,templateFiles:readTree(resolve('templates/moa')),codingEngine:{async run(){generations++;throw Error('Layout must not generate');}}});
- const release=wb.store.publish('moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'桌面福利应用','application');
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0');const app=wb.store.createApplication(release.id,'桌面福利应用','application');
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));const browser=await chromium.launch({headless:true});
  t.after(async()=>{await browser.close();await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
  const address=server.address();assert.ok(address&&typeof address!=='string');const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));

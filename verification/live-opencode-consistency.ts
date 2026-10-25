@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 // Opt-in actual OpenCode consistency repair. No business model invocation or Java startup.
 import assert from 'node:assert/strict';
 import {mkdirSync,readdirSync,writeFileSync} from 'node:fs';
@@ -17,7 +18,7 @@ const safe=(value:unknown)=>JSON.stringify(value,null,2).split(config.apiKey).jo
 const store=new ProjectStore(root),jobs=new CodingJobs(store,new OpenCodeEngine(process.cwd()));
 let jobId='';const evidence:Record<string,unknown>={scope:'actual OpenCode repairs conflicting business scope/System Prompt/Skill in one review; hand-written seed, not empty-app generation or business acceptance',businessModelCalls:0,javaStarted:false};
 try{
- const template=store.seedTemplate(moaTemplateFiles()),release=store.publish(template.id,'platform','1.0.0'),app=store.createApplication(release.id,'i豆一致性修订验证','application');
+ const template=store.seedTemplate(moaTemplateFiles()),release=checkedRelease(store,template.id,'platform','1.0.0'),app=store.createApplication(release.id,'i豆一致性修订验证','application');
  assert.deepEqual(store.definition(app.id,'application').skills,[]);
  const files=readTree('examples/idou'),spec=JSON.parse(files['application.json']);
  spec.scope.own=['仅查询 i豆余额，禁止兑换礼品'];files['application.json']=JSON.stringify(spec,null,2)+'\n';

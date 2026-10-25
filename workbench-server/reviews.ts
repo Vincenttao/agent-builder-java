@@ -1,3 +1,4 @@
+import {contractIssues} from './contracts.js';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { ProjectStore, WorkbenchError, validateFiles, type Role } from './projects.js';
@@ -22,6 +23,8 @@ export class ReviewManager {
         const family=this.store.family(id,role,p.head);
         const add = (code: string, name: string, passed: boolean, detail: string) => items.push({ code, name, passed, detail });
         if(family==='deepagent')add('DEEP_SINGLE_GOAL','独立业务边界',d.capabilities.length===0&&!d.handoff.enabled&&d.scope.delegated.length===0,'首批支持业务Skill与原生CORE文件工具；A2A接管尚未接通');
+        const source=p.sourceReleaseId?this.store.release(p.sourceReleaseId):null;const problems=contractIssues(files,source?this.store.snapshot(source.projectId,source.commit):files);
+        add('TEMPLATE_CONTRACT','模板开放契约',problems.length===0,problems.join('；')||'装配与确认约束符合模板开放范围');
         add('DEFINITION', '定义与版本', true, '读取已保存Git提交；未保存草稿不参与检查');
         add('INSTRUCTIONS', '角色与行为', Boolean(files['instructions.md']?.trim()), 'instructions.md需要非空；语义一致性仍须审阅');
         add('BUSINESS_SCOPE', '业务范围', p.kind === 'template' || d.scope.own.length + d.scope.delegated.length > 0, p.kind === 'template' ? '空业务模板不预置场景' : '应用需要自己负责或已委派的业务范围');
@@ -94,5 +97,5 @@ export class ReviewManager {
         if (parts[n].trim())
             events.push({ kind: 'commit', head: parts[n].trim(), createdAt: parts[n + 1], title: parts[n + 2] });
     } for (const report of this.list(id, role))
-        events.push({ kind: 'check', head: report.head, createdAt: report.createdAt, title: report.passed ? '结构检查通过' : '结构检查有问题' }); return events.sort((a, b) => b.createdAt.localeCompare(a.createdAt)); }
+        events.push({ kind: 'check', head: report.head, createdAt: report.createdAt, title: report.passed ? '结构检查通过' : '结构检查有问题' }); for(const release of this.store.listReleases().filter(r=>r.projectId===id))events.push({kind:'release',head:release.commit,createdAt:release.createdAt,title:'发行模板 '+release.version,releaseId:release.id,checkId:release.checkId}); return events.sort((a, b) => b.createdAt.localeCompare(a.createdAt)); }
 }

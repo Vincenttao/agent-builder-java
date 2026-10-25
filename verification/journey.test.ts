@@ -1,3 +1,4 @@
+import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync} from 'node:fs';
@@ -12,7 +13,7 @@ test('fixed template metadata, empty business goal and revision-aware journey su
  t.after(async()=>{await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
  const address=server.address();assert.ok(address&&typeof address!=='string');
  const call=async(path:string,role='application',method='GET',body?:unknown)=>{const r=await fetch('http://127.0.0.1:'+address.port+'/api'+path,{method,headers:{'Content-Type':'application/json','x-workbench-role':role},body:body===undefined?undefined:JSON.stringify(body)});assert.ok(r.ok,await r.clone().text());return await r.json() as any;};
- const release=wb.store.publish('moa-platform','platform','1.0.0');
+ const release=checkedRelease(wb.store,'moa-platform','platform','1.0.0');
  const releases=(await call('/templates')).releases;assert.equal(releases[0].metadata.family,'moa');assert.match(releases[0].metadata.purpose,/业务/);assert.ok(releases[0].metadata.developmentSkills.some((x:any)=>x.name==='moa-application-development'));assert.equal(releases[0].metadata.commit,release.commit);
  const app=(await call('/projects','application','POST',{releaseId:release.id,name:'新应用',goal:'查询i豆余额并经确认兑换'})).project;
  let current=await call('/projects/'+app.id);assert.equal(current.sourceRelease.version,'1.0.0');assert.equal(current.sourceRelease.metadata.commit,release.commit);assert.equal(current.definition.description,'查询i豆余额并经确认兑换');assert.deepEqual(current.definition.skills,[]);assert.deepEqual(current.definition.scope.own,[]);assert.equal(current.journey.stage,'NEW');

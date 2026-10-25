@@ -23,6 +23,9 @@ test('PC entry uses real role, release, empty application, independent drafts an
  assert.equal(await page.evaluate(()=>localStorage.getItem('unrelated-user-data')),'preserve');
  await page.locator('#identity').selectOption('platform');
  await page.locator('.project-card').filter({has:page.getByRole('heading',{name:'MOA 开发模板',exact:true})}).getByRole('button',{name:'进入工程'}).click();
+ await page.getByRole('button',{name:'测试',exact:true}).click();
+ await page.getByRole('button',{name:'检查保存版本',exact:true}).click();
+ await page.getByText('结构检查通过；业务未验证',{exact:false}).waitFor();
  await page.getByRole('button',{name:'模板发行',exact:true}).click();
  await page.getByLabel('版本号').fill('1.0.0');
  await page.getByRole('button',{name:'发行模板',exact:true}).click();

@@ -102,7 +102,7 @@ async function capture(name: string) { for (const width of [1280, 1440, 1920]) {
     report.screens.push({ name, width, path });
 } await page.setViewportSize({ width: 1440, height: 1000 }); save(); }
 async function publish(version: string) { const projectId = await page.locator('#project-switch').inputValue(); const existing = (await api('/templates', 'platform')).releases.find((r: any) => r.projectId === projectId && r.version === version); if (existing)
-    return existing; await page.locator('.app-tabs [data-tab=release]').click(); await page.getByLabel('版本号', { exact: true }).fill(version); const response = page.waitForResponse(r => r.request().method() === 'POST' && r.url().includes('/releases')); await page.getByRole('button', { name: '发行模板', exact: true }).click(); const r = await response; assert.equal(r.status(), 201); return (await r.json()).release; }
+    return existing; await page.getByRole('button',{name:'测试',exact:true}).click(); await page.getByRole('button',{name:'检查保存版本',exact:true}).click(); await page.getByText('结构检查通过；业务未验证',{exact:false}).waitFor(); await page.locator('.app-tabs [data-tab=release]').click(); await page.getByLabel('版本号', { exact: true }).fill(version); const response = page.waitForResponse(r => r.request().method() === 'POST' && r.url().includes('/releases')); await page.getByRole('button', { name: '发行模板', exact: true }).click(); const r = await response; assert.equal(r.status(), 201); return (await r.json()).release; }
 async function create(releaseId: string, name: string) { const existing = (await api('/projects')).projects.find((p: any) => p.name === name); if (existing) {
     assert.equal(existing.sourceReleaseId, releaseId);
     await open(existing.id, 'application');

@@ -1,0 +1,12 @@
+{
+  "family": "moa",
+  "title": "MOA 开发模板",
+  "openCapabilities": {
+    "skills": true,
+    "agent": true,
+    "handoff": true,
+    "toolDrafts": ["HTTP", "MCP", "SCRIPT"],
+    "note": "业务Skill在当前任务内执行；Agent转交首期共两层。HTTP/MCP新增接入先保留为待接线草稿。"
+  },
+  "requiredConfirmations": ["redeem", "transfer", "purchase"]
+}
