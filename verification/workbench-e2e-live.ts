@@ -43,7 +43,7 @@ else
     report.cases[index] = item; save(); }
 const native = new LocalJavaEngine(repository);
 const reused = new Set<string>();
-const runEngine = { kind: native.kind, async build(input: Parameters<LocalJavaEngine['build']>[0]) { for (const candidate of prior?.runs ?? []) {
+const runEngine = { kind: native.kind,configure:(directory:string)=>native.configure(directory), async build(input: Parameters<LocalJavaEngine['build']>[0]) { for (const candidate of prior?.runs ?? []) {
         if (!candidate.artifact || reused.has(candidate.id))
             continue;
         const source = JSON.parse(readFileSync(join(root, 'runs', candidate.id, 'source.json'), 'utf8'));

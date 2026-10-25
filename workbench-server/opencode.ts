@@ -1,9 +1,10 @@
+import {executionSettings,publicExecution} from './execution-settings.js';
 import {spawn,type ChildProcess} from 'node:child_process';
 import {createServer} from 'node:net';
 import {mkdirSync,openSync,closeSync} from 'node:fs';
 import {join,dirname} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
-import {settings,compatibleBaseUrl} from './settings.js';
+import {compatibleBaseUrl} from './settings.js';
 import {WorkbenchError} from './projects.js';
 import type {CodingEngine,CodingEvidence,CodingResult} from './coding.js';
 type Request=(path:string,body?:unknown,timeout?:number)=>Promise<any>;
@@ -17,7 +18,7 @@ export class OpenCodeEngine implements CodingEngine{
   await active.request('/question/'+encodeURIComponent(id)+'/reply',{answers});
  }
  async run(input:Parameters<CodingEngine['run']>[0]):Promise<CodingResult>{
-  const config=settings(this.repository);if(!config.apiKey)throw new WorkbenchError('MODEL_KEY_MISSING','本机未配置模型 Key（MODEL_API_KEY）');
+  const config=executionSettings(this.repository,input.directory);input.onEvent({type:'configuration',configuration:publicExecution(config)});if(!config.apiKey)throw new WorkbenchError('MODEL_KEY_MISSING','本机未配置模型 Key（MODEL_API_KEY）');
   const port=await new Promise<number>(resolve=>{const server=createServer();server.listen(0,'127.0.0.1',()=>{const p=(server.address() as any).port;server.close(()=>resolve(p));});});
   const root=dirname(input.directory),native=join(config.repository,'.workbench/opencode-native');mkdirSync(native,{recursive:true});
   const clientConfig={model:'workbench/'+config.model,small_model:'workbench/'+config.model,autoupdate:false,provider:{'workbench':{npm:'@ai-sdk/openai-compatible',name:'Workbench OpenAI compatible',options:{baseURL:compatibleBaseUrl(config.baseUrl),apiKey:'{env:MODEL_API_KEY}'},models:{[config.model]:{name:config.model,limit:{context:131072,output:8192},options:config.model==='deepseek-flash'?{thinking:{type:'disabled'}}:{}}}}},agent:{build:{steps:40}},permission:{'*':'deny',read:'allow',glob:'allow',grep:'allow',list:'allow',edit:'allow',skill:'allow',question:'allow',bash:'deny',external_directory:'deny',webfetch:'deny'}};

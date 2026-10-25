@@ -1,3 +1,4 @@
+import {publicRegistry,registry,selection} from './execution-settings.js';
 import {RevisionManager} from './revisions.js';
 import {flowSources} from './design.js';
 import {releaseInfo,projectJourney,templateMetadata,assetOrigins} from './journey.js';
@@ -14,7 +15,7 @@ import {LocalJavaEngine,type RunEngine} from './local-java.js';
 import {moaTemplateFiles,deepAgentTemplateFiles} from './template.js';
 import {CodingJobs,type CodingEngine} from './coding.js';
 import {OpenCodeEngine} from './opencode.js';
-import {ProjectStore,WorkbenchError,applicationEditable,type Role,type Files} from './projects.js';
+import {ProjectStore,WorkbenchError,type Role,type Files} from './projects.js';
 const repository=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 export {readTree} from './files.js';
 export function createWorkbench(options:{root:string;templateFiles?:Files;codingEngine?:CodingEngine;runEngine?:RunEngine}){
@@ -27,14 +28,14 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const reviews=new ReviewManager(store);
   const revisions=new RevisionManager(store);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js','execution-settings.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js','execution-settings.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
@@ -45,7 +46,7 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     if(!['application','platform'].includes(role))return next(new WorkbenchError('INVALID_ROLE','请选择应用开发者或平台开发者'));
     res.locals.role=role as Role;res.set('Cache-Control','no-store');next();
   });
-  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:settings(repository).model,modelConfiguration:(()=>{const s=settings(repository);let origin='地址无效';try{origin=new URL(s.baseUrl).origin;}catch{}return {model:s.model,origin,configured:Boolean(s.apiKey),scope:'local-shared'};})(),uiVersion:build,workspaceId:store.workspaceId}));
+  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',executionCatalog:publicRegistry(repository),model:settings(repository).model,modelConfiguration:(()=>{const s=settings(repository);let origin='地址无效';try{origin=new URL(s.baseUrl).origin;}catch{}return {model:s.model,origin,configured:Boolean(s.apiKey),scope:'local-shared'};})(),uiVersion:build,workspaceId:store.workspaceId}));
   app.get('/api/templates',(_req,res)=>res.json({releases:store.listReleases().map(r=>releaseInfo(store,r))}));
   app.get('/api/projects/:id/release-preview',(req,res)=>{const p=store.get(req.params.id,res.locals.role);if(p.kind!=='template')throw new WorkbenchError('INVALID_PROJECT','请在模板工程预览发行',400);const previous=store.listReleases().filter(r=>r.projectId===p.id).at(-1),before=previous?store.snapshot(p.id,previous.commit):{},after=store.snapshot(p.id,p.head);const changes=[...new Set([...Object.keys(before),...Object.keys(after)])].sort().filter(path=>before[path]!==after[path]).map(path=>({path,status:!(path in before)?'新增':!(path in after)?'移除':'修改'}));res.json({head:p.head,previous:previous??null,changes});});
   app.post('/api/templates/:id/releases',(req,res)=>res.status(201).json({release:store.publish(req.params.id,res.locals.role,req.body.version)}));
@@ -55,6 +56,7 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     const project=store.get(req.params.id,res.locals.role);const files=store.files(project.id,res.locals.role);
     res.json({flowSources:flowSources(store,project.id,project.head),assetOrigins:assetOrigins(store,project.id,res.locals.role),contract:store.contract(project.id,res.locals.role),sourceRelease:project.sourceReleaseId?releaseInfo(store,store.release(project.sourceReleaseId)):null,templateMetadata:templateMetadata(store.snapshot(project.id,project.head),project.head),journey:projectJourney(store,reviews,jobs,runs,exports,project.id,res.locals.role),project:{...project,family:store.family(project.id,res.locals.role)},definition:store.definition(project.id,res.locals.role),files,editablePaths:Object.keys(files).filter(f=>project.kind==='template'?res.locals.role==='platform':res.locals.role==='application'&&store.canEdit(project.id,res.locals.role,f))});
   });
+  app.put('/api/projects/:id/runtime-settings',(req,res)=>{const p=store.get(req.params.id,res.locals.role),catalog=registry(repository);const selected=selection({'runtime-settings.json':JSON.stringify({modelProfile:req.body.modelProfile,environmentId:req.body.environmentId})});if(!catalog.models.some(m=>m.id===selected.modelProfile))throw new WorkbenchError('MODEL_PROFILE_NOT_FOUND','所选模型配置档不存在');const environment=catalog.environments.find(e=>e.id===selected.environmentId);if(!environment)throw new WorkbenchError('ENVIRONMENT_NOT_FOUND','所选环境配置档不存在');const changes:Files={'runtime-settings.json':JSON.stringify(selected,null,2)+'\n'};if(Object.keys(environment.connections).length){const definition=store.definition(p.id,res.locals.role);definition.connections={...definition.connections,...environment.connections};changes['application.json']=JSON.stringify(definition,null,2)+'\n';}res.json({project:store.save(p.id,res.locals.role,req.body.baseHead,changes)});});
   app.get('/api/projects/:id/revisions',(req,res)=>res.json(revisions.history(req.params.id,res.locals.role)));
   app.get('/api/projects/:id/revision-diff',(req,res)=>res.json(revisions.compare(req.params.id,res.locals.role,req.query.revision)));
   app.get('/api/projects/:id/revision-file',(req,res)=>res.json(revisions.file(req.params.id,res.locals.role,req.query.revision,req.query.path)));

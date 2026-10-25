@@ -69,7 +69,7 @@ window.WorkbenchRuntime=(()=>{
     ${!playback&&owned&&run.status==='running'?`<button data-run-action="new-conversation" ${rs.pending||rs.uncertain||run.unobserved?.length?'disabled':''}>新建业务会话</button>`:''}
     ${view?interaction(shownRun,rs,view,c):!playback&&owned&&run.status==='running'?interaction(run,rs,{stack:{},tasks:[],events:[],live:true},c):'<p>尚无业务会话或可用观察快照。</p>'}
     ${view&&!playback?`<button data-run-action="playback" ${rs.pending?'disabled':''}>进入只读回放</button>`:''}
-    ${view?traces(shownRun,view)+timeline(view,playback?.cursor):''}${!playback&&owned&&!activeStatuses.includes(run.status)?'<button data-run-action="delete">清理此历史运行</button>':''}`;
+    ${run.configuration?`<details class="run-configuration"><summary>本次运行模型与环境</summary><p>${esc(run.configuration.model)} · ${esc(run.configuration.origin)} · 配置档 ${esc(run.configuration.modelProfile)} · 环境 ${esc(run.configuration.environmentId)}</p><p>这是启动时固定配置，新选择不会改变本运行。</p></details>`:'<p class="muted">历史运行未记录模型配置，不从当前设置推测补齐。</p>'}${view?traces(shownRun,view)+timeline(view,playback?.cursor):''}${!playback&&owned&&!activeStatuses.includes(run.status)?'<button data-run-action="delete">清理此历史运行</button>':''}`;
  }
  function paint(c){
   const s=state(c.project.id),run=currentRun(c);if(!document.getElementById('runtime-host'))return;

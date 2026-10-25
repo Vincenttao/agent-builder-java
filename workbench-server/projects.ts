@@ -26,13 +26,14 @@ const validateDefinition=new Ajv({allErrors:true}).compile({
     connections:{type:'object',additionalProperties:{type:'string'}},mapping:{type:'object',required:['balancePath'],additionalProperties:false,properties:{balancePath:{type:'string',pattern:'^[a-zA-Z][a-zA-Z0-9_.]*$'}}}
   }
 });
-export function applicationEditable(name:string){return name==='application.json'||name==='instructions.md'||name==='README.md'||['skills/','adapters/','tests/','src/main/java/com/openjiuwen/workbench/app/'].some(prefix=>name.startsWith(prefix));}
+export function applicationEditable(name:string){return name==='runtime-settings.json'||name==='application.json'||name==='instructions.md'||name==='README.md'||['skills/','adapters/','tests/','src/main/java/com/openjiuwen/workbench/app/'].some(prefix=>name.startsWith(prefix));}
 const forbidden=/(^|\/)(\.git|\.env(?:\..*)?|node_modules|target)(\/|$)/;
 export function validatePath(path:string){
   if(!path || path.length>500 || path.startsWith('/') || /[\\\x00-\x1f:]/.test(path) || path.split('/').some(p=>p==='..'||p==='.'||!p) || forbidden.test(path))fail('INVALID_PATH','文件路径不在工程允许范围内');
 }
 export function validateFiles(files:Files):Definition{
   for(const [name,content] of Object.entries(files)){validatePath(name);if(Buffer.byteLength(content)>2_000_000)fail('FILE_TOO_LARGE','单文件不能超过 2 MB',413);if(/sk-[a-zA-Z0-9_-]{20,}/.test(content))fail('SECRET_IN_PROJECT','工程包含疑似模型 Key，请使用本机私有配置');}
+  if(files['runtime-settings.json']){let runtime:any;try{runtime=JSON.parse(files['runtime-settings.json']);}catch{fail('INVALID_RUNTIME_SETTINGS','运行配置引用须为JSON');}if(!runtime||Object.keys(runtime).some(k=>!['modelProfile','environmentId'].includes(k))||typeof runtime.modelProfile!=='string'||typeof runtime.environmentId!=='string'||!/^([a-z][a-z0-9_-]{0,39})$/.test(runtime.modelProfile)||!/^([a-z][a-z0-9_-]{0,39})$/.test(runtime.environmentId))fail('INVALID_RUNTIME_SETTINGS','运行配置仅允许modelProfile和environmentId引用');}
   let spec:Definition;
   try{spec=JSON.parse(files['application.json']??'');}catch{fail('INVALID_DEFINITION','application.json 必须是有效 JSON');}
   if(!validateDefinition(spec))fail('INVALID_DEFINITION','应用配置不满足 Schema：'+new Ajv().errorsText(validateDefinition.errors));

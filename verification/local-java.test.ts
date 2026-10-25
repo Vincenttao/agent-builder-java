@@ -1,7 +1,7 @@
 import {checkedRelease} from './fixtures/checked-release.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync,writeFileSync,chmodSync,rmSync} from 'node:fs';
+import {mkdtempSync,writeFileSync,chmodSync,rmSync,mkdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
@@ -13,7 +13,7 @@ function processFixture(){
  const root=mkdtempSync(join(tmpdir(),'workbench-java-adapter-'));const key='sk-'+'a'.repeat(32);
  writeFileSync(join(root,'.env.local'),'DEEPSEEK_API_KEY='+key+'\n',{mode:0o600});
  const binary=join(root,'fixture-java.mjs');
- writeFileSync(binary,`#!/usr/bin/env node\nimport {createServer} from 'node:http';const runId=process.argv.find(v=>v.startsWith('-Dworkbench.runId=')).split('=')[1];const server=createServer((_q,r)=>{r.setHeader('content-type','application/json');r.end(JSON.stringify({runId,mode:'live-java'}));});server.listen(0,'127.0.0.1',()=>{process.stdout.write(process.env.DEEPSEEK_API_KEY.slice(0,12));setTimeout(()=>{process.stdout.write(process.env.DEEPSEEK_API_KEY.slice(12)+'\\n');console.log('Tomcat started on port '+server.address().port+' (http)');},30);});\n`);chmodSync(binary,0o755);
+ writeFileSync(binary,`#!/usr/bin/env node\nimport {createServer} from 'node:http';const runId=process.argv.find(v=>v.startsWith('-Dworkbench.runId=')).split('=')[1];const server=createServer((_q,r)=>{r.setHeader('content-type','application/json');r.end(JSON.stringify({runId,mode:'live-java',model:process.env.MODEL_NAME}));});server.listen(0,'127.0.0.1',()=>{process.stdout.write(process.env.DEEPSEEK_API_KEY.slice(0,12));setTimeout(()=>{process.stdout.write(process.env.DEEPSEEK_API_KEY.slice(12)+'\\n');console.log('Tomcat started on port '+server.address().port+' (http)');},30);});\n`);chmodSync(binary,0o755);
  const previousBinary=process.env.JAVA_BIN,previousKey=process.env.DEEPSEEK_API_KEY;process.env.JAVA_BIN=binary;process.env.DEEPSEEK_API_KEY=key;
  return {root,key,cleanup(){if(previousBinary===undefined)delete process.env.JAVA_BIN;else process.env.JAVA_BIN=previousBinary;if(previousKey===undefined)delete process.env.DEEPSEEK_API_KEY;else process.env.DEEPSEEK_API_KEY=previousKey;rmSync(root,{recursive:true,force:true});}};
 }
@@ -36,4 +36,11 @@ test('reconstructed manager adopts the original live process and blocks a second
  next=new RunManager(store,adapter);await next.ready;assert.equal(next.get(created.id,'application').process?.pid,running.process.pid);assert.equal(next.get(created.id,'application').status,'running');
  await assert.rejects(next.start(app.id,'application',app.head),(e:unknown)=>e instanceof WorkbenchError&&e.code==='RUN_BUSY');
  assert.equal((await next.reconnect(created.id,'application')).status,'running');await next.stop(created.id,'application');assert.equal(ownsProcess(running.process),false);
+});
+
+
+test('native process start uses the model configuration captured before a private registry change',async t=>{
+ const fixture=processFixture(),directory=join(fixture.root,'project');mkdirSync(directory);const original=process.env.MODEL_PROFILES_JSON;delete process.env.MODEL_PROFILES_JSON;let handle:Awaited<ReturnType<LocalJavaEngine['start']>>|undefined;t.after(async()=>{if(handle)await handle.stop();fixture.cleanup();if(original!==undefined)process.env.MODEL_PROFILES_JSON=original;});
+ const registry=(model:string)=>'MODEL_API_KEY='+fixture.key+'\nMODEL_PROFILES_JSON='+JSON.stringify([{id:'review',title:'Review',model,baseUrl:'http://127.0.0.1:8999/v1',keyEnv:'MODEL_API_KEY'}])+'\n';writeFileSync(join(fixture.root,'.env.local'),registry('captured-model'));writeFileSync(join(directory,'runtime-settings.json'),JSON.stringify({modelProfile:'review',environmentId:'local'}));const engine=new LocalJavaEngine(fixture.root),configuration=engine.configure(directory);writeFileSync(join(fixture.root,'.env.local'),registry('later-model'));
+ handle=await engine.start({directory,configuration,runId:randomUUID(),signal:new AbortController().signal,onLog:()=>{},onProcess:()=>{},jar:join(directory,'fixture.jar'),stateDirectory:join(directory,'state')});const response=await fetch(handle.origin+'/workbench/application'),value=await response.json() as any;assert.equal(value.model,'captured-model');assert.equal(engine.configure(directory).model,'later-model');
 });

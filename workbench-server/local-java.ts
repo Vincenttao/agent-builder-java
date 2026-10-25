@@ -1,15 +1,16 @@
+import {executionSettings,type ExecutionSettings} from './execution-settings.js';
 import {spawn} from 'node:child_process';
 import {StringDecoder} from 'node:string_decoder';
 import {readFileSync,existsSync,readdirSync,realpathSync} from 'node:fs';
 import {join,resolve,relative} from 'node:path';
-import {settings} from './settings.js';
 import {WorkbenchError} from './projects.js';
 export type OwnedProcess={pid:number;started:string;marker:string;kind:'build'|'java'};
 export type ProcessExit={code:number|null;signal:string|null};
 export type RunningJava={origin:string;process?:OwnedProcess;exited:Promise<ProcessExit>;stop:()=>Promise<void>};
-export type EngineInput={directory:string;runId:string;signal:AbortSignal;onLog:(text:string)=>void;onProcess:(process:OwnedProcess)=>void};
+export type EngineInput={configuration?:ExecutionSettings;directory:string;runId:string;signal:AbortSignal;onLog:(text:string)=>void;onProcess:(process:OwnedProcess)=>void};
 export interface RunEngine{
  readonly kind:string;
+ configure?(directory:string):ExecutionSettings;
  build(input:EngineInput):Promise<{jar:string}>;
  start(input:EngineInput&{jar:string;stateDirectory:string}):Promise<RunningJava>;
 }
@@ -30,7 +31,7 @@ function child(input:EngineInput,program:string,args:string[],env:NodeJS.Process
  const processHandle=spawn(program,args,{cwd:input.directory,env,detached:true,stdio:['ignore','pipe','pipe']});
  let closed=false,stopping=false,tail='';let killTimer:ReturnType<typeof setTimeout>|undefined;
  const signal=()=>{if(closed||stopping)return;stopping=true;if(processHandle.pid){try{process.kill(-processHandle.pid,'SIGTERM');}catch{}killTimer=setTimeout(()=>{if(!closed)try{process.kill(-processHandle.pid!,'SIGKILL');}catch{}},3000);}};
- const publish=(line:string)=>{const text=sanitize(line);tail=(tail+text).slice(-200000);input.onLog(text);};
+ const publish=(line:string)=>{const text=sanitize(input.configuration?.apiKey?line.split(input.configuration.apiKey).join('[REDACTED]'):line);tail=(tail+text).slice(-200000);input.onLog(text);};
  const streams=[processHandle.stdout,processHandle.stderr].map(stream=>{
   const decoder=new StringDecoder('utf8');let buffered='',omitted=false;
   const receive=(text:string)=>{
@@ -52,6 +53,7 @@ function child(input:EngineInput,program:string,args:string[],env:NodeJS.Process
 export class LocalJavaEngine implements RunEngine{
  readonly kind='local-java';
  constructor(private repository:string){}
+ configure(directory:string){return executionSettings(this.repository,directory);}
  async build(input:EngineInput){
   const installed=join(this.repository,'.tools/apache-maven-3.9.11/bin/mvn');const binary=process.env.MAVEN_BIN??(existsSync(installed)?installed:'mvn');
   const args=['-B','-ntp',...(process.env.WORKBENCH_OFFLINE==='1'?['-o']:[]),'-Dworkbench.runId='+input.runId,'package'];
@@ -63,9 +65,9 @@ export class LocalJavaEngine implements RunEngine{
   const jar=realpathSync(join(target,jars[0]));if(relative(realpathSync(input.directory),jar).startsWith('..'))throw new WorkbenchError('ARTIFACT_INVALID','构建产物越出本次工程');return {jar};
  }
  async start(input:EngineInput&{jar:string;stateDirectory:string}){
-  const config=settings(this.repository);if(!config.apiKey)throw new WorkbenchError('MODEL_KEY_MISSING','请在本机私有配置中设置 MODEL_API_KEY（兼容 DEEPSEEK_API_KEY）');
+  const config=input.configuration??executionSettings(this.repository,input.directory);if(!config.apiKey)throw new WorkbenchError('MODEL_KEY_MISSING','请在本机私有配置中设置 MODEL_API_KEY（兼容 DEEPSEEK_API_KEY）');
   const env={...environment(),MODEL_API_KEY:config.apiKey,MODEL_BASE_URL:config.baseUrl,MODEL_NAME:config.model,DEEPSEEK_API_KEY:config.apiKey,DEEPSEEK_BASE_URL:config.baseUrl,DEEPSEEK_MODEL:config.model,WORKBENCH_APP_DIR:input.directory,WORKBENCH_STATE_DIR:input.stateDirectory,OTEL_EXPORTER_OTLP_ENDPOINT:process.env.OTEL_EXPORTER_OTLP_ENDPOINT??'http://127.0.0.1:14318'};
-  const execution=child(input,process.env.JAVA_BIN??'java',['-Xmx768m','-Dworkbench.runId='+input.runId,'-jar',resolve(input.jar),'--server.port=0','--server.address=127.0.0.1'],env,'java');
+  const execution=child({...input,configuration:config},process.env.JAVA_BIN??'java',['-Xmx768m','-Dworkbench.runId='+input.runId,'-jar',resolve(input.jar),'--server.port=0','--server.address=127.0.0.1'],env,'java');
   try{
    for(let n=0;n<180;n++){
     if(input.signal.aborted)throw new WorkbenchError('RUN_CANCELLED','启动已取消');if(execution.closed())throw new WorkbenchError('JAVA_START_FAILED','Java 服务启动失败，请查看本次日志');

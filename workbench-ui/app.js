@@ -4,7 +4,7 @@ let directoryTab='projects';
 let role = 'application', projects = [], releases = [], current = null, tab = 'overview', file = 'instructions.md', epoch = 0, busy = false;
 const drafts = new Map();const familyName=p=>p?.family==='deepagent'?'DeepAgent':'MOA';
 const buildKey = 'openjiuwen-workbench-live-ui-build';
-let build = null, workspaceId=null,modelInfo=null;
+let build = null, workspaceId=null,modelInfo=null,executionCatalog=null;
 const localUI={read:(id,actor,name,fallback)=>WorkbenchPersistence.read(id,actor,name,fallback),write:(id,actor,name,value)=>WorkbenchPersistence.write(id,actor,name,value)};
 const draftKey=()=>role+'|'+current.project.id;
 function stale() { return WorkbenchPersistence.stale(); }
@@ -32,7 +32,7 @@ async function load() { const token = ++epoch; const [p, r] = await Promise.all(
     return; projects = p.projects; releases = r.releases; render(); }
 async function open(id) { const token = ++epoch; const value = await api('/projects/' + encodeURIComponent(id)); if (token !== epoch)
     return; current=value;const position=localUI.read(id,role,'position',{});file=typeof position.file==='string'?position.file:'instructions.md';tab=['overview','files','configuration','flow','capabilities','checks','history','revisions','guidance','activity','coding','runs',...(current.project.kind==='template'?['release']:['delivery'])].includes(position.tab)?position.tab:'overview';render(); }
-function codingContext() {return current?{project:current.project,files:current.files,flowSources:current.flowSources,releases,assetOrigins:current.assetOrigins,contract:current.contract,sourceRelease:current.sourceRelease,templateMetadata:current.templateMetadata,journey:current.journey,effectiveFiles:effectiveFiles(),role,modelInfo,historyOnly:tab==='history',editable:editable(),dirty:editable()&&Object.keys(draft().changes).length>0}:null;}
+function codingContext() {return current?{project:current.project,files:current.files,flowSources:current.flowSources,releases,assetOrigins:current.assetOrigins,contract:current.contract,sourceRelease:current.sourceRelease,templateMetadata:current.templateMetadata,journey:current.journey,effectiveFiles:effectiveFiles(),role,modelInfo,executionCatalog,historyOnly:tab==='history',editable:editable(),dirty:editable()&&Object.keys(draft().changes).length>0}:null;}
 function shell(body) {
  const platform=role==='platform';
  $('#role-caption').textContent=platform?'平台开发':'应用开发';
@@ -142,7 +142,8 @@ window.addEventListener('beforeunload', e => { if ([...drafts.values()].some(d =
     e.preventDefault();
     e.returnValue = '';
 } });
-async function boot(){const context=await api('/context');build=context.uiVersion;workspaceId=context.workspaceId;modelInfo=context.modelConfiguration;WorkbenchPersistence.init({build,workspaceId,buildKey,onWarning:notify});role=localUI.read('','shared','role','application');if(!['application','platform'].includes(role))role='application';$('#identity').value=role;const remembered=localUI.read('',role,'navigation',{});await load();if(remembered?.projectId&&projects.some(p=>p.id===remembered.projectId))await open(remembered.projectId);}
+async function boot(){const context=await api('/context');build=context.uiVersion;workspaceId=context.workspaceId;modelInfo=context.modelConfiguration;executionCatalog=context.executionCatalog;WorkbenchPersistence.init({build,workspaceId,buildKey,onWarning:notify});role=localUI.read('','shared','role','application');if(!['application','platform'].includes(role))role='application';$('#identity').value=role;const remembered=localUI.read('',role,'navigation',{});await load();if(remembered?.projectId&&projects.some(p=>p.id===remembered.projectId))await open(remembered.projectId);}
+WorkbenchExecutionSettings.init({api,context:codingContext,action,notify,render,reload:async()=>{current=await api('/projects/'+current.project.id);render();}});
 WorkbenchRevisions.init({api,context:codingContext,action,notify,reload:async()=>{current=await api('/projects/'+current.project.id);render();}});
 WorkbenchDiagnostics.init({api,open:(projectId,runId)=>action(async()=>{localUI.write(projectId,role,'runtime',{selected:runId});await open(projectId);tab='history';render();})});
 WorkbenchAssignments.init({context:codingContext,patch,render,action,notify});

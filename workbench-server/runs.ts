@@ -1,9 +1,10 @@
+import {publicExecution} from './execution-settings.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {mkdirSync,readFileSync,writeFileSync,appendFileSync,existsSync,statSync,lstatSync,realpathSync,rmSync,readdirSync} from 'node:fs';
 import {join,dirname,relative,resolve} from 'node:path';
 import {ProjectStore,WorkbenchError,validateFiles,type Role} from './projects.js';
 import {ownsProcess,stopOwnedProcess,sanitize,type RunEngine,type OwnedProcess,type RunningJava} from './local-java.js';
-export type RunRecord={id:string;projectId:string;role:Role;head:string;sourceReleaseId:string|null;createdAt:string;engine:string;status:'building'|'starting'|'running'|'stopping'|'stopped'|'failed'|'interrupted'|'unresponsive';logs:string[];process?:OwnedProcess;origin?:string;artifact?:{path:string;sha256:string;bytes:number};conversations:string[];unobserved?:string[];error?:{code:string;message:string}};
+export type RunRecord={configuration?:ReturnType<typeof publicExecution>;id:string;projectId:string;role:Role;head:string;sourceReleaseId:string|null;createdAt:string;engine:string;status:'building'|'starting'|'running'|'stopping'|'stopped'|'failed'|'interrupted'|'unresponsive';logs:string[];process?:OwnedProcess;origin?:string;artifact?:{path:string;sha256:string;bytes:number};conversations:string[];unobserved?:string[];error?:{code:string;message:string}};
 const liveStatuses=new Set(['building','starting','running','stopping','unresponsive']);
 const conversationPattern=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 function fail(code:string,message:string,status=409):never{throw new WorkbenchError(code,message,status);}
@@ -44,6 +45,7 @@ export class RunManager{
   const directory=join(this.directory(run.id),'project');
   const input={directory,runId:run.id,signal:controller.signal,onLog:(value:string)=>this.log(run,value),onProcess:(process:OwnedProcess)=>{run.process=process;this.persist(run);}};
   try{
+   const configuration=this.engine.configure?.(directory);if(configuration){Object.assign(input,{configuration});run.configuration=publicExecution(configuration);this.persist(run);if(!configuration.apiKey)throw new WorkbenchError('MODEL_KEY_MISSING','所选模型配置档没有可用凭据，请配置后发起新运行');}
    const result=await this.engine.build(input);if(controller.signal.aborted)throw new Error('cancelled');
    const artifact=realpathSync(result.jar);const path=relative(realpathSync(directory),artifact);if(path.startsWith('..')||path.startsWith('/'))fail('ARTIFACT_INVALID','构建产物不在本次工程中');
    const bytes=statSync(artifact).size;if(bytes>350_000_000)fail('ARTIFACT_TOO_LARGE','本 Demo 单个 JAR 限制为 350 MB');
