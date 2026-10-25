@@ -31,7 +31,7 @@ function editable() { return current && (role === 'platform' ? current.project.k
 async function load() { const token = ++epoch; const [p, r] = await Promise.all([api('/projects'), api('/templates')]); if (token !== epoch)
     return; projects = p.projects; releases = r.releases; render(); }
 async function open(id) { const token = ++epoch; const value = await api('/projects/' + encodeURIComponent(id)); if (token !== epoch)
-    return; current=value;const position=localUI.read(id,role,'position',{});file=typeof position.file==='string'?position.file:'instructions.md';tab=['overview','files','configuration','flow','capabilities','checks','history','guidance','activity','coding','runs',...(current.project.kind==='template'?['release']:['delivery'])].includes(position.tab)?position.tab:'overview';render(); }
+    return; current=value;const position=localUI.read(id,role,'position',{});file=typeof position.file==='string'?position.file:'instructions.md';tab=['overview','files','configuration','flow','capabilities','checks','history','revisions','guidance','activity','coding','runs',...(current.project.kind==='template'?['release']:['delivery'])].includes(position.tab)?position.tab:'overview';render(); }
 function codingContext() {return current?{project:current.project,files:current.files,flowSources:current.flowSources,releases,assetOrigins:current.assetOrigins,contract:current.contract,sourceRelease:current.sourceRelease,templateMetadata:current.templateMetadata,journey:current.journey,effectiveFiles:effectiveFiles(),role,modelInfo,historyOnly:tab==='history',editable:editable(),dirty:editable()&&Object.keys(draft().changes).length>0}:null;}
 function shell(body) {
  const platform=role==='platform';
@@ -45,6 +45,7 @@ function shell(body) {
  if(current)WorkbenchPanels.mount(tab);
  if(current)WorkbenchJourney.mount();
  if(current&&tab==='release')WorkbenchRelease.mount();
+ if(current&&tab==='revisions')WorkbenchRevisions.mount();
  if(current)WorkbenchCoding.mount();else WorkbenchCoding.unmount();
  if(['runs','history'].includes(tab)&&current)WorkbenchRuntime.mount();else WorkbenchRuntime.unmount();
  if(tab==='delivery'&&current)WorkbenchDelivery.mount();else WorkbenchDelivery.unmount();
@@ -53,8 +54,8 @@ function render() {
  localUI.write('',role,'navigation',{projectId:current?.project.id??null});if(current)localUI.write(current.project.id,role,'position',{tab,file});
  if(!current)return home();const p=current.project,d=editable()?draft():{baseHead:p.head,changes:{}};
  shell(`<section class="project-header"><div class="project-title"><button class="back-link" data-action="home">← ${role==='platform'?'模板与应用':'全部应用'}</button><div class="title-line"><h1>${esc(p.name)}</h1><span class="badge">${p.kind==='template'?familyName(p)+' 开发模板':editable()?'应用工程':'应用诊断 · 只读'}</span></div><p class="muted">${p.kind==='template'?'维护开发范式，定义应用可装配的能力与开发指导。':'基于 '+familyName(p)+' 模板开发 · 配置、代码与运行各自绑定版本'}</p></div><div class="project-actions"><select class="project-switch" id="project-switch" aria-label="切换工程">${projects.map(x=>`<option value="${esc(x.id)}" ${x.id===p.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select><div class="row"><code title="${esc(p.head)}">版本 ${esc(p.head.slice(0,12))}</code><span id="draft-count">${Object.keys(d.changes).length} 个文件待保存</span>${editable()?`<button data-action="save" class="primary" ${d.baseHead!==p.head?'disabled':''}>保存所有修改</button><button data-action="discard">放弃草稿</button>`:''}</div></div></section>
- <nav class="tabs app-tabs" aria-label="当前工程导航">${[['overview','概览'],['configuration','开发'],['checks','测试'],['history','运行记录'],[p.kind==='template'?'release':'delivery',p.kind==='template'?'模板发行':'版本与发布']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id||id==='configuration'&&['flow','capabilities','files','coding','guidance'].includes(tab)||id==='checks'&&tab==='runs'?'active':''}">${label}</button>`).join('')}</nav>
- ${['configuration','capabilities','flow','files','coding','guidance'].includes(tab)?`<nav class="tabs develop-tabs" aria-label="开发内容">${[['configuration',p.kind==='template'?'模板设置':'应用设置'],['capabilities',p.kind==='template'?'公共能力':'能力'],['flow','编排'],['files','文件与指令'],['coding','Coding 助手'],...(p.kind==='template'?[['guidance','开发 Skill']]:[])].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}">${label}</button>`).join('')}</nav>`:''}
+ <nav class="tabs app-tabs" aria-label="当前工程导航">${[['overview','概览'],['configuration','开发'],['checks','测试'],['history','运行记录'],[p.kind==='template'?'release':'delivery',p.kind==='template'?'模板发行':'版本与发布']].map(([id,label])=>`<button data-tab="${id}" class="${tab===id||id==='configuration'&&['flow','capabilities','files','coding','guidance','revisions'].includes(tab)||id==='checks'&&tab==='runs'?'active':''}">${label}</button>`).join('')}</nav>
+ ${['configuration','capabilities','flow','files','coding','guidance','revisions'].includes(tab)?`<nav class="tabs develop-tabs" aria-label="开发内容">${[['configuration',p.kind==='template'?'模板设置':'应用设置'],['capabilities',p.kind==='template'?'公共能力':'能力'],['flow','编排'],['files','文件与指令'],['coding','Coding 助手'],['revisions','版本历史'],...(p.kind==='template'?[['guidance','开发 Skill']]:[])].map(([id,label])=>`<button data-tab="${id}" class="${tab===id?'active':''}">${label}</button>`).join('')}</nav>`:''}
  ${['checks','runs'].includes(tab)?`<nav class="tabs develop-tabs" aria-label="测试内容"><button data-tab="checks" class="${tab==='checks'?'active':''}">结构检查与候选</button><button data-tab="runs" class="${tab==='runs'?'active':''}">调试运行</button></nav>`:''}
  <div class="work-layout"><section class="canvas-main" aria-label="工程工作区">${d.baseHead!==p.head?'<p class="warning">工程版本已变化。请先复制保留草稿，再放弃草稿并基于新版本修改。</p>':''}<div id="journey-banner">${WorkbenchJourney.banner(codingContext())}</div>${view()}</section>${WorkbenchCoding.dock(codingContext(),tab==='coding')}</div>`);
 }
@@ -68,6 +69,7 @@ function overview(){const d=current.definition,j=current.journey;const stages=[[
 function view() {
     if(current.project.family==='deepagent'&&['overview','configuration','flow'].includes(tab))return (tab==='overview'?'<div id="journey-progress">'+WorkbenchJourney.progress(codingContext())+'</div>'+WorkbenchJourney.source(codingContext()):'')+WorkbenchDeep.render(tab,codingContext())+(tab==='configuration'?WorkbenchJourney.model(codingContext()):'');
     if(['capabilities','checks','guidance','activity'].includes(tab))return WorkbenchPanels.render(tab,codingContext());
+    if(tab==='revisions')return WorkbenchRevisions.render(codingContext());
     if(tab==='delivery')return WorkbenchDelivery.render(codingContext());
     if(['runs','history'].includes(tab))return WorkbenchRuntime.render(codingContext());
     if(tab==='coding')return WorkbenchCoding.render(codingContext());
@@ -141,6 +143,7 @@ window.addEventListener('beforeunload', e => { if ([...drafts.values()].some(d =
     e.returnValue = '';
 } });
 async function boot(){const context=await api('/context');build=context.uiVersion;workspaceId=context.workspaceId;modelInfo=context.modelConfiguration;WorkbenchPersistence.init({build,workspaceId,buildKey,onWarning:notify});role=localUI.read('','shared','role','application');if(!['application','platform'].includes(role))role='application';$('#identity').value=role;const remembered=localUI.read('',role,'navigation',{});await load();if(remembered?.projectId&&projects.some(p=>p.id===remembered.projectId))await open(remembered.projectId);}
+WorkbenchRevisions.init({api,context:codingContext,action,notify,reload:async()=>{current=await api('/projects/'+current.project.id);render();}});
 WorkbenchDiagnostics.init({api,open:(projectId,runId)=>action(async()=>{localUI.write(projectId,role,'runtime',{selected:runId});await open(projectId);tab='history';render();})});
 WorkbenchAssignments.init({context:codingContext,patch,render,action,notify});
 WorkbenchRelease.init({api,context:codingContext});

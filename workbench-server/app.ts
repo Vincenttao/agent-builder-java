@@ -1,3 +1,4 @@
+import {RevisionManager} from './revisions.js';
 import {flowSources} from './design.js';
 import {releaseInfo,projectJourney,templateMetadata,assetOrigins} from './journey.js';
 import {settings} from './settings.js';
@@ -24,15 +25,16 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
   const exports=new ExportManager(store,runs);
   const reviews=new ReviewManager(store);
+  const revisions=new RevisionManager(store);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
@@ -53,6 +55,11 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     const project=store.get(req.params.id,res.locals.role);const files=store.files(project.id,res.locals.role);
     res.json({flowSources:flowSources(store,project.id,project.head),assetOrigins:assetOrigins(store,project.id,res.locals.role),contract:store.contract(project.id,res.locals.role),sourceRelease:project.sourceReleaseId?releaseInfo(store,store.release(project.sourceReleaseId)):null,templateMetadata:templateMetadata(store.snapshot(project.id,project.head),project.head),journey:projectJourney(store,reviews,jobs,runs,exports,project.id,res.locals.role),project:{...project,family:store.family(project.id,res.locals.role)},definition:store.definition(project.id,res.locals.role),files,editablePaths:Object.keys(files).filter(f=>project.kind==='template'?res.locals.role==='platform':res.locals.role==='application'&&store.canEdit(project.id,res.locals.role,f))});
   });
+  app.get('/api/projects/:id/revisions',(req,res)=>res.json(revisions.history(req.params.id,res.locals.role)));
+  app.get('/api/projects/:id/revision-diff',(req,res)=>res.json(revisions.compare(req.params.id,res.locals.role,req.query.revision)));
+  app.get('/api/projects/:id/revision-file',(req,res)=>res.json(revisions.file(req.params.id,res.locals.role,req.query.revision,req.query.path)));
+  app.post('/api/projects/:id/restore',(req,res)=>res.json({project:revisions.restore(req.params.id,res.locals.role,req.body.baseHead,req.body.revision)}));
+  app.get('/api/projects/:id/upgrade-preview',(req,res)=>res.json(revisions.upgrade(req.params.id,res.locals.role,req.query.releaseId)));
   app.get('/api/projects/:id/journey',(req,res)=>res.json({journey:projectJourney(store,reviews,jobs,runs,exports,req.params.id,res.locals.role)}));
   app.put('/api/projects/:id/files',(req,res)=>res.json({project:store.save(req.params.id,res.locals.role,req.body.baseHead,req.body.changes)}));
   app.get('/api/projects/:id/checks',(req,res)=>res.json({reports:reviews.list(req.params.id,res.locals.role)}));

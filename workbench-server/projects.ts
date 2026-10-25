@@ -115,7 +115,7 @@ export class ProjectStore{
     for(const name of names){validatePath(name);const mode=this.git(id,['ls-tree',commit,'--',name]).split(' ')[0];if(mode==='120000')fail('INVALID_PATH','版本包含符号链接');files[name]=execFileSync('git',['-C',this.path(id),'show',`${commit}:${name}`],{encoding:'utf8',stdio:['ignore','pipe','pipe'],maxBuffer:3_000_000,timeout:15_000});}
     validateFiles(files);const bytes=Object.entries(files).reduce((total,[path,value])=>total+Buffer.byteLength(path)+Buffer.byteLength(value),0);if(bytes<=16_000_000){while(this.snapshotCache.size&&(this.snapshotCacheBytes+bytes>16_000_000||this.snapshotCache.size>=64)){const oldest=this.snapshotCache.keys().next().value!,entry=this.snapshotCache.get(oldest)!;this.snapshotCacheBytes-=entry.bytes;this.snapshotCache.delete(oldest);}this.snapshotCache.set(cacheKey,{files:{...files},bytes});this.snapshotCacheBytes+=bytes;}return files;
   }
-  save(id:string,role:Role,baseHead:string,changes:Record<string,string|null>):Project{
+  save(id:string,role:Role,baseHead:string,changes:Record<string,string|null>,message='Save reviewed workbench revision'):Project{
     const p=this.get(id,role);if((p.kind==='template')!==(role==='platform'))fail('FORBIDDEN','当前身份不能修改该工程',403);
     if(p.head!==baseHead||this.git(id,['rev-parse','HEAD'])!==baseHead)fail('REVISION_CONFLICT','工程已更新，请刷新后审阅差异',409);
     if(!changes||!Object.keys(changes).length)fail('EMPTY_CHANGE','没有待保存变更');
@@ -135,7 +135,7 @@ export class ProjectStore{
       for(const [name,content]of Object.entries(changes)){const dest=join(worktree,name);if(content===null){rmSync(dest,{force:true});}else{mkdirSync(dirname(dest),{recursive:true});writeFileSync(dest,content);}}
       run(['add','-f','--',...Object.keys(changes)]);
       if(!run(['diff','--cached','--name-only']))return p;
-      run(['commit','-m','Save reviewed workbench revision']);commit=run(['rev-parse','HEAD']);
+      run(['commit','-m',message]);commit=run(['rev-parse','HEAD']);
       this.git(id,['merge','--ff-only',commit]);
       this.db.prepare('UPDATE projects SET head=?,name=? WHERE id=?').run(commit,p.kind==='application'?spec.name:p.name,id);
       return this.get(id,role);
