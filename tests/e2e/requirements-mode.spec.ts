@@ -42,22 +42,13 @@ test('AC-02 guided and form modes keep one requirement state', async ({ page }) 
   await expect(page.getByRole('checkbox', { name: '确认目标使用者' })).toBeChecked();
   await expect(page.getByRole('checkbox', { name: '确认业务目标' })).not.toBeChecked();
 
-  const project = process.env.TD15_ACCEPTANCE_COMPOSE_PROJECT ?? 'agent-builder-td15-nf01';
-  const containers = execFileSync('docker', ['compose', '-p', project, 'ps', '-q', 'app', 'runner'], { encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean);
-  expect(containers).toHaveLength(2);
-  const targetImageIds = execFileSync('docker', ['inspect', '--format', '{{.Image}}', ...containers], { encoding: 'utf8' }).trim().split(/\r?\n/);
-  const browserProject = process.env.TD15_BROWSER_COMPOSE_PROJECT ?? 'agent-builder-td15-ac01';
-  const browserApp = execFileSync('docker', ['compose', '--env-file', '.env.local', '-p', browserProject, 'ps', '-q', 'app'], { encoding: 'utf8' }).trim();
-  expect(browserApp).toBeTruthy();
-  const servedAppImageId = execFileSync('docker', ['inspect', '--format', '{{.Image}}', browserApp], { encoding: 'utf8' }).trim();
-  expect(servedAppImageId).toBe(targetImageIds[0]);
+  const provenance = deploymentProvenance();
   const evidence = { schemaVersion: 1, requirement: 'TD-15/AC-02 Requirement fields and confirmation state survive guided/form switches and reload',
-    executionMode: 'live-browser-isolated-docker', measuredAt: new Date().toISOString(), base, composeProject: project, draftName: name,
-    browserComposeProject: browserProject, servedAppImageId,
+    ...provenance, measuredAt: new Date().toISOString(), base, draftName: name,
     assertions: { guidedToFormPreservedValues: true, guidedToFormPreservedConfirmation: true, formToGuidedPreservedEdits: true,
-      editedFieldConfirmationReset: true, savedDraftSurvivedReload: true }, targetImageIds, verdict: 'passed' };
-  await mkdir('docs/implementation/evidence', { recursive: true });
-  await writeFile('docs/implementation/evidence/TD15-AC02-mode-switch.json', JSON.stringify(evidence, null, 2) + '\n');
+      editedFieldConfirmationReset: true, savedDraftSurvivedReload: true }, verdict: 'passed' };
+  await mkdir(evidenceDirectory(), { recursive: true });
+  await writeFile(`${evidenceDirectory()}/TD15-AC02-mode-switch.json`, JSON.stringify(evidence, null, 2) + '\n');
 });
 
 test('AC-03 changing a read-only goal to work-order creation exposes confirmation and missing-resource requirements', async ({ page }) => {
@@ -80,6 +71,28 @@ test('AC-03 changing a read-only goal to work-order creation exposes confirmatio
   await expect(page.getByRole('textbox', { name: '交付内容' })).toHaveValue('设备状态、温度和查询时间');
   await page.getByRole('button', { name: '表单', exact: true }).click();
   await expect(page.getByRole('region', { name: '需求影响提示' })).toContainText('执行前需要用户确认');
+  const provenance = deploymentProvenance();
+  const evidence = { schemaVersion: 1, requirement: 'TD-15/AC-03 Write intent adds confirmation and resource requirements while retaining unrelated requirement fields',
+    ...provenance, measuredAt: new Date().toISOString(), base: process.env.APP_ORIGIN,
+    assertions: { confirmationRequirementShown: true, missingWriteInterfaceShown: true, audienceRetained: true, outputRetained: true, hintSurvivedFormSwitch: true },
+    verdict: 'passed', branches: ['write-confirmation-added', 'resource-gap', 'unrelated-fields-retained'].map(branchId => ({ caseId: 'AC-03', branchId, status: 'passed' })) };
+  await mkdir(evidenceDirectory(), { recursive: true });
+  await writeFile(`${evidenceDirectory()}/TD15-AC03-requirement-impact.json`, JSON.stringify(evidence, null, 2) + '\n');
+});
+
+
+// CI exercises the UI against its compiled server, not the separately deployed TD15 Docker acceptance target.
+// Keep every Docker identity assertion for that acceptance mode; never emit CI results into its evidence directory.
+function evidenceDirectory() {
+  return process.env.TD15_BROWSER_EVIDENCE_MODE === 'standalone-ci' ? 'test-results/requirements-ui' : 'docs/implementation/evidence';
+}
+function deploymentProvenance() {
+  if (process.env.TD15_BROWSER_EVIDENCE_MODE === 'standalone-ci') {
+    expect(process.env.GITHUB_ACTIONS).toBe('true');
+    expect(process.env.GITHUB_SHA).toMatch(/^[a-f0-9]{40}$/);
+    return { executionMode: 'ci-browser-ui', scope: 'requirement-ui-only', sourceCommit: process.env.GITHUB_SHA,
+      deploymentEvidence: 'not-collected', businessVerification: 'not-performed', fullAcceptance: 'not-verified' };
+  }
   const project = process.env.TD15_ACCEPTANCE_COMPOSE_PROJECT ?? 'agent-builder-td15-nf01';
   const containers = execFileSync('docker', ['compose', '-p', project, 'ps', '-q', 'app', 'runner'], { encoding: 'utf8' }).trim().split(/\r?\n/).filter(Boolean);
   expect(containers).toHaveLength(2);
@@ -89,11 +102,5 @@ test('AC-03 changing a read-only goal to work-order creation exposes confirmatio
   expect(browserApp).toBeTruthy();
   const servedAppImageId = execFileSync('docker', ['inspect', '--format', '{{.Image}}', browserApp], { encoding: 'utf8' }).trim();
   expect(servedAppImageId).toBe(targetImageIds[0]);
-  const evidence = { schemaVersion: 1, requirement: 'TD-15/AC-03 Write intent adds confirmation and resource requirements while retaining unrelated requirement fields',
-    executionMode: 'live-browser-isolated-docker', measuredAt: new Date().toISOString(), base: process.env.APP_ORIGIN, composeProject: project,
-    browserComposeProject: browserProject, servedAppImageId,
-    targetImageIds, assertions: { confirmationRequirementShown: true, missingWriteInterfaceShown: true, audienceRetained: true, outputRetained: true, hintSurvivedFormSwitch: true },
-    verdict: 'passed', branches: ['write-confirmation-added', 'resource-gap', 'unrelated-fields-retained'].map(branchId => ({ caseId: 'AC-03', branchId, status: 'passed' })) };
-  await mkdir('docs/implementation/evidence', { recursive: true });
-  await writeFile('docs/implementation/evidence/TD15-AC03-requirement-impact.json', JSON.stringify(evidence, null, 2) + '\n');
-});
+  return {executionMode:'live-browser-isolated-docker',composeProject:project,browserComposeProject:browserProject,servedAppImageId,targetImageIds};
+}

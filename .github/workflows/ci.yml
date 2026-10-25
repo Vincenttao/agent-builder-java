@@ -73,6 +73,8 @@ jobs:
       - run: pnpm db:migrate
       - run: pnpm exec playwright install --with-deps chromium
       - name: Browser against real app and database
+        env:
+          TD15_BROWSER_EVIDENCE_MODE: standalone-ci
         run: |
           # Match deploy/Dockerfile: tsc output alone cannot resolve pnpm workspace dependencies.
           pnpm --filter @agent-builder/server deploy --prod .cache/ci-server

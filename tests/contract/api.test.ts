@@ -3,6 +3,8 @@ import { createApp } from '../../apps/server/src/app.js';
 import { DraftService } from '../../apps/server/src/drafts/application/draft-service.js';
 import { MemoryDraftRepository } from '../support/memory-drafts.js';
 import { draftInput } from '../support/fixtures.js';
+import { AppError } from '../../apps/server/src/shared/errors.js';
+import type { SnapshotService } from '../../apps/server/src/snapshots/application/snapshot-service.js';
 import { randomUUID } from 'node:crypto';
 const apps: ReturnType<typeof createApp>[] = [];
 afterEach(async () => { await Promise.all(apps.splice(0).map(app => app.close())); });
@@ -57,6 +59,18 @@ describe('TD-01 HTTP 契约与本地工作台保护', () => {
     expect(run.statusCode).toBe(409);
     expect(run.json().details.blockers.map((b: {code: string}) => b.code)).toEqual(expect.arrayContaining(['MODEL_NOT_CONFIGURED', 'RUNTIME_NOT_IMPLEMENTED']));
     expect(run.json()).not.toHaveProperty('runId');
+  });
+  it('fixed snapshot run admission reports missing runtime without creating a run and still checks identity', async () => {
+    const known = randomUUID(); let lookups = 0;
+    const snapshots = { get: async (id: string) => { lookups++; if (id !== known) throw new AppError('SNAPSHOT_NOT_FOUND', '快照不存在', 404); return { id }; } } as unknown as SnapshotService;
+    const app = setup({ snapshots }); const headers = await login(app);
+    const payload = { clientRequestId: randomUUID(), input: 'query' };
+    const response = await app.inject({ method: 'POST', url: `/api/snapshots/${known}/runs`, headers, payload });
+    expect(response.statusCode).toBe(409); expect(response.json().code).toBe('ENVIRONMENT_BLOCKED');
+    expect(response.json().details.blockers.map((b: {code: string}) => b.code)).toContain('RUNTIME_NOT_IMPLEMENTED');
+    expect(response.json()).not.toHaveProperty('runId'); expect(lookups).toBe(1);
+    const unknown = await app.inject({ method: 'POST', url: `/api/snapshots/${randomUUID()}/runs`, headers, payload });
+    expect(unknown.statusCode).toBe(404); expect(unknown.json().code).toBe('SNAPSHOT_NOT_FOUND');
   });
   it('有模型凭据不表示实际连通，更不表示 Runtime 可运行', async () => {
     const app = setup({ modelConfigured: true }); const headers = await login(app);
