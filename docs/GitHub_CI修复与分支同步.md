@@ -36,3 +36,14 @@
 | archive/legacy-v1-20261025 | bb30f69 | [Platform checks](https://github.com/Vincenttao/agent-builder-java/actions/runs/40205057529) |
 
 表中是修复提交及初次推送的固定执行证据，不用新的执行ID替换旧失败记录；若后续修复产生新提交/运行，应追加说明。编写本记录时除dev外仍在执行，最终状态以对应运行与本次交付答复为准。本机摘要与保全清单在忽略目录test-results/ci-sync-20261025/。
+
+
+## 最新决定：旧版CI仅手动运行
+
+用户随后明确要求绕过旧版CI，避免持续因退役代码报错。因此main与归档中的`.github/workflows/ci.yml`已移除push/pull_request自动触发，保留workflow_dispatch及原有全部任务，名称为Legacy platform checks (manual)。不使用mock伪造通过，不删除历史失败。
+
+main策略提交15008ee，归档策略提交53d3066。新版dev/workbench-v2及静态demo/prd-v2-workbench继续自动检查；最新开发报告提交a241001的[远端CI](https://github.com/Vincenttao/agent-builder-java/actions/runs/40205182248)也已通过。
+
+启动修复后曾暴露的旧浏览器问题已另行保存修复：main 4af69a9、归档fe53396。包括检查运行条件先提示固定版本、Runtime缺失时固定快照运行返回409而非404，以及独立CI的界面证据不冒充Docker完整验收。新增API红/绿测试16项和三个原浏览器用例在明确的本地内存测试对端通过，Docker模式原镜像核验保留。两个首次修复运行的Java适配任务远端通过；不将后续取消的旧整套CI宣称为全部通过。
+
+用户决定到达前已触发的旧任务40205778335/40205777675已请求取消；策略提交不会再触发该旧工作流。历史红色记录仍可查看，这与新提交是否自动检查是两件事。
