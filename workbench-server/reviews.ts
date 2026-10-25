@@ -1,3 +1,4 @@
+import {flowSources} from './design.js';
 import {contractIssues} from './contracts.js';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -50,6 +51,7 @@ export class ReviewManager {
             return false;
         } }), '检查Agent连接引用和无凭据HTTP(S)地址，不验证远端可用性');
         add('HANDOFF', '接管与两层策略', !d.handoff.enabled || ids.includes(d.handoff.target), '启用时接管目标必须已挂载；最多A→B');
+        const diagrams=flowSources(this.store,id,p.head);
         for (const s of d.skills) {
             const ops = s.operations.map((name: string) => catalog[name]);
             add('SKILL_' + s.id, 'Skill ' + s.id, Boolean(files[s.file]?.startsWith('---')) && ops.length > 0 && ops.every((op: any) => op && (['SCRIPT', 'A2A'].includes(op.type)||family==='deepagent'&&op.type==='CORE'&&['read_file','write_file','list_files'].includes(op.nativeTool)) && (!op.resultScript || Boolean(files['skills/' + op.resultScript]))), '检查指导、操作引用及脚本存在；可用集合不是强制执行顺序');
@@ -58,6 +60,7 @@ export class ReviewManager {
                 if (['redeem', 'transfer', 'purchase'].includes(name))
                     add('CONFIRM_' + name, '写操作确认 ' + name, op?.confirmationRequired === true, '写操作必须保留独立确认');
             }
+            if(diagrams[s.id]?.status==='stale')add('FLOW_SOURCE_'+s.id,'Skill流程说明来源 '+s.id,false,diagrams[s.id].reason);
             const diagram = files['skills/' + s.id + '/flow.json'];
             if (diagram) {
                 try {

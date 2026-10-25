@@ -1,3 +1,4 @@
+import {flowSources} from './design.js';
 import {releaseInfo,projectJourney,templateMetadata,assetOrigins} from './journey.js';
 import {settings} from './settings.js';
 import {ReviewManager} from './reviews.js';
@@ -24,14 +25,14 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const exports=new ExportManager(store,runs);
   const reviews=new ReviewManager(store);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
@@ -50,7 +51,7 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   app.post('/api/projects',(req,res)=>res.status(201).json({project:store.createApplication(req.body.releaseId,req.body.name,res.locals.role,req.body.goal)}));
   app.get('/api/projects/:id',(req,res)=>{
     const project=store.get(req.params.id,res.locals.role);const files=store.files(project.id,res.locals.role);
-    res.json({assetOrigins:assetOrigins(store,project.id,res.locals.role),contract:store.contract(project.id,res.locals.role),sourceRelease:project.sourceReleaseId?releaseInfo(store,store.release(project.sourceReleaseId)):null,templateMetadata:templateMetadata(store.snapshot(project.id,project.head),project.head),journey:projectJourney(store,reviews,jobs,runs,exports,project.id,res.locals.role),project:{...project,family:store.family(project.id,res.locals.role)},definition:store.definition(project.id,res.locals.role),files,editablePaths:Object.keys(files).filter(f=>project.kind==='template'?res.locals.role==='platform':res.locals.role==='application'&&store.canEdit(project.id,res.locals.role,f))});
+    res.json({flowSources:flowSources(store,project.id,project.head),assetOrigins:assetOrigins(store,project.id,res.locals.role),contract:store.contract(project.id,res.locals.role),sourceRelease:project.sourceReleaseId?releaseInfo(store,store.release(project.sourceReleaseId)):null,templateMetadata:templateMetadata(store.snapshot(project.id,project.head),project.head),journey:projectJourney(store,reviews,jobs,runs,exports,project.id,res.locals.role),project:{...project,family:store.family(project.id,res.locals.role)},definition:store.definition(project.id,res.locals.role),files,editablePaths:Object.keys(files).filter(f=>project.kind==='template'?res.locals.role==='platform':res.locals.role==='application'&&store.canEdit(project.id,res.locals.role,f))});
   });
   app.get('/api/projects/:id/journey',(req,res)=>res.json({journey:projectJourney(store,reviews,jobs,runs,exports,req.params.id,res.locals.role)}));
   app.put('/api/projects/:id/files',(req,res)=>res.json({project:store.save(req.params.id,res.locals.role,req.body.baseHead,req.body.changes)}));
@@ -73,6 +74,7 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     const timer=setInterval(emit,750);req.on('close',()=>clearInterval(timer));emit();
   });
   app.get('/api/projects/:id/runs',(req,res)=>res.json({runs:runs.list(req.params.id,res.locals.role)}));
+  app.get('/api/diagnostics',(req,res)=>{if(res.locals.role!=='platform')throw new WorkbenchError('FORBIDDEN','集中诊断仅供平台开发者只读查看',403);const {projectId='',head='',status=''}=req.query;if(typeof projectId!=='string'||typeof head!=='string'||typeof status!=='string'||head&&!/^[a-f0-9]{4,40}$/.test(head)||status&&!['building','starting','running','stopping','stopped','failed','interrupted','unresponsive'].includes(status))throw new WorkbenchError('INVALID_FILTER','诊断筛选需要有效版本前缀及运行状态');if(projectId)store.get(projectId,'platform');const selected=runs.listAll('platform').filter(r=>(!projectId||r.projectId===projectId)&&(!head||r.head.startsWith(head))&&(!status||r.status===status));res.json({readOnly:true,runs:selected.map(r=>{const p=store.get(r.projectId,'platform');return {...r,projectName:p.name,stale:p.head!==r.head};})});});
   app.get('/api/runs',(_req,res)=>res.json({runs:runs.listAll(res.locals.role)}));
   app.post('/api/projects/:id/runs',async(req,res)=>res.status(202).json({run:await runs.start(req.params.id,res.locals.role,req.body.baseHead)}));
   app.get('/api/runs/:id',(req,res)=>res.json({run:runs.get(req.params.id,res.locals.role)}));

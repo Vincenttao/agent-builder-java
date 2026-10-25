@@ -1,5 +1,6 @@
 'use strict';
 const $ = s => document.querySelector(s), esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let directoryTab='projects';
 let role = 'application', projects = [], releases = [], current = null, tab = 'overview', file = 'instructions.md', epoch = 0, busy = false;
 const drafts = new Map();const familyName=p=>p?.family==='deepagent'?'DeepAgent':'MOA';
 const buildKey = 'openjiuwen-workbench-live-ui-build';
@@ -31,15 +32,16 @@ async function load() { const token = ++epoch; const [p, r] = await Promise.all(
     return; projects = p.projects; releases = r.releases; render(); }
 async function open(id) { const token = ++epoch; const value = await api('/projects/' + encodeURIComponent(id)); if (token !== epoch)
     return; current=value;const position=localUI.read(id,role,'position',{});file=typeof position.file==='string'?position.file:'instructions.md';tab=['overview','files','configuration','flow','capabilities','checks','history','guidance','activity','coding','runs',...(current.project.kind==='template'?['release']:['delivery'])].includes(position.tab)?position.tab:'overview';render(); }
-function codingContext() {return current?{project:current.project,files:current.files,releases,assetOrigins:current.assetOrigins,contract:current.contract,sourceRelease:current.sourceRelease,templateMetadata:current.templateMetadata,journey:current.journey,effectiveFiles:effectiveFiles(),role,modelInfo,historyOnly:tab==='history',editable:editable(),dirty:editable()&&Object.keys(draft().changes).length>0}:null;}
+function codingContext() {return current?{project:current.project,files:current.files,flowSources:current.flowSources,releases,assetOrigins:current.assetOrigins,contract:current.contract,sourceRelease:current.sourceRelease,templateMetadata:current.templateMetadata,journey:current.journey,effectiveFiles:effectiveFiles(),role,modelInfo,historyOnly:tab==='history',editable:editable(),dirty:editable()&&Object.keys(draft().changes).length>0}:null;}
 function shell(body) {
  const platform=role==='platform';
  $('#role-caption').textContent=platform?'平台开发':'应用开发';
  $('#breadcrumb').innerHTML=`企业空间 <span>/</span> ${platform?'平台开发':'应用'}${current?` <span>/</span> <strong>${esc(current.project.name)}</strong>`:''}`;
- $('#global-nav').innerHTML=platform?`<button data-action="home" class="${!current?'active':''}">开发模板与应用诊断</button><div class="nav-label">切换模板 · 在工程内维护</div><select id="template-switch" aria-label="切换开发模板">${projects.filter(p=>p.kind==='template').map(p=>`<option title="${esc(p.name)}" value="${esc(p.id)}" ${current?.project.id===p.id?'selected':''}>${esc(familyName(p))} 模板</option>`).join('')}</select>${[['guidance','开发 Skill'],['activity','工程活动']].map(([id,label])=>`<button data-action="template" data-target-tab="${id}" class="${current?.project.kind==='template'&&tab===id?'active':''}">${label}</button>`).join('')}`:`<button data-action="home" class="active">▦　我的应用</button>`;
+ $('#global-nav').innerHTML=platform?`<button data-action="home" class="${!current&&directoryTab!=='diagnostics'?'active':''}">开发模板与应用诊断</button><button data-action="diagnostics" class="${!current&&directoryTab==='diagnostics'?'active':''}">应用运行诊断</button><div class="nav-label">切换模板 · 在工程内维护</div><select id="template-switch" aria-label="切换开发模板">${projects.filter(p=>p.kind==='template').map(p=>`<option title="${esc(p.name)}" value="${esc(p.id)}" ${current?.project.id===p.id?'selected':''}>${esc(familyName(p))} 模板</option>`).join('')}</select>${[['guidance','开发 Skill'],['activity','工程活动']].map(([id,label])=>`<button data-action="template" data-target-tab="${id}" class="${current?.project.kind==='template'&&tab===id?'active':''}">${label}</button>`).join('')}`:`<button data-action="home" class="active">▦　我的应用</button>`;
  $('#workspace').innerHTML=body;
  if(current&&tab==='configuration')WorkbenchConfiguration.restrict(current.contract);
  if(current&&tab==='configuration')WorkbenchConfiguration.focus(localUI.read(current.project.id,role,'configuration-section','scope-settings'));
+ if(!current&&role==='platform'&&directoryTab==='diagnostics')WorkbenchDiagnostics.mount();
  if(current)WorkbenchPanels.mount(tab);
  if(current)WorkbenchJourney.mount();
  if(current&&tab==='release')WorkbenchRelease.mount();
@@ -57,6 +59,7 @@ function render() {
  <div class="work-layout"><section class="canvas-main" aria-label="工程工作区">${d.baseHead!==p.head?'<p class="warning">工程版本已变化。请先复制保留草稿，再放弃草稿并基于新版本修改。</p>':''}<div id="journey-banner">${WorkbenchJourney.banner(codingContext())}</div>${view()}</section>${WorkbenchCoding.dock(codingContext(),tab==='coding')}</div>`);
 }
 function home() {
+ if(role==='platform'&&directoryTab==='diagnostics')return shell(WorkbenchDiagnostics.render(projects));
  const platform=role==='platform';shell(`<div class="directory"><div class="directory-head"><div><div class="eyebrow">${platform?'PLATFORM WORKSPACE':'APPLICATION WORKSPACE'}</div><h1>${platform?'开发模板与应用诊断':'我的应用'}</h1><p class="muted">${platform?'维护开发范式、发行模板，并协助定位应用问题。':'选择适合业务的开发模板，和 Coding Agent 一起构建应用。'}</p></div><span class="badge">${projects.length} 个${platform?'工程':'应用'}</span></div>
  ${!platform?`<section class="panel create-panel"><div><div class="template-icon">◈</div><h2>从开发模板创建应用</h2><p class="muted">MOA：装配业务与Agent；DeepAgent：独立目标与文件交付</p></div>${releases.length?`${WorkbenchJourney.picker(releases)}<form id="create"><div class="field"><label for="name">应用名称</label><input id="name" name="name" required maxlength="120" placeholder="例如：材料整理助手"></div><div class="field"><label for="release">模板版本</label><select name="releaseId" id="release">${releases.map(r=>`<option value="${esc(r.id)}" ${r.developmentMode==='legacy-trial'?'disabled':''}>${r.developmentMode==='legacy-trial'?'历史试作 · ':''}${esc(r.templateName??'MOA')} · ${esc(r.version)} · ${esc(r.commit.slice(0,8))}</option>`).join('')}</select></div><div class="field goal-field"><label for="goal">业务目标</label><textarea id="goal" name="goal" maxlength="12000" placeholder="例如：查询员工积分，兑换前让用户确认。创建后交给 Coding 助手制定开发方案。"></textarea><small>先创建空业务工程；不会自动加入任何示例 Skill。</small></div><button class="primary">创建应用</button></form>`:'<p>尚无已发行模板。请切换至平台开发者，检查 MOA 模板并发行版本。</p>'}</section>`:''}
  <div class="section-title"><h2>${platform?'模板与应用':'已有应用'}</h2><span class="muted">工程按保存版本管理</span></div><div class="grid applications-grid">${projects.map(p=>`<section class="panel project-card"><div class="card-meta"><span class="template-icon">${p.kind==='template'?'◈':'▦'}</span><span class="badge">${p.kind==='template'?'开发模板':releases.some(r=>r.id===p.sourceReleaseId&&r.developmentMode==='legacy-trial')?'历史试作 · 旧模板':'应用'}</span></div><h2>${esc(p.name)}</h2><p class="muted">${p.kind==='template'?'范式代码、开放契约与开发 Skill':'业务配置、Skill 与挂载 Agent'}</p><div class="card-bottom"><code>${esc(p.head.slice(0,12))}</code><button data-open="${esc(p.id)}">${platform&&p.kind==='application'?'查看诊断':'进入工程'}</button></div></section>`).join('')||'<section class="panel">尚未创建应用。新应用不会预置 i豆业务。</section>'}</div></div>`);
@@ -93,7 +96,7 @@ finally {
     busy = false;
     $('#identity').disabled = false;
 } }
-$('#identity').onchange = () => action(async () => { epoch++; role = $('#identity').value;localUI.write('','shared','role',role); current = null; await load(); });
+$('#identity').onchange = () => action(async () => { epoch++; directoryTab='projects';role = $('#identity').value;localUI.write('','shared','role',role); current = null; await load(); });
 document.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !(b.dataset.open || b.dataset.tab || b.dataset.file || b.dataset.configSection || b.hasAttribute('data-config-expand') || b.dataset.openFile || b.dataset.action))
     return; action(async () => { if(b.hasAttribute('data-config-expand')){localUI.write(current.project.id,role,'configuration-section','all');WorkbenchConfiguration.focus('all');return;} if(b.dataset.openFile){tab='files';file=b.dataset.openFile;return render();} if(b.dataset.configSection) {localUI.write(current.project.id,role,'configuration-section',b.dataset.configSection);tab='configuration';render();document.getElementById(b.dataset.configSection)?.scrollIntoView({block:'start'});return;} if (b.dataset.open)
     return open(b.dataset.open); if (b.dataset.tab) {
@@ -104,8 +107,9 @@ document.addEventListener('click', e => { const b = e.target.closest('button'); 
     return render();
 } switch (b.dataset.action) {
     case 'template': {const target=projects.find(p=>p.kind==='template'&&p.id===current?.project.id)??projects.find(p=>p.kind==='template');if(!target)throw Error('尚无开发模板');await open(target.id);tab=b.dataset.targetTab;return render();}
+    case 'diagnostics':current=null;directoryTab='diagnostics';return load();
     case 'home':
-        current = null;
+        directoryTab='projects';current = null;
         return load();
     case 'save': return save();
     case 'discard':
@@ -137,6 +141,8 @@ window.addEventListener('beforeunload', e => { if ([...drafts.values()].some(d =
     e.returnValue = '';
 } });
 async function boot(){const context=await api('/context');build=context.uiVersion;workspaceId=context.workspaceId;modelInfo=context.modelConfiguration;WorkbenchPersistence.init({build,workspaceId,buildKey,onWarning:notify});role=localUI.read('','shared','role','application');if(!['application','platform'].includes(role))role='application';$('#identity').value=role;const remembered=localUI.read('',role,'navigation',{});await load();if(remembered?.projectId&&projects.some(p=>p.id===remembered.projectId))await open(remembered.projectId);}
+WorkbenchDiagnostics.init({api,open:(projectId,runId)=>action(async()=>{localUI.write(projectId,role,'runtime',{selected:runId});await open(projectId);tab='history';render();})});
+WorkbenchAssignments.init({context:codingContext,patch,render,action,notify});
 WorkbenchRelease.init({api,context:codingContext});
 WorkbenchAssembly.init({context:codingContext,patch,render,action,notify});
 WorkbenchJourney.init({api,context:codingContext,releases:()=>releases,update:j=>{if(current)current.journey=j;},next:target=>action(async()=>{if(target==='save')return save();tab=target;render();if(target==='coding'&&current.definition.description)WorkbenchCoding.setPrompt('请根据以下业务目标检查当前工程，并在允许范围内补齐开发方案、业务Skill与测试：\n'+current.definition.description);})});

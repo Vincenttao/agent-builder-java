@@ -97,15 +97,16 @@ window.WorkbenchDesign = (() => {
         const c = ctx(), s = spec(true).skills.find(x => x.id === id);
         if (!s)
             return '<p>Skill已被移除，请重新选择。</p>';
+        const source=c.flowSources?.[id],sourceWarning=source?.status==='stale'?'<p class="warning">流程说明已过期：'+esc(source.reason)+'</p>':'<p class="muted">'+esc(source?.reason??'来源未记录，图示需要人工核对。')+'</p>';
         let flow;
         try {
             flow = JSON.parse(c.files['skills/' + id + '/flow.json']);
         }
         catch { }
         if (!flow || flow.designOnly !== true || !Array.isArray(flow.nodes) || !flow.nodes.length || flow.nodes.length > 30 || !Array.isArray(flow.edges))
-            return `<section class="panel"><h2>${esc(id)} · 业务指导</h2><p class="muted">尚未提供流程说明图。下面是实际Skill内容；操作集合不代表强制顺序。</p><pre>${esc(c.files[s.file])}</pre><button data-open-file="${esc(s.file)}">编辑指导</button></section>`;
+            return `<section class="panel"><h2>${esc(id)} · 业务指导</h2>${sourceWarning}<button data-design-diagram-coding="${esc(id)}">请Coding助手生成流程说明</button><p class="muted">尚未提供流程说明图。下面是实际Skill内容；操作集合不代表强制顺序。</p><pre>${esc(c.files[s.file])}</pre><button data-open-file="${esc(s.file)}">编辑指导</button></section>`;
         const positions = new Map(flow.nodes.map(n => [n.id, { x: 20 + (n.column ?? 1) * 190, y: 20 + (n.row ?? 0) * 100 }])), height = Math.max(...flow.nodes.map(n => (n.row ?? 0) * 100)) + 95;
-        return `<section class="panel"><div class="section-title"><h2>${esc(id)} · ${esc(flow.title || '业务过程')}</h2><button data-open-file="skills/${esc(id)}/flow.json">查看流程说明文件</button></div><p class="muted">设计说明，非执行引擎；执行仍由Skill指导、模型和程序约束决定。</p><div class="skill-diagram" style="height:${height}px"><svg viewBox="0 0 600 ${height}" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="flow-arrow-tip" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#aab6c6"/></marker></defs>${flow.edges.map(e => { const a = positions.get(e.from), b = positions.get(e.to); if (!a || !b)
+        return `<section class="panel"><div class="section-title"><h2>${esc(id)} · ${esc(flow.title || '业务过程')}</h2><button data-design-diagram-coding="${esc(id)}">关联修订流程说明</button><button data-open-file="skills/${esc(id)}/flow.json">查看流程说明文件</button></div>${sourceWarning}<p class="muted">设计说明，非执行引擎；执行仍由Skill指导、模型和程序约束决定。</p><div class="skill-diagram" style="height:${height}px"><svg viewBox="0 0 600 ${height}" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="flow-arrow-tip" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#aab6c6"/></marker></defs>${flow.edges.map(e => { const a = positions.get(e.from), b = positions.get(e.to); if (!a || !b)
             return ''; if(b.y-a.y>140){const left=a.x<180,lane=left?8:570,start=left?a.x:a.x+160,end=left?b.x:b.x+160;return `<path d="M${start},${a.y+28} H${lane} V${b.y+28} H${end}" stroke="#aab6c6" fill="none" marker-end="url(#flow-arrow-tip)"/><text x="${lane+5}" y="${(a.y+b.y)/2+28}" font-size="10" fill="#6e7c91">${esc(e.when??'')}</text>`;} return `<path d="M${a.x + 80},${a.y + 55} C${a.x + 80},${a.y + 85} ${b.x + 80},${b.y - 15} ${b.x + 80},${b.y}" stroke="#aab6c6" fill="none" marker-end="url(#flow-arrow-tip)"/><text x="${(a.x + b.x) / 2 + 85}" y="${(a.y + b.y) / 2 + 35}" font-size="10" fill="#6e7c91">${esc(e.when ?? '')}</text>`; }).join('')}</svg>${flow.nodes.map(n => { const p = positions.get(n.id); return `<article class="skill-process-node" style="left:${p.x / 6}%;top:${p.y}px;width:26.6%"><small>${esc(n.operation ?? n.kind ?? '业务条件')}</small><strong>${esc(n.label)}</strong></article>`; }).join('')}</div><p>${esc(flow.note ?? '每个写操作独立确认；图中结果以实际工具回执为准。')}</p></section>`;
     }
     function flow() { const c = ctx(), s = state();host.local?.write(c.project.id,c.role,'design',s); const tabs = [['map', '处理流程'], ['scope', '业务范围'], ['handoff', '转交与续办'], ['skills', '业务 Skills'], ['preview', '规则预演']]; let body; if (s.section === 'map')
@@ -117,7 +118,7 @@ window.WorkbenchDesign = (() => {
     else {
         const box = document.createElement('div');
         box.innerHTML = WorkbenchConfiguration.render(c.effectiveFiles, !c.editable);
-        body = box.querySelector(s.section === 'scope' ? '#scope-settings' : '#skill-settings')?.outerHTML ?? '<p>先修复应用定义。</p>';
+        body = (s.section==='scope'?WorkbenchAssignments.render(c):'')+(box.querySelector(s.section === 'scope' ? '#scope-settings' : '#skill-settings')?.outerHTML ?? '<p>先修复应用定义。</p>');
         if (s.section === 'skills')
             body = `<div class="skill-pickers">${spec(true).skills.map(x => `<button data-design-skill="${esc(x.id)}">${esc(x.id)} · 查看过程</button>`).join('')}</div>` + (s.skill ? skillDiagram(s.skill) : '') + body;
     } return `<div class="section-title"><div><h2>编排</h2><p class="muted">定义负责什么、如何处理，以及何时转交。</p></div><button data-design-coding>交给 Coding Agent</button></div><nav class="flow-nav" aria-label="编排内容">${tabs.map(([id, label], i) => `<button data-design-section="${id}" class="${s.section === id ? 'active' : ''}" aria-pressed="${s.section === id}"><small>0${i + 1}</small>${label}</button>`).join('')}</nav>${body}`; }
@@ -139,7 +140,7 @@ window.WorkbenchDesign = (() => {
             s.result.stale = true;
         host.render();
     } }); document.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !ctx())
-        return; const s = state(); if (b.dataset.designSection) {
+        return; const s = state(); if(b.dataset.designDiagramCoding){const id=b.dataset.designDiagramCoding;host.coding('请关联核对当前已保存Skill '+id+'、绑定操作和 skills/'+id+'/flow.json。流程只作设计说明，不是执行引擎。补齐或修订图中条件、确认、跳转及完成依据；将sourceHash设置为当前来源摘要 '+(ctx().flowSources?.[id]?.hash??'请先读取当前定义计算')+'。保持未涉及文件不变，并说明图示与业务指导的关系。');return;} if (b.dataset.designSection) {
         s.section = b.dataset.designSection;
         host.render();
     }
