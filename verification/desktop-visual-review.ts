@@ -1,0 +1,19 @@
+// Read-only visual review of the running real workbench. Never generates, builds or submits business.
+import assert from 'node:assert/strict';
+import {chromium} from '@playwright/test';
+import {mkdirSync,writeFileSync} from 'node:fs';
+import {resolve,join} from 'node:path';
+const base=process.env.DESKTOP_REVIEW_URL??'http://127.0.0.1:8768',output=resolve(process.env.DESKTOP_REVIEW_OUTPUT??('test-results/desktop-layout-'+new Date().toISOString().replace(/[:.]/g,'-')));mkdirSync(output,{recursive:true});
+const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(12000);const writes:string[]=[],errors:string[]=[];page.on('request',r=>{if(r.url().includes('/api/')&&!['GET','HEAD'].includes(r.method()))writes.push(r.method()+' '+new URL(r.url()).pathname);});page.on('pageerror',e=>errors.push(e.message));
+const shot=async(name:string)=>{assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:join(output,name+'.png'),fullPage:true});};
+try{
+ const context=await(await fetch(base+'/api/context')).json();
+ await page.goto(base);await page.getByRole('heading',{name:'我的应用',exact:true}).waitFor();await shot('application-directory');const card=page.locator('section.panel').filter({has:page.getByRole('heading',{name:'i豆服务助手',exact:true})});await card.getByRole('button',{name:'进入工程',exact:true}).click();await page.locator('.copilot').waitFor();await shot('application-overview');
+ await page.getByRole('button',{name:'业务配置',exact:true}).click();assert.equal(await page.getByLabel('余额结果字段路径').inputValue(),'employee.wallet.availablePoints');await shot('application-configuration');
+ await page.getByRole('button',{name:'文件与指令',exact:true}).click();await shot('application-files');await page.getByRole('button',{name:'调试运行',exact:true}).click();await page.getByRole('heading',{name:'已停止',exact:true}).waitFor();await shot('application-runtime');
+ for(const width of [1280,1920]){await page.setViewportSize({width,height:1000});await shot('runtime-'+width);assert.ok((await page.locator('.copilot').boundingBox())!.width>=280);}
+ await page.setViewportSize({width:1440,height:1000});await page.getByRole('button',{name:'版本与导出',exact:true}).click();await page.getByLabel('交付来源运行').waitFor();await shot('application-delivery');
+ await page.locator('#identity').selectOption('platform');await page.getByRole('heading',{name:'开发模板与应用诊断',exact:true}).waitFor();await shot('platform-directory');await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'MOA 开发模板',exact:true})}).getByRole('button',{name:'进入工程',exact:true}).click();await shot('platform-overview');await page.getByRole('button',{name:'Coding 助手',exact:true}).click();await page.getByRole('heading',{name:'已拒绝',exact:true}).waitFor();await shot('platform-coding');
+ await page.getByRole('button',{name:'← 模板与应用',exact:true}).click();await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'i豆服务助手',exact:true})}).getByRole('button',{name:'查看诊断',exact:true}).click();await page.getByRole('button',{name:'调试运行',exact:true}).click();await page.getByRole('heading',{name:'已停止',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'停止原运行',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).count(),0);await shot('platform-diagnosis');
+ assert.deepEqual(writes,[]);assert.deepEqual(errors,[]);writeFileSync(join(output,'visual-result.json'),JSON.stringify({passed:true,base,uiVersion:context.uiVersion,scope:'real saved template/application/Coding/runtime/export rendered through new desktop layout; read-only, no new model or business',writes,errors,widths:[1280,1440,1920]},null,2)+'\n');console.log(JSON.stringify({passed:true,output,writes,errors}));
+}finally{await browser.close();}

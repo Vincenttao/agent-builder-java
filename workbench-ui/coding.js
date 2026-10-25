@@ -7,10 +7,13 @@ window.WorkbenchCoding = (() => {
   function state(id){const role=host.context()?.role??'application',key=role+'|'+id;if(!states.has(key)){const saved=host.local?.read(id,role,'coding',{})??{};states.set(key,{jobs:[],selected:typeof saved.selected==='string'?saved.selected:null,prompt:typeof saved.prompt==='string'?saved.prompt:'',review:null,detailKey:null,answers:new Map()});}return states.get(key);}
   function persist(id,s){host.local?.write(id,host.context()?.role??'application','coding',{prompt:s.prompt,selected:s.selected});}
   function skill(project){return project.kind==='template'?'moa-platform-development':'moa-application-development';}
-  function render(context){
-    const s=state(context.project.id), path=`.opencode/skills/${skill(context.project)}/SKILL.md`;
-    return `<section class="panel"><div class="toolbar"><div><h2>Coding 助手 · ${context.project.kind==='template'?'维护开发范式':'开发业务应用'}</h2><p class="muted">建议在独立 Git worktree 中生成。审阅前不改变当前工程；切换页面不会取消执行。</p></div><button data-coding-action="refresh">重新核对建议</button></div><details><summary>本工程开发指导：${esc(skill(context.project))}</summary><pre>${esc(context.files[path]??'缺少开发 Skill，生成时会被校验阻断。')}</pre></details><p class="muted">开发 Skill 给编码助手使用；业务 Skill 给运行中的应用使用，两者用途不同。</p>
-      ${context.editable?`<p class="warning">本机 OpenCode 使用已配置的 DeepSeek。相关工程代码、测试和开发 Skill 会成为外部模型的开发上下文；任务结果会记录实际引擎与模型。</p>${context.dirty?'<p class="warning">存在未保存草稿。请先保存或放弃，再生成和应用建议。</p>':''}<form id="coding-start"><div class="field"><label for="coding-prompt">开发需求</label><textarea id="coding-prompt" name="prompt" maxlength="16000" required placeholder="说明业务目标、系统接口和需要修改的行为">${esc(s.prompt)}</textarea></div><button class="primary" ${context.dirty?'disabled':''}>生成修改建议</button></form>`:'<p class="warning">平台身份只能查看此应用的编码记录</p>'}</section><div id="coding-host" data-project="${esc(context.project.id)}"><div class="coding-layout"><section class="panel"><h2>编码记录</h2><div id="coding-list">正在读取记录…</div></section><section class="panel" id="coding-detail">选择记录查看执行与差异。</section></div></div>`;
+  function render(context){return `<div class="section-title"><div><h2>工程变更审阅</h2><p class="muted">在右侧选择编码记录，在这里核对完整差异与执行证据。</p></div><span class="badge">${context.editable?'审阅后应用':'只读诊断'}</span></div><section class="panel" id="coding-detail">选择记录查看执行与差异。</section>`;}
+  function dock(context,reviewing=false){
+    const s=state(context.project.id),name=skill(context.project),path=`.opencode/skills/${name}/SKILL.md`;
+    return `<aside class="copilot" aria-label="Coding Agent"><div class="copilot-head"><span class="copilot-mark">✦</span><div><h2>Coding Agent</h2><p>OpenCode · ${context.project.kind==='template'?'范式工程助手':'应用开发助手'}</p></div><span class="badge">已接入</span></div><div class="copilot-content"><div class="skill-context"><div class="meta"><span>当前开发 Skill</span><span class="context-dot"></span></div><strong>${esc(name)}</strong><p>${context.project.kind==='template'?'框架二开 · 扩展契约 · 应用开发指导':'业务目标 · 开放能力 · 允许修改的文件'}</p><details><summary>查看开发指导</summary><pre>${esc(context.files[path]??'缺少开发 Skill，生成时会被校验阻断。')}</pre></details></div>
+    <div class="plan-mini"><span><b>1</b>描述目标</span><span><b>2</b>审阅差异</span><span><b>3</b>调试验证</span></div>
+    <div class="agent-intro">${context.editable?'我会结合当前工程与开发指导，提出可审阅的修改。代码和配置仍由你确认后保存。':'平台身份只能查看此应用的编码记录'}</div><div id="coding-host" data-project="${esc(context.project.id)}"><div class="coding-records-head"><h3>编码记录</h3><button data-coding-action="refresh">重新核对建议</button></div><div id="coding-status" role="status"></div><div id="coding-list">正在读取记录…</div><button class="review-link" data-tab="coding">在工作区查看完整差异 ↗</button>${reviewing?'':'<section id="coding-detail" hidden></section>'}</div></div>
+    ${context.editable?`<div class="composer"><p id="coding-dirty-warning" class="warning" ${context.dirty?'':'hidden'}>存在未保存草稿，请先保存或放弃，再生成建议。</p><form id="coding-start"><label for="coding-prompt">开发需求</label><textarea id="coding-prompt" name="prompt" maxlength="16000" required placeholder="描述业务目标、接口变更或需要调整的行为…">${esc(s.prompt)}</textarea><div class="composer-footer"><span>当前工程 · ${esc(context.project.head.slice(0,8))}</span><button class="primary" ${context.dirty?'disabled':''}>生成修改建议</button></div></form><details class="model-notice"><summary>模型与上下文说明</summary><p>工程代码、测试和开发 Skill 会作为已配置模型的开发上下文。实际引擎和模型记录在每次任务中；生成差异不代表验证通过。</p></details></div>`:'<div class="agent-foot">应用代码只读；需要修改范式时，请进入 MOA 开发模板。</div>'}</aside>`;
   }
   function unmount(){clearTimeout(timer);generation++;}
   function valid(token,context){const now=host.context();return token===generation&&now&&now.project.id===context.project.id&&now.role===context.role&&document.getElementById('coding-host');}
@@ -42,6 +45,7 @@ window.WorkbenchCoding = (() => {
   function paint(context){
     const s=state(context.project.id),job=s.jobs.find(j=>j.id===s.selected);
     document.getElementById('coding-list').innerHTML=s.jobs.map(j=>`<button class="coding-record ${j.id===s.selected?'active':''}" data-coding-job="${esc(j.id)}">${esc(labels[j.status]??j.status)} · ${esc(j.createdAt)}<br><small>${esc(j.prompt.slice(0,100))}</small></button>`).join('')||'<p class="muted">没有编码记录。描述需求后生成真实文件差异，再审阅应用。</p>';
+    const status=document.getElementById('coding-status');if(status)status.textContent=job?`${labels[job.status]??job.status} · ${job.model||'等待模型信息'}`:'尚未发起编码任务';
     const target=document.getElementById('coding-detail');if(!job){target.textContent='尚未选择编码任务。';return;}
     const live=host.context();
     const key=JSON.stringify({id:job.id,status:job.status,question:job.pendingQuestion,summary:job.summary,error:job.error,changes:job.changes,review:s.review,path:s.path,head:live.project.head,dirty:live.dirty,tools:[...(job.evidence??[]),...(job.events??[]).filter(e=>e.type==='tool')]});
@@ -84,7 +88,7 @@ window.WorkbenchCoding = (() => {
       if(id==='coding-start'){
         if(c.dirty)throw Error('请先保存或放弃工程草稿');
         const {job}=await host.api('/projects/'+c.project.id+'/jobs','POST',{prompt:s.prompt});
-        if(!valid(token,c))return;s.selected=job.id;s.review=null;s.jobs.unshift(job);s.detailKey=null;await refresh(token,c,true);
+        if(!valid(token,c))return;s.selected=job.id;s.review=null;s.jobs.unshift(job);s.detailKey=null;await refresh(token,c,true);if(valid(token,c))host.showReview?.();
       }else{
         const job=s.jobs.find(j=>j.id===form.dataset.job),question=job?.pendingQuestion;
         if(!question||question.id!==form.dataset.question)throw Error('原问题已变化，请重新核对建议');
@@ -94,5 +98,5 @@ window.WorkbenchCoding = (() => {
       }
     });});
   }
-  return {init,render,mount,unmount};
+  return {init,render,dock,mount,unmount};
 })();

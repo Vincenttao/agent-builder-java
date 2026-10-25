@@ -1,1 +1,18 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>openJiuwen · 本机开发工作台</title><link rel="stylesheet" href="/workbench-ui/style.css"><body><aside><strong>openJiuwen</strong><p>Agent 开发工作台</p><label for="identity">本机模拟身份</label><select id="identity"><option value="application">陈晓 · 应用开发者</option><option value="platform">林知远 · 平台开发者</option></select><nav id="global-nav"></nav><small>本机工程 · Git 版本管理<br>业务调用需要独立运行环境</small></aside><main id="workspace" aria-live="polite"></main><div id="notice" role="status"></div><script src="/workbench-ui/configuration.js"></script><script src="/workbench-ui/coding.js"></script><script src="/workbench-ui/runtime.js"></script><script src="/workbench-ui/delivery.js"></script><script src="/workbench-ui/persistence.js"></script><script src="/workbench-ui/app.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>openJiuwen · Agent 开发工作台</title><link rel="stylesheet" href="/workbench-ui/style.css"></head>
+<body>
+<a class="skip" href="#workspace">跳到工作区</a>
+<aside class="sidebar" aria-label="角色导航">
+ <div class="brand"><span class="brand-symbol">◈</span> openJiuwen</div><div class="brand-caption">AGENT DEVELOPMENT</div>
+ <div class="space"><span class="square">企</span><span>企业 AI 开发空间</span></div>
+ <div class="nav-label" id="role-caption">应用开发</div><nav id="global-nav" aria-label="全局导航"></nav>
+ <div class="sidebar-bottom"><span class="environment-dot"></span> 本机开发环境<p>工程、运行和交付分别留存<br>业务系统使用独立 Mock</p></div>
+</aside>
+<main class="main">
+ <header class="topbar"><div class="crumb" id="breadcrumb">企业空间 / 应用</div><div class="identity-control"><span class="local-tag">本机演示</span><label for="identity">切换用户身份</label><select id="identity"><option value="application">陈晓 · 应用开发者</option><option value="platform">林知远 · 平台开发者</option></select></div></header>
+ <div id="workspace" aria-live="polite"></div>
+</main>
+<div id="notice" role="status"></div>
+<script src="/workbench-ui/configuration.js"></script><script src="/workbench-ui/coding.js"></script><script src="/workbench-ui/runtime.js"></script><script src="/workbench-ui/delivery.js"></script><script src="/workbench-ui/persistence.js"></script><script src="/workbench-ui/app.js"></script>
+</body></html>

@@ -17,7 +17,8 @@ test('PC business configuration, Skill assembly and saved flow share actual proj
  const address=server.address();assert.ok(address&&typeof address!=='string');
  const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- let businessRequests=0;page.on('request',r=>{if(/\/runs|\/messages|\/jobs/.test(r.url()))businessRequests++;});
+ // Persistent Coding dock reads job metadata; only execution/mutation requests count as business actions.
+ let businessRequests=0;page.on('request',r=>{if(r.method()!=='GET'&&/\/runs|\/messages|\/jobs/.test(r.url()))businessRequests++;});
  await page.goto(`http://127.0.0.1:${address.port}`);
  await page.getByRole('button',{name:'进入工程'}).click();
  await page.getByRole('button',{name:'业务配置',exact:true}).click();
