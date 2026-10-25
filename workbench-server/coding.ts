@@ -9,7 +9,11 @@ export type CodingJob={id:string;projectId:string;role:Role;engineKind?:string;b
 function worktreeFiles(root:string):Files{
  const files:Files={};
  function visit(dir:string,prefix=''){for(const entry of readdirSync(dir,{withFileTypes:true})){
-  if(!prefix&&entry.name==='.git')continue;const name=prefix+entry.name;validatePath(name);const file=join(dir,entry.name);const stat=lstatSync(file);
+  if(!prefix&&entry.name==='.git')continue;
+  // OpenCode installs its own local provider dependencies. They are execution cache, not application content.
+  // Keep this exact list independent of editable ignore rules; all other paths are still validated.
+  if(prefix==='.opencode/'&&['node_modules','package.json','package-lock.json','bun.lock'].includes(entry.name))continue;
+  const name=prefix+entry.name;validatePath(name);const file=join(dir,entry.name);const stat=lstatSync(file);
   if(stat.isSymbolicLink())throw new WorkbenchError('INVALID_PATH','助手变更包含符号链接');
   if(entry.isDirectory())visit(file,name+'/');else{if(stat.size>2_000_000)throw new WorkbenchError('FILE_TOO_LARGE','助手文件超过 2 MB');files[name]=readFileSync(file,'utf8');}
  }}visit(root);return files;

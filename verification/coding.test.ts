@@ -64,3 +64,15 @@ test('assistant clarification is routed to its original question and cancellatio
  for(let n=0;n<100&&jobs.get(next.id,'application').status!=='cancelled';n++)await new Promise(r=>setTimeout(r,10));
  assert.equal(jobs.get(next.id,'application').status,'cancelled');
 });
+
+test('OpenCode local dependency cache is excluded without ignoring fixed instructions or forbidden paths',async t=>{
+ const {store,jobs,a}=fixture(t,engine(dir=>{
+  mkdirSync(join(dir,'.opencode/node_modules/provider'),{recursive:true});writeFileSync(join(dir,'.opencode/node_modules/provider/package.json'),'{}');
+  for(const name of ['package.json','package-lock.json','bun.lock'])writeFileSync(join(dir,'.opencode',name),'runtime dependency metadata');
+  writeFileSync(join(dir,'instructions.md'),'实际业务修订');
+ }));
+ const first=await jobs.start(a.id,'application','修订');const result=await settled(jobs,first.id);assert.equal(result.status,'awaiting_review');assert.deepEqual(Object.keys(result.changes),['instructions.md']);await jobs.apply(first.id,'application');
+ assert.equal(store.files(a.id,'application')['instructions.md'],'实际业务修订');assert.equal(Object.keys(store.files(a.id,'application')).some(p=>p.includes('node_modules')||p==='.opencode/package.json'),false);
+ const protectedJobs=new CodingJobs(store,engine(dir=>{mkdirSync(join(dir,'.opencode/node_modules'),{recursive:true});writeFileSync(join(dir,'.opencode/.gitignore'),'ignore all');writeFileSync(join(dir,'instructions.md'),'cannot escape');}));
+ const second=await protectedJobs.start(a.id,'application','不能修改固定忽略规则');const blocked=await settled(protectedJobs,second.id);assert.equal(blocked.status,'failed');assert.equal(blocked.error?.code,'FORBIDDEN_PATH');assert.equal(store.files(a.id,'application')['instructions.md'],'实际业务修订');
+});
