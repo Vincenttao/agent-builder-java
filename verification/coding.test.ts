@@ -6,8 +6,8 @@ import {join} from 'node:path';
 import {ProjectStore,WorkbenchError} from '../workbench-server/projects.js';
 import {readTree} from '../workbench-server/app.js';
 import {CodingJobs,type CodingEngine} from '../workbench-server/coding.js';
-function fixture(t:test.TestContext,engine:CodingEngine){
- const root=mkdtempSync(join(tmpdir(),'workbench-coding-'));const store=new ProjectStore(root);const template=store.seedTemplate(readTree('templates/moa'));const release=store.publish(template.id,'platform','1.0.0');const a=store.createApplication(release.id,'应用','application');const jobs=new CodingJobs(store,engine);
+function fixture(t:test.TestContext,engine:CodingEngine,omitCacheIgnore=false){
+ const root=mkdtempSync(join(tmpdir(),'workbench-coding-'));const store=new ProjectStore(root);const files=readTree('templates/moa');if(omitCacheIgnore)delete files['.opencode/.gitignore'];const template=store.seedTemplate(files);const release=store.publish(template.id,'platform','1.0.0');const a=store.createApplication(release.id,'应用','application');const jobs=new CodingJobs(store,engine);
  t.after(()=>{store.close();rmSync(root,{recursive:true,force:true});});return {store,jobs,a};
 }
 const engine=(change:(dir:string)=>void):CodingEngine=>({async run(input){change(input.directory);return {sessionId:'real-adapter-fixture',model:'deepseek-flash',summary:'修改业务指令',evidence:[{tool:'skill',status:'completed',input:{name:'moa-application-development'}}]};}});
@@ -75,4 +75,17 @@ test('OpenCode local dependency cache is excluded without ignoring fixed instruc
  assert.equal(store.files(a.id,'application')['instructions.md'],'实际业务修订');assert.equal(Object.keys(store.files(a.id,'application')).some(p=>p.includes('node_modules')||p==='.opencode/package.json'),false);
  const protectedJobs=new CodingJobs(store,engine(dir=>{mkdirSync(join(dir,'.opencode/node_modules'),{recursive:true});writeFileSync(join(dir,'.opencode/.gitignore'),'ignore all');writeFileSync(join(dir,'instructions.md'),'cannot escape');}));
  const second=await protectedJobs.start(a.id,'application','不能修改固定忽略规则');const blocked=await settled(protectedJobs,second.id);assert.equal(blocked.status,'failed');assert.equal(blocked.error?.code,'FORBIDDEN_PATH');assert.equal(store.files(a.id,'application')['instructions.md'],'实际业务修订');
+});
+
+test('canonical OpenCode cache ignore is excluded only when newly generated',async t=>{
+ const canonical='node_modules\npackage.json\npackage-lock.json\nbun.lock\n.gitignore';const {store,jobs,a}=fixture(t,engine(dir=>{mkdirSync(join(dir,'.opencode'),{recursive:true});writeFileSync(join(dir,'.opencode/.gitignore'),canonical);writeFileSync(join(dir,'instructions.md'),'真实业务修改');}),true);
+ const job=await jobs.start(a.id,'application','修改业务指导');const result=await settled(jobs,job.id);assert.equal(result.status,'awaiting_review');assert.deepEqual(result.changes,{'instructions.md':'真实业务修改'});await jobs.apply(job.id,'application');assert.equal(Object.hasOwn(store.files(a.id,'application'),'.opencode/.gitignore'),false);
+});
+
+test('noncanonical cache ignore cannot bypass application path guards',async t=>{
+ const {jobs,a}=fixture(t,engine(dir=>{mkdirSync(join(dir,'.opencode'),{recursive:true});writeFileSync(join(dir,'.opencode/.gitignore'),'*\n');writeFileSync(join(dir,'instructions.md'),'业务修改');}),true);const job=await jobs.start(a.id,'application','修改');const result=await settled(jobs,job.id);assert.equal(result.status,'failed');assert.equal(result.error?.code,'FORBIDDEN_PATH');
+});
+
+test('an existing template ignore remains protected even when overwritten with canonical cache text',async t=>{
+ const canonical='node_modules\npackage.json\npackage-lock.json\nbun.lock\n.gitignore';const {store,jobs,a}=fixture(t,engine(dir=>{writeFileSync(join(dir,'.opencode/.gitignore'),canonical);writeFileSync(join(dir,'instructions.md'),'业务修改');}));const template=store.get('moa-platform','platform');store.save(template.id,'platform',template.head,{'.opencode/.gitignore':'platform-owned-rule\n'});const release=store.publish(template.id,'platform','2.0.0'),p=store.createApplication(release.id,'保留模板规则','application');const job=await jobs.start(p.id,'application','修改');const result=await settled(jobs,job.id);assert.equal(result.status,'failed');assert.equal(result.error?.code,'FORBIDDEN_PATH');assert.equal(store.files(p.id,'application')['.opencode/.gitignore'],'platform-owned-rule\n');
 });

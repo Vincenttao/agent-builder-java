@@ -36,6 +36,8 @@ test('PC Coding reviews fixture changes, protects drafts/stale heads, answers or
  await navigate(page,'Coding 助手');
  await page.getByLabel('开发需求').fill('修改福利业务指令');await page.getByRole('button',{name:'生成修改建议',exact:true}).click();
  await page.getByRole('button',{name:'应用全部差异',exact:true}).waitFor();
+ // Long model explanations must not displace the code comparison until explicitly opened.
+ const explanation=page.getByText('测试引擎差异，非真实模型生成。',{exact:true});assert.equal(await explanation.isVisible(),false);await page.getByText('助手说明',{exact:true}).click();assert.equal(await explanation.isVisible(),true);await page.getByText('助手说明',{exact:true}).click();assert.equal(await explanation.isVisible(),false);
  assert.equal(wb.store.get(app.id,'application').head,app.head);assert.equal(wb.store.files(app.id,'application')['instructions.md'],original);
  await page.getByLabel('选择差异文件').selectOption('instructions.md');
  assert.equal(await page.getByLabel('原版本内容').inputValue(),original);assert.equal(await page.getByLabel('建议内容').inputValue(),'浏览器契约测试建议 1');

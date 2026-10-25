@@ -53,6 +53,8 @@ export class CodingJobs{
    if(!result.evidence.some(e=>e.tool==='skill'&&e.status==='completed'&&e.input?.name===skill))throw new WorkbenchError('SKILL_NOT_LOADED','未找到本角色范式 Skill 的实际读取证据，变更不进入审阅');
    const before=this.store.snapshot(projectId,job.baseHead),after=worktreeFiles(directory);validateFiles(after);
    for(const name of new Set([...Object.keys(before),...Object.keys(after)]))if(before[name]!==after[name]){
+    // OpenCode creates this exact cache-control file during startup; never ignore custom or pre-existing rules.
+    if(name==='.opencode/.gitignore'&&!Object.hasOwn(before,name)&&after[name]?.replace(/\r\n/g,'\n').replace(/\n$/,'')==='node_modules\npackage.json\npackage-lock.json\nbun.lock\n.gitignore')continue;
     if(role==='application'&&!applicationEditable(name))throw new WorkbenchError('FORBIDDEN_PATH','助手修改了模板固定文件：'+name);
     job.changes[name]=after[name]??null;
    }
