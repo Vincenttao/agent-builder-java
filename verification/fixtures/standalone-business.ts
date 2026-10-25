@@ -1,6 +1,6 @@
 // Opt-in live assertions only; this module does not start processes or run on import.
 import assert from 'node:assert/strict';
-export async function verifyStandaloneBusiness(base:string,mockBase:string,onObservation?:(value:unknown)=>void){
+export async function verifyStandaloneBusiness(base:string,mockBase:string,onObservation?:(value:unknown)=>void,expectedBalance=1280){
  const stages:Record<string,any>={};
  const ledger=async()=>await (await fetch(mockBase+'/__mock/state')).json() as any;
  const call=async(path:string,body?:unknown,expected=200)=>{const response=await fetch(base+path,{method:body===undefined?'GET':'POST',headers:{'content-type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(240000)});const data=await response.json() as any;onObservation?.({path,status:response.status,data});assert.equal(response.status,expected,JSON.stringify(data));return data;};
@@ -8,7 +8,7 @@ export async function verifyStandaloneBusiness(base:string,mockBase:string,onObs
  const message=(conversationId:string|null,query:string,expected=200)=>call('/workbench/messages',{conversationId,query},expected);
  const reply=(view:any,answer:string,expected=200)=>call(`/workbench/conversations/${view.conversationId}/reply`,{taskId:current(view).id,token:current(view).prompt.token,answer},expected);
  const before=await ledger();
- stages.balance=await message(null,'查询我的i豆余额，查询后结束。');assert.equal(stages.balance.stack.current.state,'COMPLETED');assert.ok(JSON.stringify(stages.balance).includes('1280'));assert.equal((await ledger()).writes,before.writes);
+ stages.balance=await message(null,'查询我的i豆余额，查询后结束。');assert.equal(stages.balance.stack.current.state,'COMPLETED');assert.ok(JSON.stringify(stages.balance).includes(String(expectedBalance)));assert.equal((await ledger()).writes,before.writes);
  const query='我要兑换1张咖啡券，giftId是coffee，quantity是1。请发起确认。';
  const a=stages.a=await message(null,query),original=current(a);assert.ok(original.prompt);assert.equal((await ledger()).writes,before.writes);
  await call(`/workbench/conversations/${a.conversationId}/reply`,{taskId:original.id,token:'foreign-token',answer:'确认'},400);assert.equal((await ledger()).writes,before.writes);
