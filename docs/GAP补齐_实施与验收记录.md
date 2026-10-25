@@ -139,3 +139,14 @@ OpenCode 根据固定任务副本解析模型引用，任务记录保留公开�
 相关API/PC/导出/结构检查/阶段引导11项通过；另补候选后发现冲突、结构候选与通过登记阻断、复核解除的服务检查通过。TypeScript与新增JS语法检查通过。PC覆盖1280/1440/1920和平台只读；实际查看1280登记及双包页面。首次TypeScript发现never帮助函数的推断问题，首次API发现SQLite外键错误代码映射缺失，首次PC发现选择框缺少明确可访问名称；均修复并保留失败日志，未放宽证据匹配或真实来源要求。
 
 证据：test-results/journey-gap-delivery-red.log、journey-gap-delivery-service.log（首次失败）、journey-gap-delivery-service-retest.log、journey-gap-delivery-current.log（PC首次失败）、journey-gap-delivery-regression.log、journey-gap-delivery-conflict.log、journey-gap-delivery-current-types.log及journey-gap-delivery-pc/截图。本批仍使用契约引擎与独立Mock，不替代真实OpenCode/Java/双范式业务E2E。最终真实验收、严格局部编辑缺陷处理与GitHub同步继续推进。
+
+
+## 10 Deep严格局部编辑：执行工具修复与真实定向验证
+
+新增已接通CORE工具replace_text，先读取本轮原稿，按字面量锚点替换全部匹配，其余字符保持不变；锚点缺失、原稿被外部改变、未授权或输出超限时拒绝。装配此工具的应用不再用write_file整篇覆盖已有原稿，仍要求修改后读回。旧装配未选择该工具时保留write_file兼容行为。同步Java工具/权限/Skill装配、操作目录、模板元信息、应用开发指导和示例，模板仍为空业务。
+
+Java先加入失败用例，再实现工具：原稿两处日期同时替换且其他字符完全一致、读前拒绝、读后核实、陈旧读取拒绝、未装配拒绝及旧装配兼容。首次回归发现原“所有工具缺少Skill授权”测试没有为新工具提供必填参数，修正为合法参数后继续验证原授权断言，没有放宽授权。随后审阅补充替换结果分配前的UTF-8大小预检，防止极端锚点扩张消耗内存，新增边界用例。最终Java结果以下方日志为准。
+
+首次真实定向探测使用手写材料示例，经新版BusinessTests→实际Java/Core DeepAgent→deepseek-flash运行两轮，COMPLETED和sameExcept确定性断言均通过，记录1次artifact_patched事件，原运行已明确停止。源码/JAR/模型/运行/测试来源见test-results/gap-deep-patch-8wiWZc/report.json，原失败/构建日志保留。该探测发生在后续大小预检及模板元信息同步之前，只证明当时工具的严格局部替换行为，不冒充最终版本完整E2E，也不计为Coding从空模板生成成功。最终版本仍需整体验收。
+
+相关契约/PC/发行检查6项通过，覆盖新增工具展示和装配；新增原生工具导致PC目录数量由3改为4，原能力断言保留。测试/构建日志：journey-gap-deep-patch-red.log、journey-gap-deep-patch-java.log（原回归失败）、journey-gap-deep-patch-java-retest.log、journey-gap-deep-patch-bounded-java.log、journey-gap-deep-patch-final-contracts.log。真实探测日志journey-gap-deep-patch-live.log。类型检查首次发现定向探测的字典类型缺失，已显式声明并复核。

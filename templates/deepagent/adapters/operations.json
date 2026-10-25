@@ -66,5 +66,41 @@
     "outputSchema": {
       "type": "object"
     }
+  },
+  "replace_text": {
+    "type": "CORE",
+    "title": "精确替换交付物片段",
+    "description": "先读原稿，按字面量old_text全部替换为new_text，其余字符保持；修改后必须读回",
+    "nativeTool": "replace_text",
+    "confirmationRequired": false,
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "enum": [
+            "brief.md"
+          ]
+        },
+        "old_text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50000
+        },
+        "new_text": {
+          "type": "string",
+          "maxLength": 50000
+        }
+      },
+      "required": [
+        "file_path",
+        "old_text",
+        "new_text"
+      ],
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "type": "object"
+    }
   }
 }

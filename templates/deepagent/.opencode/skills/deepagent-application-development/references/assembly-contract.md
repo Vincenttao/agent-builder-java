@@ -9,7 +9,7 @@
 ```json
 {
   "scope": {"own": ["根据用户提供的文本完成约定交付，并支持局部修改"], "delegated": [], "outside": []},
-  "skills": [{"id": "text-delivery", "file": "skills/text-delivery/SKILL.md", "operations": ["read_file", "write_file", "list_files"]}],
+  "skills": [{"id": "text-delivery", "file": "skills/text-delivery/SKILL.md", "operations": ["read_file", "write_file", "list_files", "replace_text"]}],
   "capabilities": []
 }
 ```
@@ -27,14 +27,14 @@ description: 根据用户提供的文本完成约定交付，或局部修改同�
 按当前应用业务要求处理原始事实；缺失信息标明未知，不编造。
 首次生成前可用list_files确认有无原稿；增量修改先read_file读取brief.md，只改用户指定部分。
 局部修改只替换用户指定事实对应的片段，并同步更新同一事实的关联引用；保留其他文字与结构。用户未要求时不增加变更日志、来源回顾或重新组织整篇内容。
-用write_file保存brief.md，再read_file核对。错误或缺少授权不代表交付完成。
+首次用write_file创建brief.md；已有原稿用replace_text按old_text/new_text字面量替换全部匹配，其他字符不变，再read_file核对。装配replace_text后禁止用write_file覆盖已有原稿。错误或缺少授权不代表交付完成。
 ```
 
 这里的description说明业务Skill在何种请求下适用。开发Skill的description说明何时开展工程开发，两者不要混写。
 
 ## System Prompt与逐轮授权
 
-保留并按业务补充instructions.md的执行规则：每轮先通过skill_tool加载已装配业务Skill，再使用其operations允许的工具。上一轮授权不会自动续用。文件工具的file_path只能为brief.md；write_file还需content。遇到SKILL_LOAD_REQUIRED_THIS_TURN先加载本轮Skill，不重复盲试；遇到OPERATION_NOT_ASSEMBLED_FOR_SKILL检查装配，不换用未授权工具。
+保留并按业务补充instructions.md的执行规则：每轮先通过skill_tool加载已装配业务Skill，再使用其operations允许的工具。上一轮授权不会自动续用。文件工具的file_path只能为brief.md；write_file还需content；replace_text还需old_text与new_text（可为空用于删除）。replace_text必须先read_file取得本轮原稿；锚点不存在或原稿已变化时拒绝，不盲试或改用整篇覆盖。遇到SKILL_LOAD_REQUIRED_THIS_TURN先加载本轮Skill，不重复盲试；遇到OPERATION_NOT_ASSEMBLED_FOR_SKILL检查装配，不换用未授权工具。
 
 只有本轮文件非空、写后读回且目标完成时，才输出`<promise>ARTIFACTS_READY</promise>`。已有旧文件不代表本轮完成。增量请求复用同会话工作区，保留未涉及的事实和原有文本结构；只改被指定事实及其关联引用，不额外插入修改说明或来源变更记录。工具错误需要说明，不能输出虚假完成信号。
 

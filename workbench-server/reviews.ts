@@ -40,7 +40,7 @@ export class ReviewManager {
             catalog={};
             add('CATALOG', '操作目录JSON', false, 'adapters/operations.json格式无效');
         }
-        if(family==='deepagent')add('DEEP_CORE_TOOLS','DeepAgent工具接线',d.skills.every(s=>s.operations.every(name=>['read_file','write_file','list_files'].includes(name)&&catalog[name]?.type==='CORE'&&catalog[name]?.nativeTool===name)),'只允许已接通的CORE工具；自定义HTTP/MCP/脚本仍需实现适配器');
+        if(family==='deepagent')add('DEEP_CORE_TOOLS','DeepAgent工具接线',d.skills.every(s=>s.operations.every(name=>['read_file','write_file','list_files','replace_text'].includes(name)&&catalog[name]?.type==='CORE'&&catalog[name]?.nativeTool===name)),'只允许已接通的CORE工具；自定义HTTP/MCP/脚本仍需实现适配器');
         const agents = d.capabilities.filter((c: any) => c.type === 'agent'), ids = agents.map((c: any) => c.id), drafts = d.capabilities.filter((c: any) => c.status === 'draft' || !['agent'].includes(c.type));
         add('ASSEMBLY_READY', '能力装配状态', drafts.length === 0, drafts.length ? '存在未接线能力草稿；它们不是可执行工具' : '挂载能力没有待接线草稿');
         add('CONNECTIONS', '连接与引用', new Set(ids).size === ids.length && agents.every((c: any) => { try {
@@ -54,7 +54,7 @@ export class ReviewManager {
         const diagrams=flowSources(this.store,id,p.head);
         for (const s of d.skills) {
             const ops = s.operations.map((name: string) => catalog[name]);
-            add('SKILL_' + s.id, 'Skill ' + s.id, Boolean(files[s.file]?.startsWith('---')) && ops.length > 0 && ops.every((op: any) => op && (['SCRIPT', 'A2A'].includes(op.type)||family==='deepagent'&&op.type==='CORE'&&['read_file','write_file','list_files'].includes(op.nativeTool)) && (!op.resultScript || Boolean(files['skills/' + op.resultScript]))), '检查指导、操作引用及脚本存在；可用集合不是强制执行顺序');
+            add('SKILL_' + s.id, 'Skill ' + s.id, Boolean(files[s.file]?.startsWith('---')) && ops.length > 0 && ops.every((op: any) => op && (['SCRIPT', 'A2A'].includes(op.type)||family==='deepagent'&&op.type==='CORE'&&['read_file','write_file','list_files','replace_text'].includes(op.nativeTool)) && (!op.resultScript || Boolean(files['skills/' + op.resultScript]))), '检查指导、操作引用及脚本存在；可用集合不是强制执行顺序');
             for (const name of s.operations) {
                 const op = catalog[name];
                 if (['redeem', 'transfer', 'purchase'].includes(name))
