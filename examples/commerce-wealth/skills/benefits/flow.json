@@ -1,0 +1,92 @@
+{
+  "designOnly": true,
+  "title": "余额、礼品、确认与兑换",
+  "nodes": [
+    {
+      "id": "balance",
+      "label": "查询 i豆 余额",
+      "kind": "read",
+      "row": 0,
+      "column": 1,
+      "operation": "balance"
+    },
+    {
+      "id": "gifts",
+      "label": "查询可兑换礼品",
+      "kind": "read",
+      "row": 1,
+      "column": 1,
+      "operation": "gifts"
+    },
+    {
+      "id": "confirm",
+      "label": "选择礼品并独立确认",
+      "kind": "confirm",
+      "row": 2,
+      "column": 1,
+      "operation": "redeem"
+    },
+    {
+      "id": "redeem",
+      "label": "提交本次兑换",
+      "kind": "write",
+      "row": 3,
+      "column": 1,
+      "operation": "redeem"
+    },
+    {
+      "id": "receipt",
+      "label": "结果未知：核对原回执",
+      "kind": "read",
+      "row": 4,
+      "column": 0,
+      "operation": "receipt"
+    },
+    {
+      "id": "finish",
+      "label": "完成或取消当前办理",
+      "kind": "end",
+      "row": 5,
+      "column": 1,
+      "operation": "finish"
+    }
+  ],
+  "edges": [
+    {
+      "from": "balance",
+      "to": "gifts",
+      "when": "已取得余额"
+    },
+    {
+      "from": "gifts",
+      "to": "confirm",
+      "when": "满足兑换条件"
+    },
+    {
+      "from": "confirm",
+      "to": "redeem",
+      "when": "确认本次兑换"
+    },
+    {
+      "from": "confirm",
+      "to": "finish",
+      "when": "拒绝"
+    },
+    {
+      "from": "redeem",
+      "to": "receipt",
+      "when": "提交后结果未知"
+    },
+    {
+      "from": "receipt",
+      "to": "finish",
+      "when": "取得原回执"
+    },
+    {
+      "from": "redeem",
+      "to": "finish",
+      "when": "取得结果"
+    }
+  ],
+  "note": "这是可编辑的设计说明；真实执行由 Skill、模型和执行端校验负责。每个写操作需独立确认，未知结果只核对原回执，不重发。"
+}

@@ -24,7 +24,7 @@ window.WorkbenchRuntime=(()=>{
  function controls(s,c){
   const run=currentRun(c),rs=run&&runState(s,run.id),active=s.all.find(r=>activeStatuses.includes(r.status));
   if(rs?.playback)return '<p class="warning">只读回放：不会重新调用模型、Skill 或 Agent</p>';
-  return `${!c.editable?'<p>当前身份只读诊断，不能发起业务或停止应用。</p>':`<button class="primary" data-run-action="start" ${c.dirty||active?'disabled':''}>构建并启动保存版本</button>${c.dirty?'<p class="warning">请先保存或放弃工程草稿，再构建。</p>':''}`}${active&&active.projectId!==c.project.id?`<p class="warning">其他工程已有活动运行 <code>${esc(active.id.slice(0,8))}</code>。<button data-run-open="${esc(active.id)}" data-project="${esc(active.projectId)}">查看原运行</button></p>`:''}`;
+  return `${(!c.editable||c.historyOnly)?(c.historyOnly?'<p>运行记录只读；需要执行时请进入测试 / 调试运行。</p>':'<p>当前身份只读诊断，不能发起业务或停止应用。</p>'):`<button class="primary" data-run-action="start" ${c.dirty||active?'disabled':''}>构建并启动保存版本</button>${c.dirty?'<p class="warning">请先保存或放弃工程草稿，再构建。</p>':''}`}${active&&active.projectId!==c.project.id?`<p class="warning">其他工程已有活动运行 <code>${esc(active.id.slice(0,8))}</code>。<button data-run-open="${esc(active.id)}" data-project="${esc(active.projectId)}">查看原运行</button></p>`:''}`;
  }
  function traces(run,view){
   const ids=[...new Set([...(view.tasks??[]).flatMap(t=>t.traceIds??[]),...(view.events??[]).map(e=>e.traceId)].filter(id=>typeof id==='string'&&/^[a-f0-9]{32}$/i.test(id)&&!/^0+$/.test(id)))];
@@ -42,7 +42,7 @@ window.WorkbenchRuntime=(()=>{
   return `<article class="runtime-task"><h3>${esc(slot)}</h3><p><strong>${esc(frame.target)}</strong> · ${frame.kind==='skill'?'当前任务内 Skill':'A2A Agent'} ${stateInfo}</p><p>${esc(frame.query)}</p>${frame.error?`<p class="warning">${esc(errors[frame.error]||frame.error)}</p>`:''}${Object.keys(frame.output??{}).length?`<details><summary>原任务结果</summary><pre>${esc(json(frame.output))}</pre></details>`:''}${submitted&&!ended(frame.state)&&canOperate?`<p>已提交操作仅核对原键回执，不重复提交。</p><button data-run-action="receipt" data-task="${esc(frame.id)}">核对原操作回执</button>`:''}<details><summary>任务标识</summary><code>${esc(frame.id)}</code>${submitted?`<p>原操作键：<code>${esc(submitted)}</code></p>`:''}</details></article>`;
  }
  function interaction(run,rs,view,c){
-  const owned=c.editable&&run.role===c.role,unobserved=rs.uncertain||view.unobserved||(run.unobserved??[]).includes(rs.conversation);
+  const owned=c.editable&&!c.historyOnly&&run.role===c.role,unobserved=rs.uncertain||view.unobserved||(run.unobserved??[]).includes(rs.conversation);
   const live=run.status==='running'&&view.live!==false,blocked=rs.pending||view.busy||unobserved;
   const disabled=blocked||view.conflict?'disabled':'',stack=view.stack??{},frames=view.tasks??[],current=frames.find(t=>t.id===stack.current?.id),retained=frames.find(t=>t.id===stack.retained?.id);
   const mutable=owned&&live&&!rs.playback&&!blocked;
@@ -58,7 +58,7 @@ window.WorkbenchRuntime=(()=>{
   return body;
  }
  function detail(run,rs,c){
-  const playback=rs.playback,shownRun=playback?.run??run,view=playback?.view??rs.view,owned=c.editable&&run.role===c.role;
+  const playback=rs.playback,shownRun=playback?.run??run,view=playback?.view??rs.view,owned=c.editable&&!c.historyOnly&&run.role===c.role;
   return `<div class="toolbar"><h2>${esc(runLabels[shownRun.status]||shownRun.status)}</h2><code>${esc(shownRun.id.slice(0,8))}</code></div><p><span class="badge">${shownRun.engine==='local-java'?'本机 Java 运行':esc(shownRun.engine)+' · 运行契约测试，不代表真实业务'}</span></p><p>启动版本 <code>${esc(shownRun.head.slice(0,12))}</code></p>${run.head!==c.project.head?'<p class="warning">工程已修改，运行仍使用启动时版本。不会自动重建或重启。</p>':''}${run.error?`<p class="warning">${esc(run.error.code)}：${esc(run.error.message)}</p>`:''}${rs.error?`<p class="warning" role="alert">${esc(rs.error)}</p>`:''}${shownRun.artifact?`<details id="runtime-artifact"><summary>构建产物摘要</summary><p>SHA-256：<code>${esc(shownRun.artifact.sha256)}</code></p><p>${esc(shownRun.artifact.bytes)} bytes · 绑定本次启动版本</p></details>`:''}
     ${!playback&&owned&&activeStatuses.includes(run.status)?`<div class="row"><button data-run-action="stop">停止原运行</button>${run.status==='unresponsive'?'<button data-run-action="reconnect">核验原进程</button>':''}</div>`:''}
     <details id="runtime-logs"><summary>本次构建与进程日志</summary><pre>${esc((shownRun.logs??[]).join(''))}</pre></details>
@@ -93,7 +93,7 @@ window.WorkbenchRuntime=(()=>{
   })();observing=execution;try{await execution;}finally{if(observing===execution)observing=null;}
  }
  async function operate(c,action,body){
-  const s=state(c.project.id),run=currentRun(c);if(!run||!c.editable||run.role!==c.role)throw Error('当前身份不能操作此运行');const rs=runState(s,run.id);if(rs.pending||rs.playback)throw Error('原请求尚未结束，或当前处于只读回放');
+  const s=state(c.project.id),run=currentRun(c);if(!run||!c.editable||c.historyOnly||run.role!==c.role)throw Error('当前身份不能操作此运行');const rs=runState(s,run.id);if(rs.pending||rs.playback)throw Error('原请求尚未结束，或当前处于只读回放');
   rs.pending=true;rs.error='';paint(c);const token=generation,conversation=rs.conversation,originalDraft=draft(rs),text=action==='messages'?originalDraft.query:originalDraft.reply;
   try{
    const path='/runs/'+run.id+(action==='messages'?'/messages':'/conversations/'+conversation+'/'+action);
@@ -119,7 +119,7 @@ window.WorkbenchRuntime=(()=>{
     if(button.dataset.runOpen){const target=state(button.dataset.project);target.selected=button.dataset.runOpen;return host.openRun(button.dataset.project);}
     if(button.dataset.runSelect){s.selected=button.dataset.runSelect;s.detailKey=null;return refresh(generation,c,true);}
     if(action==='refresh'){if(rs?.playback)return host.notify('请先返回当前状态；回放不会读取或重执行业务');return refresh(generation,c,true);}
-    if(action==='start'){if(!c.editable||c.dirty)throw Error('请使用工程所属身份保存修改后运行');const {run:created}=await read(c,'/projects/'+c.project.id+'/runs','POST',{baseHead:c.project.head});s.selected=created.id;s.runs.unshift(created);return refresh(generation,c,true);}
+    if(action==='start'){if(!c.editable||c.historyOnly||c.dirty)throw Error('请使用工程所属身份保存修改后运行');const {run:created}=await read(c,'/projects/'+c.project.id+'/runs','POST',{baseHead:c.project.head});s.selected=created.id;s.runs.unshift(created);return refresh(generation,c,true);}
     if(!run)return;
     if(action==='playback'){if(rs.pending||!rs.view)throw Error('请先等待原请求结束');clearTimeout(timer);generation++;if(observing)await observing.catch(()=>{});rs.playback={run:structuredClone(run),view:structuredClone(rs.view),cursor:1,capturedAt:new Date().toISOString()};s.detailKey=null;paint(c);return;}
     if(action==='live'){rs.playback=null;generation++;s.detailKey=null;return refresh(generation,c,true);}

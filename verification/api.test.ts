@@ -21,7 +21,7 @@ test('HTTP workbench persists real role/template/application revisions and block
   assert.equal(script.headers.get('cache-control'),'no-store');
   for(const path of ['/workbench-ui/../.env.local','/workbench-ui/package.json','/workbench-ui/app.ts'])assert.equal((await fetch(base+path)).status,404);
   async function call(path:string,role='application',method='GET',body?:unknown){const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json','x-workbench-role':role},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,body:await r.json() as any};}
-  assert.equal((await call('/api/context')).body.identity.role,'application');
+  assert.equal((await call('/api/context')).body.identity.role,'application');const publicConfig=(await call('/api/context')).body.modelConfiguration;assert.equal(typeof publicConfig.configured,'boolean');assert.equal(publicConfig.scope,'local-shared');assert.equal('apiKey' in publicConfig,false);for(const asset of ['design.js','panels.js'])assert.equal((await fetch(base+'/workbench-ui/'+asset)).status,200);
   assert.equal((await call('/api/context')).body.workspaceId,store.workspaceId);
   const wrongWorkspace=await fetch(base+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json','x-workbench-workspace':'another-workspace'},body:'{}'});
   assert.equal(wrongWorkspace.status,409);assert.equal((await wrongWorkspace.json() as any).error.code,'WORKSPACE_CHANGED');
@@ -33,7 +33,7 @@ test('HTTP workbench persists real role/template/application revisions and block
   const publish=await call('/api/templates/moa-platform/releases','platform','POST',{version:'1.0.0'});assert.equal(publish.status,201);
   const releases=await call('/api/templates');assert.equal(releases.body.releases.length,1);
   const created=await call('/api/projects','application','POST',{releaseId:publish.body.release.id,name:'新的福利应用'});assert.equal(created.status,201);
-  const id=created.body.project.id;
+  const id=created.body.project.id;const check=await call('/api/projects/'+id+'/checks','application','POST',{});assert.equal(check.status,201);assert.equal(check.body.report.business,'not-verified');assert.equal(check.body.report.passed,false);assert.equal((await call('/api/projects/'+id+'/checks','platform','POST',{})).status,403);assert.equal((await call('/api/projects/'+id+'/candidates','application','POST',{checkId:check.body.report.id})).status,409);
   const a=await call('/api/projects/'+id);assert.equal(a.body.definition.name,'新的福利应用');assert.deepEqual(a.body.definition.scope.own,[]);
   const saved=await call('/api/projects/'+id+'/files','application','PUT',{baseHead:created.body.project.head,changes:{'instructions.md':'新增业务指令'}});assert.equal(saved.status,200);
   assert.equal((await call('/api/projects/'+id)).body.files['instructions.md'],'新增业务指令');

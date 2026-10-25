@@ -1,3 +1,4 @@
+import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -14,7 +15,7 @@ test('PC runtime preserves original task confirmation, A/B recovery, unknown res
  const server=wb.app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));const browser=await chromium.launch({headless:true});
  t.after(async()=>{await browser.close();await wb.close();await new Promise<void>(r=>server.close(()=>r()));wb.store.close();rmSync(root,{recursive:true,force:true});});
  const address=server.address();assert.ok(address&&typeof address!=='string');const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);let runtimeRequests=0;page.on('request',r=>{if(/\/api\/runs(?:\/|$)/.test(r.url()))runtimeRequests++;});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(`http://127.0.0.1:${address.port}`);await page.getByRole('button',{name:'进入工程'}).click();await page.getByRole('button',{name:'调试运行',exact:true}).click();
+ await page.goto(`http://127.0.0.1:${address.port}`);await page.getByRole('button',{name:'进入工程'}).click();await navigate(page,'调试运行');
  await page.getByRole('button',{name:'构建并启动保存版本',exact:true}).click();await page.getByRole('heading',{name:'运行中',exact:true}).waitFor();assert.equal(fixture.counters.builds,1);
  await page.getByLabel('新需求或澄清补充').fill('刷新前未发送的需求');const postsBeforeRefresh=fixture.counters.posts;
  await page.reload();await page.getByLabel('新需求或澄清补充').waitFor();assert.equal(await page.getByLabel('新需求或澄清补充').inputValue(),'刷新前未发送的需求');assert.equal(fixture.counters.posts,postsBeforeRefresh);assert.equal(fixture.counters.builds,1);
@@ -30,22 +31,22 @@ test('PC runtime preserves original task confirmation, A/B recovery, unknown res
  await page.getByRole('button',{name:'复核并续办原任务',exact:true}).click();await page.getByRole('button',{name:'确认原操作',exact:true}).click();
  await page.getByText('原任务已完成',{exact:true}).waitFor();assert.equal(fixture.counters.writes,1);assert.equal(fixture.counters.replies.length,2);assert.match(fixture.counters.replies[1].token,/^fresh-/);
  const originalRun=wb.runs.list(project.id,'application')[0];
- await page.getByRole('button',{name:'文件与指令',exact:true}).click();await page.locator('#editor').fill('新的工程版本，不改变原运行');await page.getByRole('button',{name:'保存所有修改'}).click();await page.getByText('已提交工程版本',{exact:true}).waitFor();
- await page.getByRole('button',{name:'调试运行',exact:true}).click();await page.getByText('工程已修改，运行仍使用启动时版本。不会自动重建或重启。',{exact:true}).waitFor();
+ await navigate(page,'文件与指令');await page.locator('#editor').fill('新的工程版本，不改变原运行');await page.getByRole('button',{name:'保存所有修改'}).click();await page.getByText('已提交工程版本',{exact:true}).waitFor();
+ await navigate(page,'调试运行');await page.getByText('工程已修改，运行仍使用启动时版本。不会自动重建或重启。',{exact:true}).waitFor();
  assert.notEqual(readFileSync(join(wb.runs.directory(originalRun.id),'project/instructions.md'),'utf8'),'新的工程版本，不改变原运行');
  wb.store.createApplication(release.id,'另一个应用','application');
- await page.getByRole('button',{name:'全部应用',exact:false}).click();await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'另一个应用',exact:true})}).getByRole('button',{name:'进入工程'}).click();await page.getByRole('button',{name:'调试运行',exact:true}).click();
+ await page.getByRole('button',{name:'全部应用',exact:false}).click();await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'另一个应用',exact:true})}).getByRole('button',{name:'进入工程'}).click();await navigate(page,'调试运行');
  await page.getByRole('button',{name:'查看原运行',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'构建并启动保存版本',exact:true}).isDisabled(),true);await page.getByRole('button',{name:'查看原运行',exact:true}).click();await page.getByRole('heading',{name:'运行中',exact:true}).waitFor();assert.equal(fixture.counters.builds,1);
  const run=wb.runs.list(project.id,'application')[0],conversation=run.conversations[0];const before=readFileSync(join(wb.runs.directory(run.id),'observations',conversation+'.json'),'utf8');
  await page.getByRole('button',{name:'进入只读回放',exact:true}).click();await page.getByText('只读回放：不会重新调用模型、Skill 或 Agent',{exact:true}).waitFor();
- await page.getByRole('button',{name:'文件与指令',exact:true}).click();await page.getByRole('button',{name:'调试运行',exact:true}).click();await page.getByText('只读回放：不会重新调用模型、Skill 或 Agent',{exact:true}).waitFor();
+ await navigate(page,'文件与指令');await navigate(page,'调试运行');await page.getByText('只读回放：不会重新调用模型、Skill 或 Agent',{exact:true}).waitFor();
  const counts={...fixture.counters},requestCount=runtimeRequests;await page.getByLabel('回放事件位置').fill('1');await page.getByRole('button',{name:'下一步事件',exact:true}).click();
  await page.waitForTimeout(1100);assert.equal(runtimeRequests,requestCount);assert.equal(fixture.counters.posts,counts.posts);assert.equal(fixture.counters.reads,counts.reads);assert.equal(readFileSync(join(wb.runs.directory(run.id),'observations',conversation+'.json'),'utf8'),before);
  await page.getByRole('button',{name:'返回当前状态',exact:true}).click();await page.getByRole('button',{name:'新建业务会话',exact:true}).click();
  await page.getByLabel('新需求或澄清补充').fill('不明结果');await page.getByRole('button',{name:'发送新需求',exact:true}).click();await page.getByRole('button',{name:'核对原状态',exact:true}).waitFor();
  assert.equal(fixture.counters.messages,4);await page.getByRole('button',{name:'核对原状态',exact:true}).click();await page.getByRole('button',{name:'核对原操作回执',exact:true}).click();await page.getByText('原任务已完成',{exact:true}).waitFor();assert.equal(fixture.counters.messages,4);assert.equal(fixture.counters.writes,1);
- await page.locator('#identity').selectOption('platform');await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'运行测试应用',exact:true})}).getByRole('button',{name:'查看诊断'}).click();await page.getByRole('button',{name:'调试运行',exact:true}).click();await page.getByRole('heading',{name:'运行中',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'停止原运行',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:'发送新需求',exact:true}).count(),0);
- await page.locator('#identity').selectOption('application');await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'运行测试应用',exact:true})}).getByRole('button',{name:'进入工程'}).click();await page.getByRole('button',{name:'调试运行',exact:true}).click();await page.getByRole('heading',{name:'运行中',exact:true}).waitFor();
+ await page.locator('#identity').selectOption('platform');await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'运行测试应用',exact:true})}).getByRole('button',{name:'查看诊断'}).click();await navigate(page,'调试运行');await page.getByRole('heading',{name:'运行中',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'停止原运行',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:'发送新需求',exact:true}).count(),0);
+ await page.locator('#identity').selectOption('application');await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'运行测试应用',exact:true})}).getByRole('button',{name:'进入工程'}).click();await navigate(page,'调试运行');await page.getByRole('heading',{name:'运行中',exact:true}).waitFor();
  page.once('dialog',d=>d.accept());await page.getByRole('button',{name:'停止原运行',exact:true}).click();await page.getByRole('heading',{name:'已停止',exact:true}).waitFor();await page.getByText('历史观察快照 · 只读',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'确认原操作',exact:true}).count(),0);
  for(const width of [1280,1440,1920]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`runtime overflow at ${width}`);}
  const deleted=page.waitForResponse(r=>r.request().method()==='DELETE');

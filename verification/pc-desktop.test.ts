@@ -1,3 +1,4 @@
+import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -20,8 +21,8 @@ test('desktop workbench follows prototype shell with persistent real coding dock
   assert.equal(positions.overflow,false);assert.ok(positions.canvas.width>=650);assert.ok(positions.dock.width>=280);assert.ok(positions.dock.x>=positions.canvas.x+positions.canvas.width-1);assert.ok(positions.dock.y+positions.dock.height<=1001);assert.ok(positions.identity.x>width/2);assert.ok(positions.nav.width<=205);
  }
  await page.setViewportSize({width:1440,height:1000});await page.getByLabel('开发需求',{exact:true}).fill('常驻助手未发送的开发需求');
- await page.getByRole('button',{name:'业务配置',exact:true}).click();assert.equal(await page.getByLabel('开发需求',{exact:true}).inputValue(),'常驻助手未发送的开发需求');await page.getByLabel('自己负责的业务').fill('桌面配置保存');assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).isDisabled(),true);
- await page.getByRole('button',{name:'文件与指令',exact:true}).click();await page.getByRole('button',{name:'application.json',exact:true}).click();assert.match(await page.locator('#editor').inputValue(),/桌面配置保存/);await page.getByRole('button',{name:'保存所有修改',exact:true}).click();await page.getByText('已提交工程版本',{exact:true}).waitFor();assert.deepEqual(wb.store.definition(app.id,'application').scope.own,['桌面配置保存']);assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).isEnabled(),true);
+ await navigate(page,'业务配置');assert.equal(await page.getByLabel('开发需求',{exact:true}).inputValue(),'常驻助手未发送的开发需求');await page.getByLabel('自己负责的业务').fill('桌面配置保存');assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).isDisabled(),true);
+ await navigate(page,'文件与指令');await page.getByRole('button',{name:'application.json',exact:true}).click();assert.match(await page.locator('#editor').inputValue(),/桌面配置保存/);await page.getByRole('button',{name:'保存所有修改',exact:true}).click();await page.getByText('已提交工程版本',{exact:true}).waitFor();assert.deepEqual(wb.store.definition(app.id,'application').scope.own,['桌面配置保存']);assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).isEnabled(),true);
  assert.ok((await page.locator('#editor').boundingBox())!.height>=400);await page.screenshot({path:'/tmp/workbench-desktop-application.png',fullPage:true});
  await page.locator('#identity').selectOption('platform');await page.locator('section.panel').filter({has:page.getByRole('heading',{name:'桌面福利应用',exact:true})}).getByRole('button',{name:'查看诊断'}).click();await page.getByText('平台身份只能查看此应用的编码记录',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).count(),0);assert.equal(generations,0);assert.deepEqual(errors,[]);
 });

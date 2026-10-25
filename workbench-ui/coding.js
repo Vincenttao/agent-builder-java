@@ -98,5 +98,5 @@ window.WorkbenchCoding = (() => {
       }
     });});
   }
-  return {init,render,dock,mount,unmount};
+  return {init,render,dock,mount,unmount,setPrompt:text=>{const el=document.querySelector('#coding-start textarea');if(el){el.value=text;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();}}};
 })();

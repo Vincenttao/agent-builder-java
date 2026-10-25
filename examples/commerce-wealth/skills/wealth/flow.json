@@ -1,0 +1,122 @@
+{
+  "designOnly": true,
+  "title": "资金不足时转账，再确认购买",
+  "nodes": [
+    {
+      "id": "plan",
+      "label": "查询账户与购买计划",
+      "kind": "read",
+      "row": 0,
+      "column": 1,
+      "operation": "wealth_plan"
+    },
+    {
+      "id": "funds",
+      "label": "资金是否足够？",
+      "kind": "condition",
+      "row": 1,
+      "column": 1
+    },
+    {
+      "id": "transfer-confirm",
+      "label": "资金不足：询问是否转账",
+      "kind": "confirm",
+      "row": 2,
+      "column": 0,
+      "operation": "transfer"
+    },
+    {
+      "id": "transfer",
+      "label": "取得确认后转账",
+      "kind": "write",
+      "row": 3,
+      "column": 0,
+      "operation": "transfer"
+    },
+    {
+      "id": "recheck",
+      "label": "重新查询账户余额",
+      "kind": "read",
+      "row": 4,
+      "column": 1,
+      "operation": "wealth_plan"
+    },
+    {
+      "id": "purchase-confirm",
+      "label": "足额后再次确认购买",
+      "kind": "confirm",
+      "row": 5,
+      "column": 1,
+      "operation": "purchase"
+    },
+    {
+      "id": "purchase",
+      "label": "确认后提交购买",
+      "kind": "write",
+      "row": 6,
+      "column": 1,
+      "operation": "purchase"
+    },
+    {
+      "id": "end",
+      "label": "取消或完成：收束当前任务",
+      "kind": "end",
+      "row": 7,
+      "column": 1,
+      "operation": "finish"
+    }
+  ],
+  "edges": [
+    {
+      "from": "plan",
+      "to": "funds",
+      "when": "读取余额"
+    },
+    {
+      "from": "funds",
+      "to": "transfer-confirm",
+      "when": "不足"
+    },
+    {
+      "from": "funds",
+      "to": "purchase-confirm",
+      "when": "足够"
+    },
+    {
+      "from": "transfer-confirm",
+      "to": "transfer",
+      "when": "同意本次转账"
+    },
+    {
+      "from": "transfer-confirm",
+      "to": "end",
+      "when": "拒绝"
+    },
+    {
+      "from": "transfer",
+      "to": "recheck",
+      "when": "取得成功回执"
+    },
+    {
+      "from": "recheck",
+      "to": "purchase-confirm",
+      "when": "核对足额"
+    },
+    {
+      "from": "purchase-confirm",
+      "to": "purchase",
+      "when": "同意本次购买"
+    },
+    {
+      "from": "purchase-confirm",
+      "to": "end",
+      "when": "拒绝"
+    },
+    {
+      "from": "purchase",
+      "to": "end",
+      "when": "取得结果"
+    }
+  ],
+  "note": "这是可编辑的设计说明；真实执行由 Skill、模型和执行端校验负责。每个写操作需独立确认，未知结果只核对原回执，不重发。"
+}

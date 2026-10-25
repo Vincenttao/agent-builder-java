@@ -1,4 +1,5 @@
 import {settings} from './settings.js';
+import {ReviewManager} from './reviews.js';
 import express,{type Request,type Response,type NextFunction} from 'express';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -19,15 +20,16 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   const jobs=new CodingJobs(store,options.codingEngine??new OpenCodeEngine(repository));
   const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
   const exports=new ExportManager(store,runs);
+  const reviews=new ReviewManager(store);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
@@ -38,7 +40,7 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     if(!['application','platform'].includes(role))return next(new WorkbenchError('INVALID_ROLE','请选择应用开发者或平台开发者'));
     res.locals.role=role as Role;res.set('Cache-Control','no-store');next();
   });
-  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:settings(repository).model,uiVersion:build,workspaceId:store.workspaceId}));
+  app.get('/api/context',(req,res)=>res.json({identity:{role:res.locals.role,name:res.locals.role==='platform'?'林知远':'陈晓',simulated:true},mode:'local-development',model:settings(repository).model,modelConfiguration:(()=>{const s=settings(repository);let origin='地址无效';try{origin=new URL(s.baseUrl).origin;}catch{}return {model:s.model,origin,configured:Boolean(s.apiKey),scope:'local-shared'};})(),uiVersion:build,workspaceId:store.workspaceId}));
   app.get('/api/templates',(_req,res)=>res.json({releases:store.listReleases()}));
   app.post('/api/templates/:id/releases',(req,res)=>res.status(201).json({release:store.publish(req.params.id,res.locals.role,req.body.version)}));
   app.get('/api/projects',(_req,res)=>res.json({projects:store.list(res.locals.role)}));
@@ -48,6 +50,11 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     res.json({project,definition:store.definition(project.id,res.locals.role),files,editablePaths:Object.keys(files).filter(f=>project.kind==='template'?res.locals.role==='platform':res.locals.role==='application'&&applicationEditable(f))});
   });
   app.put('/api/projects/:id/files',(req,res)=>res.json({project:store.save(req.params.id,res.locals.role,req.body.baseHead,req.body.changes)}));
+  app.get('/api/projects/:id/checks',(req,res)=>res.json({reports:reviews.list(req.params.id,res.locals.role)}));
+  app.post('/api/projects/:id/checks',(req,res)=>res.status(201).json({report:reviews.check(req.params.id,res.locals.role)}));
+  app.get('/api/projects/:id/candidates',(req,res)=>res.json({candidates:reviews.candidates(req.params.id,res.locals.role)}));
+  app.post('/api/projects/:id/candidates',(req,res)=>res.status(201).json({candidate:reviews.candidate(req.params.id,res.locals.role,req.body.checkId)}));
+  app.get('/api/projects/:id/activity',(req,res)=>res.json({events:reviews.activity(req.params.id,res.locals.role)}));
   app.get('/api/projects/:id/jobs',(req,res)=>res.json({jobs:jobs.list(req.params.id,res.locals.role)}));
   app.post('/api/projects/:id/jobs',async(req,res)=>res.status(202).json({job:await jobs.start(req.params.id,res.locals.role,req.body.prompt)}));
   app.get('/api/jobs/:id',(req,res)=>res.json({job:jobs.get(req.params.id,res.locals.role)}));

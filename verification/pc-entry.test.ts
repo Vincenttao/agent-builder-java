@@ -1,3 +1,4 @@
+import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -32,17 +33,17 @@ test('PC entry uses real role, release, empty application, independent drafts an
  await page.getByRole('heading',{name:'i豆福利助手',exact:true}).waitFor();
  const apps=workbench.store.list('application');assert.equal(apps.length,1);
  assert.deepEqual(workbench.store.definition(apps[0].id,'application').skills,[]);
- await page.getByRole('button',{name:'文件与指令'}).click();
+ await navigate(page,'文件与指令');
  await page.locator('#editor').fill('这是尚未保存的应用指令。');
  await page.locator('#identity').selectOption('platform');
  await page.getByRole('button',{name:'查看诊断'}).click();
- await page.getByRole('button',{name:'文件与指令'}).click();
+ await navigate(page,'文件与指令');
  assert.equal(await page.locator('#editor').getAttribute('readonly'),'');
  assert.notEqual(await page.locator('#editor').inputValue(),'这是尚未保存的应用指令。');
  assert.equal(await page.getByRole('button',{name:'保存所有修改'}).count(),0);
  await page.locator('#identity').selectOption('application');
  await page.getByRole('button',{name:'进入工程'}).click();
- await page.getByRole('button',{name:'文件与指令'}).click();
+ await navigate(page,'文件与指令');
  assert.equal(await page.locator('#editor').inputValue(),'这是尚未保存的应用指令。');
  await page.getByRole('button',{name:'保存所有修改'}).click();
  await page.getByText('已提交工程版本',{exact:true}).waitFor();
@@ -51,11 +52,11 @@ test('PC entry uses real role, release, empty application, independent drafts an
  await page.getByLabel('应用名称').fill('第二个应用');
  await page.getByRole('button',{name:'创建空白应用'}).click();
  await page.getByRole('heading',{name:'第二个应用',exact:true}).waitFor();
- await page.getByRole('button',{name:'文件与指令'}).click();
+ await navigate(page,'文件与指令');
  assert.notEqual(await page.locator('#editor').inputValue(),'这是尚未保存的应用指令。');
  await page.getByLabel('切换工程').selectOption(apps[0].id);
  await page.getByRole('heading',{name:'i豆福利助手',exact:true}).waitFor();
- await page.getByRole('button',{name:'文件与指令'}).click();
+ await navigate(page,'文件与指令');
  assert.equal(await page.locator('#editor').inputValue(),'这是尚未保存的应用指令。');
  for(const width of [1280,1440,1920]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`overflow at ${width}`);}
  await page.setViewportSize({width:1440,height:1000});

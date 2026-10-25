@@ -1,3 +1,4 @@
+import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -21,7 +22,7 @@ test('PC business configuration, Skill assembly and saved flow share actual proj
  let businessRequests=0;page.on('request',r=>{if(r.method()!=='GET'&&/\/runs|\/messages|\/jobs/.test(r.url()))businessRequests++;});
  await page.goto(`http://127.0.0.1:${address.port}`);
  await page.getByRole('button',{name:'进入工程'}).click();
- await page.getByRole('button',{name:'业务配置',exact:true}).click();
+ await navigate(page,'业务配置');
  await page.getByLabel('余额结果字段路径').fill('employee.wallet.availablePoints');
  await page.getByLabel('自己负责的业务').fill('查询福利余额\n兑换礼品');
  await page.getByLabel('角色与行为（应用层 System Prompt）').fill('你是福利助手。兑换前必须确认。');
@@ -36,7 +37,7 @@ test('PC business configuration, Skill assembly and saved flow share actual proj
  await page.getByLabel('启用范围外转交').check();
  await page.getByLabel('范围外接管 Agent').selectOption('fallback');
  await page.getByLabel('原任务未完成时').selectOption('retain');
- await page.getByRole('button',{name:'处理流程',exact:true}).click();
+ await navigate(page,'处理流程');
  assert.equal(await page.locator('#flow-definition').getByText('benefits',{exact:true}).count(),0);
  await page.getByText('有未保存修改，当前图仍展示已保存版本。',{exact:true}).waitFor();
  await page.getByRole('button',{name:'保存所有修改'}).click();
@@ -50,25 +51,25 @@ test('PC business configuration, Skill assembly and saved flow share actual proj
  await page.locator('#flow-definition').getByText('benefits',{exact:true}).waitFor();
  for(const width of [1280,1440,1920]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`flow overflow at ${width}`);}
  await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:'/tmp/workbench-flow-configuration.png',fullPage:true});
- await page.locator('#flow-definition').getByRole('button',{name:'明确范围外 → 接管 Agent'}).click();
+ await page.locator('[data-design-node=handoff]').click();await page.getByRole('button',{name:'编辑对应配置',exact:true}).click();
  await page.getByLabel('范围外接管 Agent').waitFor();
  assert.equal(await page.getByLabel('范围外接管 Agent').inputValue(),'fallback');
- await page.getByRole('button',{name:'文件与指令',exact:true}).click();
+ await navigate(page,'文件与指令');
  await page.getByRole('button',{name:'application.json',exact:true}).click();
  const text=await page.locator('#editor').inputValue();assert.deepEqual(JSON.parse(text),definition);
  const fixtureCatalog=JSON.parse(readTree(resolve('examples/idou'))['adapters/operations.json']);
  const current=wb.store.get(application.id,'application');
  wb.store.save(application.id,'application',current.head,{'adapters/operations.json':JSON.stringify({balance:fixtureCatalog.balance}),'skills/benefits/balance.py':readTree(resolve('examples/idou'))['skills/benefits/balance.py']});
  await page.reload();await page.locator('#editor').waitFor(); // Same-build refresh now restores the open project and file.
- await page.getByRole('button',{name:'业务配置',exact:true}).click();
+ await navigate(page,'业务配置');
  await page.getByLabel('查询余额 balance',{exact:false}).check();
  await page.getByRole('button',{name:'保存所有修改'}).click();await page.getByText('已提交工程版本',{exact:true}).waitFor();
  assert.deepEqual(wb.store.definition(application.id,'application').skills[0].operations,['balance']);
- await page.getByRole('button',{name:'文件与指令',exact:true}).click();await page.getByRole('button',{name:'application.json',exact:true}).click();
+ await navigate(page,'文件与指令');await page.getByRole('button',{name:'application.json',exact:true}).click();
  const changed=JSON.parse(await page.locator('#editor').inputValue());changed.scope.own=['文件修改的福利范围'];await page.locator('#editor').fill(JSON.stringify(changed,null,2));
- await page.getByRole('button',{name:'业务配置',exact:true}).click();assert.equal(await page.getByLabel('自己负责的业务').inputValue(),'文件修改的福利范围');
- await page.getByRole('button',{name:'文件与指令',exact:true}).click();await page.getByRole('button',{name:'application.json',exact:true}).click();await page.locator('#editor').fill('{invalid');
- await page.getByRole('button',{name:'业务配置',exact:true}).click();await page.getByText('application.json 存在格式错误，请到文件页修复。',{exact:true}).waitFor();
+ await navigate(page,'业务配置');assert.equal(await page.getByLabel('自己负责的业务').inputValue(),'文件修改的福利范围');
+ await navigate(page,'文件与指令');await page.getByRole('button',{name:'application.json',exact:true}).click();await page.locator('#editor').fill('{invalid');
+ await navigate(page,'业务配置');await page.getByText('application.json 存在格式错误，请到文件页修复。',{exact:true}).waitFor();
  assert.equal(wb.store.definition(application.id,'application').scope.own[0],'查询福利余额');
  assert.equal(businessRequests,0);assert.deepEqual(errors,[]);
 });

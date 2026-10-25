@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "query": "查询我的i豆余额",
+      "action": "SKILL",
+      "target": "benefits"
+    },
+    {
+      "query": "我想购买理财",
+      "action": "SKILL",
+      "target": "wealth"
+    },
+    {
+      "query": "帮我处理一下",
+      "action": "CLARIFY",
+      "target": ""
+    }
+  ]
+}

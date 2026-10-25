@@ -1,3 +1,4 @@
+import {navigate} from './pc-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -32,7 +33,7 @@ test('PC Coding reviews fixture changes, protects drafts/stale heads, answers or
  const address=server.address();assert.ok(address&&typeof address!=='string');const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(`http://127.0.0.1:${address.port}`);await page.getByRole('button',{name:'进入工程'}).click();
- await page.getByRole('button',{name:'Coding 助手',exact:true}).click();
+ await navigate(page,'Coding 助手');
  await page.getByLabel('开发需求').fill('修改福利业务指令');await page.getByRole('button',{name:'生成修改建议',exact:true}).click();
  await page.getByRole('button',{name:'应用全部差异',exact:true}).waitFor();
  assert.equal(wb.store.get(app.id,'application').head,app.head);assert.equal(wb.store.files(app.id,'application')['instructions.md'],original);
@@ -43,8 +44,8 @@ test('PC Coding reviews fixture changes, protects drafts/stale heads, answers or
  await page.getByRole('button',{name:'拒绝建议',exact:true}).click();await page.getByText('建议已拒绝，工程保持原状',{exact:true}).waitFor();
  assert.equal(wb.store.get(app.id,'application').head,app.head);
  await page.getByLabel('开发需求').fill('第二次修改');await page.getByRole('button',{name:'生成修改建议',exact:true}).click();await page.getByRole('button',{name:'应用全部差异',exact:true}).waitFor();
- await page.getByRole('button',{name:'文件与指令',exact:true}).click();await page.locator('#editor').fill('人工未保存草稿');
- await page.getByRole('button',{name:'Coding 助手',exact:true}).click();assert.equal(await page.getByRole('button',{name:'应用全部差异',exact:true}).isDisabled(),true);
+ await navigate(page,'文件与指令');await page.locator('#editor').fill('人工未保存草稿');
+ await navigate(page,'Coding 助手');assert.equal(await page.getByRole('button',{name:'应用全部差异',exact:true}).isDisabled(),true);
  assert.equal(wb.store.files(app.id,'application')['instructions.md'],original);
  await page.getByRole('button',{name:'保存所有修改'}).click();await page.getByText('已提交工程版本',{exact:true}).waitFor();
  await page.getByRole('button',{name:'重新核对建议',exact:true}).click();await page.getByText('建议已过期，请保留人工修改并重新发起',{exact:true}).waitFor();
@@ -69,11 +70,11 @@ test('PC Coding reviews fixture changes, protects drafts/stale heads, answers or
  assert.equal(wb.store.files(app.id,'application')['instructions.md'],'浏览器契约测试建议 3');
  await page.getByLabel('开发需求').fill('等待取消');await page.getByRole('button',{name:'生成修改建议',exact:true}).click();
  await page.getByRole('button',{name:'取消原任务',exact:true}).click();await page.getByText('已取消',{exact:true}).waitFor();assert.equal(calls,4);assert.equal(answerCalls,1);
- await page.locator('#identity').selectOption('platform');await page.getByRole('button',{name:'查看诊断'}).click();await page.getByRole('button',{name:'Coding 助手',exact:true}).click();
+ await page.locator('#identity').selectOption('platform');await page.getByRole('button',{name:'查看诊断'}).click();await navigate(page,'Coding 助手');
  await page.getByText('平台身份只能查看此应用的编码记录',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'生成修改建议',exact:true}).count(),0);
  assert.ok(skills.every(s=>s==='moa-application-development'));
  await page.getByRole('button',{name:'开发模板与应用诊断',exact:true}).click();await page.getByRole('button',{name:'进入工程',exact:true}).click();
- await page.getByRole('button',{name:'Coding 助手',exact:true}).click();await page.getByLabel('开发需求').fill('维护范式说明');await page.getByRole('button',{name:'生成修改建议',exact:true}).click();
+ await navigate(page,'Coding 助手');await page.getByLabel('开发需求').fill('维护范式说明');await page.getByRole('button',{name:'生成修改建议',exact:true}).click();
  await page.getByRole('button',{name:'应用全部差异',exact:true}).waitFor();assert.equal(skills[4],'moa-platform-development');
  await page.getByRole('button',{name:'拒绝建议',exact:true}).click();
  assert.equal(wb.store.files(app.id,'application')['instructions.md'],'浏览器契约测试建议 3');
