@@ -23,6 +23,7 @@ test('conflicts retain original task safeguards through rejected repairs, versio
  const engine:CodingEngine={kind:'contract-fixture',async run(input){
   const files=readTree(input.directory);delete files['.git'];const source=definitionInputs(files);let summary='contract only';
   if(input.purpose==='consistency'){
+   assert.ok(input.prompt.includes('框架提供工具不代表应用必须使用'));assert.ok(input.prompt.includes('未穷尽的异常细节'));
    const report={inputDigest:source.digest,verdict,issues:verdict==='clear'?[]:[{paths:['instructions.md','application.json'],description:'应用指令与业务范围冲突',impact:'查询被误认为写入',suggestion:'保留查询能力，统一业务指导'}]};
    mkdirSync(dirname(join(input.directory,consistencyPath)),{recursive:true});writeFileSync(join(input.directory,consistencyPath),JSON.stringify(report));
    if(modifySource)writeFileSync(join(input.directory,'instructions.md'),'unauthorized analysis modification');
@@ -36,7 +37,7 @@ test('conflicts retain original task safeguards through rejected repairs, versio
  const run=await wb.runs.start(p.id,'application',p.head);for(let n=0;n<100&&wb.runs.get(run.id,'application').status!=='running';n++)await new Promise(r=>setTimeout(r,5));
  const view=await wb.runs.message(run.id,'application',{query:'兑换咖啡'}),frame=view.tasks[0];
  assert.equal(wb.consistency.state(p.id,'application').status,'unchecked');
- const report=await finish((await wb.consistency.check(p.id,'application',p.head)).id);assert.equal(report.status,'analysed',JSON.stringify(report.error));assert.equal(wb.store.get(p.id,'application').head,p.head);assert.deepEqual(report.changes,{});
+ const report=await finish((await wb.consistency.check(p.id,'application',p.head)).id);assert.equal(report.status,'analysed',JSON.stringify(report.error));assert.equal(wb.store.get(p.id,'application').head,p.head);assert.deepEqual(report.changes,{});assert.equal(JSON.parse(report.analysisOutput!.raw).inputDigest,report.analysis!.inputDigest);assert.match(report.analysisOutput!.sha256,/^[a-f0-9]{64}$/);
  assert.equal(wb.consistency.state(p.id,'application').verification,'contract-fixture');assert.equal(wb.consistency.state(p.id,'application').blocked,true);
  verdict='needs-clarification';const ambiguous=await finish((await wb.consistency.check(p.id,'application',p.head)).id);assert.equal(wb.consistency.state(p.id,'application').status,'needs-clarification');await assert.rejects(wb.consistency.repair(ambiguous.id,'application',''),/明确业务取舍/);verdict='conflict';
  await assert.rejects(wb.jobs.apply(report.id,'application'),/不可应用/);
@@ -60,6 +61,10 @@ test('semantic reports require exact input identity and traceable unresolved sou
  assert.throws(()=>parseConsistency(JSON.stringify({inputDigest:'wrong',verdict:'clear',issues:[]}),source));
  assert.throws(()=>parseConsistency(JSON.stringify({inputDigest:source.digest,verdict:'conflict',issues:[]}),source));
  assert.throws(()=>parseConsistency(JSON.stringify({inputDigest:source.digest,verdict:'conflict',issues:[{paths:['unknown.md'],description:'范围冲突',impact:'误路由',suggestion:'统一指导'}]}),source));
+ const annotated={inputDigest:source.digest,verdict:'conflict',note:'静态诊断，不代表业务通过',issues:[{paths:['instructions.md'],description:'范围冲突',impact:'误路由',suggestion:'统一指导',impact_note:'needs-user-decision'}]};
+ assert.deepEqual(parseConsistency(JSON.stringify(annotated),source),{inputDigest:source.digest,verdict:'conflict',issues:[{paths:['instructions.md'],description:'范围冲突',impact:'误路由',suggestion:'统一指导'}]});
+ assert.throws(()=>parseConsistency(JSON.stringify({...annotated,inputDigest:undefined,passed:true}),source));
+ assert.throws(()=>parseConsistency(JSON.stringify({...annotated,verdict:'clear'}),source));
 });
 
 test('a project-authored clear JSON cannot be promoted to a fresh assistant diagnosis',async t=>{

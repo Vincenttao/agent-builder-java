@@ -1,4 +1,4 @@
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHash} from 'node:crypto';
 import {mkdirSync,readdirSync,readFileSync,lstatSync,existsSync,unlinkSync} from 'node:fs';
 import {join,relative,resolve} from 'node:path';
 import {consistencyPath,definitionInputs,parseConsistency,type ConsistencyAnalysis} from './consistency-contract.js';
@@ -6,7 +6,7 @@ import {ProjectStore,WorkbenchError,validateFiles,validatePath,applicationEditab
 export type CodingEvidence={tool:string;status:string;input?:Record<string,unknown>};
 export type CodingResult={sessionId:string;model:string;summary:string;evidence:CodingEvidence[]};
 export interface CodingEngine{readonly kind?:string;answer?(directory:string,id:string,answers:string[][]):Promise<void>;run(input:{directory:string;prompt:string;skill:string;purpose?:'consistency';signal:AbortSignal;onEvent:(event:Record<string,unknown>)=>void}):Promise<CodingResult>;}
-export type CodingJob={purpose?:'development'|'consistency';relatedCheckId?:string;analysis?:ConsistencyAnalysis;configuration?:{modelProfile:string;environmentId:string;model:string;origin:string;configured:boolean};id:string;projectId:string;role:Role;engineKind?:string;baseHead:string;prompt:string;status:'running'|'awaiting_input'|'awaiting_review'|'analysed'|'applied'|'rejected'|'failed'|'cancelled';createdAt:string;changes:Record<string,string|null>;summary?:string;sessionId?:string;model?:string;evidence:CodingEvidence[];events:Record<string,unknown>[];pendingQuestion?:{id:string;questions:Record<string,unknown>[]};error?:{code:string;message:string};appliedHead?:string};
+export type CodingJob={purpose?:'development'|'consistency';relatedCheckId?:string;analysis?:ConsistencyAnalysis;analysisOutput?:{raw:string;sha256:string};configuration?:{modelProfile:string;environmentId:string;model:string;origin:string;configured:boolean};id:string;projectId:string;role:Role;engineKind?:string;baseHead:string;prompt:string;status:'running'|'awaiting_input'|'awaiting_review'|'analysed'|'applied'|'rejected'|'failed'|'cancelled';createdAt:string;changes:Record<string,string|null>;summary?:string;sessionId?:string;model?:string;evidence:CodingEvidence[];events:Record<string,unknown>[];pendingQuestion?:{id:string;questions:Record<string,unknown>[]};error?:{code:string;message:string};appliedHead?:string};
 function worktreeFiles(root:string):Files{
  const files:Files={};
  function visit(dir:string,prefix=''){for(const entry of readdirSync(dir,{withFileTypes:true})){
@@ -65,7 +65,7 @@ export class CodingJobs{
    if(job.purpose==='consistency'){
     const source=definitionInputs(before),reads=new Set(result.evidence.filter(e=>e.tool==='read'&&e.status==='completed'&&typeof e.input?.filePath==='string').map(e=>relative(directory,resolve(directory,String(e.input!.filePath)))));
     if(source.required.some(p=>!reads.has(p)))throw new WorkbenchError('CONSISTENCY_SOURCE_NOT_READ','缺少业务范围、应用指令或业务Skill的实际读取证据');
-    job.analysis=parseConsistency(after[consistencyPath],source);job.changes={};job.status='analysed';this.clean(job);return;
+    const raw=after[consistencyPath];if(typeof raw==='string'&&raw.length<=128000)job.analysisOutput={raw,sha256:createHash('sha256').update(raw).digest('hex')};job.analysis=parseConsistency(raw,source);job.changes={};job.status='analysed';this.clean(job);return;
    }
    if(!Object.keys(job.changes).length)throw new WorkbenchError('NO_CHANGES','助手未产生文件差异；原建议和记录保留');
    job.status='awaiting_review';

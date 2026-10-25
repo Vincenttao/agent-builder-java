@@ -150,3 +150,16 @@ Java先加入失败用例，再实现工具：原稿两处日期同时替换且�
 首次真实定向探测使用手写材料示例，经新版BusinessTests→实际Java/Core DeepAgent→deepseek-flash运行两轮，COMPLETED和sameExcept确定性断言均通过，记录1次artifact_patched事件，原运行已明确停止。源码/JAR/模型/运行/测试来源见test-results/gap-deep-patch-8wiWZc/report.json，原失败/构建日志保留。该探测发生在后续大小预检及模板元信息同步之前，只证明当时工具的严格局部替换行为，不冒充最终版本完整E2E，也不计为Coding从空模板生成成功。最终版本仍需整体验收。
 
 相关契约/PC/发行检查6项通过，覆盖新增工具展示和装配；新增原生工具导致PC目录数量由3改为4，原能力断言保留。测试/构建日志：journey-gap-deep-patch-red.log、journey-gap-deep-patch-java.log（原回归失败）、journey-gap-deep-patch-java-retest.log、journey-gap-deep-patch-bounded-java.log、journey-gap-deep-patch-final-contracts.log。真实探测日志journey-gap-deep-patch-live.log。类型检查首次发现定向探测的字典类型缺失，已显式声明并复核。
+
+
+## 11 真实诊断输出兼容修复
+
+首次完整真实E2E已完成平台/Deep应用Coding、Deep一致性检查、Java双轮严格修改、页面业务报告和实际制品候选；随后MOA诊断正确识别注入冲突，但模型增加note/impact_note说明，被原additionalProperties门禁拒绝。原失败任务94f25365-1c85-4fa1-b7d0-87f62b9de2c2及失败报告保留，不手工改为通过。
+
+修复：保存本轮助手原始JSON及SHA，提取并严格校验核心来源摘要/结论/issues字段，兼容只作说明的附加字段；它们不授予权限或更改核心结论。核心字段缺失、错误摘要/路径、clear但存在issues、过大输出继续拒绝。界面保留原始附加说明查看。7项诊断/候选API与PC定向检查及类型检查通过；真实重新诊断任务ab04088d-dc49-476f-a7cf-1024e23cf16a在固定原输入上识别conflict，并保留原始输出，后续关联修订/复核/行为继续执行。本修复不降低独立业务断言。
+
+真实E2E脚本也修复了通过API保存独立用例后未刷新浏览器工程版本的问题（页面正确阻断旧版本候选）；补齐等待响应Promise的拒绝处理，失败可走原清理流程。续验复用已应用Coding和已完成Deep业务/包，不重发这些业务；新增产品文件摘要清单，后续跨Git提交续验只允许产品输入摘要完全一致。原始失败与每次续验单独成目录，不覆盖旧报告。
+
+证据：test-results/journey-gap-consistency-annotations.log、journey-gap-consistency-annotations-types.log；真实E2E各次报告在test-results/gap-e2e-20261026/。本批至此只证明兼容修复与真实冲突识别，完整最终E2E结果留待后续收口记录。
+
+同轮后续复核又将可选展示形式、未逐处重复的程序约束列为needs-clarification。已把诊断阻塞范围精确到真实互斥指令、业务去向、授权/完成依据及关键业务主体取舍；互补说明、框架工具可用但非必用、可选文案和异常细节仅记建议。15项诊断/关联Coding/候选/PC定向检查通过；真实业务取舍将通过原诊断关联修订，并增加他人员工零调用断言，当前尚不宣称最终真实链路完成。
