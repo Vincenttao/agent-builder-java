@@ -76,13 +76,15 @@ public final class TaskShelf {
         if(call==null||call.isBlank())throw new IllegalArgumentException("Missing operation identifier");
         task.submittedCall=call;task.inputToken=null;task.state=State.WAITING_RECEIPT;event("operation_submitted",task,Map.of("callId",call));
     }
-    public synchronized void receipt(String id,String call,boolean success){
+    public synchronized void receipt(String id,String call,boolean success){receipt(id,call,success,true);}
+    public synchronized void receipt(String id,String call,boolean success,boolean terminal){
         Task task=task(id);
         if(task.submittedCall==null||!task.submittedCall.equals(call))throw error("RECEIPT_CORRELATION_MISMATCH");
-        State result=success?State.COMPLETED:State.FAILED;
+        State result=success?(terminal?State.COMPLETED:State.ACTIVE):State.FAILED;
         if(task.ended()){if(task.state!=result)throw error("CONFLICTING_RECEIPT");return;}
         task.state=result;task.inputToken=null;event("operation_receipt",task,Map.of("callId",call,"state",result.name()));
-        if(task==retained)retained=null;
+        if(success&&!terminal)task.submittedCall=null;
+        if(task==retained&&task.ended())retained=null;
     }
     public synchronized void finish(String id,boolean success){
         Task task=task(id);if(task.ended())throw error("TASK_ALREADY_ENDED");

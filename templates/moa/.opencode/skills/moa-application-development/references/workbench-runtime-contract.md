@@ -56,3 +56,9 @@ A2A 目标以 `capabilities` 中 `type: agent` 和 `connection` 绑定到已声�
 联合核对 scope、System Prompt、业务 Skill 与操作目录。需要业务决定时提问，不擅自扩权。应用身份不得修改固定 Java、POM、开发 Skill 或 runtime-tests；发现范式契约问题应说明并交平台修订。
 
 本机 OpenCode 默认禁止 Bash；不能因此声称已运行 Maven、Python 或业务测试。使用允许的编辑/读取工具完成差异，说明做了哪些静态核对、哪些检查未执行。真实编译、模型、Mock 账本和 Trace 由工作台后续验证。生成、审阅应用、构建成功、业务验收是不同状态。
+
+## 预制商城/理财示例
+
+主Agent可在自身scope下装配多个Skill，由模型路由到benefits/wealth；它们是本任务内的业务Skill，不冒充远程A2A Agent。`examples/commerce-wealth` 是人工预制资产，不是模板默认业务或助手生成证据。
+
+受限本机写适配现支持redeem、transfer、purchase。transfer/purchase必须confirmationRequired=true、固定customerId=demo；转账固定本人funding→investment账户，转账和购买分别确认。transfer为terminal=false时，成功回执只完成一个操作步骤，继续原Skill；purchase为terminal=true结束本次任务。中间成功写回执保留在completedWrites，拒绝后续购买不能抹掉已发生的转账。未知转账不自动接着购买，按原key查单后结束本次任务，购买另行发起。不得把通用SCRIPT配置解释为任意新增写适配已受支持。

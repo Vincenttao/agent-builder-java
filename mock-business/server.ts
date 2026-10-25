@@ -1,5 +1,6 @@
 import express from 'express';
 import {randomUUID} from 'node:crypto';
+import {registerWealthMock} from './wealth.js';
 
 type Order={id:string;employeeId:string;giftId:string;quantity:number;points:number;idempotencyKey:string;status:'completed'};
 type A2aTask={id:string;contextId:string;kind:'task';status:{state:string;message:unknown};artifacts?:unknown[]};
@@ -12,6 +13,7 @@ function versionOneTask(task:A2aTask){
 /** Standalone demo dependency. Controls and recorded ledger are explicitly Mock-only. */
 export function createBusinessMock(){
  const app=express();app.use(express.json({limit:'128kb'}));
+ registerWealthMock(app);
  const balances:Record<string,number>={demo:1280};const orders=new Map<string,Order>();const tasks=new Map<string,A2aTask>();
  const calls:unknown[]=[];const a2aCalls:unknown[]=[];let writes=0;let redemptionDelayMs=0;let nextA2aFailure=false;
  const record=(target:unknown[],value:unknown)=>{target.push(value);if(target.length>1000)target.shift();};

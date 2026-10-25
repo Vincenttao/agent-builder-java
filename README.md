@@ -25,6 +25,10 @@ npm run start:workbench
 
 具体双角色、映射修复、两层任务、Trace/回放及独立包操作见 [可运行 Demo 演示与交付指南](docs/DEV-02_可运行Demo演示与交付指南.md)。
 
+## 新增业务示例
+
+已提供[预制 i豆商城、理财购买与综合业务主 Agent](examples/commerce-wealth/README.md)。主 Agent 用模型选择业务 Skill，Skill指导流程，独立 Mock 模拟账户与交易。使用 `MOCK_PORT=8772 npm run start:mock`，再运行 `node --import tsx scripts/install-business-examples.ts` 安装；新应用来自 MOA 空模板，预制资产明确为人工编写，旧工程不覆盖。solution 仓既有 Mock 与复用边界见[代码检查记录](docs/业务示例_Mock复用与主Agent分工.md)。
+
 ## 查看静态交互设计稿
 
 只需要 Node.js，直接在仓库根目录运行：

@@ -52,4 +52,10 @@ class TaskShelfTest {
   assertThrows(IllegalStateException.class,()->shelf.submitted(a,"new-key"));
   assertThrows(IllegalStateException.class,()->shelf.waitForInput(a,"retry-confirm"));
  }
+ @Test void confirmedIntermediateWriteContinuesBeforeSeparateFinalConfirmation(){
+  var shelf=shelf();String id=shelf.start("idou");shelf.submitted(id,"transfer-1");
+  assertThrows(IllegalStateException.class,()->shelf.receipt(id,"wrong",true,false));
+  shelf.receipt(id,"transfer-1",true,false);assertEquals(TaskShelf.State.ACTIVE,shelf.snapshot().current().state());assertNull(shelf.snapshot().current().submittedCall());
+  shelf.waitForInput(id,"purchase-confirm");shelf.inputAccepted(id,"purchase-confirm");shelf.submitted(id,"purchase-1");shelf.receipt(id,"purchase-1",true);assertEquals(TaskShelf.State.COMPLETED,shelf.snapshot().current().state());
+ }
 }

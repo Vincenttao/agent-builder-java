@@ -46,6 +46,7 @@ public final class BusinessAssets {
                     String operation=text(name);var declared=catalog.get(operation);if(declared==null||selected.containsKey(operation))throw invalid("operation reference");
                     declared=declared.resolveContract(assets);
                     if(operation.equals("redeem")&&(!declared.confirmationRequired()||!"demo".equals(declared.fixedArguments().get("employeeId"))))throw invalid("fixed redemption policy");
+                    if(Set.of("transfer","purchase").contains(operation)&&(!declared.confirmationRequired()||!"demo".equals(declared.fixedArguments().get("customerId"))))throw invalid("fixed money operation policy");
                     if(declared.resultScript()!=null)assets.script(declared.resultScript());if(declared.beforeScript()!=null)assets.script(declared.beforeScript());
                     selected.put(operation,declared);
                 }

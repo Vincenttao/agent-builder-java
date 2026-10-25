@@ -27,6 +27,7 @@ public final class BusinessHost implements AgentHandler {
     private static final class Frame {
         final String id,target,kind,query;final List<String> traceIds=new ArrayList<>();
         MoaExecution execution;MoaExecution.Turn turn;Prompt prompt;Task remote;
+        final List<Map<String,Object>> completedWrites=new ArrayList<>();
         String callKey,writeOperation,error="";Map<String,Object> writeArguments=Map.of(),output=Map.of();
         Frame(String id,String target,String kind,String query){this.id=id;this.target=target;this.kind=kind;this.query=query;}
     }
@@ -94,7 +95,7 @@ public final class BusinessHost implements AgentHandler {
             if(frame.execution!=null)settle(c,frame,frame.execution.reply(frame.turn.interrupt().id(),answer));
             else callRemote(c,frame,answer);
         }catch(RuntimeException failure){failed(c,frame,failure);}
-        if(declined&&frame.callKey==null){frame.output=new LinkedHashMap<>(frame.output);frame.output.put("userDecision","rejected");emit(c,"confirmation_declined",frame.id,Map.of("message","用户拒绝，未提交兑换"));}
+        if(declined&&frame.callKey==null){frame.output=new LinkedHashMap<>(frame.output);frame.output.put("userDecision","rejected");emit(c,"confirmation_declined",frame.id,Map.of("message","用户拒绝，未提交当前操作"));}
         maybeAutoResume(c);
     }
     private void activate(Conversation c,String id,String target,String query){
@@ -114,14 +115,17 @@ public final class BusinessHost implements AgentHandler {
                     }
                     String operation=entry.operations().entrySet().stream().filter(e->e.getValue().resultScript()!=null&&e.getValue().confirmationRequired()&&entry.assets().script(e.getValue().resultScript()).equals(source)).map(Map.Entry::getKey).findFirst().orElse(null);
                     if(operation==null)return scripts.run(session,source,input);
-                    if(!operation.equals("redeem"))throw error("WRITE_ADAPTER_NOT_SUPPORTED");
-                    String key="redeem-"+input.get("execution_id");c.shelf.submitted(frame.id,key);
+                    if(!Set.of("redeem","transfer","purchase").contains(operation))throw error("WRITE_ADAPTER_NOT_SUPPORTED");
+                    String key=operation+"-"+input.get("execution_id");c.shelf.submitted(frame.id,key);
                     frame.callKey=key;frame.writeOperation=operation;frame.writeArguments=Json.object(input.get("arguments"));
                     emit(c,"write_authorized",frame.id,Map.of("operation",frame.writeOperation,"arguments",frame.writeArguments,"idempotencyKey",frame.callKey,"parameterRevision",input.getOrDefault("revision",0)));publish(c);
                     Map<String,Object> result=scripts.run(session,source,input);var data=Json.object(result.get("data"));
                     SkillSchema.validate(entry.operations().get(operation).outputSchema(),data);
                     if(!frame.callKey.equals(data.get("idempotencyKey")))throw error("RECEIPT_CORRELATION_MISMATCH");
-                    if("completed".equals(data.get("status")))c.shelf.receipt(frame.id,frame.callKey,true);
+                    if("completed".equals(data.get("status"))){
+                        boolean terminal=entry.operations().get(operation).terminal();c.shelf.receipt(frame.id,frame.callKey,true,terminal);
+                        if(!terminal){var completed=new LinkedHashMap<String,Object>(data);completed.put("operation",operation);frame.completedWrites.add(Map.copyOf(completed));frame.callKey=null;}
+                    }
                     else if("failed".equals(data.get("status")))c.shelf.receipt(frame.id,frame.callKey,false);
                     frame.output=data;publish(c);return result;
                 };
@@ -137,10 +141,10 @@ public final class BusinessHost implements AgentHandler {
         if(turn.interrupt()!=null){
             var interruption=turn.interrupt();
             if(Json.object(interruption.context()).containsKey("_interrupt_kind"))throw error("NESTED_REMOTE_SKILL_NOT_ENABLED");
-            String message=interruption.message();if(interruption.tool().equals("confirm_action"))message+="\n业务主体：demo（本机 Mock 员工）";
+            String message=interruption.message();if(interruption.tool().equals("confirm_action"))message+="\n业务主体：demo（本机 Mock 用户）";
             frame.prompt=prompt(interruption.tool(),message);c.shelf.waitForInput(frame.id,frame.prompt.token);
         }else{
-            if(frame.callKey==null){frame.output=SkillOutput.result(turn.result());c.shelf.finish(frame.id,Boolean.TRUE.equals(frame.output.get("success")));}
+            if(frame.callKey==null){frame.output=new LinkedHashMap<>(SkillOutput.result(turn.result()));if(!frame.completedWrites.isEmpty())frame.output.put("completedWrites",List.copyOf(frame.completedWrites));c.shelf.finish(frame.id,Boolean.TRUE.equals(frame.output.get("success")));}
             else if(frame.output.isEmpty())frame.output=Map.of("status","unknown","idempotencyKey",frame.callKey);
         }
         publish(c);
@@ -171,12 +175,16 @@ public final class BusinessHost implements AgentHandler {
         if(frame.turn==null||frame.turn.interrupt()==null)throw error("RESUME_POINT_NOT_SUPPORTED");
         var confirmation=Json.object(frame.turn.interrupt().context().get("confirmation"));
         if(!confirmation.isEmpty()){
-            if(!"redeem".equals(confirmation.get("operation")))throw error("RESUME_REVIEW_NOT_SUPPORTED");
-            var entry=assets.skill(frame.target);var args=Json.object(confirmation.get("arguments"));args.putAll(entry.operations().get("redeem").fixedArguments());SkillSchema.validate(entry.operations().get("redeem").inputSchema(),args);
-            Map<String,Object> balance=readOperation(c,frame,"balance",Map.of()),gifts=readOperation(c,frame,"gifts",Map.of());
-            var available=balance.get("available");Object cost=null;
-            if(gifts.get("gifts") instanceof List<?> catalog)for(Object item:catalog){var gift=Json.object(item);if(Objects.equals(gift.get("id"),args.get("giftId")))cost=gift.get("points");}
-            boolean passed=available instanceof Number amount&&cost instanceof Number price&&args.get("quantity") instanceof Number quantity&&amount.longValue()>=price.longValue()*quantity.longValue();
+            String operation=String.valueOf(confirmation.get("operation"));var entry=assets.skill(frame.target);var args=Json.object(confirmation.get("arguments"));args.putAll(entry.operations().get(operation).fixedArguments());SkillSchema.validate(entry.operations().get(operation).inputSchema(),args);
+            boolean passed;Map<String,Object> balance;
+            if(operation.equals("redeem")){
+                balance=readOperation(c,frame,"balance",Map.of());var gifts=readOperation(c,frame,"gifts",Map.of());var available=balance.get("available");Object cost=null;
+                if(gifts.get("gifts") instanceof List<?> catalog)for(Object gift:catalog){var item=Json.object(gift);if(Objects.equals(item.get("id"),args.get("giftId")))cost=item.get("points");}
+                passed=available instanceof Number amount&&cost instanceof Number price&&args.get("quantity") instanceof Number quantity&&amount.longValue()>=price.longValue()*quantity.longValue();
+            }else if(Set.of("transfer","purchase").contains(operation)){
+                balance=readOperation(c,frame,"wealth_plan",Map.of("productId",args.get("productId"),"amountFen",args.get(operation.equals("transfer")?"purchaseAmountFen":"amountFen")));
+                passed=operation.equals("purchase")?Boolean.TRUE.equals(balance.get("canPurchase")):balance.get("shortfallFen") instanceof Number shortfall&&args.get("amountFen") instanceof Number amount&&shortfall.longValue()==amount.longValue()&&balance.get("fundingFen") instanceof Number funding&&funding.longValue()>=amount.longValue();
+            }else throw error("RESUME_REVIEW_NOT_SUPPORTED");
             c.shelf.review(id,passed);emit(c,"resume_facts_checked",id,Map.of("passed",passed,"balance",balance,"arguments",args));
             if(!passed){frame.error="RESUME_FACTS_CHANGED";return;}
         }else c.shelf.review(id,true);
@@ -192,8 +200,8 @@ public final class BusinessHost implements AgentHandler {
     });}
     private Map<String,Object> readOperation(Conversation c,Frame frame,String name,Map<String,Object> args){
         var entry=assets.skill(frame.target);var operation=entry.operations().get(name);
-        if(operation==null||operation.type()!=SkillOperation.Type.SCRIPT||operation.confirmationRequired()||!Set.of("balance","gifts","receipt").contains(name))throw error("READ_ADAPTER_NOT_SUPPORTED");
-        SkillSchema.validate(operation.inputSchema(),args);emit(c,"review_read_started",frame.id,Map.of("operation",name));publish(c);
+        if(operation==null||operation.type()!=SkillOperation.Type.SCRIPT||operation.confirmationRequired()||!Set.of("balance","gifts","receipt","wealth_plan").contains(name))throw error("READ_ADAPTER_NOT_SUPPORTED");
+        args=new LinkedHashMap<>(args);args.putAll(operation.fixedArguments());SkillSchema.validate(operation.inputSchema(),args);emit(c,"review_read_started",frame.id,Map.of("operation",name));publish(c);
         Map<String,Object> result=assets.scripts(frame.target).run(c.shelf.session(frame.id),entry.assets().script(operation.resultScript()),Map.of("arguments",args,"execution_id",frame.id,"results",Map.of(),"versions",Map.of(),"metadata",Map.of(),"result",Map.of(),"revision",0));
         var data=Json.object(result.get("data"));if(!Boolean.TRUE.equals(result.get("success")))throw error("BUSINESS_READ_FAILED");SkillSchema.validate(operation.outputSchema(),data);
         emit(c,"review_read_completed",frame.id,Map.of("operation",name,"data",data));return data;

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "name": "综合业务主Agent",
+  "description": "预制模拟示例：主Agent识别意图，分发到i豆商城或理财购买Skill；业务数据由独立Mock服务提供。",
+  "scope": {
+    "own": [
+      "i豆商城：余额、礼品查询与确认兑换，使用 benefits Skill",
+      "理财购买：账户余额、资金不足时询问转账、转账后再确认购买，使用 wealth Skill"
+    ],
+    "delegated": [],
+    "outside": []
+  },
+  "skills": [
+    {
+      "id": "benefits",
+      "file": "skills/benefits/SKILL.md",
+      "operations": [
+        "balance",
+        "gifts",
+        "redeem",
+        "receipt",
+        "finish"
+      ]
+    },
+    {
+      "id": "wealth",
+      "file": "skills/wealth/SKILL.md",
+      "operations": [
+        "wealth_plan",
+        "transfer",
+        "purchase",
+        "receipt",
+        "finish"
+      ]
+    }
+  ],
+  "capabilities": [],
+  "handoff": {
+    "enabled": false,
+    "target": "",
+    "unfinished": "ask",
+    "resume": "prompt",
+    "maxTasks": 2
+  },
+  "connections": {
+    "idou": "http://127.0.0.1:8772",
+    "wealth": "http://127.0.0.1:8772"
+  },
+  "mapping": {
+    "balancePath": "employee.wallet.availablePoints"
+  }
+}
