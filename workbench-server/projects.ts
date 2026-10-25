@@ -142,9 +142,10 @@ export class ProjectStore{
     const release:Release={id:randomUUID(),projectId:id,version,commit:p.head,digest,createdAt:new Date().toISOString()};
     this.db.prepare('INSERT INTO releases VALUES(@id,@projectId,@version,@commit,@digest,@createdAt)').run(release);return release;
   }
-  createApplication(releaseId:string,name:string,role:Role):Project{
+  createApplication(releaseId:string,name:string,role:Role,goal:string=''):Project{
     if(role!=='application')fail('FORBIDDEN','请切换到应用开发者创建应用',403);if(!name?.trim()||name.length>120)fail('INVALID_NAME','请输入 1～120 字的应用名称');
-    const release=this.release(releaseId);const files=this.snapshot(release.projectId,release.commit);const spec=validateFiles(files);spec.name=name.trim();files['application.json']=JSON.stringify(spec,null,2)+'\n';
+    if(typeof goal!=='string'||goal.length>12000)fail('INVALID_GOAL','业务目标须为不超过 12000 字的文本');
+    const release=this.release(releaseId);const files=this.snapshot(release.projectId,release.commit);const spec=validateFiles(files);spec.name=name.trim();if(goal.trim())spec.description=goal.trim();files['application.json']=JSON.stringify(spec,null,2)+'\n';
     return this.init(randomUUID(),'application',name.trim(),files,releaseId);
   }
 }
