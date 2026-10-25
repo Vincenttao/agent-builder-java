@@ -175,6 +175,13 @@ export function createApp(options: AppOptions) {
     app.get<{ Params: { id: string } }>('/api/drafts/:id/baselines', { schema: { params: draftParamsSchema } }, async request => { await options.drafts.get(request.params.id); return { items: await baselines.list(request.params.id) }; });
     app.get<{ Params: { id: string } }>('/api/baselines/:id', { schema: { params: draftParamsSchema } }, async request => baselines.get(request.params.id));
   }
+  if (options.snapshots && !options.runs) {
+    const snapshots = options.snapshots;
+    app.post<{ Params: { id: string }; Body: RunInput }>('/api/snapshots/:id/runs', { schema: { params: draftParamsSchema, body: runInputSchema } }, async request => {
+      await snapshots.get(request.params.id);
+      throw new AppError('ENVIRONMENT_BLOCKED', '当前环境不能执行真实业务 Agent', 409, { blockers: (await environment()).blockers });
+    });
+  }
   if (options.runs) {
     const runs = options.runs;
     const streams = new Set<ServerResponse>();
