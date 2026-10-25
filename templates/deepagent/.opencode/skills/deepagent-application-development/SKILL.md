@@ -22,3 +22,7 @@ description: 从DeepAgent模板新建或修改独立业务应用，将用户目�
 本机OpenCode禁止Bash。使用实际文件编辑工具，不只给出代码文本；不能声称已运行Maven、Python或真实业务测试。源码建议、结构检查、Java构建、真实模型业务和企业发布是不同状态。由工作台在应用差异后执行后续检查。
 
 本范式来源agent-solution的guides/docs-java/how-to/deepagent.md，当前本地接线以RUNTIME.md与固定实现为准；不从上游文档推断未接通能力。
+
+## 版本化业务回归
+
+新增或修订业务测试时，先读取 [用例Schema与执行边界](references/business-tests.md)。编辑 tests/business-cases.json 中的声明式步骤和独立断言，不生成任意Shell命令。只核对文件和引用，由工作台调用已保存版本的原运行执行；禁止以COMPLETED覆盖外部状态或局部修改保留断言，禁止为消除失败修改独立验收预期。

@@ -23,6 +23,7 @@ window.WorkbenchRuntime=(()=>{
  function report(error,token,c){if(valid(token,c))host.notify(errors[error.code]||error.message);}
  function controls(s,c){
   const run=currentRun(c),rs=run&&runState(s,run.id),active=s.all.find(r=>activeStatuses.includes(r.status));
+  if(run?.testing)return '<p class="warning">原运行正在执行业务回归，当前只读；取消后续步骤仍会等待原请求核对。</p><button data-tab="business-tests">查看原业务测试</button>';
   if(rs?.playback)return '<p class="warning">只读回放：不会重新调用模型、Skill 或 Agent</p>';
   return `${(!c.editable||c.historyOnly)?(c.historyOnly?'<p>运行记录只读；需要执行时请进入测试 / 调试运行。</p>':'<p>当前身份只读诊断，不能发起业务或停止应用。</p>'):`<button class="primary" data-run-action="start" ${c.dirty||active?'disabled':''}>构建并启动保存版本</button>${c.dirty?'<p class="warning">请先保存或放弃工程草稿，再构建。</p>':''}`}${active&&active.projectId!==c.project.id?`<p class="warning">其他工程已有活动运行 <code>${esc(active.id.slice(0,8))}</code>。<button data-run-open="${esc(active.id)}" data-project="${esc(active.projectId)}">查看原运行</button></p>`:''}`;
  }
@@ -43,7 +44,7 @@ window.WorkbenchRuntime=(()=>{
   return `<article class="runtime-task"><h3>${esc(slot)}</h3><p><strong>${esc(frame.target)}</strong> · ${frame.kind==='deepagent'?'DeepAgent 独立目标':frame.kind==='skill'?'当前任务内 Skill':'A2A Agent'} ${stateInfo}</p><p>${esc(frame.query)}</p>${frame.error?`<p class="warning">${esc(errors[frame.error]||frame.error)}</p>`:''}${Object.keys(frame.output??{}).length?`<details><summary>原任务结果</summary><pre>${esc(json(frame.output))}</pre></details>`:''}${submitted&&!ended(frame.state)&&canOperate?`<p>已提交操作仅核对原键回执，不重复提交。</p><button data-run-action="receipt" data-task="${esc(frame.id)}">核对原操作回执</button>`:''}<details><summary>任务标识</summary><code>${esc(frame.id)}</code>${submitted?`<p>原操作键：<code>${esc(submitted)}</code></p>`:''}</details></article>`;
  }
  function interaction(run,rs,view,c){
-  const owned=c.editable&&!c.historyOnly&&run.role===c.role,unobserved=rs.uncertain||view.unobserved||(run.unobserved??[]).includes(rs.conversation);
+  const owned=c.editable&&!c.historyOnly&&run.role===c.role&&!run.testing,unobserved=rs.uncertain||view.unobserved||(run.unobserved??[]).includes(rs.conversation);
   const live=run.status==='running'&&view.live!==false,blocked=rs.pending||view.busy||unobserved;
   const disabled=blocked||view.conflict?'disabled':'',stack=view.stack??{},frames=view.tasks??[],current=view.mode==='deepagent'?frames.at(-1):frames.find(t=>t.id===stack.current?.id),retained=frames.find(t=>t.id===stack.retained?.id);
   const mutable=owned&&live&&!rs.playback&&!blocked;
@@ -60,7 +61,7 @@ window.WorkbenchRuntime=(()=>{
   return body;
  }
  function detail(run,rs,c){
-  const playback=rs.playback,shownRun=playback?.run??run,view=playback?.view??rs.view,owned=c.editable&&!c.historyOnly&&run.role===c.role;
+  const playback=rs.playback,shownRun=playback?.run??run,view=playback?.view??rs.view,owned=c.editable&&!c.historyOnly&&run.role===c.role&&!run.testing;
   return `<div class="toolbar"><h2>${esc(runLabels[shownRun.status]||shownRun.status)}</h2><code>${esc(shownRun.id.slice(0,8))}</code></div><p><span class="badge">${shownRun.engine==='local-java'?'本机 Java 运行':esc(shownRun.engine)+' · 运行契约测试，不代表真实业务'}</span></p><p>启动版本 <code>${esc(shownRun.head.slice(0,12))}</code></p>${run.head!==c.project.head?'<p class="warning">工程已修改，运行仍使用启动时版本。不会自动重建或重启。</p>':''}${run.error?`<p class="warning">${esc(run.error.code)}：${esc(run.error.message)}</p>`:''}${rs.error?`<p class="warning" role="alert">${esc(rs.error)}</p>`:''}${shownRun.artifact?`<details id="runtime-artifact"><summary>构建产物摘要</summary><p>SHA-256：<code>${esc(shownRun.artifact.sha256)}</code></p><p>${esc(shownRun.artifact.bytes)} bytes · 绑定本次启动版本</p></details>`:''}
     ${!playback&&owned&&activeStatuses.includes(run.status)?`<div class="row"><button data-run-action="stop">停止原运行</button>${run.status==='unresponsive'?'<button data-run-action="reconnect">核验原进程</button>':''}</div>`:''}
     <details id="runtime-logs"><summary>本次构建与进程日志</summary><pre>${esc((shownRun.logs??[]).join(''))}</pre></details>
@@ -69,7 +70,7 @@ window.WorkbenchRuntime=(()=>{
     ${!playback&&owned&&run.status==='running'?`<button data-run-action="new-conversation" ${rs.pending||rs.uncertain||run.unobserved?.length?'disabled':''}>新建业务会话</button>`:''}
     ${view?interaction(shownRun,rs,view,c):!playback&&owned&&run.status==='running'?interaction(run,rs,{stack:{},tasks:[],events:[],live:true},c):'<p>尚无业务会话或可用观察快照。</p>'}
     ${view&&!playback?`<button data-run-action="playback" ${rs.pending?'disabled':''}>进入只读回放</button>`:''}
-    ${run.configuration?`<details class="run-configuration"><summary>本次运行模型与环境</summary><p>${esc(run.configuration.model)} · ${esc(run.configuration.origin)} · 配置档 ${esc(run.configuration.modelProfile)} · 环境 ${esc(run.configuration.environmentId)}</p><p>这是启动时固定配置，新选择不会改变本运行。</p></details>`:'<p class="muted">历史运行未记录模型配置，不从当前设置推测补齐。</p>'}${view?traces(shownRun,view)+timeline(view,playback?.cursor):''}${!playback&&owned&&!activeStatuses.includes(run.status)?'<button data-run-action="delete">清理此历史运行</button>':''}`;
+    ${run.configuration?`<details class="run-configuration"><summary>本次运行模型与环境</summary><p>${esc(run.configuration.model)} · ${esc(run.configuration.origin)} · 配置档 ${esc(run.configuration.modelProfile)} · 环境 ${esc(run.configuration.environmentId)}</p><p>这是启动时固定配置，新选择不会改变本运行。</p></details>`:'<p class="muted">历史运行未记录模型配置，不从当前设置推测补齐。</p>'}${run.testing?'<p class="warning">此运行正在执行业务回归，暂时只读。请在业务回归页查看原报告或取消后续步骤。</p><button data-tab="business-tests">查看业务测试</button>':''}${view?traces(shownRun,view)+timeline(view,playback?.cursor):''}${!playback&&owned&&!activeStatuses.includes(run.status)?'<button data-run-action="delete">清理此历史运行</button>':''}`;
  }
  function paint(c){
   const s=state(c.project.id),run=currentRun(c);if(!document.getElementById('runtime-host'))return;

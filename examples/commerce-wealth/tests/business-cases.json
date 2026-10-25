@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "family": "moa",
+  "mockConnection": "idou",
+  "cases": [
+    {
+      "id": "balance",
+      "title": "i豆查询与零写入",
+      "steps": [
+        {
+          "id": "query",
+          "type": "message",
+          "query": "查询我的i豆余额，查询后结束。",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "COMPLETED"
+            },
+            {
+              "source": "task",
+              "path": "output",
+              "operator": "contains",
+              "value": 1280
+            },
+            {
+              "source": "delta",
+              "path": "calls.idou.balance",
+              "operator": "gte",
+              "value": 1
+            },
+            {
+              "source": "delta",
+              "path": "writes",
+              "operator": "equals",
+              "value": 0
+            },
+            {
+              "source": "delta",
+              "path": "a2aCalls",
+              "operator": "equals",
+              "value": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "decline",
+      "title": "拒绝兑换与旧确认拒绝",
+      "steps": [
+        {
+          "id": "ask",
+          "type": "message",
+          "query": "我要兑换1张咖啡券，giftId是coffee，quantity是1。请发起确认。",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "WAITING_INPUT"
+            },
+            {
+              "source": "delta",
+              "path": "writes",
+              "operator": "equals",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": "decline",
+          "type": "reply",
+          "answer": "拒绝",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "COMPLETED"
+            },
+            {
+              "source": "delta",
+              "path": "writes",
+              "operator": "equals",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": "stale",
+          "type": "reply",
+          "answer": "确认",
+          "fromStep": "ask",
+          "expectedError": "STALE_TASK_INPUT",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "COMPLETED"
+            },
+            {
+              "source": "delta",
+              "path": "writes",
+              "operator": "equals",
+              "value": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "receipt",
+      "title": "兑换超时只查原回执，不重复提交",
+      "steps": [
+        {
+          "id": "delay",
+          "type": "controls",
+          "control": {
+            "redemptionDelayMs": 1500
+          }
+        },
+        {
+          "id": "ask",
+          "type": "message",
+          "query": "我要兑换1张咖啡券，giftId是coffee，quantity是1。请发起确认。",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "WAITING_INPUT"
+            },
+            {
+              "source": "delta",
+              "path": "writes",
+              "operator": "equals",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "id": "confirm",
+          "type": "reply",
+          "answer": "确认",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "WAITING_RECEIPT"
+            },
+            {
+              "source": "delta",
+              "path": "writes",
+              "operator": "equals",
+              "value": 1
+            },
+            {
+              "source": "delta",
+              "path": "calls.idou.redeem",
+              "operator": "equals",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": "receipt",
+          "type": "receipt",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "COMPLETED"
+            },
+            {
+              "source": "delta",
+              "path": "writes",
+              "operator": "equals",
+              "value": 1
+            },
+            {
+              "source": "delta",
+              "path": "calls.idou.redeem",
+              "operator": "equals",
+              "value": 1
+            },
+            {
+              "source": "delta",
+              "path": "calls.idou.receipt",
+              "operator": "gte",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": "restore",
+          "type": "controls",
+          "control": {
+            "redemptionDelayMs": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "wealth",
+      "title": "理财资金不足→确认转账→新确认购买",
+      "steps": [
+        {
+          "id": "ask",
+          "type": "message",
+          "query": "我要购买2000元模拟理财A，productId=demo-wealth-a，amountFen=200000。理财账户余额不足时，请先询问是否从本人资金账户转账，转账和购买必须分别确认。",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "WAITING_INPUT"
+            },
+            {
+              "source": "delta",
+              "path": "transferWrites",
+              "operator": "equals",
+              "value": 0
+            },
+            {
+              "source": "delta",
+              "path": "purchaseWrites",
+              "operator": "equals",
+              "value": 0
+            },
+            {
+              "source": "wealth",
+              "path": "investmentFen",
+              "operator": "equals",
+              "value": 100000
+            }
+          ]
+        },
+        {
+          "id": "transfer",
+          "type": "reply",
+          "answer": "确认",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "WAITING_INPUT"
+            },
+            {
+              "source": "delta",
+              "path": "transferWrites",
+              "operator": "equals",
+              "value": 1
+            },
+            {
+              "source": "delta",
+              "path": "purchaseWrites",
+              "operator": "equals",
+              "value": 0
+            },
+            {
+              "source": "task",
+              "path": "prompt.token",
+              "operator": "notEqualsFrom",
+              "fromStep": "ask"
+            }
+          ]
+        },
+        {
+          "id": "purchase",
+          "type": "reply",
+          "answer": "确认",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "COMPLETED"
+            },
+            {
+              "source": "delta",
+              "path": "transferWrites",
+              "operator": "equals",
+              "value": 1
+            },
+            {
+              "source": "delta",
+              "path": "purchaseWrites",
+              "operator": "equals",
+              "value": 1
+            },
+            {
+              "source": "wealth",
+              "path": "investmentFen",
+              "operator": "equals",
+              "value": 0
+            },
+            {
+              "source": "delta",
+              "path": "calls.idou.balance",
+              "operator": "equals",
+              "value": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

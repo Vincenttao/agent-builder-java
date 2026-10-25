@@ -18,7 +18,7 @@ export function createBusinessMock(){
  const calls:unknown[]=[];const a2aCalls:unknown[]=[];let writes=0;let redemptionDelayMs=0;let nextA2aFailure=false;
  const record=(target:unknown[],value:unknown)=>{target.push(value);if(target.length>1000)target.shift();};
  app.get('/health',(_q,s)=>s.json({status:'ok',mode:'independent-mock'}));
- app.get('/api/gifts',(_q,s)=>s.json({gifts}));
+ app.get('/api/gifts',(_q,s)=>{record(calls,{operation:'gifts',at:new Date().toISOString()});s.json({gifts});});
  app.get('/api/employees/:employeeId/balance',(q,s)=>{
   const id=q.params.employeeId;record(calls,{operation:'balance',employeeId:id,at:new Date().toISOString()});
   if(!(id in balances)){s.status(404).json({error:'EMPLOYEE_NOT_FOUND'});return;}
@@ -69,6 +69,7 @@ export function createBusinessMock(){
   });
  }
  app.get('/__mock/state',(_q,s)=>s.json({mock:true,balances,orders:[...orders.values()],writes,calls,a2aCalls,a2aTasks:[...tasks.values()]}));
+ app.get('/__mock/controls',(_q,s)=>s.json({mock:true,redemptionDelayMs,nextA2aFailure}));
  app.post('/__mock/controls',(q,s)=>{
   const {redemptionDelayMs:delay,nextA2aFailure:failure}=q.body??{};
   if(delay!==undefined&&(!Number.isInteger(delay)||delay<0||delay>5000)||failure!==undefined&&typeof failure!=='boolean'){s.status(400).json({error:'INVALID_MOCK_CONTROL'});return;}

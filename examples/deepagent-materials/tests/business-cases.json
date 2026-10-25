@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "family": "deepagent",
+  "cases": [
+    {
+      "id": "materials",
+      "title": "整理材料与严格局部修改",
+      "steps": [
+        {
+          "id": "create",
+          "type": "message",
+          "query": "请整理以下短材料：项目负责人是王晨，预算3万元，截止日期为6月30日，安全评审由李敏负责。生成brief.md，事实不全的事项标为待确认。",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "COMPLETED"
+            },
+            {
+              "source": "artifact",
+              "path": "",
+              "operator": "contains",
+              "value": "王晨"
+            },
+            {
+              "source": "artifact",
+              "path": "",
+              "operator": "contains",
+              "value": "3万元"
+            },
+            {
+              "source": "artifact",
+              "path": "",
+              "operator": "contains",
+              "value": "李敏"
+            },
+            {
+              "source": "artifact",
+              "path": "",
+              "operator": "contains",
+              "value": "6月30日"
+            }
+          ]
+        },
+        {
+          "id": "edit",
+          "type": "message",
+          "query": "请只将原稿里所有出现的“6月30日”替换为“7月5日”，其他所有字符、事实、格式和顺序逐字保持不变；先读原稿，再修改并读回。",
+          "assertions": [
+            {
+              "source": "task",
+              "path": "state",
+              "operator": "equals",
+              "value": "COMPLETED"
+            },
+            {
+              "source": "artifact",
+              "path": "",
+              "operator": "sameExcept",
+              "fromStep": "create",
+              "oldText": "6月30日",
+              "newText": "7月5日"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

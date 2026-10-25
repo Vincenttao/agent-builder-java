@@ -4,7 +4,7 @@ import {mkdirSync,readFileSync,writeFileSync,appendFileSync,existsSync,statSync,
 import {join,dirname,relative,resolve} from 'node:path';
 import {ProjectStore,WorkbenchError,validateFiles,type Role} from './projects.js';
 import {ownsProcess,stopOwnedProcess,sanitize,type RunEngine,type OwnedProcess,type RunningJava} from './local-java.js';
-export type RunRecord={configuration?:ReturnType<typeof publicExecution>;id:string;projectId:string;role:Role;head:string;sourceReleaseId:string|null;createdAt:string;engine:string;status:'building'|'starting'|'running'|'stopping'|'stopped'|'failed'|'interrupted'|'unresponsive';logs:string[];process?:OwnedProcess;origin?:string;artifact?:{path:string;sha256:string;bytes:number};conversations:string[];unobserved?:string[];error?:{code:string;message:string}};
+export type RunRecord={testing?:string;configuration?:ReturnType<typeof publicExecution>;id:string;projectId:string;role:Role;head:string;sourceReleaseId:string|null;createdAt:string;engine:string;status:'building'|'starting'|'running'|'stopping'|'stopped'|'failed'|'interrupted'|'unresponsive';logs:string[];process?:OwnedProcess;origin?:string;artifact?:{path:string;sha256:string;bytes:number};conversations:string[];unobserved?:string[];error?:{code:string;message:string}};
 const liveStatuses=new Set(['building','starting','running','stopping','unresponsive']);
 const conversationPattern=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 function fail(code:string,message:string,status=409):never{throw new WorkbenchError(code,message,status);}
@@ -22,6 +22,9 @@ export class RunManager{
  get(id:string,role:Role){const run=this.record(id);this.store.get(run.projectId,role);return JSON.parse(JSON.stringify(run)) as RunRecord;}
  list(id:string,role:Role){this.store.get(id,role);return (this.store.db.prepare('SELECT id FROM runs WHERE projectId=? ORDER BY rowid DESC LIMIT 24').all(id) as {id:string}[]).map(row=>this.get(row.id,role));}
  listAll(role:Role){return (this.store.db.prepare('SELECT id FROM runs ORDER BY rowid DESC LIMIT 24').all() as {id:string}[]).flatMap(row=>{try{return [this.get(row.id,role)];}catch(error){if(error instanceof WorkbenchError&&error.code==='FORBIDDEN')return [];throw error;}});}
+ claimTesting(id:string,role:Role,reportId:string){const run=this.record(id);this.owner(run,role);if(run.testing||run.status!=='running'||run.unobserved?.length)fail('RUN_UNDER_TEST','运行正在测试或有未核对的请求，请先核对原状态');run.testing=reportId;this.persist(run);}
+ releaseTesting(id:string,reportId:string){const run=this.record(id);if(run.testing===reportId){delete run.testing;this.persist(run);}}
+ private testingAllowed(run:RunRecord,token?:string){if(run.testing&&run.testing!==token)fail('RUN_UNDER_TEST','该运行正在执行业务回归，请查看报告或先取消测试');}
  private owner(run:RunRecord,role:Role){this.store.get(run.projectId,role);if(run.role!==role)fail('FORBIDDEN','请使用发起运行的身份操作',403);}
  private log(run:RunRecord,text:string){const value=sanitize(text).slice(-4000);run.logs.push(value);if(run.logs.length>150)run.logs.shift();const file=join(this.directory(run.id),'process.log');if(!existsSync(file)||statSync(file).size<2_000_000)appendFileSync(file,value);this.persist(run);}
  async start(id:string,role:Role,head:string){
@@ -57,7 +60,7 @@ export class RunManager{
    void handle.exited.then(result=>{const stopped=run.status==='stopping'||controller.signal.aborted;run.status=stopped?'stopped':'interrupted';if(!stopped)run.error={code:'JAVA_EXITED',message:'原 Java 进程已退出，未完成业务需核对；不会自动重放'};this.active.delete(run.id);this.handles.delete(run.id);this.controllers.delete(run.id);this.persist(run);});
   }catch(error){run.status=controller.signal.aborted?'stopped':'failed';run.error=controller.signal.aborted?undefined:error instanceof WorkbenchError?{code:error.code,message:error.message}:{code:'RUN_FAILED',message:'构建或启动失败，请核对本次运行日志'};this.active.delete(run.id);this.controllers.delete(run.id);this.persist(run);}
  }
- async stop(id:string,role:Role){await this.ready;const run=this.record(id);this.owner(run,role);if(!liveStatuses.has(run.status))return this.get(id,role);run.status='stopping';this.persist(run);
+ async stop(id:string,role:Role){await this.ready;const run=this.record(id);this.owner(run,role);if(!this.closed)this.testingAllowed(run);if(!liveStatuses.has(run.status))return this.get(id,role);run.status='stopping';this.persist(run);
   const handle=this.handles.get(id);this.controllers.get(id)?.abort();
   if(handle)await handle.stop();else if(this.launches.has(id))await this.launches.get(id);else if(run.process&&ownsProcess(run.process))await stopOwnedProcess(run.process);
   run.status='stopped';this.active.delete(id);this.controllers.delete(id);this.handles.delete(id);this.persist(run);return this.get(id,role);
@@ -86,11 +89,11 @@ export class RunManager{
   if(!view.busy&&run.unobserved?.includes(view.conversationId)){run.unobserved=run.unobserved.filter(id=>id!==view.conversationId);this.persist(run);}
   writeFileSync(join(this.directory(run.id),'observations',view.conversationId+'.json'),JSON.stringify(view));return {...view,live:true,runId:run.id};
  }
- async message(id:string,role:Role,body:unknown){const run=this.record(id);this.owner(run,role);const value=body as {query?:unknown;conversationId?:unknown};if(typeof value?.query!=='string'||!value.query.trim()||value.query.length>12000)fail('INVALID_QUERY','请输入业务消息',400);
+ async message(id:string,role:Role,body:unknown,testingToken?:string){const run=this.record(id);this.owner(run,role);this.testingAllowed(run,testingToken);const value=body as {query?:unknown;conversationId?:unknown};if(typeof value?.query!=='string'||!value.query.trim()||value.query.length>12000)fail('INVALID_QUERY','请输入业务消息',400);
   if(value.conversationId!==undefined&&value.conversationId!==null&&(typeof value.conversationId!=='string'||!conversationPattern.test(value.conversationId)||!run.conversations.includes(value.conversationId)))fail('CONVERSATION_NOT_FOUND','该会话不属于本次运行',404);
   return this.track((async()=>{const conversation=value.conversationId?String(value.conversationId):this.capture(run,await this.backend(run,'/workbench/conversations',{})).conversationId;return this.perform(run,conversation,'/workbench/messages',{...value,conversationId:conversation});})());
  }
- async command(id:string,role:Role,conversation:string,action:string,body:unknown){const run=this.record(id);this.owner(run,role);this.conversationOwned(run,conversation);if(!['reply','decide','resume','receipt'].includes(action))fail('INVALID_ACTION','不支持该业务操作',400);if(!body||typeof body!=='object'||Array.isArray(body))fail('INVALID_ACTION_INPUT','请提供该任务的操作参数',400);return this.track(this.perform(run,conversation,'/workbench/conversations/'+conversation+'/'+action,body));}
+ async command(id:string,role:Role,conversation:string,action:string,body:unknown,testingToken?:string){const run=this.record(id);this.owner(run,role);this.testingAllowed(run,testingToken);this.conversationOwned(run,conversation);if(!['reply','decide','resume','receipt'].includes(action))fail('INVALID_ACTION','不支持该业务操作',400);if(!body||typeof body!=='object'||Array.isArray(body))fail('INVALID_ACTION_INPUT','请提供该任务的操作参数',400);return this.track(this.perform(run,conversation,'/workbench/conversations/'+conversation+'/'+action,body));}
  private async perform(run:RunRecord,conversation:string,path:string,body:unknown){
   run.unobserved=[...new Set([...(run.unobserved??[]),conversation])];this.persist(run);
   try{const view=await this.backend(run,path,body);if(view.conversationId!==conversation)fail('JAVA_RESPONSE_INVALID','会话关联不匹配');return this.capture(run,view);}
@@ -105,7 +108,7 @@ export class RunManager{
  async remove(id:string,role:Role){const run=this.record(id);this.owner(run,role);if(liveStatuses.has(run.status)||this.active.has(id))fail('RUN_STILL_ACTIVE','先明确停止原进程再清理运行目录');
   const directory=this.directory(id);if(!existsSync(directory)||lstatSync(directory).isSymbolicLink()||realpathSync(directory)!==resolve(directory))fail('WORKSPACE_OWNERSHIP_MISMATCH','运行目录归属不匹配');
   const owner=JSON.parse(readFileSync(join(directory,'owner.json'),'utf8'));if(owner.kind!=='workbench-run'||owner.id!==id||owner.projectId!==run.projectId)fail('WORKSPACE_OWNERSHIP_MISMATCH','运行目录归属不匹配');
-  this.store.db.transaction(()=>{try{this.store.db.prepare('DELETE FROM runs WHERE id=?').run(id);}catch{fail('RUN_REFERENCED','该运行仍被交付物引用，不能清理');}rmSync(directory,{recursive:true,force:true});})();this.records.delete(id);
+  this.store.db.transaction(()=>{try{this.store.db.prepare('DELETE FROM runs WHERE id=?').run(id);}catch{fail('RUN_REFERENCED','该运行仍被测试、候选或交付证据引用，不能清理');}rmSync(directory,{recursive:true,force:true});})();this.records.delete(id);
  }
  private findProcess(id:string):OwnedProcess|undefined{
   const marker='-Dworkbench.runId='+id;
@@ -113,7 +116,7 @@ export class RunManager{
  }
  private async recover(){
   const rows=this.store.db.prepare('SELECT record FROM runs').all() as {record:string}[];
-  for(const row of rows){const run=JSON.parse(row.record) as RunRecord;if(!liveStatuses.has(run.status))continue;
+  for(const row of rows){const run=JSON.parse(row.record) as RunRecord;if(run.testing){delete run.testing;this.persist(run);}if(!liveStatuses.has(run.status))continue;
    const process=run.process&&ownsProcess(run.process)?run.process:this.findProcess(run.id);
    if(!process){run.status='interrupted';run.error={code:'PROCESS_MISSING',message:'原进程已退出，未完成业务需核对；不会自动恢复或重放'};this.persist(run);continue;}
    run.process=process;this.active.add(run.id);run.status='unresponsive';run.error={code:'ORIGINAL_PROCESS_ALIVE',message:'已找到原进程，需核验或明确停止；不会再启动一个进程'};

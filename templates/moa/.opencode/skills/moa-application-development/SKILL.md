@@ -37,3 +37,7 @@ description: 基于 MOA 范式装配应用，统一修改业务范围、System P
 JSON 可解析，schemaVersion=1，handoff.maxTasks=2。每个 Skill 的 file 引用存在；各入口描述一致。若提供tests/routing-examples.json，先按本机运行契约“路由预演样例的文件格式”核对case顶层query/action/target；业务答案预期不能替代路由字段。对自己修改的内容运行适用检查。最后返回简短变更说明；不要输出密钥、完整上下文或无关文件。
 
 完整机制参考本 Skill 的 references/native-skill-agent.md、request-routing.md、rail-extension.md 和 intent-switch.md，均固定到 SOURCE.md 声明的来源提交。涉及旧 Core API 的部分以本工程兼容适配和实际测试为准。
+
+## 版本化业务回归
+
+新增或修订业务测试时，先读取 [用例Schema与执行边界](references/business-tests.md)。编辑 tests/business-cases.json 中的声明式步骤和独立断言，不生成任意Shell命令。只核对文件和引用，由工作台调用已保存版本的原运行执行；禁止以COMPLETED覆盖外部状态或局部修改保留断言，禁止为消除失败修改独立验收预期。

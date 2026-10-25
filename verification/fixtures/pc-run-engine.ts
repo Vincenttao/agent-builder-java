@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {writeFileSync} from 'node:fs';
 import type {RunEngine,ProcessExit} from '../../workbench-server/local-java.js';
 type FixtureTask={id:string;target:string;kind:string;query:string;state:string;prompt:{kind:string;token:string;message:string;expiresAt:number}|null;output:Record<string,unknown>;error:string;traceIds:string[]};
-export function pcRunFixture(){
+export function pcRunFixture(options:{beforeMessage?:(query:string)=>Promise<void>}={}){
  const counters={builds:0,messages:0,posts:0,reads:0,writes:0,replies:[] as any[]};
  const engine:RunEngine={kind:'contract-fixture',async build(input){counters.builds++;input.onLog('Browser contract fixture; no Java compilation.');const jar=join(input.directory,'fixture.jar');writeFileSync(jar,'contract-fixture');return {jar};},async start(){
   const views=new Map<string,any>();
@@ -21,7 +21,7 @@ export function pcRunFixture(){
    const v=views.get(body.conversationId??match?.[1]);if(!v){res.statusCode=404;res.end(JSON.stringify({error:'CONVERSATION_NOT_FOUND'}));return;}
    if(req.method==='GET'){res.end(JSON.stringify(sync(v)));return;}
    if(req.url==='/workbench/messages'){
-    counters.messages++;
+    await options.beforeMessage?.(body.query);counters.messages++;
     if(v.stack.retained){res.statusCode=409;res.end(JSON.stringify({error:'TASK_DEPTH_LIMIT'}));return;}
     if(body.query==='处理采购'){v.switchRequest={requestId:randomUUID(),target:'procurement',query:body.query};event(v,'switch_decision_required',v.stack.current.id,{target:'procurement'});}
     else {const a=task('benefits','skill',body.query,'old-'+randomUUID());v.tasks.push(a);v.stack.current={id:a.id,target:a.target,state:a.state,submittedCall:null};v.stack.tasks.push(v.stack.current);event(v,'routing_decided',a.id,{action:'SKILL',target:'benefits',reason:'contract fixture only'});event(v,'input_required',a.id);
@@ -30,7 +30,7 @@ export function pcRunFixture(){
     assert.equal(body.requestId,v.switchRequest.requestId);assert.equal(body.choice,'RETAIN');const a=v.tasks.find((t:any)=>t.id===v.stack.current.id);a.prompt=null;v.stack.retained=v.stack.current;
     const b=task('procurement','agent','处理采购','b-'+randomUUID());v.tasks.push(b);v.stack.current={id:b.id,target:b.target,state:b.state,submittedCall:null};v.stack.tasks.push(v.stack.current);v.switchRequest=null;event(v,'task_retained',a.id);event(v,'a2a_call_started',b.id,{target:'procurement'});
    }else if(match?.[2]==='reply'){
-    counters.replies.push(body);const frame=v.tasks.find((t:any)=>t.id===body.taskId);assert.equal(frame.prompt.token,body.token);assert.equal(frame.id,v.stack.current.id);frame.prompt=null;frame.state='COMPLETED';
+    counters.replies.push(body);const frame=v.tasks.find((t:any)=>t.id===body.taskId);if(!frame?.prompt||frame.prompt.token!==body.token||frame.id!==v.stack.current.id){res.statusCode=400;res.end(JSON.stringify({error:'STALE_TASK_INPUT'}));return;}assert.equal(frame.prompt.token,body.token);assert.equal(frame.id,v.stack.current.id);frame.prompt=null;frame.state='COMPLETED';
     if(frame.kind==='agent'){v.stack.resumeCandidate=v.stack.retained.id;frame.output={text:'contract fixture procurement completed'};}
     else {if(body.answer==='确认')counters.writes++;frame.output={status:'completed',source:'contract-fixture'};}
     event(v,'task_finished',frame.id,{state:frame.state});
