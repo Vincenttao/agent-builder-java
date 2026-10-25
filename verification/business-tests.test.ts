@@ -25,6 +25,11 @@ test('all example suites use the supported bounded declarative schema',async()=>
  for(const example of ['idou','commerce-wealth','deepagent-materials'])assert.ok(parseBusinessSuite(readTree('examples/'+example)['tests/business-cases.json']).cases.length>0);
 });
 
+test('a completed task confirmation is rejected as TASK_NOT_CURRENT with no new write',async t=>{
+ const cases=structuredClone(suite) as any;cases.cases[0].steps.push({id:'stale',type:'reply',fromStep:'ask',answer:'确认',expectedError:'TASK_NOT_CURRENT',assertions:[{source:'delta',path:'writes',operator:'equals',value:0}]});
+ const {wb,project,run,call,fixture}=await businessTestFixture(t,cases),started=await call('/projects/'+project.id+'/business-tests','application','POST',{baseHead:project.head,runId:run.id,allowMockWrites:true});assert.equal(started.status,202);const result=await finished(call,started.body.report.id);assert.equal(result.status,'passed');assert.equal(result.cases[0].steps.at(-1).error,'TASK_NOT_CURRENT');assert.equal(fixture.counters.writes,0);
+});
+
 test('fault injection restores the original controls and preserves the business ledger',async t=>{
  const {wb,project,run,call,origin}=await setup(t);await wb.runs.stop(run.id,'application');
  const post=async(body:unknown)=>(await fetch(origin+'/__mock/controls',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)})).json();

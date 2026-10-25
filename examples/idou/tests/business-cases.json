@@ -93,7 +93,7 @@
           "type": "reply",
           "answer": "确认",
           "fromStep": "ask",
-          "expectedError": "STALE_TASK_INPUT",
+          "expectedError": "TASK_NOT_CURRENT",
           "assertions": [
             {
               "source": "task",
