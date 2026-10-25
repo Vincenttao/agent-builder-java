@@ -9,6 +9,7 @@ import com.moaagent.agent.routing.context.ModelContextContributor;
 import com.moaagent.agent.routing.context.IntentHandoff;
 import com.moaagent.agent.support.Json;
 import com.openjiuwen.core.foundation.llm.schema.AssistantMessage;
+import com.openjiuwen.core.foundation.llm.schema.ToolMessage;
 import com.openjiuwen.core.session.AgentSessionApi;
 import com.openjiuwen.core.session.interaction.InteractiveInput;
 import com.openjiuwen.core.singleagent.interrupt.ToolInterruptionState;
@@ -19,6 +20,7 @@ import com.openjiuwen.core.singleagent.rail.ToolCallInputs;
 import com.openjiuwen.core.singleagent.rail.AgentRail;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -176,7 +178,13 @@ public final class SkillBoundaryRail extends AgentRail {
         if (!hasToolCalls) {
             SkillSession state = SkillSession.load(ctx.getSession())
                     .orElseThrow(() -> new IllegalStateException("Skill 执行未初始化"));
-            if (!requiresVerifiedCompletion && canCompleteFromModel(state)) {
+            if (requiresVerifiedCompletion && canCompleteFromModel(state) && verifiedRefusalAtTail(state, input.getMessages())) {
+                state.setState("COMPLETED");
+                state.setOutcome(Map.of("protocol", "native_skill_v1", "success", true, "status", "rejected",
+                        "userDecision", "rejected", "completion_reason", "verified_confirmation_rejection",
+                        "output", "用户已拒绝本次操作，本次未新增业务提交。"));
+                state.save(ctx.getSession());
+            } else if (!requiresVerifiedCompletion && canCompleteFromModel(state)) {
                 completeFromModel(ctx, state, finalText);
             }
             if ("ACTIVE".equals(state.getState())) {
@@ -192,6 +200,33 @@ public final class SkillBoundaryRail extends AgentRail {
     private static boolean canCompleteFromModel(SkillSession state) {
         return "ACTIVE".equals(state.getState())
                 && state.getPending().isEmpty() && state.getApprovals().isEmpty();
+    }
+
+    /** Trust correlated Core tool messages and receipts, never model prose or an older refusal. */
+    private static boolean verifiedRefusalAtTail(SkillSession state, List<Object> messages) {
+        String lastTool = "";
+        for (Object message : messages) {
+            if (message instanceof ToolMessage tool) {
+                lastTool = "tool".equals(tool.getRole()) && tool.getToolCallId() != null ? tool.getToolCallId() : "";
+            } else if (message instanceof AssistantMessage assistant
+                    && assistant.getToolCalls() != null && !assistant.getToolCalls().isEmpty()) {
+                lastTool = ""; // A later attempted tool must have its own matching result and receipt.
+            } else if (message instanceof Map<?, ?> map) {
+                if ("tool".equals(map.get("role"))) {
+                    lastTool = map.get("tool_call_id") instanceof String id ? id : "";
+                } else if ("assistant".equals(map.get("role")) && map.get("tool_calls") instanceof List<?> calls && !calls.isEmpty()) {
+                    lastTool = "";
+                }
+            }
+        }
+        if (lastTool.isBlank()) return false;
+        String lastReceipt = "";
+        for (String id : state.getReceipts().keySet()) lastReceipt = id;
+        if (!lastTool.equals(lastReceipt)) return false;
+        Map<String, Object> receipt = Json.object(state.getReceipts().get(lastTool));
+        Map<String, Object> response = Json.object(receipt.get("response"));
+        return "confirm_action".equals(receipt.get("tool")) && response.keySet().equals(Set.of("approved"))
+                && Boolean.FALSE.equals(response.get("approved"));
     }
 
     private static void completeFromModel(AgentCallbackContext ctx, SkillSession state, String finalText) {

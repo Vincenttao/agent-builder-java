@@ -253,7 +253,7 @@
       "path": "com/moaagent/agent/skill/SkillBoundaryRail.java",
       "source_sha256": "eb11d232a1ee8a12a5296a03ca59756d4afda9d1d6d168ccadfb8cceb9c6dde4",
       "adapted": true,
-      "local_sha256": "e1db03de13c6953766ca8459e4a667b84e807b83b4d37dd50897491e7b9c2c2a"
+      "local_sha256": "632b4aee9ac7da47fa4cc97e8878ac354ce47ef8a29b8e340ec37938d8a1133d"
     },
     {
       "path": "com/moaagent/agent/skill/SkillCompletion.java",
@@ -429,7 +429,7 @@
       "path": "prompts/native-skill.md",
       "origin": "common/agents/moa-agent/src/main/resources/prompts/native-skill.md",
       "source_sha256": "e55b51dc1544c009c5ff036d1dc81a1bd8924649914949be4e7e6aaf5f7d25de",
-      "local_sha256": "94fbc9b5bef687c8d76af362aeb15c81ced2200d4b02fb52c8375b974311ffd3",
+      "local_sha256": "fb17ce77aabeefe779cea9246f97aef5ac85eaebf8ac9eb133c86aaebd2fc899",
       "adapted": true
     }
   ]
