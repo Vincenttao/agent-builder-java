@@ -7,7 +7,7 @@ const root=path.resolve(__dirname,'..'),out=path.resolve(process.env.DEMO_CHECK_
 fs.mkdirSync(out,{recursive:true});
 const key='openjiuwen-workbench-v2-demo-3';
 (async()=>{
- const browser=await chromium.launch({executablePath:process.env.DEMO_BROWSER_PATH||'/opt/google/chrome/chrome',headless:true,args:['--no-sandbox']});
+ const browser=await chromium.launch({...(process.env.DEMO_BROWSER_PATH?{executablePath:process.env.DEMO_BROWSER_PATH}:{}),headless:true,args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1440,height:1000}});page.setDefaultTimeout(5000);
  const errors=[],checks=[];page.on('pageerror',e=>errors.push(e.message));
  const click=(a,attrs='')=>page.locator(`[data-action="${a}"]${attrs}`).first().click();

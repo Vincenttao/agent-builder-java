@@ -1,0 +1,39 @@
+name: Workbench checks
+on:
+  push:
+    branches: [dev/workbench-v2]
+  pull_request:
+    branches: [dev/workbench-v2]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: workbench-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contracts-and-desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run typecheck
+      - name: Build and verify clickable prototype
+        run: |
+          npm run build
+          npm run test:demo
+          npm run test:flow
+      - name: Verify API, contracts and PC interactions without paid models
+        run: node --import tsx --test --test-concurrency=4 verification/*.test.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: workbench-check-evidence
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 7
