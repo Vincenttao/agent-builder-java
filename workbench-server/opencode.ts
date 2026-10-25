@@ -43,7 +43,7 @@ export class OpenCodeEngine implements CodingEngine{
    if(health.version!=='1.18.9')throw new WorkbenchError('OPENCODE_VERSION','当前验证版本为 OpenCode 1.18.9；请核验新版本 API 后更新基线');
    const session=await request('/session',{title:'Agent 工程修订'},90_000);sessionId=session.id;
    this.active.set(input.directory,{request,sessionId});input.onEvent({type:'session',sessionId,version:health.version,model:config.model});
-   const prompt=`必须先通过 skill 工具读取 ${input.skill}，再读取 application.json、instructions.md 和相关 Skill。\n本工程是固定提交的任务副本。只修改本角色允许的文件，用实际编辑工具交付差异；不触碰固定约束、密钥或运行数据。若有业务范围/System Prompt/Skill 冲突，联合修订并说明理由；目标不清晰才使用 question。Bash 未授权，不能声称运行了 Bash 检查。\n用户需求：\n${input.prompt}`;
+   const prompt=`必须先通过 skill 工具读取 ${input.skill}，再读取 application.json、instructions.md 和相关 Skill。\n本工程是固定提交的任务副本。只修改本角色允许的文件，用实际编辑工具交付差异；不触碰固定约束、密钥或运行数据。${input.purpose==='consistency'?'本次仅诊断：不修订工程，只按下方要求写结构化诊断；有歧义记录needs-clarification，不擅自决定。':'若有业务范围/System Prompt/Skill 冲突，联合修订并说明理由；目标不清晰才使用 question。'}Bash 未授权，不能声称运行了 Bash 检查。\n用户需求：\n${input.prompt}`;
    await request('/session/'+sessionId+'/prompt_async',{model:{providerID:'workbench',modelID:config.model},parts:[{type:'text',text:prompt}]},20_000);
    const seen=new Set<string>();let deadline=Date.now()+240_000;let pendingQuestion='';
    while(Date.now()<deadline){

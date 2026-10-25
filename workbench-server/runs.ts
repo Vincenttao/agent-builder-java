@@ -12,7 +12,7 @@ export class RunManager{
  readonly ready:Promise<void>;
  private records=new Map<string,RunRecord>();private active=new Set<string>();private controllers=new Map<string,AbortController>();
  private launches=new Map<string,Promise<void>>();private handles=new Map<string,RunningJava>();private closed=false;private requests=new Set<Promise<unknown>>();
- constructor(private store:ProjectStore,private engine:RunEngine){
+ constructor(private store:ProjectStore,private engine:RunEngine,private definitionGuard?:(id:string,role:Role,head:string)=>void){
   store.db.exec('CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY,projectId TEXT NOT NULL,record TEXT NOT NULL)');
   this.ready=this.recover();
  }
@@ -22,7 +22,7 @@ export class RunManager{
  get(id:string,role:Role){const run=this.record(id);this.store.get(run.projectId,role);return JSON.parse(JSON.stringify(run)) as RunRecord;}
  list(id:string,role:Role){this.store.get(id,role);return (this.store.db.prepare('SELECT id FROM runs WHERE projectId=? ORDER BY rowid DESC LIMIT 24').all(id) as {id:string}[]).map(row=>this.get(row.id,role));}
  listAll(role:Role){return (this.store.db.prepare('SELECT id FROM runs ORDER BY rowid DESC LIMIT 24').all() as {id:string}[]).flatMap(row=>{try{return [this.get(row.id,role)];}catch(error){if(error instanceof WorkbenchError&&error.code==='FORBIDDEN')return [];throw error;}});}
- claimTesting(id:string,role:Role,reportId:string){const run=this.record(id);this.owner(run,role);if(run.testing||run.status!=='running'||run.unobserved?.length)fail('RUN_UNDER_TEST','运行正在测试或有未核对的请求，请先核对原状态');run.testing=reportId;this.persist(run);}
+ claimTesting(id:string,role:Role,reportId:string){const run=this.record(id);this.owner(run,role);this.definitionGuard?.(run.projectId,role,run.head);if(run.testing||run.status!=='running'||run.unobserved?.length)fail('RUN_UNDER_TEST','运行正在测试或有未核对的请求，请先核对原状态');run.testing=reportId;this.persist(run);}
  releaseTesting(id:string,reportId:string){const run=this.record(id);if(run.testing===reportId){delete run.testing;this.persist(run);}}
  private testingAllowed(run:RunRecord,token?:string){if(run.testing&&run.testing!==token)fail('RUN_UNDER_TEST','该运行正在执行业务回归，请查看报告或先取消测试');}
  private owner(run:RunRecord,role:Role){this.store.get(run.projectId,role);if(run.role!==role)fail('FORBIDDEN','请使用发起运行的身份操作',403);}
@@ -31,6 +31,7 @@ export class RunManager{
   await this.ready;if(this.closed)fail('WORKBENCH_STOPPED','工作台正在关闭');
   const project=this.store.get(id,role);if((project.kind==='template')!==(role==='platform'))fail('FORBIDDEN','当前身份不能发起该工程的调试',403);
   if(project.head!==head||this.store.git(id,['rev-parse','HEAD'])!==head)fail('REVISION_CONFLICT','请保存并刷新当前版本后运行');
+  this.definitionGuard?.(id,role,head);
   if(this.active.size)fail('RUN_BUSY','已有构建或 Java 进程，请继续查看原运行或明确停止后再启动');
   if(this.store.git(id,['status','--porcelain']))fail('UNSAVED_EXTERNAL_CHANGE','存在工作台外的修改，请先核对');
   if((this.store.db.prepare('SELECT count(*) AS n FROM runs').get() as {n:number}).n>=24)fail('RETENTION_LIMIT','运行记录已达 24 份，请先下载并清理不再使用的历史运行');
@@ -89,11 +90,11 @@ export class RunManager{
   if(!view.busy&&run.unobserved?.includes(view.conversationId)){run.unobserved=run.unobserved.filter(id=>id!==view.conversationId);this.persist(run);}
   writeFileSync(join(this.directory(run.id),'observations',view.conversationId+'.json'),JSON.stringify(view));return {...view,live:true,runId:run.id};
  }
- async message(id:string,role:Role,body:unknown,testingToken?:string){const run=this.record(id);this.owner(run,role);this.testingAllowed(run,testingToken);const value=body as {query?:unknown;conversationId?:unknown};if(typeof value?.query!=='string'||!value.query.trim()||value.query.length>12000)fail('INVALID_QUERY','请输入业务消息',400);
+ async message(id:string,role:Role,body:unknown,testingToken?:string){const run=this.record(id);this.owner(run,role);this.testingAllowed(run,testingToken);this.definitionGuard?.(run.projectId,role,run.head);const value=body as {query?:unknown;conversationId?:unknown};if(typeof value?.query!=='string'||!value.query.trim()||value.query.length>12000)fail('INVALID_QUERY','请输入业务消息',400);
   if(value.conversationId!==undefined&&value.conversationId!==null&&(typeof value.conversationId!=='string'||!conversationPattern.test(value.conversationId)||!run.conversations.includes(value.conversationId)))fail('CONVERSATION_NOT_FOUND','该会话不属于本次运行',404);
   return this.track((async()=>{const conversation=value.conversationId?String(value.conversationId):this.capture(run,await this.backend(run,'/workbench/conversations',{})).conversationId;return this.perform(run,conversation,'/workbench/messages',{...value,conversationId:conversation});})());
  }
- async command(id:string,role:Role,conversation:string,action:string,body:unknown,testingToken?:string){const run=this.record(id);this.owner(run,role);this.testingAllowed(run,testingToken);this.conversationOwned(run,conversation);if(!['reply','decide','resume','receipt'].includes(action))fail('INVALID_ACTION','不支持该业务操作',400);if(!body||typeof body!=='object'||Array.isArray(body))fail('INVALID_ACTION_INPUT','请提供该任务的操作参数',400);return this.track(this.perform(run,conversation,'/workbench/conversations/'+conversation+'/'+action,body));}
+ async command(id:string,role:Role,conversation:string,action:string,body:unknown,testingToken?:string){const run=this.record(id);this.owner(run,role);this.testingAllowed(run,testingToken);this.conversationOwned(run,conversation);if(!['reply','decide','resume','receipt'].includes(action))fail('INVALID_ACTION','不支持该业务操作',400);if(!body||typeof body!=='object'||Array.isArray(body))fail('INVALID_ACTION_INPUT','请提供该任务的操作参数',400);const input=body as Record<string,unknown>;if(action!=='receipt'&&!(action==='reply'&&['拒绝','取消'].includes(String(input.answer)))&&!(action==='decide'&&input.choice==='STAY'))this.definitionGuard?.(run.projectId,role,run.head);return this.track(this.perform(run,conversation,'/workbench/conversations/'+conversation+'/'+action,body));}
  private async perform(run:RunRecord,conversation:string,path:string,body:unknown){
   run.unobserved=[...new Set([...(run.unobserved??[]),conversation])];this.persist(run);
   try{const view=await this.backend(run,path,body);if(view.conversationId!==conversation)fail('JAVA_RESPONSE_INVALID','会话关联不匹配');return this.capture(run,view);}

@@ -1,4 +1,5 @@
 import {BusinessTests,parseBusinessSuite} from './business-tests.js';
+import {ConsistencyManager} from './consistency.js';
 import {publicRegistry,registry,selection} from './execution-settings.js';
 import {RevisionManager} from './revisions.js';
 import {flowSources} from './design.js';
@@ -24,20 +25,21 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   store.seedTemplate(options.templateFiles??moaTemplateFiles());
   if(!options.templateFiles)store.seedTemplate(deepAgentTemplateFiles(),{id:'deepagent-platform',name:'DeepAgent 独立业务模板'});
   const jobs=new CodingJobs(store,options.codingEngine??new OpenCodeEngine(repository));
-  const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository));
+  const consistency=new ConsistencyManager(store,jobs);
+  const runs=new RunManager(store,options.runEngine??new LocalJavaEngine(repository),(id,role,head)=>consistency.guard(id,role,head));
   const exports=new ExportManager(store,runs);
   const reviews=new ReviewManager(store);
   const revisions=new RevisionManager(store);
   const businessTests=new BusinessTests(store,runs);
   let closing=false;
-  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js','execution-settings.js','business-tests.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
+  const uiFiles=new Map(['index.html','style.css','app.js','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js','execution-settings.js','business-tests.js','consistency.js'].map(name=>[name,readFileSync(resolve(repository,'workbench-ui',name),'utf8')]));
   const uiVersion=createHash('sha256');
   for(const [name,content] of uiFiles)uiVersion.update(name+'\0'+content);
   const build=uiVersion.digest('hex');
   const app=express();app.disable('x-powered-by');app.use(express.json({limit:'4mb'}));
   // Serve only the explicit UI assets; never expose the repository or local configuration.
   app.get('/',(_req,res)=>{res.set('Cache-Control','no-store');res.type('html').send(uiFiles.get('index.html'));});
-  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js','execution-settings.js','business-tests.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
+  for(const name of ['app.js','style.css','configuration.js','coding.js','runtime.js','delivery.js','persistence.js','design.js','panels.js','deepagent.js','journey.js','assembly.js','release.js','assignments.js','diagnostics.js','revisions.js','execution-settings.js','business-tests.js','consistency.js'])app.get('/workbench-ui/'+name,(_req,res)=>{res.set('Cache-Control','no-store');res.type(name).send(uiFiles.get(name));});
   app.use('/api',(req,res,next)=>{
     if(closing&&!['GET','HEAD'].includes(req.method))return next(new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503));
     const browserBuild=req.header('x-workbench-ui-build');
@@ -60,6 +62,9 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
   });
   app.put('/api/projects/:id/runtime-settings',(req,res)=>{const p=store.get(req.params.id,res.locals.role),catalog=registry(repository);const selected=selection({'runtime-settings.json':JSON.stringify({modelProfile:req.body.modelProfile,environmentId:req.body.environmentId})});if(!catalog.models.some(m=>m.id===selected.modelProfile))throw new WorkbenchError('MODEL_PROFILE_NOT_FOUND','所选模型配置档不存在');const environment=catalog.environments.find(e=>e.id===selected.environmentId);if(!environment)throw new WorkbenchError('ENVIRONMENT_NOT_FOUND','所选环境配置档不存在');const changes:Files={'runtime-settings.json':JSON.stringify(selected,null,2)+'\n'};if(Object.keys(environment.connections).length){const definition=store.definition(p.id,res.locals.role);definition.connections={...definition.connections,...environment.connections};changes['application.json']=JSON.stringify(definition,null,2)+'\n';}res.json({project:store.save(p.id,res.locals.role,req.body.baseHead,changes)});});
   app.get('/api/projects/:id/business-suite',(req,res)=>{const p=store.get(req.params.id,res.locals.role),files=store.snapshot(p.id,p.head),text=files['tests/business-cases.json'];res.json({head:p.head,suite:text?parseBusinessSuite(text):null});});
+  app.get('/api/projects/:id/consistency',(req,res)=>res.json(consistency.state(req.params.id,res.locals.role)));
+  app.post('/api/projects/:id/consistency',async(req,res)=>res.status(202).json({job:await consistency.check(req.params.id,res.locals.role,req.body.baseHead)}));
+  app.post('/api/consistency/:id/repair',async(req,res)=>res.status(202).json({job:await consistency.repair(req.params.id,res.locals.role,req.body.instruction)}));
   app.get('/api/projects/:id/business-tests',(req,res)=>res.json({reports:businessTests.list(req.params.id,res.locals.role)}));
   app.post('/api/projects/:id/business-tests',async(req,res)=>res.status(202).json({report:await businessTests.start(req.params.id,res.locals.role,req.body)}));
   app.get('/api/business-tests/:id',(req,res)=>res.json({report:businessTests.get(req.params.id,res.locals.role)}));
@@ -113,5 +118,5 @@ export function createWorkbench(options:{root:string;templateFiles?:Files;coding
     const e=error instanceof WorkbenchError?error:error instanceof SyntaxError?new WorkbenchError('INVALID_JSON','请求必须是有效 JSON'):new WorkbenchError('INTERNAL_ERROR','操作失败，请查看本机服务状态',500);
     res.status(e.status).json({error:{code:e.code,message:e.message}});
   });
-  return {app,store,jobs,runs,exports,businessTests,close:async()=>{closing=true;await businessTests.close();await Promise.all([exports.close(),jobs.close(),runs.close()]);}};
+  return {app,store,jobs,runs,exports,businessTests,consistency,close:async()=>{closing=true;await businessTests.close();await Promise.all([exports.close(),jobs.close(),runs.close()]);}};
 }

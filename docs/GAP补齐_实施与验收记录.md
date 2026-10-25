@@ -16,7 +16,7 @@
 | GAP-06 页面业务回归 | 已实现，契约/API/PC验证通过；真实业务E2E待验 | 版本化用例、Mock账本断言、原运行互斥、取消与报告；最终Java/模型及Deep严格局部修改仍需真实验证 |
 | GAP-07 候选与交付证据 | 待实现 | 绑定检查、测试、运行、制品及企业交接登记 |
 | GAP-08 集中运行诊断 | 已实现，相关层验证通过 | 平台跨应用/版本/状态筛选，原运行只读进入，事件字段与载荷展示；不虚构Span或耗时 |
-| GAP-09 冲突修订闭环 | 待实现 | 检查、Coding关联修订、行为复核和交付状态 |
+| GAP-09 冲突修订闭环 | 诊断/修订/复核及运行阻断已实现，契约/PC通过；真实语义及候选联动待验 | OpenCode诊断任务、来源摘要、关联审阅、原版本保护；后续接候选业务证据和真实行为验证 |
 | GAP-10 模型与环境 | 已实现，相关层验证通过 | 本机目录/工程引用、双范式选择、环境连接覆盖、新任务/运行固定配置；导出记录实际模型，密钥外部注入 |
 | GAP-11 平台开放契约 | 已实现，相关层验证通过 | 平台开放开关、有限能力类型与可写路径服务端校验、固定来源/应用覆盖说明；Deep未接通能力保持禁用 |
 | GAP-12 版本恢复与升级预览 | 已实现，相关层验证通过 | 最近60次保存、差异/完整原文、草稿与过期阻断、恢复新提交、升级覆盖/冲突及所需检查预览 |
@@ -117,3 +117,14 @@ OpenCode 根据固定任务副本解析模型引用，任务记录保留公开�
 新增服务与PC用例：7项定向检查通过，相关运行/Mock/Deep模板/调试回归共15项通过；随后补验测试中调试入口只读，PC定向1项通过。TypeScript和新增JS语法检查通过。PC覆盖1280/1440/1920无横向溢出，实际查看1280报告截图。第一次PC失败是夹具保存后应用名与选择器不一致，按真实名称定位后通过，未降低业务断言。原失败日志保留。
 
 证据：test-results/journey-gap-business-current.log（首次失败）、journey-gap-business-current-retest.log、journey-gap-business-regression.log、journey-gap-business-pc-final.log、journey-gap-business-typecheck.log及journey-gap-business-pc/截图。以上使用契约引擎和独立Mock，没有调用真实模型/Java，不替代本轮最终真实业务E2E。GAP-07/09、真实业务验证及GitHub同步仍待完成，继续按整体目标推进。
+
+
+## 8 D2批：一致性诊断与关联修订
+
+“测试→一致性检查”复用Coding任务，不新增工作流引擎。诊断只写隔离副本中的结构化报告，由服务端校验角色开发Skill和范围/Prompt/业务Skill的实际读取证据、固定输入摘要与真实路径后存入原任务。诊断擅改源文件、未读取、格式错误或使用工程自填报告均被拒绝；成功分析副本清理，工程不变。
+
+页面展示来源、影响与建议，可填修订意图，生成与诊断关联的普通Coding任务，再使用既有差异审阅/拒绝/应用。修订形成新提交，已知冲突/业务歧义直到复核前阻断对应定义的新运行、消息、确认和续办；保留原回执、明确拒绝、暂不切换与只读观察。旧运行按原定义判断，不因新版本修复解除其限制。只改tests/runtime-tests/README/.gitignore时允许按保守摘要复用语义诊断，显式显示原head，不复用旧业务报告。
+
+新增consistency服务与PC测试，联合Coding/运行/PC业务回归共21项通过，类型检查及UI语法检查通过。首次契约夹具错误地把worktree的.git指针计入输入摘要，已修正夹具并保留失败记录，没有改生产摘要规则或放宽验收。PC覆盖1280/1440/1920、冲突→关联差异→应用→复核→平台只读；实际查看1280截图。契约引擎的clear明确标为非真实OpenCode验证，未调用真实模型/Java。本批不宣称真实语义或业务E2E完成。
+
+证据：test-results/journey-gap-consistency-red.log、journey-gap-consistency-service.log（首次失败）、journey-gap-consistency-service-retest.log、journey-gap-consistency-pc.log、journey-gap-consistency-regression.log、journey-gap-consistency-final-types.log及journey-gap-consistency-pc/截图。操作与边界见一致性诊断与关联修订.md。GAP-07候选联动、真实OpenCode/Java/Mock/Deep行为验证和GitHub同步继续推进。

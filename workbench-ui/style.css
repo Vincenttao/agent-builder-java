@@ -31,3 +31,5 @@
 #execution-settings-form{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:center;margin:18px 0}#execution-settings-form label{margin:0}#execution-settings-form button{justify-self:start}#execution-settings-form .primary{grid-column:2}.run-configuration{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:6px}
 #execution-settings-form .execution-actions{grid-column:2;display:flex;gap:10px;flex-wrap:wrap}
 #business-tests-controls .field{margin:18px 0}#business-tests-controls select{width:100%}.business-report>details{padding:12px 0;border-bottom:1px solid var(--line)}.business-report summary{cursor:pointer;font-weight:600}.business-assertion{padding:8px 12px;margin:8px 0;border-left:3px solid #8ab49e;background:#f8faf9}.business-assertion.warning{border-color:#c57265}.business-assertion pre{max-height:160px}.business-report>button{margin:12px 8px 0 0}
+
+.consistency-report{overflow-wrap:anywhere}.consistency-issue{padding:12px 0;border-bottom:1px solid var(--line)}.consistency-issue button,.consistency-report>button,#consistency-state button{margin:6px 8px 6px 0}.consistency-report textarea{width:100%;min-height:80px}

@@ -1,7 +1,7 @@
 'use strict';
 window.WorkbenchCoding = (() => {
   const states=new Map(), activeStatuses=['running','awaiting_input'];
-  const labels={running:'执行中',awaiting_input:'等待开发者回答',awaiting_review:'建议待审阅',applied:'已应用',rejected:'已拒绝',failed:'执行失败',cancelled:'已取消'};
+  const labels={running:'执行中',awaiting_input:'等待开发者回答',awaiting_review:'建议待审阅',analysed:'诊断已完成',applied:'已应用',rejected:'已拒绝',failed:'执行失败',cancelled:'已取消'};
   let host, timer, generation=0, refreshSequence=0;
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function state(id){const role=host.context()?.role??'application',key=role+'|'+id;if(!states.has(key)){const saved=host.local?.read(id,role,'coding',{})??{};states.set(key,{jobs:[],selected:typeof saved.selected==='string'?saved.selected:null,prompt:typeof saved.prompt==='string'?saved.prompt:'',review:null,detailKey:null,answers:new Map()});}return states.get(key);}
@@ -36,7 +36,7 @@ window.WorkbenchCoding = (() => {
     if(!paths.includes(s.path))s.path=paths[0];
     const before=review?.before?.[s.path], after=job.changes[s.path];
     return `<div class="toolbar"><h2>${esc(labels[job.status]??job.status)}</h2><code>${esc(job.id.slice(0,8))}</code></div><p><span class="badge">${job.engineKind==='opencode'?'实际 OpenCode 引擎':esc(job.engineKind||'历史未声明引擎')+' · 非真实 OpenCode 验证'}</span> <span class="badge">${esc(job.model||'模型信息尚未返回')}</span></p><p>${job.configuration?'本任务配置：'+esc(job.configuration.modelProfile)+' · 环境 '+esc(job.configuration.environmentId):'历史任务未记录配置档'}</p><p>基础版本 <code>${esc(job.baseHead.slice(0,12))}</code></p><p>${loaded?'已记录开发 Skill 工具读取':'尚无开发 Skill 实际读取证据'}：<code>${esc(roleSkill)}</code></p><details><summary>原开发需求</summary><pre>${esc(job.prompt)}</pre></details>${job.summary?`<details class="coding-summary"><summary>助手说明</summary><pre>${esc(job.summary)}</pre></details><p class="muted">生成说明不代表业务验收通过；请核对差异、工具证据与后续测试。</p>`:''}${job.error?`<p class="warning">${esc(job.error.code)}：${esc(job.error.message)}</p>`:''}
-      ${job.status==='awaiting_input'?question(job,s,readOnly):''}${activeStatuses.includes(job.status)&&!readOnly?'<button data-coding-action="cancel">取消原任务</button>':''}
+      ${job.purpose==='consistency'?'<p>此任务仅诊断，不应用文件差异。<button data-tab="consistency">查看一致性诊断与修订入口</button></p>':''}${job.relatedCheckId?'<p>关联诊断 <code>'+esc(job.relatedCheckId)+'</code>；应用后需复核并验证业务。</p>':''}${job.status==='awaiting_input'?question(job,s,readOnly):''}${activeStatuses.includes(job.status)&&!readOnly?'<button data-coding-action="cancel">取消原任务</button>':''}
       ${stale&&job.status==='awaiting_review'?'<p class="warning">建议已过期，请保留人工修改并重新发起</p>':''}${dirty&&job.status==='awaiting_review'?'<p class="warning">有未保存草稿，不能应用建议。</p>':''}
       ${paths.length?`<h3>文件差异（${paths.length}）</h3><label for="coding-diff-file">选择差异文件</label><select id="coding-diff-file">${paths.map(p=>`<option value="${esc(p)}" ${p===s.path?'selected':''}>${esc(p)}${job.changes[p]===null?' · 删除':''}</option>`).join('')}</select>${review?`<div class="diff-grid"><div><label for="coding-before">原版本内容${before===null?' · 新文件':''}</label><textarea id="coding-before" readonly spellcheck="false">${esc(before??'')}</textarea></div><div><label for="coding-after">建议内容${after===null?' · 删除文件':''}</label><textarea id="coding-after" readonly spellcheck="false">${esc(after??'')}</textarea></div></div>`:'<p>正在读取固定基础版本的差异…</p>'}`:''}
       ${job.status==='awaiting_review'&&!readOnly?`<div class="row"><button class="primary" data-coding-action="apply" ${stale||dirty||!review?'disabled':''}>应用全部差异</button><button data-coding-action="reject">拒绝建议</button></div>`:''}
@@ -98,5 +98,5 @@ window.WorkbenchCoding = (() => {
       }
     });});
   }
-  return {init,render,dock,mount,unmount,setPrompt:text=>{const el=document.querySelector('#coding-start textarea');if(el){el.value=text;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();}}};
+  return {init,render,dock,mount,unmount,selectJob:id=>{const c=host.context();if(c){const s=state(c.project.id);s.selected=id;s.review=null;s.detailKey=null;persist(c.project.id,s);}},setPrompt:text=>{const el=document.querySelector('#coding-start textarea');if(el){el.value=text;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();}}};
 })();

@@ -1,11 +1,12 @@
 import {randomUUID} from 'node:crypto';
-import {mkdirSync,readdirSync,readFileSync,lstatSync,existsSync} from 'node:fs';
-import {join} from 'node:path';
+import {mkdirSync,readdirSync,readFileSync,lstatSync,existsSync,unlinkSync} from 'node:fs';
+import {join,relative,resolve} from 'node:path';
+import {consistencyPath,definitionInputs,parseConsistency,type ConsistencyAnalysis} from './consistency-contract.js';
 import {ProjectStore,WorkbenchError,validateFiles,validatePath,applicationEditable,type Role,type Files} from './projects.js';
 export type CodingEvidence={tool:string;status:string;input?:Record<string,unknown>};
 export type CodingResult={sessionId:string;model:string;summary:string;evidence:CodingEvidence[]};
-export interface CodingEngine{readonly kind?:string;answer?(directory:string,id:string,answers:string[][]):Promise<void>;run(input:{directory:string;prompt:string;skill:string;signal:AbortSignal;onEvent:(event:Record<string,unknown>)=>void}):Promise<CodingResult>;}
-export type CodingJob={configuration?:{modelProfile:string;environmentId:string;model:string;origin:string;configured:boolean};id:string;projectId:string;role:Role;engineKind?:string;baseHead:string;prompt:string;status:'running'|'awaiting_input'|'awaiting_review'|'applied'|'rejected'|'failed'|'cancelled';createdAt:string;changes:Record<string,string|null>;summary?:string;sessionId?:string;model?:string;evidence:CodingEvidence[];events:Record<string,unknown>[];pendingQuestion?:{id:string;questions:Record<string,unknown>[]};error?:{code:string;message:string};appliedHead?:string};
+export interface CodingEngine{readonly kind?:string;answer?(directory:string,id:string,answers:string[][]):Promise<void>;run(input:{directory:string;prompt:string;skill:string;purpose?:'consistency';signal:AbortSignal;onEvent:(event:Record<string,unknown>)=>void}):Promise<CodingResult>;}
+export type CodingJob={purpose?:'development'|'consistency';relatedCheckId?:string;analysis?:ConsistencyAnalysis;configuration?:{modelProfile:string;environmentId:string;model:string;origin:string;configured:boolean};id:string;projectId:string;role:Role;engineKind?:string;baseHead:string;prompt:string;status:'running'|'awaiting_input'|'awaiting_review'|'analysed'|'applied'|'rejected'|'failed'|'cancelled';createdAt:string;changes:Record<string,string|null>;summary?:string;sessionId?:string;model?:string;evidence:CodingEvidence[];events:Record<string,unknown>[];pendingQuestion?:{id:string;questions:Record<string,unknown>[]};error?:{code:string;message:string};appliedHead?:string};
 function worktreeFiles(root:string):Files{
  const files:Files={};
  function visit(dir:string,prefix=''){for(const entry of readdirSync(dir,{withFileTypes:true})){
@@ -36,27 +37,35 @@ export class CodingJobs{
   return {job,head:project.head,stale:project.head!==job.baseHead,before:Object.fromEntries(names.map(name=>[name,base[name]??null]))};
  }
  private owner(job:CodingJob,role:Role){if(job.role!==role)throw new WorkbenchError('FORBIDDEN','请使用发起任务的身份审阅',403);}
- async start(projectId:string,role:Role,prompt:string){
+ async start(projectId:string,role:Role,prompt:string,context:{purpose?:'consistency';relatedCheckId?:string}={}){
   if(this.closed)throw new WorkbenchError('WORKBENCH_STOPPED','工作台正在关闭',503);
   const project=this.store.get(projectId,role);if((project.kind==='template')!==(role==='platform'))throw new WorkbenchError('FORBIDDEN','当前身份不能修改该工程',403);
   if(typeof prompt!=='string'||!prompt.trim()||prompt.length>16000)throw new WorkbenchError('INVALID_PROMPT','请输入 1～16000 字的开发需求');
   if(this.active)throw new WorkbenchError('ENGINE_BUSY','已有编码任务正在执行，请查看原任务',409);
   const count=(this.store.db.prepare('SELECT count(*) AS count FROM coding_jobs WHERE projectId=?').get(projectId) as {count:number}).count;
   if(count>=50)throw new WorkbenchError('RETENTION_LIMIT','本工程已达 50 份助手记录上限，请先归档旧任务',409);
-  const job:CodingJob={id:randomUUID(),projectId,role,engineKind:this.engine.kind??'unspecified',baseHead:project.head,prompt,status:'running',createdAt:new Date().toISOString(),changes:{},evidence:[],events:[]};
+  const job:CodingJob={...context,id:randomUUID(),projectId,role,engineKind:this.engine.kind??'unspecified',baseHead:project.head,prompt,status:'running',createdAt:new Date().toISOString(),changes:{},evidence:[],events:[]};
   const directory=join(this.store.root,'jobs',job.id,'workspace');mkdirSync(join(this.store.root,'jobs',job.id),{recursive:true});
   this.store.git(projectId,['worktree','add','--detach',directory,project.head]);
+  // A user-authored or old report is input data, never proof of a fresh semantic analysis.
+  if(context.purpose==='consistency'&&existsSync(join(directory,consistencyPath)))unlinkSync(join(directory,consistencyPath));
   this.active=job.id;const controller=new AbortController();this.controllers.set(job.id,controller);this.persist(job);
   const family=this.store.family(projectId,role);const skill=family+'-'+(role==='platform'?'platform':'application')+'-development';
-  const execution=this.engine.run({directory,prompt,skill,signal:controller.signal,onEvent:event=>{if(event.type==='configuration')job.configuration=event.configuration as CodingJob['configuration'];if(event.type==='question'){job.status='awaiting_input';job.pendingQuestion={id:String(event.id),questions:event.questions as Record<string,unknown>[]};}else if(event.type==='question_answered'){job.status='running';delete job.pendingQuestion;}if(job.events.length<200)job.events.push(event);this.persist(job);}}).then(result=>{
+  const execution=this.engine.run({directory,prompt,skill,purpose:context.purpose,signal:controller.signal,onEvent:event=>{if(event.type==='configuration')job.configuration=event.configuration as CodingJob['configuration'];if(event.type==='question'){job.status='awaiting_input';job.pendingQuestion={id:String(event.id),questions:event.questions as Record<string,unknown>[]};}else if(event.type==='question_answered'){job.status='running';delete job.pendingQuestion;}if(job.events.length<200)job.events.push(event);this.persist(job);}}).then(result=>{
    Object.assign(job,result);if(controller.signal.aborted){job.status='cancelled';return;}
    if(!result.evidence.some(e=>e.tool==='skill'&&e.status==='completed'&&e.input?.name===skill))throw new WorkbenchError('SKILL_NOT_LOADED','未找到本角色范式 Skill 的实际读取证据，变更不进入审阅');
    const before=this.store.snapshot(projectId,job.baseHead),after=worktreeFiles(directory);validateFiles(after);
    for(const name of new Set([...Object.keys(before),...Object.keys(after)]))if(before[name]!==after[name]){
     // OpenCode creates this exact cache-control file during startup; never ignore custom or pre-existing rules.
     if(name==='.opencode/.gitignore'&&!Object.hasOwn(before,name)&&after[name]?.replace(/\r\n/g,'\n').replace(/\n$/,'')==='node_modules\npackage.json\npackage-lock.json\nbun.lock\n.gitignore')continue;
+    if(job.purpose==='consistency'&&name!==consistencyPath)throw new WorkbenchError('CONSISTENCY_SOURCE_CHANGED','诊断任务只能写结构化报告，不能修改工程定义：'+name);
     if(role==='application'&&!applicationEditable(name))throw new WorkbenchError('FORBIDDEN_PATH','助手修改了模板固定文件：'+name);
     job.changes[name]=after[name]??null;
+   }
+   if(job.purpose==='consistency'){
+    const source=definitionInputs(before),reads=new Set(result.evidence.filter(e=>e.tool==='read'&&e.status==='completed'&&typeof e.input?.filePath==='string').map(e=>relative(directory,resolve(directory,String(e.input!.filePath)))));
+    if(source.required.some(p=>!reads.has(p)))throw new WorkbenchError('CONSISTENCY_SOURCE_NOT_READ','缺少业务范围、应用指令或业务Skill的实际读取证据');
+    job.analysis=parseConsistency(after[consistencyPath],source);job.changes={};job.status='analysed';this.clean(job);return;
    }
    if(!Object.keys(job.changes).length)throw new WorkbenchError('NO_CHANGES','助手未产生文件差异；原建议和记录保留');
    job.status='awaiting_review';
